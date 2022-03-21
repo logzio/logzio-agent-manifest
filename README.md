@@ -1,0 +1,1 @@
+# logzio-agent-manifest
