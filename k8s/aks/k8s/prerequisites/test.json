@@ -1,0 +1,24 @@
+{
+    "commands": [
+        {
+            "name": "",
+            "description": "Is kubectl installed?",
+            "command": [
+                "which kubectl >/dev/null 2>&1;",
+                "if [ $? -ne 0 ]; then;", 
+                    "echo kubectl is not installed;", 
+                "fi"
+            ] 
+        },
+        {
+            "name": "",
+            "description": "Is kubectl connected to an active Kubernetes cluster?",
+            "command": [
+                "kubectl cluster-info;",
+                "if [ echo $? -ne 0 ]; then;",
+                    "echo kubectl is not connected to an active Kubernetes cluster;",
+                "fi"
+            ]
+        }
+    ]
+}
