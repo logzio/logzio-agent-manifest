@@ -1,0 +1,47 @@
+{
+    "commands": [
+        {
+            "description": "Is kubectl installed?",
+            "run": [
+                "which kubectl >/dev/null 2>&1;",
+                "if [ $? -ne 0 ]; then", 
+                    "echo Kubectl is not installed;",
+                    "exit 1",
+                "else",
+                    "echo Kubectl is installed;",
+                "fi"
+            ] 
+        },
+        {
+            "description": "Is kubectl connected to an active Kubernetes cluster?",
+            "run": [
+                "kubectl cluster-info;",
+                "if [ echo $? -ne 0 ]; then",
+                    "echo Kubectl is not connected to an active Kubernetes cluster;",
+                    "exit 1",
+                "else",
+                    "echo Kubectl is connected to an active Kubernetes cluster;",
+                "fi"
+            ]
+        },
+        {
+            "description": "Is Helm installed?",
+            "run": [
+                "where helm;",
+                "if [ echo $? -ne 0 ]; then",
+                    "echo Can't find Helm. Installing Helm...;",
+                    "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash;",
+                    "helm repo add logzio-helm https://logzio.github.io/logzio-helm;",
+                "else",
+                    "echo Helm is installed;",
+                "fi"
+            ]
+        },
+        {
+            "description": "Is Kubernetes cluster connected to Logz.io?",
+            "run": [
+                
+            ]
+        }
+    ]
+}
