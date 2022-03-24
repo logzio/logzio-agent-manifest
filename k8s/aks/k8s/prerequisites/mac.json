@@ -36,12 +36,6 @@
                     "echo Helm is installed;",
                 "fi"
             ]
-        },
-        {
-            "description": "Is Kubernetes cluster connected to Logz.io?",
-            "run": [
-                
-            ]
         }
     ]
 }

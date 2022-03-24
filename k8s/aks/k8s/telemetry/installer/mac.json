@@ -1,0 +1,10 @@
+{
+    "commands": [
+        {
+            "description": "Run helm install",
+            "run": [
+                "helm install"
+            ] 
+        }
+    ]
+}
