@@ -10,7 +10,7 @@
                         "continue;",
                     "fi;",
                     "value=$(echo $line | jq -r .value);",
-                    "if [ $value != \"true\" ]; then",
+                    "if [ $value != 'true' ]; then",
                         "exit",
                     "fi;",
                     "echo insert script here;",
