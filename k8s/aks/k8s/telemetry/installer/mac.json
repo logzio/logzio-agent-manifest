@@ -6,15 +6,15 @@
                 "params=$(jq -r .subtype.datasources[0].params $app_json);",
                 "while read line; do",
                     "name=$(echo $line | jq -r .name);",
-                    "if [ $name != \"isTaint\" ]; then",
+                    "if [ $name != 'isTaint' ]; then",
                         "continue;",
                     "fi;",
                     "value=$(echo $line | jq -r .value);",
-                    "if [ $value != \"true\" ]; then",
+                    "if [ $value != 'true' ]; then",
                         "exit",
                     "fi;",
                     "echo insert script here;",
-                "done <<< \"$(echo $params | jq -c .[])\";"
+                "done <<< '$(echo $params | jq -c .[])';"
             ]
         }
     ]
