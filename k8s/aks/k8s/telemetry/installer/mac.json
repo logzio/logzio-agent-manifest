@@ -11,7 +11,7 @@
                     "fi;",
                     "value=$(echo $line | jq -r .value);",
                     "if [ $value != 'true' ]; then",
-                        "exit",
+                        "exit 0;",
                     "fi;",
                     "echo insert script here;",
                 "done <<< $(echo $params | jq -c .[]);"
