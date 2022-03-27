@@ -3,7 +3,10 @@
         {
             "description": "Create set for taints",
             "run": [
-                "params=$(jq -r .subtype.datasources[0].params $app_json);"
+                "params=$(jq -r .subtype.datasources[0].params $app_json);",
+                "while read line; do",
+                    "echo test;",
+                "done;"
             ]
         }
     ]
