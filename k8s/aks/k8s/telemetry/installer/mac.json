@@ -7,7 +7,7 @@
                 "while read line; do",
                     "echo test;",
                 "done <<<",
-                "$(echo $params | jq -c .[])",
+                "\"$(echo $params | jq -c .[])\"",
                 ";"
             ]
         }
