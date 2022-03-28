@@ -27,12 +27,6 @@
             ]
         },
         {
-            "description": "Run logs commands",
-            "run": [
-                
-            ]
-        },
-        {
             "description": "Run metrics commands",
             "run": [
                 "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXK72DB4ZGQSJNY223IYSKWPSA | jq -r .commands)",
@@ -43,18 +37,6 @@
                     "done <<< $(echo $command | jq -r .[]);",
                     "eval $fullCommand;",
                 "done <<< $(echo $metrics | jq -c .[].run);"
-            ]
-        },
-        {
-            "description": "Run traces commands",
-            "run": [
-                
-            ]
-        },
-        {
-            "description": "Run Helm install",
-            "run": [
-                
             ]
         }
     ]
