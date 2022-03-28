@@ -1,0 +1,59 @@
+{
+    "commands": [
+        {
+            "description": "Create boolean variable for is metric option chosen",
+            "run": [
+                "isMetricsOption=true;"
+            ]
+        },
+        {
+            "description": "Is metrics option chosen by the user?",
+            "run": [
+                "metricsParams=$(jq -r .subtype.datasources[0].telemetries[1].params $app_json);",
+                "if [ $metricsParams == [] ]; then",
+                    "isMetricsOption=false;",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Add Helm set for Logz.io metrics listener to helmSets array",
+            "run": [
+                "if [ isMetricsOption ]; then",
+                    "params=$(jq -r .subtype.datasources[0].telemetries[1].params $app_json);",
+                    "logzioMetricsListenerParam='';",
+                    "while read line; do",
+                        "name=$(echo $line | jq -r .name);",
+                        "if [ $name != 'logzioMetricsListener' ]; then",
+                            "continue;",
+                        "fi;",
+                        "logzioMetricsListenerParam=$line;",
+                        "break;",
+                    "done <<< $(echo $params | jq -c .[]);",
+                    "value=$(echo $logzioMetricsListenerParam | jq -r .value);",
+                    "helmSet=$(echo --set secrets.logzioMetricsListener=\\'$value\\');",
+                    "helmSets+=($helmSet);",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Add Helm set for Logz.io metrics token to helmSets array",
+            "run": [
+                "if [ isMetricsOption ]; then",
+                    "params=$(jq -r .subtype.datasources[0].telemetries[1].params $app_json);",
+                    "logzioMetricsTokenParam='';",
+                    "while read line; do",
+                        "name=$(echo $line | jq -r .name);",
+                        "if [ $name != 'logzioMetricsToken' ]; then",
+                            "continue;",
+                        "fi;",
+                        "logzioMetricsTokenParam=$line;",
+                        "break;",
+                    "done <<< $(echo $params | jq -c .[]);",
+                    "value=$(echo $logzioMetricsTokenParam | jq -r .value);",
+                    "helmSet=$(echo --set secrets.logzioMetricsToken=\\'$value\\');",
+                    "helmSets+=($helmSet);",
+                "fi;"
+            ]
+        }
+    ]
+}
