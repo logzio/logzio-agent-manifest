@@ -1,39 +1,52 @@
 #!/bin/bash
 
-######################################################## JQ Installation ########################################################
+################################################## Prerequisites Installations ##################################################
 
-where jq
+which jq
 if [ $? -ne 0 ]; then
     brew install jq
 fi
 
 #################################################################################################################################
 
-#################################################### Build Paths to Manifest ####################################################
+########################################################## Arguments ############################################################
 
 app_json=$1                             # Application JSON file
+
+#################################################################################################################################
+
+#################################################### Build Paths to Manifest ####################################################
+
 dir1=$(jq -r .name $app_json)
 dir2=$(jq -r .subtype.name $app_json)
 dir3=$(jq -r .subtype.datasources[0].name $app_json)
 
 manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$dir1/$dir2/$dir3"
-prerequisites=$(curl $manifest/prerequisites/mac.json?token=GHSAT0AAAAAABJEBVXK64AYDDFCSPXEQZRGYSB3BXA | jq -r .commands)
-#installer=$(curl $manifest/telemetry/installer/mac.json?token=GHSAT0AAAAAABJEBVXK64AYDDFCSPXEQZRGYSB3BXA | jq -r .commands)
+prerequisites=$(curl $manifest/prerequisites/mac.json?token=GHSAT0AAAAAABJEBVXLYPXRR7DJ3YIKATMOYSFR3AA | jq -r .commands)
+installer=$(curl $manifest/telemetry/installer/mac.json?token=GHSAT0AAAAAABJEBVXKOGVJYY46VA3AO3EGYSJRFLA | jq -r .commands)
 
 #################################################################################################################################
 
 ################################################## Run Prerequisites Commands ###################################################
 
-while read line; do
-    full_command=""
-    while read command; do
-        full_command+=" $command"
-    done <<< "$(echo $line | jq -r .[])"
-    eval $full_command
+while read command; do
+    fullCommand=""
+    while read line; do
+        fullCommand+=" $line"
+    done <<< "$(echo $command | jq -r .[])"
+    eval $fullCommand
 done <<< "$(echo $prerequisites | jq -c .[].run)"
 
 #################################################################################################################################
 
+##################################################### Run Installer Commands ####################################################
 
+while read command; do
+    fullCommand=""
+    while read line; do
+        fullCommand+=" $line"
+    done <<< $(echo $command | jq -r .[])
+    eval $fullCommand
+done <<< $(echo $installer | jq -c .[].run)
 
-
+#################################################################################################################################

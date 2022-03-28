@@ -1,20 +1,60 @@
 {
     "commands": [
         {
-            "description": "Create set for taints",
+            "description": "Create array for Helm sets",
+            "run": [
+                "helmSets=();"
+            ]
+        },
+        {
+            "description": "Create Helm set for taints",
             "run": [
                 "params=$(jq -r .subtype.datasources[0].params $app_json);",
+                "isTaintParam='';",
                 "while read line; do",
                     "name=$(echo $line | jq -r .name);",
                     "if [ $name != 'isTaint' ]; then",
                         "continue;",
                     "fi;",
-                    "value=$(echo $line | jq -r .value);",
-                    "if [ $value != 'true' ]; then",
-                        "exit 0;",
-                    "fi;",
+                    "isTaintParam=$line;",
+                    "break;",
+                "done <<< $(echo $params | jq -c .[]);",
+                "value=$(echo $isTaintParam | jq -r .value);",
+                "if [ $value ]; then",
                     "echo insert script here;",
-                "done <<< $(echo $params | jq -c .[]);"
+                    "helmSets+=('test');",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Run logs commands",
+            "run": [
+                
+            ]
+        },
+        {
+            "description": "Run metrics commands",
+            "run": [
+                "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXK72DB4ZGQSJNY223IYSKWPSA | jq -r .commands)",
+                "while read command; do",
+                    "fullCommand='';",
+                    "while read line; do",
+                        "fullCommand+=$(echo ' '$line);",
+                    "done <<< $(echo $command | jq -r .[]);",
+                    "eval $fullCommand;",
+                "done <<< $(echo $metrics | jq -c .[].run);"
+            ]
+        },
+        {
+            "description": "Run traces commands",
+            "run": [
+                
+            ]
+        },
+        {
+            "description": "Run Helm install",
+            "run": [
+                
             ]
         }
     ]

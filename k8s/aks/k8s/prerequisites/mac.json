@@ -6,7 +6,7 @@
                 "which kubectl >/dev/null 2>&1;",
                 "if [ $? -ne 0 ]; then", 
                     "echo Kubectl is not installed;",
-                    "exit 1",
+                    "exit 1;",
                 "else",
                     "echo Kubectl is installed;",
                 "fi"
@@ -18,7 +18,7 @@
                 "kubectl cluster-info;",
                 "if [ echo $? -ne 0 ]; then",
                     "echo Kubectl is not connected to an active Kubernetes cluster;",
-                    "exit 1",
+                    "exit 1;",
                 "else",
                     "echo Kubectl is connected to an active Kubernetes cluster;",
                 "fi"
@@ -27,14 +27,25 @@
         {
             "description": "Is Helm installed?",
             "run": [
-                "where helm;",
+                "which helm;",
                 "if [ echo $? -ne 0 ]; then",
                     "echo Can't find Helm. Installing Helm...;",
                     "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash;",
-                    "helm repo add logzio-helm https://logzio.github.io/logzio-helm;",
                 "else",
                     "echo Helm is installed;",
                 "fi"
+            ]
+        },
+        {
+            "description": "Add Logz.io Helm repo",
+            "run": [
+                "helm repo add logzio-helm https://logzio.github.io/logzio-helm;"
+            ]
+        },
+        {
+            "description": "Update Logz.io Helm repo",
+            "run": [
+                "helm repo update logzio-helm;"
             ]
         }
     ]
