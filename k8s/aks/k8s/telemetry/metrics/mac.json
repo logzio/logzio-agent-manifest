@@ -14,6 +14,44 @@
                     "isMetricsOption=false;",
                 "fi;"
             ]
+        },
+        {
+            "description": "Append Helm set for Logz.io metrics listener to helmSets string",
+            "run": [
+                "if [ isMetricsOption ]; then",
+                    "logzioMetricsListenerParam=\"\";",
+                    "while read -r param; do",
+                        "name=$(echo $param | jq -r \".name\");",
+                        "if [ $name != \"logzioMetricsListener\" ]; then",
+                            "continue;",
+                        "fi;",
+                        "logzioMetricsListenerParam=$param;",
+                        "break;",
+                    "done < <(echo $metricsParams | jq -c \".[]\");",
+                    "value=$(echo $logzioMetricsListenerParam | jq -r \".value\");",
+                    "helmSet=\"--set secrets.logzioMetricsListener=\\'$value\\'\");",
+                    "helmSets+=\"$helmSet\";",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Append Helm set for Logz.io metrics token to helmSets string",
+            "run": [
+                "if [ isMetricsOption ]; then",
+                    "logzioMetricsTokenParam=\"\";",
+                    "while read -r param; do",
+                        "name=$(echo $param | jq -r \".name\");",
+                        "if [ $name != \"logzioMetricsToken\" ]; then",
+                            "continue;",
+                        "fi;",
+                        "logzioMetricsListenerParam=$param;",
+                        "break;",
+                    "done < <(echo $metricsParams | jq -c \".[]\");",
+                    "value=$(echo $logzioMetricsTokenParam | jq -r \".value\");",
+                    "helmSet=\"--set secrets.logzioMetricsToken=\\'$value\\'\");",
+                    "helmSets+=\"$helmSet\";",
+                "fi;"
+            ]
         }
     ]
 }
