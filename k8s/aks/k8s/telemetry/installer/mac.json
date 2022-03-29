@@ -28,8 +28,8 @@
                         "value=$(echo $taint | jq -r \".value\");",
                         "effect=$(echo $taint | jq -r \".effect\");",
                         "tolerations+=\"  - key: \"$key\"\n    operator: \"Equal\"\n    value: \"$value\"\n    effect: \"$effect\"\n\";",
-                        "helmSets+=(\"--set secrets.tolerations=$tolerations\");",
                     "done < <(echo $items | jq -c \".[].spec.taints[]\");",
+                    "helmSets+=(\"--set secrets.tolerations=$tolerations\");",
                 "fi;"
             ]
         }
