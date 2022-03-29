@@ -21,8 +21,15 @@
                 "done < <(echo $params | jq -c \".[]\");",
                 "value=$(echo $isTaintParam | jq -r \".value\");",
                 "if [ $value ]; then",
-                    "echo insert script here;",
-                    "helmSets+=('test');",
+                    "items=$(kubectl get nodes -o json | jq -r \".items\");",
+                    "tolerations=\"tolerations:\n\";",
+                    "while read -r taint; do",
+                        "key=$(echo $taint | jq -r \".key\");",
+                        "value=$(echo $taint | jq -r \".value\");",
+                        "effect=$(echo $taint | jq -r \".effect\");",
+                        "tolerations+=\"  - key: \"$key\"\n    operator: \"Equal\"\n    value: \"$value\"\n    effect: \"$effect\"\n\";",
+                        "helmSets+=(\"--set secrets.tolerations=$tolerations\");",
+                    "done < <(echo $items | jq -c \".[].spec.taints\");",
                 "fi;"
             ]
         }
