@@ -42,6 +42,7 @@
                     "while read line; do",
                         "fullCommand+=$(echo \" $line\");",
                     "done < <(echo $command | jq -r \".[]\");",
+                    "echo $fullCommand;",
                     "eval $fullCommand;",
                 "done < <(echo $metrics | jq -c \".[].run\");"
             ]
