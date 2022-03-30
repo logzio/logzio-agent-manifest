@@ -36,7 +36,7 @@
         {
             "description": "Run logs commands",
             "run": [
-                "logs=$(curl $manifest/telemetry/logs/mac.json?token=GHSAT0AAAAAABJEBVXLLBWJ4D2XPGP24ZL4YSNKEJA | jq -r \".commands\");",
+                "logs=$(curl $manifest/telemetry/logs/mac.json | jq -r \".commands\");",
                 "while read -r command; do",
                     "fullCommand=\"\";",
                     "while read line; do",
@@ -49,7 +49,7 @@
         {
             "description": "Run metrics commands",
             "run": [
-                "metrics=$(curl $manifest/telemetry/metrics/mac.json?token=GHSAT0AAAAAABJEBVXKUBGLBH3SKCYQKGAMYSNKEWA | jq -r \".commands\");",
+                "metrics=$(curl $manifest/telemetry/metrics/mac.json | jq -r \".commands\");",
                 "while read -r command; do",
                     "fullCommand=\"\";",
                     "while read line; do",
