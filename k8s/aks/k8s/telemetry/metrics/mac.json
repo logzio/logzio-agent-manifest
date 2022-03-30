@@ -1,7 +1,7 @@
 {
     "commands": [
         {
-            "description": "Create boolean variable for is metric option chosen",
+            "description": "Create boolean variable for is metrics option chosen",
             "run": [
                 "isMetricsOption=true;",
                 "metricsParams=$(jq -r \".subtype.datasources[0].telemetries[1].params\" $app_json);"
