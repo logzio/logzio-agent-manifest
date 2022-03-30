@@ -1,0 +1,57 @@
+{
+    "commands": [
+        {
+            "description": "Create boolean variable for is logs option chosen",
+            "run": [
+                "isLogsOption=true;",
+                "logsParams=$(jq -r \".subtype.datasources[0].telemetries[0].params\" $app_json);"
+            ]
+        },
+        {
+            "description": "Is logs option chosen by the user?",
+            "run": [
+                "if [ \"$logsParams\" == [] ]; then",
+                    "isLogsOption=false;",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Append Helm set for Logz.io logs listener to helmSets string",
+            "run": [
+                "if [ isLogsOption ]; then",
+                    "logzioLogsListenerParam=\"\";",
+                    "while read -r param; do",
+                        "name=$(echo $param | jq -r \".name\");",
+                        "if [ $name != \"logzioLogsListener\" ]; then",
+                            "continue;",
+                        "fi;",
+                        "logzioLogsListenerParam=$param;",
+                        "break;",
+                    "done < <(echo $logsParams | jq -c \".[]\");",
+                    "value=$(echo $logzioLogsListenerParam | jq -r \".value\");",
+                    "helmSet=\"--set secrets.logzioLogsListener=\\'$value\\'\";",
+                    "helmSets+=\" $helmSet\";",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Append Helm set for Logz.io logs token to helmSets string",
+            "run": [
+                "if [ isLogsOption ]; then",
+                    "logzioLogsTokenParam=\"\";",
+                    "while read -r param; do",
+                        "name=$(echo $param | jq -r \".name\");",
+                        "if [ $name != \"logzioLogsToken\" ]; then",
+                            "continue;",
+                        "fi;",
+                        "logzioLogsTokenParam=$param;",
+                        "break;",
+                    "done < <(echo $logsParams | jq -c \".[]\");",
+                    "value=$(echo $logzioLogsTokenParam | jq -r \".value\");",
+                    "helmSet=\"--set secrets.logzioLogsToken=\\'$value\\'\";",
+                    "helmSets+=\" $helmSet\";",
+                "fi;"
+            ]
+        }
+    ]
+}
