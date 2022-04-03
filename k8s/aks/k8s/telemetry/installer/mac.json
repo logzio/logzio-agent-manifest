@@ -20,7 +20,7 @@
                     "break;",
                 "done < <(echo $params | jq -c \".[]\");",
                 "value=$(echo $isTaintParam | jq -r \".value\");",
-                "if [ $value ]; then",
+                "if $value; then",
                     "items=$(kubectl get nodes -o json | jq -r \".items\");",
                     "tolerations=\"tolerations:\n\";",
                     "while read -r taint; do",
