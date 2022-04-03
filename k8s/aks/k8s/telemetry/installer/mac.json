@@ -9,7 +9,7 @@
         {
             "description": "Create Helm set for taints",
             "run": [
-                "params=$(jq -r \".subtype.datasources[0].params\" $app_json);",
+                "params=$(jq -r \".subtype.datasources[0].params\" $appJson);",
                 "isTaintParam=\"\";",
                 "while read -r line; do",
                     "name=$(echo $line | jq -r \".name\");",

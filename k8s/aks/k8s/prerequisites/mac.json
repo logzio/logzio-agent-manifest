@@ -5,10 +5,10 @@
             "run": [
                 "which kubectl >/dev/null 2>&1;",
                 "if [ $? -ne 0 ]; then", 
-                    "echo Kubectl is not installed;",
+                    "echo \"Kubectl is not installed\";",
                     "exit 1;",
                 "else",
-                    "echo Kubectl is installed;",
+                    "echo \"Kubectl is already installed\";",
                 "fi"
             ] 
         },
@@ -17,10 +17,10 @@
             "run": [
                 "kubectl cluster-info;",
                 "if [ echo $? -ne 0 ]; then",
-                    "echo Kubectl is not connected to an active Kubernetes cluster;",
+                    "echo \"Kubectl is not connected to an active Kubernetes cluster\";",
                     "exit 1;",
                 "else",
-                    "echo Kubectl is connected to an active Kubernetes cluster;",
+                    "echo \"Kubectl is connected to an active Kubernetes cluster\";",
                 "fi"
             ]
         },
@@ -29,22 +29,24 @@
             "run": [
                 "which helm;",
                 "if [ echo $? -ne 0 ]; then",
-                    "echo Can't find Helm. Installing Helm...;",
+                    "echo \"Installing Helm...\";",
                     "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash;",
                 "else",
-                    "echo Helm is installed;",
+                    "echo \"Helm is already installed\";",
                 "fi"
             ]
         },
         {
             "description": "Add Logz.io Helm repo",
             "run": [
+                "echo \"Adding Logz.io Helm repo...\";",
                 "helm repo add logzio-helm https://logzio.github.io/logzio-helm;"
             ]
         },
         {
             "description": "Update Logz.io Helm repo",
             "run": [
+                "echo \"Updating Logz.io Helm repo...\";",
                 "helm repo update logzio-helm;"
             ]
         }

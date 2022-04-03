@@ -2,24 +2,27 @@
 
 ################################################## Prerequisites Installations ##################################################
 
-which jq
+which jq >/dev/null 2>&1
 if [ $? -ne 0 ]; then
+    echo "Installing jq..."
     brew install jq
+else
+    echo "jq is already installed"
 fi
 
 #################################################################################################################################
 
 ########################################################## Arguments ############################################################
 
-app_json=$1                             # Application JSON file
+appJson=$1                             # Application JSON file
 
 #################################################################################################################################
 
 #################################################### Build Paths to Manifest ####################################################
 
-dir1=$(jq -r ".name $app_json")
-dir2=$(jq -r ".subtype.name $app_json")
-dir3=$(jq -r ".subtype.datasources[0].name $app_json")
+dir1=$(jq -r ".name" $appJson)
+dir2=$(jq -r ".subtype.name" $appJson)
+dir3=$(jq -r ".subtype.datasources[0].name" $appJson)
 
 manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$dir1/$dir2/$dir3"
 prerequisites=$(curl $manifest/prerequisites/mac.json | jq -r ".commands")
