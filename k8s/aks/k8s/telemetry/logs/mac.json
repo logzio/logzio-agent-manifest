@@ -21,7 +21,7 @@
         {
             "description": "Append Helm set for Logz.io logs listener to helmSets string",
             "run": [
-                "if $isLogsOptionSelected; then",
+                "if \"$isLogsOptionSelected\"; then",
                     "echo \"Getting Logz.io logs listener...\";",
                     "logzioLogsListenerParam=\"\";",
                     "while read -r param; do",
