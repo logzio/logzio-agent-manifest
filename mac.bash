@@ -26,7 +26,7 @@ dir3=$(jq -r ".subtype.datasources[0].name" $appJson)
 
 manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$dir1/$dir2/$dir3"
 prerequisites=$(curl -LSs $manifest/prerequisites/mac.json | jq -r ".commands")
-installer=$(curl -LSs \"$manifest/telemetry/installer/mac.json\" | jq -r ".commands")
+installer=$(curl -LSs $manifest/telemetry/installer/mac.json | jq -r ".commands")
 
 #################################################################################################################################
 
