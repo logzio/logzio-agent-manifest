@@ -29,7 +29,7 @@
                         "break;",
                     "done < <(echo $metricsParams | jq -c \".[]\");",
                     "value=$(echo $logzioMetricsListenerParam | jq -r \".value\");",
-                    "helmSet=\"--set secrets.logzioMetricsListener=\\'$value\\'\";",
+                    "helmSet=\"--set secrets.ListenerHost=\\'$value\\'\";",
                     "helmSets+=\" $helmSet\";",
                 "fi;"
             ]
@@ -48,7 +48,7 @@
                         "break;",
                     "done < <(echo $metricsParams | jq -c \".[]\");",
                     "value=$(echo $logzioMetricsTokenParam | jq -r \".value\");",
-                    "helmSet=\"--set secrets.logzioMetricsToken=\\'$value\\'\";",
+                    "helmSet=\"--set secrets.MetricsToken=\\'$value\\'\";",
                     "helmSets+=\" $helmSet\";",
                 "fi;"
             ]

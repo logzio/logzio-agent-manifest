@@ -62,7 +62,7 @@
         {
             "description": "Run Helm install",
             "run": [
-                "helm install "
+                "helm install $helmSets logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics"
             ]
         }
     ]
