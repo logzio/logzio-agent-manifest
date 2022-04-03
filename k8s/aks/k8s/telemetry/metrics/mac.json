@@ -21,7 +21,7 @@
         {
             "description": "Append Helm set for Logz.io metrics listener to helmSets string",
             "run": [
-                "if isMetricsOptionSelected; then",
+                "if $isMetricsOptionSelected; then",
                     "echo \"Getting Logz.io metrics listener...\";",
                     "logzioMetricsListenerParam=\"\";",
                     "while read -r param; do",
@@ -42,7 +42,7 @@
         {
             "description": "Append Helm set for Logz.io metrics token to helmSets string",
             "run": [
-                "if isMetricsOptionSelected; then",
+                "if $isMetricsOptionSelected; then",
                     "echo \"Getting Logz.io metrics token...\";",
                     "logzioMetricsTokenParam=\"\";",
                     "while read -r param; do",
