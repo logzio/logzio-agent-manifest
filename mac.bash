@@ -5,6 +5,7 @@
 which jq >/dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Installing JQ..."
+    brew update
     brew install jq
 else
     echo "JQ is already installed"
