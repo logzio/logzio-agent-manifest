@@ -4,10 +4,10 @@
 
 which jq >/dev/null 2>&1
 if [ $? -ne 0 ]; then
-    echo "Installing jq..."
+    echo "Installing JQ..."
     brew install jq
 else
-    echo "jq is already installed"
+    echo "JQ is already installed"
 fi
 
 #################################################################################################################################
@@ -25,8 +25,8 @@ dir2=$(jq -r ".subtype.name" $appJson)
 dir3=$(jq -r ".subtype.datasources[0].name" $appJson)
 
 manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$dir1/$dir2/$dir3"
-prerequisites=$(curl $manifest/prerequisites/mac.json | jq -r ".commands")
-installer=$(curl $manifest/telemetry/installer/mac.json | jq -r ".commands")
+prerequisites=$(curl -S $manifest/prerequisites/mac.json | jq -r ".commands")
+installer=$(curl -S $manifest/telemetry/installer/mac.json | jq -r ".commands")
 
 #################################################################################################################################
 
