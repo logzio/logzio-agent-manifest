@@ -59,6 +59,27 @@
                     "helmSets+=\" $helmSet\";",
                 "fi;"
             ]
+        },
+        {
+            "description": "Append Helm set for metrics environment to helmSets string",
+            "run": [
+                "if $isMetricsOptionSelected; then",
+                    "echo \"Getting metrics environment...\";",
+                    "metricsEnvParam=\"\";",
+                    "while read -r param; do",
+                        "name=$(echo \"$param\" | jq -r \".name\");",
+                        "if [ $name != \"metricsEnv\" ]; then",
+                            "continue;",
+                        "fi;",
+                        "metricsEnvParam=$param;",
+                        "break;",
+                    "done < <(echo \"$metricsParams\" | jq -c \".[]\");",
+                    "value=$(echo \"$metricsEnvParam\" | jq -r \".value\");",
+                    "echo \"Creating Helm set...\";",
+                    "helmSet=\"--set secrets.p8s_logzio_name=\\'$value\\'\";",
+                    "helmSets+=\" $helmSet\";",
+                "fi;"
+            ]
         }
     ]
 }
