@@ -49,7 +49,6 @@
             "description": "Run Helm install",
             "run": [
                 "echo \"Running Helm install...\";",
-                "echo \"$helm_sets\";",
                 "helm install $helm_sets logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics;",
                 "echo \"The Helm chart was installed successfully\";"
             ]
