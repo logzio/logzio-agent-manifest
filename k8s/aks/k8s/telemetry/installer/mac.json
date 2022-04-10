@@ -3,67 +3,54 @@
         {
             "description": "Create string variable for Helm sets",
             "run": [
-                "helmSets=\"\";"
+                "helm_sets=\"\";",
+                "general_params=$(jq -r \".subtype.datasources[0].params\" $APP_JSON);"
             ]
         },
         {
-            "description": "Create Helm set for taints",
+            "description": "Append Helm set for taints to helm_sets string",
             "run": [
-                "params=$(jq -r \".subtype.datasources[0].params\" $appJson);",
-                "isTaintParam=\"\";",
-                "while read -r line; do",
-                    "name=$(echo $line | jq -r \".name\");",
-                    "if [ $name != \"isTaint\" ]; then",
-                        "continue;",
-                    "fi;",
-                    "isTaintParam=$line;",
-                    "break;",
-                "done < <(echo $params | jq -c \".[]\");",
-                "value=$(echo $isTaintParam | jq -r \".value\");",
+                "echo \"Getting is taint...\";",
+                "is_taint_param=$(find_param \"datasources\" \"$general_params\" \"isTaint\");",
+                "value=$(echo \"$is_taint_param\" | jq -r \".value\");",
                 "if $value; then",
                     "items=$(kubectl get nodes -o json | jq -r \".items\");",
-                    "tolerations=\"tolerations:\n\";",
+                    "echo \"Creating Helm sets...\";",
                     "while read -r taint; do",
+                        "index=0;",
                         "key=$(echo $taint | jq -r \".key\");",
                         "value=$(echo $taint | jq -r \".value\");",
                         "effect=$(echo $taint | jq -r \".effect\");",
-                        "tolerations+=\"  - key: \"$key\"\n    operator: \"Equal\"\n    value: \"$value\"\n    effect: \"$effect\"\n\";",
-                    "done < <(echo $items | jq -c \".[].spec.taints[]\");",
-                    "helmSets+=\" --set secrets.tolerations='$tolerations'\";",
+                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].key=$key'\";",
+                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].value=$value'\";",
+                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].operator=Equal'\";",
+                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].effect=$effect'\";",
+                        "let index+=1;",
+                    "done < <(echo \"$items\" | jq -c \".[].spec.taints[]\");",
+                    "helm_sets+=\"$tolerations_sets\";",
                 "fi;"
             ]
         },
         {
             "description": "Run logs commands",
             "run": [
-                "logs=$(curl -LSs \"$manifest/telemetry/logs/mac.json\" | jq -r \".commands\");",
-                "while read -r command; do",
-                    "fullCommand=\"\";",
-                    "while read line; do",
-                        "fullCommand+=$(echo \" $line\");",
-                    "done < <(echo $command | jq -r \".[]\");",
-                    "eval $fullCommand;",
-                "done < <(echo $logs | jq -c \".[].run\");"
+                "echo \"Running logs commands...\";",
+                "run_commands \"$logs\";"
             ]
         },
         {
             "description": "Run metrics commands",
             "run": [
-                "metrics=$(curl -LSs \"$manifest/telemetry/metrics/mac.json\" | jq -r \".commands\");",
-                "while read -r command; do",
-                    "fullCommand=\"\";",
-                    "while read line; do",
-                        "fullCommand+=$(echo \" $line\");",
-                    "done < <(echo $command | jq -r \".[]\");",
-                    "eval $fullCommand;",
-                "done < <(echo $metrics | jq -c \".[].run\");"
+                "echo \"Running metrics commands...\";",
+                "run_commands \"$metrics\";"
             ]
         },
         {
             "description": "Run Helm install",
             "run": [
                 "echo \"Running Helm install...\";",
-                "helm install $helmSets logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics"
+                "helm install \"$helm_sets\" logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics;",
+                "echo \"The Helm chart was installed successfully\";"
             ]
         }
     ]

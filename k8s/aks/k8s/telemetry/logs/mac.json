@@ -3,15 +3,15 @@
         {
             "description": "Create boolean variable for is logs option selected",
             "run": [
-                "isLogsOptionSelected=true;",
-                "logsParams=$(jq -r \".subtype.datasources[0].telemetries[0].params\" $appJson);"
+                "is_logs_option_selected=true;",
+                "logs_params=$(jq -r \".subtype.datasources[0].telemetries[0].params\" $APP_JSON);"
             ]
         },
         {
             "description": "Is logs option selected?",
             "run": [
-                "if [ \"$logsParams\" = [] ]; then",
-                    "isLogsOptionSelected=false;",
+                "if [ \"$logs_params\" = [] ]; then",
+                    "is_logs_option_selected=false;",
                     "echo \"Logs option was not selected\";",
                 "else",
                     "echo \"Logs option was selected\";",
@@ -19,44 +19,28 @@
             ]
         },
         {
-            "description": "Append Helm set for Logz.io logs listener to helmSets string",
+            "description": "Append Helm set for Logz.io logs listener to helm_sets string",
             "run": [
-                "if $isLogsOptionSelected; then",
+                "if $is_logs_option_selected; then",
                     "echo \"Getting Logz.io logs listener...\";",
-                    "logzioLogsListenerParam=\"\";",
-                    "while read -r param; do",
-                        "name=$(echo \"$param\" | jq -r \".name\");",
-                        "if [ $name != \"logzioLogsListener\" ]; then",
-                            "continue;",
-                        "fi;",
-                        "logzioLogsListenerParam=$param;",
-                        "break;",
-                    "done < <(echo \"$logsParams\" | jq -c \".[]\");",
-                    "value=$(echo \"$logzioLogsListenerParam\" | jq -r \".value\");",
+                    "logzio_logs_listener_param=$(find_param \"logs\" \"$logs_params\" \"logzioLogsListener\");",
+                    "value=$(echo \"$logzio_logs_listener_param\" | jq -r \".value\");",
                     "echo \"Creating Helm set...\";",
-                    "helmSet=\"--set secrets.logzioLogsListener=\\'$value\\'\";",
-                    "helmSets+=\" $helmSet\";",
+                    "helm_set=\"--set 'secrets.logzioLogsListener=$value'\";",
+                    "helm_sets+=\" $helm_set\";",
                 "fi;"
             ]
         },
         {
-            "description": "Append Helm set for Logz.io logs token to helmSets string",
+            "description": "Append Helm set for Logz.io logs token to helm_sets string",
             "run": [
-                "if $isLogsOptionSelected; then",
+                "if $is_logs_option_selected; then",
                     "echo \"Getting Logz.io logs token...\";",
-                    "logzioLogsTokenParam=\"\";",
-                    "while read -r param; do",
-                        "name=$(echo \"$param\" | jq -r \".name\");",
-                        "if [ $name != \"logzioLogsToken\" ]; then",
-                            "continue;",
-                        "fi;",
-                        "logzioLogsTokenParam=$param;",
-                        "break;",
-                    "done < <(echo \"$logsParams\" | jq -c \".[]\");",
-                    "value=$(echo \"$logzioLogsTokenParam\" | jq -r \".value\");",
+                    "logzio_logs_token_param=$(find_param \"logs\" \"$logs_params\" \"logzioLogsToken\");",
+                    "value=$(echo \"$logzio_logs_token_param\" | jq -r \".value\");",
                     "echo \"Creating Helm set...\";",
-                    "helmSet=\"--set secrets.logzioLogsToken=\\'$value\\'\";",
-                    "helmSets+=\" $helmSet\";",
+                    "helm_set=\"--set 'secrets.logzioLogsToken=$value'\";",
+                    "helm_sets+=\" $helm_set\";",
                 "fi;"
             ]
         }

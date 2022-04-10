@@ -3,15 +3,15 @@
         {
             "description": "Create boolean variable for is metrics option selected",
             "run": [
-                "isMetricsOptionSelected=true;",
-                "metricsParams=$(jq -r \".subtype.datasources[0].telemetries[1].params\" $appJson);"
+                "is_metrics_option_selected=true;",
+                "metrics_params=$(jq -r \".subtype.datasources[0].telemetries[1].params\" $APP_JSON);"
             ]
         },
         {
             "description": "Is metrics option selected?",
             "run": [
-                "if [ \"$metricsParams\" = [] ]; then",
-                    "isMetricsOptionSelected=false;",
+                "if [ \"$metrics_params\" = [] ]; then",
+                    "is_metrics_option_selected=false;",
                     "echo \"Metrics option was not selected\";",
                 "else",
                     "echo \"Metrics option was selected\";",
@@ -19,65 +19,41 @@
             ]
         },
         {
-            "description": "Append Helm set for Logz.io metrics listener to helmSets string",
+            "description": "Append Helm set for Logz.io metrics listener to helm_sets string",
             "run": [
-                "if $isMetricsOptionSelected; then",
+                "if $is_metrics_option_selected; then",
                     "echo \"Getting Logz.io metrics listener...\";",
-                    "logzioMetricsListenerParam=\"\";",
-                    "while read -r param; do",
-                        "name=$(echo \"$param\" | jq -r \".name\");",
-                        "if [ $name != \"logzioMetricsListener\" ]; then",
-                            "continue;",
-                        "fi;",
-                        "logzioMetricsListenerParam=$param;",
-                        "break;",
-                    "done < <(echo \"$metricsParams\" | jq -c \".[]\");",
-                    "value=$(echo \"$logzioMetricsListenerParam\" | jq -r \".value\");",
+                    "logzio_metrics_listener_param=$(find_param \"metrics\" \"$metrics_params\" \"logzioMetricsListener\");",
+                    "value=$(echo \"$logzio_metrics_listener_param\" | jq -r \".value\");",
                     "echo \"Creating Helm set...\";",
-                    "helmSet=\"--set secrets.ListenerHost=\\'$value\\'\";",
-                    "helmSets+=\" $helmSet\";",
+                    "helm_set=\"--set 'secrets.ListenerHost=$value'\";",
+                    "helm_sets+=\" $helm_set\";",
                 "fi;"
             ]
         },
         {
-            "description": "Append Helm set for Logz.io metrics token to helmSets string",
+            "description": "Append Helm set for Logz.io metrics token to helm_sets string",
             "run": [
-                "if $isMetricsOptionSelected; then",
+                "if $is_metrics_option_selected; then",
                     "echo \"Getting Logz.io metrics token...\";",
-                    "logzioMetricsTokenParam=\"\";",
-                    "while read -r param; do",
-                        "name=$(echo \"$param\" | jq -r \".name\");",
-                        "if [ $name != \"logzioMetricsToken\" ]; then",
-                            "continue;",
-                        "fi;",
-                        "logzioMetricsTokenParam=$param;",
-                        "break;",
-                    "done < <(echo \"$metricsParams\" | jq -c \".[]\");",
-                    "value=$(echo \"$logzioMetricsTokenParam\" | jq -r \".value\");",
+                    "logzio_metrics_token_param=$(find_param \"metrics\" \"$metrics_params\" \"logzioMetricsToken\");",
+                    "value=$(echo \"$logzio_metrics_token_param\" | jq -r \".value\");",
                     "echo \"Creating Helm set...\";",
-                    "helmSet=\"--set secrets.MetricsToken=\\'$value\\'\";",
-                    "helmSets+=\" $helmSet\";",
+                    "helm_set=\"--set 'secrets.MetricsToken=$value'\";",
+                    "helm_sets+=\" $helm_set\";",
                 "fi;"
             ]
         },
         {
-            "description": "Append Helm set for metrics environment to helmSets string",
+            "description": "Append Helm set for metrics environment to helm_sets string",
             "run": [
-                "if $isMetricsOptionSelected; then",
+                "if $is_metrics_option_selected; then",
                     "echo \"Getting metrics environment...\";",
-                    "metricsEnvParam=\"\";",
-                    "while read -r param; do",
-                        "name=$(echo \"$param\" | jq -r \".name\");",
-                        "if [ $name != \"metricsEnv\" ]; then",
-                            "continue;",
-                        "fi;",
-                        "metricsEnvParam=$param;",
-                        "break;",
-                    "done < <(echo \"$metricsParams\" | jq -c \".[]\");",
-                    "value=$(echo \"$metricsEnvParam\" | jq -r \".value\");",
+                    "metrics_env_param=$(find_param \"metrics\" \"$metrics_params\" \"metricsEnv\");",
+                    "value=$(echo \"$metrics_env_param\" | jq -r \".value\");",
                     "echo \"Creating Helm set...\";",
-                    "helmSet=\"--set secrets.p8s_logzio_name=\\'$value\\'\";",
-                    "helmSets+=\" $helmSet\";",
+                    "helm_set=\"--set 'secrets.p8s_logzio_name=$value'\";",
+                    "helm_sets+=\" $helm_set\";",
                 "fi;"
             ]
         }
