@@ -57,6 +57,11 @@ echo "Running prerequisites installations..."
 
 which jq >/dev/null 2>&1
 if [ $? -ne 0 ]; then
+    which brew >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+        echo "Installing Homebrew..."
+        ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    fi
     echo "Installing JQ..."
     brew update
     brew install jq
