@@ -1,105 +1,58 @@
 {
     "commands": [
         {
-            "description": "Create variables",
-            "run": [
-                "is_logs_option_selected=true;",
-                "logs_params=$(jq -r \".subtype.datasources[0].telemetries[0].params\" $APP_JSON);"
-            ]
-        },
-        {
-            "description": "Is logs option selected?",
-            "run": [
-                "if [ \"$logs_params\" = [] ]; then",
-                    "is_logs_option_selected=false;",
-                    "echo \"Logs option was not selected\";",
-                "else",
-                    "echo \"Logs option was selected\";",
-                "fi;"
-            ]
-        },
-        {
-            "description": "Append helm_sets string with tolerations Helm sets",
-            "run": [
-                "if $is_logs_option_selected; then",
-                    "if $is_taint; then",
-                        "items=$(kubectl get nodes -o json | jq -r \".items\");",
-                        "index=0;",
-                        "echo \"Creating logs tolerations Helm sets...\";",
-                        "while read -r taint; do",
-                            "key=$(echo $taint | jq -r \".key\");",
-                            "value=$(echo $taint | jq -r \".value\");",
-                            "effect=$(echo $taint | jq -r \".effect\");",
-                            "tolerations_sets+=\"--set 'secrets.tolerations[$index].key=$key'\";",
-                            "tolerations_sets+=\"--set 'secrets.tolerations[$index].value=$value'\";",
-                            "tolerations_sets+=\"--set 'secrets.tolerations[$index].operator=Equal'\";",
-                            "tolerations_sets+=\"--set 'secrets.tolerations[$index].effect=$effect'\";",
-                            "let index+=1;",
-                        "done < <(echo \"$items\" | jq -c \".[].spec.taints[]\");",
-                        "helm_sets+=\"$tolerations_sets\";",
-                    "fi;",
-                "fi;"
-            ]
-        },
-        {
             "description": "Append helm_sets string with Logz.io logs listener Helm set",
             "run": [
-                "if $is_logs_option_selected; then",
-                    "echo \"Getting Logz.io logs listener...\";",
-                    "logzio_logs_listener_param=$(find_param \"logs\" \"$logs_params\" \"logzioLogsListener\");",
-                    "value=$(echo \"$logzio_logs_listener_param\" | jq -r \".value\");",
-                    "echo \"Creating Logz.io logs listener Helm set...\";",
-                    "helm_set=\"--set 'secrets.logzioListener=$value'\";",
-                    "helm_sets+=\" $helm_set\";",
-                "fi;"
+                "echo \"Getting Logz.io logs listener...\";",
+                "logzio_logs_listener_param=$(find_param \"logs\" \"$logs_params\" \"logzioLogsListener\");",
+                "value=$(echo \"$logzio_logs_listener_param\" | jq -r \".value\");",
+                "echo \"Creating Logz.io logs listener Helm set...\";",
+                "helm_set=\"--set 'secrets.logzioListener=$value'\";",
+                "helm_sets+=\" $helm_set\";"
             ]
         },
         {
             "description": "Append helm_sets string with Logz.io logs token Helm set",
             "run": [
-                "if $is_logs_option_selected; then",
-                    "echo \"Getting Logz.io logs token...\";",
-                    "logzio_logs_token_param=$(find_param \"logs\" \"$logs_params\" \"logzioLogsToken\");",
-                    "value=$(echo \"$logzio_logs_token_param\" | jq -r \".value\");",
-                    "echo \"Creating Logz.io logs token Helm set...\";",
-                    "helm_set=\"--set 'secrets.logzioShippingToken=$value'\";",
-                    "helm_sets+=\" $helm_set\";",
-                "fi;"
+                "echo \"Getting Logz.io logs token...\";",
+                "logzio_logs_token_param=$(find_param \"logs\" \"$logs_params\" \"logzioLogsToken\");",
+                "value=$(echo \"$logzio_logs_token_param\" | jq -r \".value\");",
+                "echo \"Creating Logz.io logs token Helm set...\";",
+                "helm_set=\"--set 'secrets.logzioShippingToken=$value'\";",
+                "helm_sets+=\" $helm_set\";"
             ]
         },
         {
             "description": "Append helm_sets string with multiline Helm sets",
             "run": [
-                "if $is_logs_option_selected; then",
-                    "echo \"Getting multiline objects...\";",
-                    "multiline_obj=$(find_param \"logs\" \"$logs_params\" \"multiline\");",
-                    "value=$(echo \"$multiline_obj\" | jq -r \".value\");",
-                    "paths=\"\";",
-                    "index=1;",
-                    "touch sources.conf;",
-                    "touch filters.conf;",
-                    "while read -r obj; do",
-                        "source=$(curl -LSs $manifest/telemetry/logs/multiline_source.conf);",
-                        "filter=$(curl -LSs $manifest/telemetry/logs/multiline_filter.conf);",
-                        "name=\"custom$index\";",
-                        "path=$(echo \"$obj\" | jq -r \".path\");",
-                        "paths+=\",$path\";",
-                        "regex=$(echo \"$obj\" | jq -r \".regex\");",
-                        "source=$(echo \"${source//NAME/$name}\");",
-                        "source=$(echo \"${source//PATH/$path}\");",
-                        "filter=$(echo \"${filter//NAME/$name}\");",
-                        "filter=$(echo \"${filter//REGEX/$regex}\");",
-                        "echo \"$source\" >> sources.conf;",
-                        "echo \"$filter\" >> filters.conf;",
-                        "let index+=1;",
-                    "done < <(echo \"$value\" | jq -c \".[]\");",
-                    "paths=${paths:1};",
-                    "echo \"Creating multiline Helm sets...\";",
-                    "multiline_helm_sets+=\"--set-file 'configmap.customSources=sources.conf'\";",
-                    "multiline_helm_sets+=\"--set-file 'configmap.customFilters=filters.conf'\";",
-                    "multiline_helm_sets+=\"--set 'daemonset.extraExclude=\"$paths\"'\";",
-                    "helm_sets+=\" $multiline_helm_sets\";",
-                "fi;"
+                "echo \"Getting multiline objects...\";",
+                "multiline_obj=$(find_param \"logs\" \"$logs_params\" \"multiline\");",
+                "value=$(echo \"$multiline_obj\" | jq -r \".value\");",
+                "paths=\"\";",
+                "index=1;",
+                "touch sources.conf;",
+                "touch filters.conf;",
+                "while read -r obj; do",
+                    "source=$(curl -LSs $manifest/telemetry/logs/multiline_source.conf);",
+                    "filter=$(curl -LSs $manifest/telemetry/logs/multiline_filter.conf);",
+                    "name=\"custom$index\";",
+                    "path=$(echo \"$obj\" | jq -r \".path\");",
+                    "paths+=\",$path\";",
+                    "regex=$(echo \"$obj\" | jq -r \".regex\");",
+                    "source=$(echo \"${source//NAME/$name}\");",
+                    "source=$(echo \"${source//PATH/$path}\");",
+                    "filter=$(echo \"${filter//NAME/$name}\");",
+                    "filter=$(echo \"${filter//REGEX/$regex}\");",
+                    "echo \"$source\" >> sources.conf;",
+                    "echo \"$filter\" >> filters.conf;",
+                    "let index+=1;",
+                "done < <(echo \"$value\" | jq -c \".[]\");",
+                "paths=${paths:1};",
+                "echo \"Creating multiline Helm sets...\";",
+                "multiline_helm_sets+=\"--set-file 'configmap.customSources=sources.conf'\";",
+                "multiline_helm_sets+=\"--set-file 'configmap.customFilters=filters.conf'\";",
+                "multiline_helm_sets+=\"--set 'daemonset.extraExclude=\"$paths\"'\";",
+                "helm_sets+=\" $multiline_helm_sets\";"
             ]
         }
     ]

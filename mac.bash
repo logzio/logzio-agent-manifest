@@ -89,12 +89,6 @@ prerequisites=$(curl -LSs $manifest/prerequisites/mac.json | jq -r ".commands")
 echo "Getting installer commands..."
 installer=$(curl -LSs $manifest/telemetry/installer/mac.json | jq -r ".commands")
 
-echo "Getting logs commands..."
-logs=$(curl -LSs $manifest/telemetry/logs/mac.json | jq -r ".commands")
-
-echo "Getting metrics commands..."
-metrics=$(curl -LSs $manifest/telemetry/metrics/mac.json | jq -r ".commands")
-
 #################################################################################################################################
 
 ################################################## Run Prerequisites Commands ###################################################
