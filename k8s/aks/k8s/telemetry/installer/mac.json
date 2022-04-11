@@ -117,6 +117,17 @@
             ]
         },
         {
+            "description": "Run traces commands",
+            "run": [
+                "if $is_traces_option_selected; then",
+                    "echo \"Getting traces commands...\";",
+                    "metrics=$(curl -LSs $manifest/telemetry/traces/mac.json | jq -r \".commands\");",
+                    "echo \"Running traces commands...\";",
+                    "run_commands \"$traces\";",
+                "fi;"
+            ]
+        },
+        {
             "description": "Run Helm install",
             "run": [
                 "echo \"Running Helm install...\";",
