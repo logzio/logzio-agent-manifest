@@ -8,27 +8,11 @@
             ]
         },
         {
-            "description": "Append Helm set for taints to helm_sets string",
+            "description": "Get isTaint value",
             "run": [
-                "echo \"Getting is taint...\";",
+                "echo \"Getting isTaint...\";",
                 "is_taint_param=$(find_param \"datasources\" \"$general_params\" \"isTaint\");",
-                "value=$(echo \"$is_taint_param\" | jq -r \".value\");",
-                "if $value; then",
-                    "items=$(kubectl get nodes -o json | jq -r \".items\");",
-                    "echo \"Creating Helm sets...\";",
-                    "while read -r taint; do",
-                        "index=0;",
-                        "key=$(echo $taint | jq -r \".key\");",
-                        "value=$(echo $taint | jq -r \".value\");",
-                        "effect=$(echo $taint | jq -r \".effect\");",
-                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].key=$key'\";",
-                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].value=$value'\";",
-                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].operator=Equal'\";",
-                        "tolerations_sets+=\"--set 'secrets.tolerations[$index].effect=$effect'\";",
-                        "let index+=1;",
-                    "done < <(echo \"$items\" | jq -c \".[].spec.taints[]\");",
-                    "helm_sets+=\"$tolerations_sets\";",
-                "fi;"
+                "is_taint=$(echo \"$is_taint_param\" | jq -r \".value\");"
             ]
         },
         {
@@ -51,6 +35,14 @@
                 "echo \"Running Helm install...\";",
                 "helm install $helm_sets logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics;",
                 "echo \"The Helm chart was installed successfully\";"
+            ]
+        },
+        {
+            "description": "Remove temp files",
+            "run": [
+                "echo \"Deleting temp files...\";",
+                "rm -f sources.xml;",
+                "rm -f filters.xml;"
             ]
         }
     ]

@@ -1,7 +1,7 @@
 {
     "commands": [
         {
-            "description": "Create boolean variable for is metrics option selected",
+            "description": "Create variables",
             "run": [
                 "is_metrics_option_selected=true;",
                 "metrics_params=$(jq -r \".subtype.datasources[0].telemetries[1].params\" $APP_JSON);"
@@ -19,39 +19,68 @@
             ]
         },
         {
-            "description": "Append Helm set for Logz.io metrics listener to helm_sets string",
+            "description": "Append helm_sets string with tolerations Helm sets",
+            "run": [
+                "if $is_taint; then",
+                    "items=$(kubectl get nodes -o json | jq -r \".items\");",
+                    "index=0;",
+                    "echo \"Creating metrics tolerations Helm sets...\";",
+                    "while read -r taint; do",
+                        "key=$(echo $taint | jq -r \".key\");",
+                        "value=$(echo $taint | jq -r \".value\");",
+                        "effect=$(echo $taint | jq -r \".effect\");",
+                        "tolerations_sets+=\"--set 'prometheus-pushgateway.tolerations[$index].key=$key'\";",
+                        "tolerations_sets+=\"--set 'prometheus-pushgateway.tolerations[$index].value=$value'\";",
+                        "tolerations_sets+=\"--set 'prometheus-pushgateway.tolerations[$index].operator=Equal'\";",
+                        "tolerations_sets+=\"--set 'prometheus-pushgateway.tolerations[$index].effect=$effect'\";",
+                        "tolerations_sets+=\"--set 'prometheus-node-exporter.tolerations[$index].key=$key'\";",
+                        "tolerations_sets+=\"--set 'prometheus-node-exporter.tolerations[$index].value=$value'\";",
+                        "tolerations_sets+=\"--set 'prometheus-node-exporter.tolerations[$index].operator=Equal'\";",
+                        "tolerations_sets+=\"--set 'prometheus-node-exporter.tolerations[$index].effect=$effect'\";",
+                        "tolerations_sets+=\"--set 'kube-state-metrics.tolerations[$index].key=$key'\";",
+                        "tolerations_sets+=\"--set 'kube-state-metrics.tolerations[$index].value=$value'\";",
+                        "tolerations_sets+=\"--set 'kube-state-metrics.tolerations[$index].operator=Equal'\";",
+                        "tolerations_sets+=\"--set 'kube-state-metrics.tolerations[$index].effect=$effect'\";",
+                        "let index+=1;",
+                    "done < <(echo \"$items\" | jq -c \".[].spec.taints[]\");",
+                    "helm_sets+=\"$tolerations_sets\";",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with Logz.io metrics listener Helm set",
             "run": [
                 "if $is_metrics_option_selected; then",
                     "echo \"Getting Logz.io metrics listener...\";",
                     "logzio_metrics_listener_param=$(find_param \"metrics\" \"$metrics_params\" \"logzioMetricsListener\");",
                     "value=$(echo \"$logzio_metrics_listener_param\" | jq -r \".value\");",
-                    "echo \"Creating Helm set...\";",
+                    "echo \"Creating Logz.io metrics listener Helm set...\";",
                     "helm_set=\"--set 'secrets.ListenerHost=$value'\";",
                     "helm_sets+=\" $helm_set\";",
                 "fi;"
             ]
         },
         {
-            "description": "Append Helm set for Logz.io metrics token to helm_sets string",
+            "description": "Append helm_sets string with Logz.io metrics token Helm set",
             "run": [
                 "if $is_metrics_option_selected; then",
                     "echo \"Getting Logz.io metrics token...\";",
                     "logzio_metrics_token_param=$(find_param \"metrics\" \"$metrics_params\" \"logzioMetricsToken\");",
                     "value=$(echo \"$logzio_metrics_token_param\" | jq -r \".value\");",
-                    "echo \"Creating Helm set...\";",
+                    "echo \"Creating Logz.io metrics token Helm set...\";",
                     "helm_set=\"--set 'secrets.MetricsToken=$value'\";",
                     "helm_sets+=\" $helm_set\";",
                 "fi;"
             ]
         },
         {
-            "description": "Append Helm set for metrics environment to helm_sets string",
+            "description": "Append helm_sets string with metrics environment Helm set",
             "run": [
                 "if $is_metrics_option_selected; then",
                     "echo \"Getting metrics environment...\";",
                     "metrics_env_param=$(find_param \"metrics\" \"$metrics_params\" \"metricsEnv\");",
                     "value=$(echo \"$metrics_env_param\" | jq -r \".value\");",
-                    "echo \"Creating Helm set...\";",
+                    "echo \"Creating metrics environment Helm set...\";",
                     "helm_set=\"--set 'secrets.p8s_logzio_name=$value'\";",
                     "helm_sets+=\" $helm_set\";",
                 "fi;"
