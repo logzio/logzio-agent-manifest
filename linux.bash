@@ -58,8 +58,17 @@ echo "Running prerequisites installations..."
 which jq >/dev/null 2>&1
 if [ $? -ne 0 ]; then
     echo "Installing JQ..."
-    yum update
-    yum install -y jq
+    which apt-get >/dev/null 2>&1
+    if [ $? -eq 0 ]; then
+        apt-get update
+        apt-get install -y jq
+    else
+        which yum >/dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            yum update
+            yum install -y jq
+        fi
+    fi
 else
     echo "JQ is already installed"
 fi
