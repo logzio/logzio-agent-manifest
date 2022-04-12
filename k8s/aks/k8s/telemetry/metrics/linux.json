@@ -1,0 +1,45 @@
+{
+    "commands": [
+        {
+            "description": "Append helm_sets string with enable metrics Helm set",
+            "run": [
+                "echo \"Creating enable metrics Helm set...\";",
+                "helm_set=\"--set 'metrics.enabled=true'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with Logz.io metrics listener Helm set",
+            "run": [
+                "echo \"Getting Logz.io metrics listener...\";",
+                "logzio_metrics_listener_param=$(find_param \"metrics\" \"$metrics_params\" \"logzioMetricsListener\");",
+                "value=$(echo \"$logzio_metrics_listener_param\" | jq -r \".value\");",
+                "echo \"Creating Logz.io metrics listener Helm set...\";",
+                "helm_set=\"--set 'secrets.ListenerHost=$value'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with Logz.io metrics token Helm set",
+            "run": [
+                "echo \"Getting Logz.io metrics token...\";",
+                "logzio_metrics_token_param=$(find_param \"metrics\" \"$metrics_params\" \"logzioMetricsToken\");",
+                "value=$(echo \"$logzio_metrics_token_param\" | jq -r \".value\");",
+                "echo \"Creating Logz.io metrics token Helm set...\";",
+                "helm_set=\"--set 'secrets.MetricsToken=$value'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with environment tag Helm set",
+            "run": [
+                "echo \"Getting environment tag...\";",
+                "env_tag_param=$(find_param \"metrics\" \"$metrics_params\" \"envTag\");",
+                "value=$(echo \"$env_tag_param\" | jq -r \".value\");",
+                "echo \"Creating environment tag Helm set...\";",
+                "helm_set=\"--set 'secrets.p8s_logzio_name=$value'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,45 @@
+{
+    "commands": [
+        {
+            "description": "Append helm_sets string with enable traces Helm set",
+            "run": [
+                "echo \"Creating enable metrics Helm set...\";",
+                "helm_set=\"--set 'traces.enabled=true'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with Logz.io traces token Helm set",
+            "run": [
+                "echo \"Getting Logz.io traces token...\";",
+                "logzio_traces_token_param=$(find_param \"traces\" \"$traces_params\" \"logzioTracesToken\");",
+                "value=$(echo \"$logzio_traces_token_param\" | jq -r \".value\");",
+                "echo \"Creating Logz.io traces token Helm set...\";",
+                "helm_set=\"--set 'secrets.TracesToken=$value'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with Logz.io region Helm set",
+            "run": [
+                "echo \"Getting Logz.io region...\";",
+                "logzio_region_param=$(find_param \"traces\" \"$traces_params\" \"logzioRegion\");",
+                "value=$(echo \"$logzio_region_param\" | jq -r \".value\");",
+                "echo \"Creating logzio region Helm set...\";",
+                "helm_set=\"--set 'secrets.LogzioRegion=$value'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with environment tag Helm set",
+            "run": [
+                "echo \"Getting environment tag...\";",
+                "env_tag_param=$(find_param \"traces\" \"$traces_params\" \"envTag\");",
+                "value=$(echo \"$env_tag_param\" | jq -r \".value\");",
+                "echo \"Creating environment tag Helm set...\";",
+                "helm_set=\"--set 'secrets.p8s_logzio_name=$value'\";",
+                "helm_sets+=\" $helm_set\";"
+            ]
+        }
+    ]
+}
