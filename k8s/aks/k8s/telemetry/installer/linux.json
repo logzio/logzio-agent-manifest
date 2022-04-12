@@ -99,7 +99,7 @@
             "run": [
                 "if $is_logs_option_selected; then",
                     "echo \"Getting logs commands...\";",
-                    "logs=$(curl -LSs $manifest/telemetry/logs/mac.json | jq -r \".commands\");",
+                    "logs=$(curl -LSs $manifest/telemetry/logs/linux.json | jq -r \".commands\");",
                     "echo \"Running logs commands...\";",
                     "run_commands \"$logs\";",
                 "fi;"
@@ -110,7 +110,7 @@
             "run": [
                 "if $is_metrics_option_selected; then",
                     "echo \"Getting metrics commands...\";",
-                    "metrics=$(curl -LSs $manifest/telemetry/metrics/mac.json | jq -r \".commands\");",
+                    "metrics=$(curl -LSs $manifest/telemetry/metrics/linux.json | jq -r \".commands\");",
                     "echo \"Running metrics commands...\";",
                     "run_commands \"$metrics\";",
                 "fi;"
