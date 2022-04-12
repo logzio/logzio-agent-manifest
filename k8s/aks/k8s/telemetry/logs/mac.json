@@ -49,10 +49,10 @@
                 "done < <(echo \"$value\" | jq -c \".[]\");",
                 "paths=${paths:1};",
                 "echo \"Creating multiline Helm sets...\";",
-                "multiline_helm_sets+=\"--set-file 'configmap.customSources=sources.conf'\";",
-                "multiline_helm_sets+=\"--set-file 'configmap.customFilters=filters.conf'\";",
-                "multiline_helm_sets+=\"--set 'daemonset.extraExclude=\"$paths\"'\";",
-                "helm_sets+=\" $multiline_helm_sets\";"
+                "multiline_helm_sets+=\" --set-file 'configmap.customSources=sources.conf'\";",
+                "multiline_helm_sets+=\" --set-file 'configmap.customFilters=filters.conf'\";",
+                "multiline_helm_sets+=\" --set 'daemonset.extraExclude=\"$paths\"'\";",
+                "helm_sets+=\"$multiline_helm_sets\";"
             ]
         }
     ]
