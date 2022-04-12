@@ -60,13 +60,13 @@ if [ $? -ne 0 ]; then
     echo "Installing JQ..."
     which apt-get >/dev/null 2>&1
     if [ $? -eq 0 ]; then
-        apt-get update
-        apt-get install -y jq
+        sudo apt-get update
+        sudo apt-get install -y jq
     else
         which yum >/dev/null 2>&1
         if [ $? -eq 0 ]; then
-            yum update
-            yum install -y jq
+            sudo yum update
+            sudo yum install -y jq
         fi
     fi
 else
