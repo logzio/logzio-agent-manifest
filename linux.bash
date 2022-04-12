@@ -1,5 +1,4 @@
 #!/bin/bash
-#set -e
 
 ########################################################## Arguments ############################################################
 
@@ -60,12 +59,12 @@ if [ $? -ne 0 ]; then
     echo "Installing JQ..."
     which apt-get >/dev/null 2>&1
     if [ $? -eq 0 ]; then
-        sudo apt-get update
+        sudo apt-get -y update
         sudo apt-get install -y jq
     else
         which yum >/dev/null 2>&1
         if [ $? -eq 0 ]; then
-            sudo yum update
+            sudo yum -y update
             sudo yum install -y jq
         fi
     fi
@@ -103,6 +102,8 @@ run_commands "$prerequisites"
 #################################################################################################################################
 
 ##################################################### Run Installer Commands ####################################################
+
+set -e
 
 echo "Running installer commands..."
 run_commands "$installer"
