@@ -39,7 +39,7 @@
                 "else",
                     "echo \"Kubernetes runs on Windows OS\";",
                     "echo \"Please enter your Windows Node username: \";",
-                    "read username;",
+                    "read username",
                     "echo \"test\";",
                     "read 'Please enter your Windows Node password: ' password;",
                     "windows_sets+=\" --set 'logzio-k8s-telemetry.secrets.windowsNodeUsername=$username'\";",
