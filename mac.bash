@@ -71,7 +71,6 @@ fi
 
 if [ $# -eq 1 ]; then
     echo "Getting app JSON from agent..."
-    https://app.logz.io/telemetry-agent/public/agents/configuration
     APP_JSON=$(curl -LSs https://app.logz.io/telemetry-agent/public/agents/configuration/$AGENT_ID)
 else
     echo "Using given app JSON..."
