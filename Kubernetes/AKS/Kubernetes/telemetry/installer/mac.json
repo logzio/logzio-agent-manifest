@@ -22,7 +22,6 @@
                     "type=$(echo \"$telemetry\" | jq -r \".type\");",
                     "if [ \"$type\" = \"LOG_ANALYTICS\" ]; then",
                         "is_logs_option_selected=true;",
-                        "echo \"hi\";",
                         "is_params_exist=$(echo \"$telemetry\" | jq -e 'has(\"params\")');",
                         "echo $is_params_exist;",
                         "if $is_params_exist; then",
@@ -43,10 +42,7 @@
                             "traces_params=$(echo \"$telemetry\" | jq -r \".params\");",
                         "fi;",
                     "fi;",
-                "done < <(echo \"$APP_JSON\" | jq -c \".configuration.subtypes[0].datasources[0].telemetries[]\");",
-                "echo $is_logs_option_selected;",
-                "echo $is_metrics_option_selected;",
-                "echo $is_traces_option_selected;"
+                "done < <(echo \"$APP_JSON\" | jq -c \".configuration.subtypes[0].datasources[0].telemetries[]\");"
             ]
         },
         {
