@@ -42,7 +42,7 @@
                     "read -p \"Please enter your Windows Node password: \" password </dev/tty;",
                     "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodeUsername=$username\";",
                     "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodePassword=$password\";",
-                    "helm_sets+=\"$helm_set\";",
+                    "helm_sets+=\"$windows_sets\";",
                 "fi;"
             ]
         }
