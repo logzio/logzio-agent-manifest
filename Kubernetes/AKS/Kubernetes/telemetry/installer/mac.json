@@ -14,30 +14,36 @@
             ]
         },
         {
-            "description": "Which products are selected?",
+            "description": "Get general params",
+            "run": [
+                "echo \"Getting general params...\";",
+                "is_params_exist=$(echo \"$APP_JSON\" | jq -r \".configuration.subtypes[0].datasources[0]\" | jq -r 'has(\"params\")');",
+                "if $is_params_exist; then",
+                    "general_params=$(echo \"$APP_JSON\" | jq -r \".configuration.subtypes[0].datasources[0].params\");",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Which products were selected?",
             "run": [
                 "echo \"Getting which products were selected...\";",
                 "while read -r telemetry; do",
-                    "echo \"$telemetry\";",
                     "type=$(echo \"$telemetry\" | jq -r \".type\");",
                     "if [ \"$type\" = \"LOG_ANALYTICS\" ]; then",
                         "is_logs_option_selected=true;",
                         "is_params_exist=$(echo \"$telemetry\" | jq -r 'has(\"params\")');",
-                        "echo $is_params_exist;",
                         "if $is_params_exist; then",
                             "logs_params=$(echo \"$telemetry\" | jq -r \".params\");",
                         "fi;",
                     "elif [ \"$type\" = \"METRICS\" ]; then",
                         "is_metrics_option_selected=true;",
                         "is_params_exist=$(echo \"$telemetry\" | jq -r 'has(\"params\")');",
-                        "echo $is_params_exist;",
                         "if $is_params_exist; then",
                             "metrics_params=$(echo \"$telemetry\" | jq -r \".params\");",
                         "fi;",
-                    "elif [ \"$type\" = \"TRACES\" ]; then",
+                    "elif [ \"$type\" = \"TRACING\" ]; then",
                         "is_traces_option_selected=true;",
                         "is_params_exist=$(echo \"$telemetry\" | jq -r 'has(\"params\")');",
-                        "echo $is_params_exist;",
                         "if $is_params_exist; then",
                             "traces_params=$(echo \"$telemetry\" | jq -r \".params\");",
                         "fi;",
