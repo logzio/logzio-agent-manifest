@@ -18,7 +18,7 @@
             "run": [
                 "echo \"Getting which products were selected...\";",
                 "while read -r telemetry; do",
-                    "echo \"- $telemetry\";",
+                    "echo \"$telemetry\";",
                     "type=$(echo \"$telemetry\" | jq -r \".type\");",
                 "done < <(echo \"$APP_JSON\" | jq -c \".configuration.subtypes[0].datasources[0].telemetries[]\");"
             ]
