@@ -14,7 +14,7 @@
                 "echo \"Getting Logz.io logs listener...\";",
                 "listener_url=$(echo \"$APP_JSON\" | jq -r \".listenerUrl\");",
                 "echo \"Creating Logz.io logs listener Helm set...\";",
-                "helm_set=\" --set logzio-fluentd.secrets.logzioListener=$value\";",
+                "helm_set=\" --set logzio-fluentd.secrets.logzioListener=$listener_url\";",
                 "helm_sets+=\"$helm_set\";"
             ]
         },
