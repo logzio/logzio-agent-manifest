@@ -18,7 +18,7 @@
             "run": [
                 "echo \"Getting which products were selected...\";",
                 "while read -r telemetry; do",
-                    "echo \"$telemetry\";",
+                    "echo \"- $telemetry\";",
                     "type=$(echo \"$telemetry\" | jq -r \".type\");",
                     "if [ \"$type\" = \"LOG_ANALYTICS\" ]; then",
                         "is_logs_option_selected=true;",
