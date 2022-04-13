@@ -10,7 +10,7 @@
                 "else",
                     "echo \"Kubectl is already installed\";",
                 "fi;"
-            ] 
+            ]
         }
     ]
 }
