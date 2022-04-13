@@ -4,7 +4,7 @@
             "description": "Append helm_sets string with enable metrics Helm set",
             "run": [
                 "echo \"Creating enable metrics Helm set...\";",
-                "helm_set=\" --set 'metrics.enabled=true'\";",
+                "helm_set=\" --set logzio-k8s-telemetry.metrics.enabled=true\";",
                 "helm_sets+=\"$helm_set\";"
             ]
         },
@@ -15,7 +15,7 @@
                 "listener_url=$(echo \"$APP_JSON\" | jq -r \".listenerUrl\");",
                 "listener_url=\"https://$listener_url:8053\";",
                 "echo \"Creating Logz.io metrics listener Helm set...\";",
-                "helm_set=\" --set 'logzio-k8s-telemetry.secrets.ListenerHost=$listener_url'\";",
+                "helm_set=\" --set logzio-k8s-telemetry.secrets.ListenerHost=$listener_url\";",
                 "helm_sets+=\"$helm_set\";"
             ]
         },
@@ -25,7 +25,7 @@
                 "echo \"Getting Logz.io metrics token...\";",
                 "shipping_token=$(echo \"$APP_JSON\" | jq -r \".shippingTokens.METRICS\");",
                 "echo \"Creating Logz.io metrics token Helm set...\";",
-                "helm_set=\" --set 'logzio-k8s-telemetry.secrets.MetricsToken=$shipping_token'\";",
+                "helm_set=\" --set logzio-k8s-telemetry.secrets.MetricsToken=$shipping_token\";",
                 "helm_sets+=\"$helm_set\";"
             ]
         },
@@ -38,10 +38,10 @@
                     "echo \"Kubernetes does not run on Windows OS\";",
                 "else",
                     "echo \"Kubernetes runs on Windows OS\";",
-                    "read -p \"Please enter your Windows Node username: \" username;",
-                    "read -p \"Please enter your Windows Node password: \" password;",
-                    "windows_sets+=\" --set 'logzio-k8s-telemetry.secrets.windowsNodeUsername=$username'\";",
-                    "windows_sets+=\" --set 'logzio-k8s-telemetry.secrets.windowsNodePassword=$password'\";",
+                    "read -p \"Please enter your Windows Node username: \" username </dev/tty;",
+                    "read -p \"Please enter your Windows Node password: \" password </dev/tty;",
+                    "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodeUsername=$username\";",
+                    "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodePassword=$password\";",
                     "helm_sets+=\"$helm_set\";",
                 "fi;"
             ]
