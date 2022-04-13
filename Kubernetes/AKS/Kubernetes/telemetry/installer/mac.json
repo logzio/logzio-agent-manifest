@@ -22,7 +22,7 @@
                     "type=$(echo \"$telemetry\" | jq -r \".type\");",
                     "if [ \"$type\" = \"LOG_ANALYTICS\" ]; then",
                         "is_logs_option_selected=true;",
-                        "is_params_exist=$(echo \"$telemetry\" | jq -e 'has(\"params\")');",
+                        "is_params_exist=$(echo \"$telemetry\" | jq -e has(\"params\"));",
                         "echo $is_params_exist;",
                         "if $is_params_exist; then",
                             "logs_params=$(echo \"$telemetry\" | jq -r \".params\");",
