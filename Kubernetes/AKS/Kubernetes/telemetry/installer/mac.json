@@ -25,7 +25,7 @@
                         "is_params_exist=$(echo \"$telemetry\" | jq -e 'has(\"params\")');",
                         "echo $is_params_exist;",
                         "if $is_params_exist; then",
-                            "general_params=$(echo \"$telemetry\" | jq -r \".params\");",
+                            "logs_params=$(echo \"$telemetry\" | jq -r \".params\");",
                         "fi;",
                     "fi;",
                     "if [ \"$type\" = \"METRICS\" ]; then",
