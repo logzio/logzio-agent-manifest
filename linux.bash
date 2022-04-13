@@ -2,7 +2,8 @@
 
 ########################################################## Arguments ############################################################
 
-APP_JSON=$1                             # Application JSON file
+AGENT_ID=$1                             # Agent ID
+APP_JSON_FILE=$2                        # App JSON file (for tests)
 
 #################################################################################################################################
 
@@ -41,10 +42,6 @@ function find_param () {
             requested_param="$param"
         fi
     done < <(echo "$product_params" | jq -c ".[]")
-    if [ "$requested_param" = "" ]; then
-        echo "Did not find $requested_name parameter under $product_name in the application json"
-        exit 1
-    fi
     echo "$requested_param"
 }
 
@@ -74,12 +71,24 @@ fi
 
 #################################################################################################################################
 
-#################################################### Build Path to Manifest ####################################################
+########################################################## Get App JSON #########################################################
+
+if [ $# -eq 1 ]; then
+    echo "Getting app JSON from agent..."
+    APP_JSON=$(curl -LSs https://app-ca.logz.io/telemetry-agent/public/agents/configuration/$AGENT_ID)
+else
+    echo "Using given app JSON..."
+    APP_JSON=$(cat $APP_JSON_FILE)
+fi
+
+#################################################################################################################################
+
+##################################################### Build Path to Manifest ####################################################
 
 echo "Building manifest path..."
-dir1=$(jq -r ".name" $APP_JSON)
-dir2=$(jq -r ".subtype.name" $APP_JSON)
-dir3=$(jq -r ".subtype.datasources[0].name" $APP_JSON)
+dir1=$(echo "$APP_JSON" | jq -r ".configuration.name")
+dir2=$(echo "$APP_JSON" | jq -r ".configuration.subtypes[0].name")
+dir3=$(echo "$APP_JSON" | jq -r ".configuration.subtypes[0].datasources[0].name")
 manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$dir1/$dir2/$dir3"
 
 #################################################################################################################################
@@ -87,10 +96,10 @@ manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$d
 ########################################################## Get Commands #########################################################
 
 echo "Getting prerequisites commands..."
-prerequisites=$(curl -LSs $manifest/prerequisites/linux.json | jq -r ".commands")
+prerequisites=$(curl -LSs -H "Cache-Control: no-cache, no-store" $manifest/prerequisites/mac.json | jq -r ".commands")
 
 echo "Getting installer commands..."
-installer=$(curl -LSs $manifest/telemetry/installer/linux.json | jq -r ".commands")
+installer=$(curl -LSs -H "Cache-Control: no-cache, no-store" $manifest/telemetry/installer/mac.json | jq -r ".commands")
 
 #################################################################################################################################
 
