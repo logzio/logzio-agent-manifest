@@ -56,7 +56,9 @@
             "run": [
                 "echo \"Getting is taint...\";",
                 "is_taint_param=$(find_param \"datasources\" \"$general_params\" \"isTaint\");",
-                "if [ \"$is_taint_param\" != \"\" ]; then",
+                "if [ \"$is_taint_param\" = \"\" ]; then",
+                    "echo \"There are no tains\";",
+                "else",
                     "value=$(echo \"$is_taint_param\" | jq -r \".value\");",
                     "if $value; then",
                         "items=$(kubectl get nodes -o json | jq -r \".items\");",
@@ -125,7 +127,7 @@
             "run": [
                 "if $is_metrics_option_selected || $is_traces_option_selected; then",
                     "echo \"Getting environment tag...\";",
-                    "env_tag=$(jq -r \".id\" $APP_JSON);",
+                    "env_tag=$(echo \"$APP_JSON\" | jq -r \".id\");",
                     "echo \"Creating environment tag Helm set...\";",
                     "helm_set=\" --set 'logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag'\";",
                     "helm_sets+=\"$helm_set\";",
