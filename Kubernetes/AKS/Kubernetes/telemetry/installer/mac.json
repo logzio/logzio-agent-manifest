@@ -110,8 +110,7 @@
                             "helm_sets+=\"$tolerations_sets\";",
                         "fi;",
                     "done < <(echo \"$items\" | jq -c \".[].spec\");",
-                "fi;",
-                "echo \"$helm_sets\";"
+                "fi;"
             ]
         },
         {
