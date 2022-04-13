@@ -20,6 +20,14 @@
                 "while read -r telemetry; do",
                     "echo \"$telemetry\";",
                     "type=$(echo \"$telemetry\" | jq -r \".type\");",
+                    "if [ \"$type\" = \"LOG_ANALYTICS\" ]; then",
+                        "is_logs_option_selected=true;",
+                        "is_params_exist=$(echo \"$telemetry\" | jq 'has(\"params\")');",
+                        "echo $is_params_exist;",
+                        "if $is_params_exist; then",
+                            "logs_params=$(echo \"$telemetry\" | jq -r \".params\");",
+                        "fi;",
+                    "fi;",
                 "done < <(echo \"$APP_JSON\" | jq -c \".configuration.subtypes[0].datasources[0].telemetries[]\");"
             ]
         },
