@@ -16,6 +16,7 @@
         {
             "description": "Which products are selected?",
             "run": [
+                "echo \"Getting which products were selected...\";",
                 "while read -r telemetry; do",
                     "type=$(echo \"$telemetry\" | jq -r \".type\")",
                     "if [ \"$type\" = \"LOG_ANALYTICS\" ]; then",
