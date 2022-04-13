@@ -96,10 +96,10 @@ manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$d
 ########################################################## Get Commands #########################################################
 
 echo "Getting prerequisites commands..."
-prerequisites=$(curl -LSs -H "Cache-Control: no-cache, no-store" $manifest/prerequisites/mac.json | jq -r ".commands")
+prerequisites=$(curl -LSs $manifest/prerequisites/linux.json | jq -r ".commands")
 
 echo "Getting installer commands..."
-installer=$(curl -LSs -H "Cache-Control: no-cache, no-store" $manifest/telemetry/installer/mac.json | jq -r ".commands")
+installer=$(curl -LSs $manifest/telemetry/installer/linux.json | jq -r ".commands")
 
 #################################################################################################################################
 
