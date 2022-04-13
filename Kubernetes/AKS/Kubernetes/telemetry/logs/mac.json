@@ -33,7 +33,7 @@
             "run": [
                 "echo \"Getting multiline objects...\";",
                 "multiline_param=$(find_param \"logs\" \"$logs_params\" \"multiline\");",
-                "if [ \"$multiline_param\" = \"\"; then",
+                "if [ \"$multiline_param\" = \"\" ]; then",
                     "echo \"Multiline option was not selected\";",
                 "else",
                     "value=$(echo \"$multiline_param\" | jq -r \".value\");",
