@@ -171,7 +171,7 @@
             "description": "Run Helm install",
             "run": [
                 "echo \"Running Helm install...\";",
-                "helm install $helm_sets logzio-otel-k8s-metrics logzio-helm/logzio-otel-k8s-metrics;",
+                "helm install -n monitoring $helm_sets logzio-monitoring logzio-helm/logzio-monitoring;",
                 "echo \"The Helm chart was installed successfully\";"
             ]
         },
