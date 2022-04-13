@@ -9,11 +9,11 @@
                     "exit 1;",
                 "else",
                     "echo \"Kubectl is already installed\";",
-                "fi"
+                "fi;"
             ] 
         },
         {
-            "description": "Is kubectl connected to an active Kubernetes cluster?",
+            "description": "Is Kubectl connected to an active Kubernetes cluster?",
             "run": [
                 "kubectl cluster-info;",
                 "if [ $? -ne 0 ]; then",
@@ -21,7 +21,7 @@
                     "exit 1;",
                 "else",
                     "echo \"Kubectl is connected to an active Kubernetes cluster\";",
-                "fi"
+                "fi;"
             ]
         },
         {
@@ -33,7 +33,7 @@
                     "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash;",
                 "else",
                     "echo \"Helm is already installed\";",
-                "fi"
+                "fi;"
             ]
         },
         {
