@@ -172,7 +172,7 @@
             "run": [
                 "echo \"Running Helm install...\";",
                 "echo \"$helm_sets\";",
-                "helm install -n monitoring $helm_sets logzio-monitoring logzio-helm/logzio-monitoring;",
+                "helm install -n monitoring $helm_sets --debug logzio-monitoring logzio-helm/logzio-monitoring;",
                 "echo \"The Helm chart was installed successfully\";"
             ]
         },
