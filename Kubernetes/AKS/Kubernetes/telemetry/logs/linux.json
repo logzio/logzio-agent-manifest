@@ -1,0 +1,69 @@
+{
+    "commands": [
+        {
+            "description": "Append helm_sets string with enable logs Helm set",
+            "run": [
+                "echo \"Creating enable logs Helm set...\";",
+                "helm_set=\" --set 'logs.enabled=true'\";",
+                "helm_sets+=\"$helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with Logz.io logs listener Helm set",
+            "run": [
+                "echo \"Getting Logz.io logs listener...\";",
+                "listener_url=$(echo \"$APP_JSON\" | jq -r \".listenerUrl\");",
+                "echo \"Creating Logz.io logs listener Helm set...\";",
+                "helm_set=\" --set 'logzio-fluentd.secrets.logzioListener=$value'\";",
+                "helm_sets+=\"$helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with Logz.io logs token Helm set",
+            "run": [
+                "echo \"Getting Logz.io logs token...\";",
+                "shipping_token=$(echo \"$APP_JSON\" | jq -r \".shippingTokens.LOG_ANALYTICS\");",
+                "echo \"Creating Logz.io logs token Helm set...\";",
+                "helm_set=\" --set 'logzio-fluentd.secrets.logzioShippingToken=$shipping_token'\";",
+                "helm_sets+=\"$helm_set\";"
+            ]
+        },
+        {
+            "description": "Append helm_sets string with multiline Helm sets",
+            "run": [
+                "echo \"Getting multiline objects...\";",
+                "multiline_param=$(find_param \"logs\" \"$logs_params\" \"multiline\");",
+                "if [ \"$multiline_param\" = \"\" ]; then",
+                    "echo \"Multiline option was not selected\";",
+                "else",
+                    "value=$(echo \"$multiline_param\" | jq -r \".value\");",
+                    "paths=\"\";",
+                    "index=1;",
+                    "touch sources.conf;",
+                    "touch filters.conf;",
+                    "while read -r obj; do",
+                        "source=$(curl -LSs $manifest/telemetry/logs/multiline_source.conf);",
+                        "filter=$(curl -LSs $manifest/telemetry/logs/multiline_filter.conf);",
+                        "name=\"custom$index\";",
+                        "path=$(echo \"$obj\" | jq -r \".path\");",
+                        "paths+=\",$path\";",
+                        "regex=$(echo \"$obj\" | jq -r \".regex\");",
+                        "source=$(echo \"${source//NAME/$name}\");",
+                        "source=$(echo \"${source//PATH/$path}\");",
+                        "filter=$(echo \"${filter//NAME/$name}\");",
+                        "filter=$(echo \"${filter//REGEX/$regex}\");",
+                        "echo \"$source\" >> sources.conf;",
+                        "echo \"$filter\" >> filters.conf;",
+                        "let index+=1;",
+                    "done < <(echo \"$value\" | jq -c \".[]\");",
+                    "paths=${paths:1};",
+                    "echo \"Creating multiline Helm sets...\";",
+                    "multiline_helm_sets+=\" --set-file 'configmap.customSources=sources.conf'\";",
+                    "multiline_helm_sets+=\" --set-file 'configmap.customFilters=filters.conf'\";",
+                    "multiline_helm_sets+=\" --set 'daemonset.extraExclude=\"$paths\"'\";",
+                    "helm_sets+=\"$multiline_helm_sets\";",
+                "fi;"
+            ]
+        }
+    ]
+}
