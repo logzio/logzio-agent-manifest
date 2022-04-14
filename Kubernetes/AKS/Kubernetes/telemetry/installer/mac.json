@@ -104,8 +104,8 @@
                             "tolerations_sets+=\" --set logzio-k8s-telemetry.tolerations[$index].effect=$effect\";",
                         "fi;",
                         "let index+=1;",
-                        "helm_sets+=\"$tolerations_sets\";",
                     "done < <(echo \"$spec\" | jq -c \".spec.taints[]\");",
+                    "helm_sets+=\"$tolerations_sets\";",
                 "fi;"
             ]
         },
