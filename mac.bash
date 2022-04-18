@@ -3,7 +3,8 @@
 ########################################################## Arguments ############################################################
 
 AGENT_ID=$1                             # Agent ID
-APP_JSON_FILE=$2                        # App JSON file (for tests)
+REGION=$2                               # Region
+APP_JSON_FILE=$3                        # App JSON file (for tests)
 
 #################################################################################################################################
 
@@ -69,9 +70,9 @@ fi
 
 ########################################################## Get App JSON #########################################################
 
-if [ $# -eq 1 ]; then
+if [ $# -eq 2 ]; then
     echo "Getting app JSON from agent..."
-    APP_JSON=$(curl -LSs https://app.logz.io/telemetry-agent/public/agents/configuration/$AGENT_ID)
+    APP_JSON=$(curl -LSs https://app-$REGION.logz.io/telemetry-agent/public/agents/configuration/$AGENT_ID)
 else
     echo "Using given app JSON..."
     APP_JSON=$(cat $APP_JSON_FILE)
