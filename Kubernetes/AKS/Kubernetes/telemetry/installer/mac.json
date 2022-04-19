@@ -64,9 +64,6 @@
                     "index=0;",
                     "echo \"Creating tolerations Helm sets...\";",
                     "while read -r taint; do",
-                        "if [ \"$taint\" = null ]; then",
-                            "continue;",
-                        "fi;",
                         "echo \"$taint\";",
                         "key=$(echo \"$taint\" | jq -r \".key\");",
                         "operator=\"Exists\";",
@@ -108,7 +105,7 @@
                             "tolerations_sets+=\" --set-string logzio-k8s-telemetry.tolerations[$index].effect=$effect\";",
                         "fi;",
                         "let index+=1;",
-                    "done < <(echo \"$items\" | jq -c \".[].spec.taints[]\");",
+                    "done < <(echo \"$items\" | jq -c '.[] | .spec | select(.taints!=null) | .taints[]');",
                     "helm_sets+=\"$tolerations_sets\";",
                 "fi;"
             ]
