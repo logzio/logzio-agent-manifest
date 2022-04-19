@@ -176,8 +176,8 @@
             "description": "Remove temp files",
             "run": [
                 "echo \"Deleting temp files...\";",
-                "rm -f sources.xml;",
-                "rm -f filters.xml;"
+                "rm -f sources.conf;",
+                "rm -f filters.conf;"
             ]
         }
     ]
