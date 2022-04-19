@@ -59,7 +59,7 @@
                 "if [ \"$is_taint_param\" = \"\" ]; then",
                     "echo \"There are no tains\";",
                 "else",
-                    "items=$(kubectl get nodes -o json | jq -r \".items[0]\");",
+                    "items=$(kubectl get nodes -o json | jq -r \".items\");",
                     "tolerations_sets=\"\";",
                     "index=0;",
                     "echo \"Creating tolerations Helm sets...\";",
@@ -104,7 +104,7 @@
                             "tolerations_sets+=\" --set-string logzio-k8s-telemetry.tolerations[$index].effect=$effect\";",
                         "fi;",
                         "let index+=1;",
-                    "done < <(echo \"$items\" | jq -c \".spec.taints[]\");",
+                    "done < <(echo \"$items\" | jq -c \".[].spec.taints[]\");",
                     "helm_sets+=\"$tolerations_sets\";",
                 "fi;"
             ]
