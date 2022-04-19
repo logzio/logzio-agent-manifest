@@ -82,15 +82,6 @@ while true; do
             APP_JSON_FILE="$1"
             break
             ;;
-        --test)
-            shift
-            if [ "$1" = "" ]; then
-                echo "No command number specified!"
-                exit 1
-            fi
-            SECTION_NUM="$1"
-            break
-            ;;
         "")
             break
             ;;
