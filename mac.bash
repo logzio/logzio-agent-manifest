@@ -4,10 +4,10 @@
 
 # Prints usage
 function show_help () {
-    echo "Usage: ./mac.bash --url <logzio_api_url> --id <agent_id> [--debug <app_json>]"
-    echo " --url <logzio_api_url>       Logz.io API URL"
-    echo " --id <agent_id>              Logz.io agent ID"
-    echo " --debug <app_json>           Debug run using a local application JSON"
+    echo "Usage: ./mac.bash --url=<logzio_api_url> --id=<agent_id> [--debug=<app_json>]"
+    echo " --url=<logzio_api_url>       Logz.io API URL"
+    echo " --id=<agent_id>              Logz.io agent ID"
+    echo " --debug=<app_json>           Debug run using a local application JSON"
     echo " --help                       Show usage"
 }
 
@@ -57,29 +57,26 @@ while true; do
             show_help
             exit
             ;;
-        --url)
-            shift
-            if [ "$1" = "" ]; then
+        --url=*)
+            API_URL=$(echo "$1" | cut -d "=" -f2)
+            if [ "$API_URL" = "" ]; then
                 echo "No Logz.io API URL specified!"
                 exit 1
             fi
-            API_URL="$1"
             ;;
-        --id)
-            shift
-            if [ "$1" = "" ]; then
+        --id=*)
+            AGENT_ID=$(echo "$1" | cut -d "=" -f2)
+            if [ "$AGENT_ID" = "" ]; then
                 echo "No agent ID specified!"
                 exit 1
             fi
-            AGENT_ID="$1"
             ;;
-        --debug)
-            shift
-            if [ "$1" = "" ]; then
+        --debug=*)
+            APP_JSON_FILE=$(echo "$1" | cut -d "=" -f2)
+            if [ "$APP_JSON_FILE" = "" ]; then
                 echo "No JSON file specified!"
                 exit 1
             fi
-            APP_JSON_FILE="$1"
             break
             ;;
         "")
