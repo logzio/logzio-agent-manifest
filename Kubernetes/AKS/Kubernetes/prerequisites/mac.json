@@ -37,6 +37,17 @@
             ]
         },
         {
+            "description": "Create 'monitoring' namespace",
+            "run": [
+                "echo \"Checking if 'monitoring' namespace exists...\";",
+                "if $(kubectl get namespaces | grep -q \"monitoring\"); then",
+                    "echo \"'monitoring' namespace is already exists\";",
+                "else",
+                    "kubectl create namespace monitoring;",
+                "fi;"
+            ]
+        },
+        {
             "description": "Add Logz.io Helm repo",
             "run": [
                 "echo \"Adding Logz.io Helm repo...\";",
