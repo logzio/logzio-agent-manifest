@@ -1,0 +1,54 @@
+{
+    "commands": [
+        {
+            "description": "Is Kubectl installed?",
+            "run": [
+                "which kubectl >/dev/null 2>&1;",
+                "if [ $? -ne 0 ]; then", 
+                    "echo \"Kubectl is not installed\";",
+                    "exit 1;",
+                "else",
+                    "echo \"Kubectl is already installed\";",
+                "fi;"
+            ] 
+        },
+        {
+            "description": "Is Kubectl connected to an active Kubernetes cluster?",
+            "run": [
+                "kubectl cluster-info;",
+                "if [ $? -ne 0 ]; then",
+                    "echo \"Kubectl is not connected to an active Kubernetes cluster\";",
+                    "exit 1;",
+                "else",
+                    "echo \"Kubectl is connected to an active Kubernetes cluster\";",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Is Helm installed?",
+            "run": [
+                "which helm >/dev/null 2>&1;",
+                "if [ $? -ne 0 ]; then",
+                    "echo \"Installing Helm...\";",
+                    "curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash;",
+                "else",
+                    "echo \"Helm is already installed\";",
+                "fi;"
+            ]
+        },
+        {
+            "description": "Add Logz.io Helm repo",
+            "run": [
+                "echo \"Adding Logz.io Helm repo...\";",
+                "helm repo add logzio-helm https://logzio.github.io/logzio-helm;"
+            ]
+        },
+        {
+            "description": "Update Logz.io Helm repo",
+            "run": [
+                "echo \"Updating Logz.io Helm repo...\";",
+                "helm repo update logzio-helm;"
+            ]
+        }
+    ]
+}
