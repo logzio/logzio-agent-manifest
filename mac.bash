@@ -144,7 +144,7 @@ echo "Building manifest path..."
 dir1=$(echo "$APP_JSON" | jq -r ".configuration.name")
 dir2=$(echo "$APP_JSON" | jq -r ".configuration.subtypes[0].name")
 dir3=$(echo "$APP_JSON" | jq -r ".configuration.subtypes[0].datasources[0].name")
-manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/init/$dir1/$dir2/$dir3"
+manifest="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/master/$dir1/$dir2/$dir3"
 
 #################################################################################################################################
 
