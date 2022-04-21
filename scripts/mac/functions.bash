@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################################################################
-########################################################### Functions ###########################################################
+###################################################### Agent Mac Functions ######################################################
 #################################################################################################################################
 
 # Prints usage
@@ -85,6 +85,34 @@ function check_validation () {
     fi
 }
 
+print_progressbar_status ()
+{
+    local total_tasks=8
+    local percentage=($completed_tasks/$total_tasks)*100
+    local progress_squares=($percentage/25)*100/4
+    local progress=""
+
+    for i in {1...25}; do
+        if [ i -le $progress_squares ]; then
+            progress+="#"
+            continue
+        fi
+
+        progress+=" "
+    done
+
+    # Save cursor position
+    tput sc
+
+    # Move cursor to last line of the screen
+    tput cup $LINES 0;
+
+    echo -n "[$progress] ${percentage%.*}"
+
+    # Move cursor to last saved position
+    tput rc
+}
+
 # Installs JQ
 # Error:
 #   Status Code 2
@@ -108,6 +136,8 @@ function install_jq () {
     echo "Installing JQ..."
     brew update
     brew install jq
+
+    print_progressbar_status
 }
 
 # Gets the app JSON from the agent/local file
@@ -116,19 +146,63 @@ function install_jq () {
 function get_app_json () {
     if [ ! -z "$app_json_file" ]; then
         echo "Using local app JSON file..."
-        echo $app_json_file
         if [ ! -f "$app_json_file" ]; then
             echo "agent.bash (3): the JSON file $app_json_file does not exist"
             exit 3
         fi
+
         app_json=$(cat $app_json_file)
         return
     fi
 
     echo "Getting app JSON from agent..."
+
     app_json=$(curl -LSs $api_url/telemetry-agent/public/agents/configuration/$agent_id)
     if [ $? -ne 0 ]; then
         echo "agent.bash (3): failed to get Logz.io app JSON from agent"
         exit 3
-    fi 
+    fi
+
+    print_progressbar_status
+}
+
+# Builds path to logzio-agent-scripts repo according the app JSON
+# Error:
+#   Status Code 4
+function build_repo_path () {
+    echo "Building path to logzio-agent-scripts repo..."
+    local dir1=$(echo "$APP_JSON" | jq -r ".configuration.name")
+    if [ $? -ne 0 ]; then
+        echo "agent.bash (4): '.configuration.name' key not found in app JSON"
+        exit 4
+    fi
+
+    local dir2=$(echo "$APP_JSON" | jq -r ".configuration.subtypes[0].name")
+    if [ $? -ne 0 ]; then
+        echo "agent.bash (4): '.configuration.subtypes[0].name' key not found in app JSON"
+        exit 4
+    fi
+
+    local dir3=$(echo "$APP_JSON" | jq -r ".configuration.subtypes[0].datasources[0].name")
+    if [ $? -ne 0 ]; then
+        echo "agent.bash (4): '.configuration.subtypes[0].datasources[0].name' key not found in app JSON"
+        exit 4
+    fi
+
+    repo_path="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2/$dir1/$dir2/$dir3"
+    print_progressbar_status
+}
+
+# Gets prerequisites script from logzio-agent-scripts repo
+# Error:
+#   Status Code 5
+function get_prerequisite_script () {
+    echo "Getting prerequisites script..."
+    curl -LSs $repo_path/prerequisites/mac.json >> prerequisites.bash
+    if [ $? -ne 0 ]; then
+        echo "agent.script (5): failed to get prerequisites script file from logzio-agent-scripts repo"
+        exit 5
+    fi
+
+    print_progressbar_status
 }
