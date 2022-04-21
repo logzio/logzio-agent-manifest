@@ -196,9 +196,15 @@ function build_repo_path () {
 # Gets prerequisites script from logzio-agent-scripts repo
 # Error:
 #   Status Code 5
-function get_prerequisite_script () {
+function get_prerequisite_scripts () {
     echo "Getting prerequisites script..."
-    curl -LSs $repo_path/prerequisites/mac.json >> prerequisites.bash
+    curl -LSs $repo_path/prerequisites/mac/prerequisites.bash >> prerequisites.bash
+    if [ $? -ne 0 ]; then
+        echo "agent.script (5): failed to get prerequisites script file from logzio-agent-scripts repo"
+        exit 5
+    fi
+
+    curl -LSs $repo_path/prerequisites/mac/functions.bash >> functions.bash
     if [ $? -ne 0 ]; then
         echo "agent.script (5): failed to get prerequisites script file from logzio-agent-scripts repo"
         exit 5
