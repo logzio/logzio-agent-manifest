@@ -88,6 +88,7 @@ function check_validation () {
 print_progressbar_status ()
 {
     local total_tasks=8
+    let "completed_tasks++"
     local percentage=($completed_tasks/$total_tasks)*100
     local progress_squares=($percentage/25)*100/4
     local progress=""
@@ -197,14 +198,15 @@ function build_repo_path () {
 # Error:
 #   Status Code 5
 function get_prerequisite_scripts () {
-    echo "Getting prerequisites script..."
+    echo "Getting prerequisites scripts..."
+
     curl -LSs $repo_path/prerequisites/mac/prerequisites.bash >> prerequisites.bash
     if [ $? -ne 0 ]; then
         echo "agent.script (5): failed to get prerequisites script file from logzio-agent-scripts repo"
         exit 5
     fi
 
-    curl -LSs $repo_path/prerequisites/mac/functions.bash >> functions.bash
+    curl -LSs $repo_path/prerequisites/mac/functions.bash >> prerequisites_functions.bash
     if [ $? -ne 0 ]; then
         echo "agent.script (5): failed to get prerequisites script file from logzio-agent-scripts repo"
         exit 5
