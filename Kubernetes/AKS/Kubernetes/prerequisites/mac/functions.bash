@@ -24,7 +24,7 @@ function is_kubectl_installed () {
 #   Status Code 2
 function is_kubectl_connected_to_k8s_cluster () {
     kubectl cluster-info
-    if [ $? -ne 0 ]; then,
+    if [ $? -ne 0 ]; then
         print_error "prerequisites (2): Kubectl is not connected to an active Kubernetes cluster"
         print_progress_bar false
         exit 2
