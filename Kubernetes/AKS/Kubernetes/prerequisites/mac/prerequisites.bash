@@ -5,7 +5,7 @@
 #################################################################################################################################
 
 # Load functions
-source ./functions.bash
+source ./prerequisites-functions.bash
 
 # Check if Kubectl is installed
 is_kubectl_installed
