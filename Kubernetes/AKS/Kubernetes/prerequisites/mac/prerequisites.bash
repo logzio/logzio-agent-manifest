@@ -5,7 +5,7 @@
 #################################################################################################################################
 
 # Load functions
-source ./prerequisites_functions.bash
+source ./logzio-temp/prerequisites_functions.bash
 
 # Check if Kubectl is installed
 is_kubectl_installed
