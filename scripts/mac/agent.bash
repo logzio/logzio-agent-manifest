@@ -4,30 +4,47 @@
 ####################################################### Agent Mac Script ########################################################
 #################################################################################################################################
 
-# Load functions
+# Create temp directory
+mkdir -p logzio-temp
+touch logzio-temp/run_post_task
+
+# Get functions scripts and load functions
 source ./functions.bash
+source ./utils_functions.bash
+#curl -LSs https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2/scripts/mac/functions.bash > logzio-temp/agent_functions.bash
+#curl -LSs https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2/scripts/mac/utils_functions.bash > logzio-temp/utils_functions.bash
+#source ./utils_functions.bash
 
 # Get arguments and check validation
 get_arguments "$@"
-check_validation
 
-# Init progress bar
-completed_tasks=0
-print_progressbar_status
+# Print title
+echo -e "Running $(tput setaf 4)Logz$(tput setaf 3).io$(tput setaf 7) Agent\n"
 
-# Prerequisite installations
-echo "Running prerequisite installations..."
-install_jq
+# Run prerequisite installations
+echo -e "prerequisite installations:"
+execute_task "install_homebrew" "installing homebrew"
+execute_task "install_jq" "installing jq"
+echo -e ""
 
 # Get app JSON
-get_app_json
+execute_task "get_app_json" "getting app JSON"
 
 # Build path to logzio-agent-scripts repo
-build_repo_path
+execute_task "build_repo_path" "building path to logzio-agent-scripts repo"
 
-# Get prerequisite script from logzio-agent-scripts repo
-get_prerequisite_script
+# Get prerequisite scripts from logzio-agent-scripts repo
+execute_task "get_prerequisite_scripts" "getting prerequisites scripts"
+
+# Get installer scripts from logzio-agent-scripts repo
+
 
 # Run prerequisites script
-echo "Running prerequisites..."
-source ./prerequisites.bash
+echo -e "\nprerequisites:"
+source ./logzio-temp/prerequisites.bash
+
+#echo -e "\n"
+#read -p "Press anything to continue..."
+
+# Delete 'logzio-temp' directory
+#execute_task "delete_temp_dir" "delete temp dir"
