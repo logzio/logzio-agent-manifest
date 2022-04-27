@@ -6,79 +6,76 @@
 
 # Checks if Kubectl is installed
 # Error:
-#   Status Code 1
+#   Exit Code 1
 function is_kubectl_installed () {
     which kubectl >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        print_error "prerequisites (1): Kubectl is not installed"
-        print_progress_bar false
-        exit 1
+    if [ $? -eq 0 ]; then
+        return
     fi
 
-    print_success "kubectl is already installed"
-    print_progress_bar true
+    echo -e "print_error \"prerequisites (1): Kubectl is not installed\"" > logzio-temp/run_post_task
+    exit 1
 }
 
 # Checks if Kubectl is connected to an active Kubernetes cluster
 # Error:
-#   Status Code 2
+#   Exit Code 2
 function is_kubectl_connected_to_k8s_cluster () {
-    kubectl cluster-info
-    if [ $? -ne 0 ]; then
-        print_error "prerequisites (2): Kubectl is not connected to an active Kubernetes cluster"
-        print_progress_bar false
-        exit 2
+    kubectl cluster-info > logzio-temp/task_result 2>&1
+    if [ $? -eq 0 ]; then
+        return
     fi
 
-    print_success "Kubectl is connected to an active Kubernetes cluster"
-    print_progress_bar true
+    local result=$(cat logzio-temp/task_result)
+    echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
+    echo -e "print_error \"prerequisites (2): Kubectl is not connected to an active Kubernetes cluster\"" >> logzio-temp/run_post_task
+    exit 2
 }
 
 # Checks if Helm is installed
 # Error:
-#   Status Code 3
+#   Exit Code 3
 function is_helm_installed () {
     which helm >/dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        echo "Installing Helm..."
-        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-        if [ $? -ne 0 ]; then
-            print_error "prerequisites (3): failed to install Helm"
-            print_progress_bar false
-            exit 3
-        fi
+    if [ $? -eq 0 ]; then
+        return
     fi
 
-    print_success "Helm is already installed"
-    print_progress_bar true
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash > logzio-temp/task_result 2>&1
+    if [ $? -ne 0 ]; then
+        local result=$(cat logzio-temp/task_result)
+        echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
+        echo -e "print_error \"prerequisites (3): failed to install Helm\"" >> logzio-temp/run_post_task
+        exit 3
+    fi
 }
 
 # Adds Logz.io Helm repo
 # Error:
-#   Status Code 4
+#   Exit Code 4
 function add_logzio_helm_repo () {
-    echo "Adding Logz.io Helm repo..."
-    helm repo add logzio-helm https://logzio.github.io/logzio-helm
-    if [ $? -ne 0 ]; then
-        print_error "prerequisites (4): failed to add Logz.io Helm repo"
-        print_progress_bar false
-        exit 4
+    helm repo add logzio-helm https://logzio.github.io/logzio-helm > logzio-temp/task_result 2>&1
+    if [ $? -eq 0 ]; then
+        return
     fi
 
-    print_progress_bar true
+    local result=$(cat logzio-temp/task_result)
+    echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
+    echo -e "print_error \"prerequisites (4): failed to add Logz.io Helm repo\"" >> logzio-temp/run_post_task
+    exit 4
 }
 
 # Updates Logz.io Helm repo
 # Error:
-#   Status Code 5
+#   Exit Code 5
 function update_logzio_helm_repo () {
-    echo "Updating Logz.io Helm repo..."
-    helm repo update logzio-helm
-    if [ $? -ne 0 ]; then
-        print_error "prerequisites (4): failed to update Logz.io Helm repo"
-        print_progress_bar false
-        exit 5
+    helm repo update logzio-helm > logzio-temp/task_result 2>&1
+    if [ $? -eq 0 ]; then
+        return
     fi
 
-    print_progress_bar true
+    local result=$(cat logzio-temp/task_result)
+    echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
+    echo -e "print_error \"prerequisites (4): failed to update Logz.io Helm repo\"" >> logzio-temp/run_post_task
+    exit 5
 }
