@@ -17,13 +17,17 @@ function get_which_products_were_selected () {
 
         if [ "$type" = "LOG_ANALYTICS" ]; then
             logs_params=$(echo "$telemetry" | jq -r '.params')
-            echo $logs_params
+            echo "$logs_params"
             #echo -e "is_logs_option_selected=true" >> logzio-temp/run_post_task
             #echo -e "logs_params=$(echo \"$telemetry\" | jq -r '.params')" >> logzio-temp/run_post_task
         elif [ "$type" = "METRICS" ]; then
+            metrics_params=$(echo "$telemetry" | jq -r '.params')
+            echo "$metrics_params"
             #echo -e "is_metrics_option_selected=true" >> logzio-temp/run_post_task
             #echo -e "metrics_params=$(echo \"$telemetry\" | jq -r '.params')" >> logzio-temp/run_post_task
         elif [ "$type" = "TRACING" ]; then
+            tracing_params=$(echo "$telemetry" | jq -r '.params')
+            echo "$tracing_params"
             #echo -e "is_tracing_option_selected=true" >> logzio-temp/run_post_task
             #echo -e "tracing_params=$(echo \"$telemetry\" | jq -r '.params')" >> logzio-temp/run_post_task
         fi
