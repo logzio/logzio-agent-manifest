@@ -7,7 +7,7 @@
 # Gets general params (params under datasource)
 function get_general_params () {
     local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json)
-    echo -e "general_params=$(echo -e $general_params)" > logzio-temp/run_post_task
+    echo -e "general_params=$(echo -e \"\"$general_params\"\")" > logzio-temp/run_post_task
     #general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json)
 }
 
