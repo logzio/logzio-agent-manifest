@@ -14,7 +14,7 @@ function is_kubectl_installed () {
     fi
 
     echo -e "print_error \"prerequisites (1): Kubectl is not installed\"" > logzio-temp/run_post_task
-    exit 1
+    return 1
 }
 
 # Checks if Kubectl is connected to an active Kubernetes cluster
@@ -29,7 +29,7 @@ function is_kubectl_connected_to_k8s_cluster () {
     local result=$(cat logzio-temp/task_result)
     echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
     echo -e "print_error \"prerequisites (2): Kubectl is not connected to an active Kubernetes cluster\"" >> logzio-temp/run_post_task
-    exit 2
+    return 2
 }
 
 # Checks if Helm is installed
@@ -46,7 +46,7 @@ function is_helm_installed () {
         local result=$(cat logzio-temp/task_result)
         echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
         echo -e "print_error \"prerequisites (3): failed to install Helm\"" >> logzio-temp/run_post_task
-        exit 3
+        return 3
     fi
 }
 
@@ -62,7 +62,7 @@ function add_logzio_helm_repo () {
     local result=$(cat logzio-temp/task_result)
     echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
     echo -e "print_error \"prerequisites (4): failed to add Logz.io Helm repo\"" >> logzio-temp/run_post_task
-    exit 4
+    return 4
 }
 
 # Updates Logz.io Helm repo
@@ -77,5 +77,5 @@ function update_logzio_helm_repo () {
     local result=$(cat logzio-temp/task_result)
     echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
     echo -e "print_error \"prerequisites (4): failed to update Logz.io Helm repo\"" >> logzio-temp/run_post_task
-    exit 5
+    return 5
 }
