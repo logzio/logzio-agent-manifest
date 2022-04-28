@@ -14,7 +14,7 @@ function get_general_params () {
         return 1
     fi
 
-    echo -e "general_params=\"$general_params\"" > logzio-temp/run_post_task
+    echo -e "general_params=$general_params" > logzio-temp/run_post_task
 }
 
 # Gets which products were selected (logs/metrics/tracing)
