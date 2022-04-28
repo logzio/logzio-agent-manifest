@@ -5,8 +5,16 @@
 #################################################################################################################################
 
 # Gets general params (params under datasource)
+# Error
+#   Exit Code 1
 function get_general_params () {
-    echo -e "general_params=\$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json)" > logzio-temp/run_post_task
+    local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json 2>/dev/null)
+    if [ $? -ne 0 ]; then
+        echo -e "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' key not found in app JSON\"" > logzio-temp/run_post_task
+        return 1
+    fi
+
+    echo -e "general_params=\"$general_params\"" > logzio-temp/run_post_task
 }
 
 # Gets which products were selected (logs/metrics/tracing)
