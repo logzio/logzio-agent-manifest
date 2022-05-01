@@ -23,7 +23,7 @@ fi
 
 # Get metrics/traces environment tag helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "get_enable_metrics_or_traces_helm_set" "getting enable metrics or traces helm set"
+    execute_task "get_environment_tag_helm_set" "getting metrics/traces environment tag helm set"
 fi
 
 # Run logs script
