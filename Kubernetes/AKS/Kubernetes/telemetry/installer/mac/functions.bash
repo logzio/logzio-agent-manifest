@@ -73,6 +73,11 @@ function get_tolerations_helm_sets () {
         echo -e "print_error \"installer.bash (3): isTaint param was not found\"" >> logzio-temp/run_post_task
         return 3
     fi
+
+    local is_taint=$(echo -e "$is_taint_param" | jq -r '.value')
+    if ! $is_taint; then
+        return
+    fi
                     
     local items=$(kubectl get nodes -o json | jq -r '.items')
     local tolerations_sets=""
