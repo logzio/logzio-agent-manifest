@@ -109,3 +109,16 @@ function get_tolerations_helm_sets () {
     done < <(echo -e "$items" | jq -c '.[] | .spec | select(.taints!=null) | .taints[]')
     echo -e "helm_sets+='$tolerations_sets'" > logzio-temp/run_post_task
 }
+
+# Gets enable metrics or traces Helm set
+function get_enable_metrics_or_traces_helm_set () {
+    local helm_set+=" --set metricsOrTraces.enabled=true"
+    echo -e "helm_sets+='$helm_set'"
+}
+
+# Gets metrics/traces environment tag helm set
+function get_environment_tag_helm_set () {
+    local env_tag=$(jq -r '.id' logzio-temp/app.json)
+    local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
+    echo -e "helm_sets+='$helm_set'"
+}
