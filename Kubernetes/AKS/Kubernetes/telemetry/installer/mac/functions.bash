@@ -42,28 +42,6 @@ function get_which_products_were_selected () {
     done < <(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' logzio-temp/app.json)
 }
 
-# Finds the requested parameter of a product in the application json 
-# Inputs: 
-#   params - The product parameters in the application json
-#   requested_name - The parameter name to find
-# Output:
-# If the requested parameter was found, returns the parameter object with the requested_name,
-# otherwise exits with error
-function find_param () {
-    local params="$1"
-    local requested_name="$2"
-    local requested_param=""
-
-    while read -r param; do
-        local name=$(echo -e "$param" | jq -r '.name')
-        if [ "$name" = "$requested_name" ]; then
-            requested_param="$param"
-        fi
-    done < <(echo -e "$params" | jq -c '.')
-
-    echo -e "$requested_param"
-}
-
 # Gets tolerations Helm sets
 # Error:
 #   Exit Code 3
