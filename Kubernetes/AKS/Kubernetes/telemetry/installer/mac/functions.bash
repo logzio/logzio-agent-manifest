@@ -84,7 +84,6 @@ function get_tolerations_helm_sets () {
     local index=0
 
     while read -r taint; do
-        echo -e "$taint"
         local key=$(echo -e "$taint" | jq -r '.key')
         local operator="Exists"
         local effect=$(echo -e "$taint" | jq -r '.effect')
@@ -131,5 +130,4 @@ function get_tolerations_helm_sets () {
         let "index+=1"
     done < <(echo -e "$items" | jq -c '.[] | .spec | select(.taints!=null) | .taints[]')
     echo -e "helm_sets+='$tolerations_sets'" > logzio-temp/run_post_task
-    echo -e "$tolerations_sets"
 }
