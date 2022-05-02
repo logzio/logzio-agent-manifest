@@ -4,7 +4,7 @@
 ################################################# Prerequisites Mac Functions ###################################################
 #################################################################################################################################
 
-# Checks if Kubectl is installed
+# Checks if kubectl is installed
 # Error:
 #   Exit Code 1
 function is_kubectl_installed () {
@@ -13,11 +13,11 @@ function is_kubectl_installed () {
         return
     fi
 
-    echo -e "print_error \"prerequisites (1): Kubectl is not installed\"" > logzio-temp/run_post_task
+    echo -e "print_error \"prerequisites (1): kubectl is not installed\"" > logzio-temp/run
     return 1
 }
 
-# Checks if Kubectl is connected to an active Kubernetes cluster
+# Checks if kubectl is connected to an active Kubernetes cluster
 # Error:
 #   Exit Code 2
 function is_kubectl_connected_to_k8s_cluster () {
@@ -27,8 +27,8 @@ function is_kubectl_connected_to_k8s_cluster () {
     fi
 
     local result=$(cat logzio-temp/task_result)
-    echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
-    echo -e "print_error \"prerequisites (2): Kubectl is not connected to an active Kubernetes cluster\"" >> logzio-temp/run_post_task
+    echo -e "echo -e \"$result\"" > logzio-temp/run
+    echo -e "print_error \"prerequisites (2): kubectl is not connected to an active Kubernetes cluster\"" >> logzio-temp/run
     return 2
 }
 
@@ -44,8 +44,8 @@ function is_helm_installed () {
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash > logzio-temp/task_result 2>&1
     if [ $? -ne 0 ]; then
         local result=$(cat logzio-temp/task_result)
-        echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
-        echo -e "print_error \"prerequisites (3): failed to install Helm\"" >> logzio-temp/run_post_task
+        echo -e "echo -e \"$result\"" > logzio-temp/run
+        echo -e "print_error \"prerequisites (3): failed to install Helm\"" >> logzio-temp/run
         return 3
     fi
 }
@@ -60,8 +60,8 @@ function add_logzio_helm_repo () {
     fi
 
     local result=$(cat logzio-temp/task_result)
-    echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
-    echo -e "print_error \"prerequisites (4): failed to add Logz.io Helm repo\"" >> logzio-temp/run_post_task
+    echo -e "echo -e \"$result\"" > logzio-temp/run
+    echo -e "print_error \"prerequisites (4): failed to add Logz.io Helm repo\"" >> logzio-temp/run
     return 4
 }
 
@@ -75,7 +75,7 @@ function update_logzio_helm_repo () {
     fi
 
     local result=$(cat logzio-temp/task_result)
-    echo -e "echo -e \"$result\"" > logzio-temp/run_post_task
-    echo -e "print_error \"prerequisites (4): failed to update Logz.io Helm repo\"" >> logzio-temp/run_post_task
+    echo -e "echo -e \"$result\"" > logzio-temp/run
+    echo -e "print_error \"prerequisites (4): failed to update Logz.io Helm repo\"" >> logzio-temp/run
     return 5
 }
