@@ -36,6 +36,8 @@ function get_which_products_were_selected () {
         return 2
     fi
 
+    echo -e "$telemetries"
+
     local is_logs_option_selected=false
     local is_metrics_option_selected=false
     local is_traces_option_selected=false
