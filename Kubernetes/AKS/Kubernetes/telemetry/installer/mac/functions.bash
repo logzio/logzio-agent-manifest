@@ -44,8 +44,7 @@ function get_which_products_were_selected () {
 
 
     while read -r telemetry; do
-        echo -e "$telemetry"
-        local type=$(echo "$telemetry" | jq -r 'select(.type != null)')
+        local type=$(echo "$telemetry" | jq -r 'select(.type != null) | .type')
         if [ ! -z "$type" ]; then
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\"" > logzio-temp/run
             return 2
