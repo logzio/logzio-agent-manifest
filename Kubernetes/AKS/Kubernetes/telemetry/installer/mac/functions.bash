@@ -30,7 +30,7 @@ function get_general_params () {
 # Error:
 #   Exit Code 2
 function get_which_products_were_selected () {
-    local telemetries=$(jq -c 'select(.configuration.subtypes[0].datasources[0].telemetries[] != nil)' logzio-temp/app.json)
+    local telemetries=$(jq -c 'select(.configuration.subtypes[0].datasources[0].telemetries[] != nil | .telemetries[])' logzio-temp/app.json)
     if [ -z "$telemetries" ]; then
         echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\"" > logzio-temp/run
         return 2
