@@ -205,7 +205,7 @@ function get_logs_scripts () {
         return 4
     fi
 
-    curl -fsSL $repo_path/telemetry/installer/mac/functions.bash > logzio-temp/installer_functions.bash 2>/dev/null
+    curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > logzio-temp/logs_functions.bash 2>/dev/null
     if [ $? -ne 0 ]; then
         echo -e "print_error \"installer.script (4): failed to get logs functions script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
         return 4
@@ -215,14 +215,14 @@ function get_logs_scripts () {
 # Gets metrics scripts from logzio-agent-scripts repo
 # Error:
 #   Exit Code 5
-function get_logs_scripts () {
-    curl -fsSL $repo_path/telemetry/metrics/mac/logs.bash > logzio-temp/logs.bash 2>/dev/null
+function get_metrics_scripts () {
+    curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > logzio-temp/metrics.bash 2>/dev/null
     if [ $? -ne 0 ]; then
         echo -e "print_error \"installer.script (5): failed to get metrics script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
         return 5
     fi
 
-    curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > logzio-temp/installer_functions.bash 2>/dev/null
+    curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > logzio-temp/metrics_functions.bash 2>/dev/null
     if [ $? -ne 0 ]; then
         echo -e "print_error \"installer.script (5): failed to get metrics functions script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
         return 5
@@ -232,14 +232,14 @@ function get_logs_scripts () {
 # Gets traces scripts from logzio-agent-scripts repo
 # Error:
 #   Exit Code 6
-function get_logs_scripts () {
-    curl -fsSL $repo_path/telemetry/traces/mac/logs.bash > logzio-temp/logs.bash 2>/dev/null
+function get_traces_scripts () {
+    curl -fsSL $repo_path/telemetry/traces/mac/traces.bash > logzio-temp/traces.bash 2>/dev/null
     if [ $? -ne 0 ]; then
         echo -e "print_error \"installer.script (6): failed to get traces script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
         return 6
     fi
 
-    curl -fsSL $repo_path/telemetry/traces/mac/functions.bash > logzio-temp/installer_functions.bash 2>/dev/null
+    curl -fsSL $repo_path/telemetry/traces/mac/functions.bash > logzio-temp/traces_functions.bash 2>/dev/null
     if [ $? -ne 0 ]; then
         echo -e "print_error \"installer.script (6): failed to get traces functions script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
         return 6

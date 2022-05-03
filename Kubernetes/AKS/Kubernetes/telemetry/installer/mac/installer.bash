@@ -32,14 +32,14 @@ if $is_logs_option_selected; then
 fi
 
 # Get metrics scripts
-if $is_metrics_option_selected; then
-    execute_task "get_metrics_scripts" "getting metrics scripts"
-fi
+#if $is_metrics_option_selected; then
+#    execute_task "get_metrics_scripts" "getting metrics scripts"
+#fi
 
 # Get traces scripts
-if $is_traces_option_selected; then
-    execute_task "get_traces_scripts" "getting traces scripts"
-fi
+#if $is_traces_option_selected; then
+#    execute_task "get_traces_scripts" "getting traces scripts"
+#fi
 
 # Run logs script
 if $is_logs_option_selected; then
