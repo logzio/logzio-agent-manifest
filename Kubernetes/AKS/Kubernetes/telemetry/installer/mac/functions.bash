@@ -175,7 +175,7 @@ function build_tolerations_helm_sets () {
 
         let "index++"
     done < <(echo -e "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]')
-    echo -e "helm_sets+='$tolerations_sets'" > logzio-temp/run_post_task
+    echo -e "helm_sets+='$tolerations_sets'" > logzio-temp/run
 }
 
 # Gets enable metrics or traces Helm set
