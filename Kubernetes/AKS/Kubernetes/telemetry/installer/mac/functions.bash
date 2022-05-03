@@ -190,7 +190,7 @@ function build_enable_metrics_or_traces_helm_set () {
 # Output:
 #   helm_sets - Contains all the Helm sets
 function build_environment_tag_helm_set () {
-    local env_tag=$(jq -r '.id' logzio-temp/app.json)
+    local env_tag=$(jq -r '.id' logzio-temp/app.json)   ########### TODO: change the .id to something else
     local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
 }

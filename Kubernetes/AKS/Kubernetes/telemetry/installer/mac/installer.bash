@@ -40,3 +40,9 @@ fi
 if $is_traces_option_selected; then
     execute_task "get_traces_scripts" "getting traces scripts"
 fi
+
+# Run logs script
+if $is_logs_option_selected; then
+    echo -e "\nlogs:"
+    source ./logzio-temp/logs.bash
+fi
