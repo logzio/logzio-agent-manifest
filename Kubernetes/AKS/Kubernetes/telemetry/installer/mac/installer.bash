@@ -16,15 +16,14 @@ execute_task "get_which_products_were_selected" "getting which products were sel
 # Build tolerations helm sets
 execute_task "build_tolerations_helm_sets" "getting tolerations helm sets"
 
-: '
-# Get enable metrics or traces helm set
+# Build enable metrics or traces helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "get_enable_metrics_or_traces_helm_set" "getting enable metrics or traces helm set"
+    execute_task "build_enable_metrics_or_traces_helm_set" "getting enable metrics or traces helm set"
 fi
 
-# Get metrics/traces environment tag helm set
+# Build metrics/traces environment tag helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "get_environment_tag_helm_set" "getting metrics/traces environment tag helm set"
+    execute_task "build_environment_tag_helm_set" "getting metrics/traces environment tag helm set"
 fi
 
 # Get logs scripts
@@ -41,4 +40,3 @@ fi
 if $is_traces_option_selected; then
     execute_task "get_traces_scripts" "getting traces scripts"
 fi
-'
