@@ -10,13 +10,11 @@
 # Error:
 #   Exit Code 1
 function get_general_params () {
-    local is_params_exist=$(jq -r '.configuration.subtypes[0].datasources[0] | has("params")' logzio-temp/app.json)
-    if ! $is_params_exist; then
+    local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json)
+    if [ "$general_params" = null ]; then
         echo -e "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON\"" > logzio-temp/run
         return 1
     fi
-
-    local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json)
     if [ -z $general_params ]; then
         echo -e "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON\"" > logzio-temp/run
         return 1
@@ -36,13 +34,11 @@ function get_general_params () {
 # Error:
 #   Exit Code 2
 function get_which_products_were_selected () {
-    local is_telemetries_exist=$(jq -r '.configuration.subtypes[0].datasources[0] | has("telemetries")' logzio-temp/app.json)
-    if ! $is_telemetries_exist; then
+    local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' logzio-temp/app.json)
+    if [ "$telemetries" = null ]; then
         echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\"" > logzio-temp/run
         return 2
     fi
-
-    local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' logzio-temp/app.json)
     if [ -z "$telemetries" ]; then
         echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\"" > logzio-temp/run
         return 2
@@ -54,25 +50,21 @@ function get_which_products_were_selected () {
     local index=0
 
     while read -r telemetry; do
-        local is_type_exist=$(echo -e "$telemetry" | jq -r 'has("type")')
-        if ! $is_type_exist; then
+        local type=$(echo "$telemetry" | jq -r '.type')
+        if [ "$type" = null ]; then
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\"" > logzio-temp/run
             return 2
         fi
-
-        local type=$(echo "$telemetry" | jq -r '.type')
         if [ ! -z "$type" ]; then
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\"" > logzio-temp/run
             return 2
         fi
 
-        local is_params_exist=$(echo -e "$telemetry" | jq -r 'has("params")')
-        if ! $is_params_exist; then
+        local params=$(echo -e "$telemetry" | jq -r '.params[]')
+        if [ "$params" = null ]; then
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\"" > logzio-temp/run
             return 2
         fi
-
-        local params=$(echo -e "$telemetry" | jq -r '.params[]')
 
         if [ "$type" = "LOG_ANALYTICS" ]; then
             is_logs_option_selected=true
