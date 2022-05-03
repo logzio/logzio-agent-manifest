@@ -15,7 +15,7 @@ function get_general_params () {
         echo -e "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON\"" > logzio-temp/run
         return 1
     fi
-    if [ -z $general_params ]; then
+    if [ -z "$general_params" ]; then
         echo -e "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON\"" > logzio-temp/run
         return 1
     fi
@@ -55,7 +55,7 @@ function get_which_products_were_selected () {
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\"" > logzio-temp/run
             return 2
         fi
-        if [ ! -z "$type" ]; then
+        if [ -z "$type" ]; then
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\"" > logzio-temp/run
             return 2
         fi
