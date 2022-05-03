@@ -7,21 +7,21 @@
 # Build enable logs helm set
 function build_enable_logs_helm_set () {
     local helm_set=" --set logs.enabled=true"
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
+    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
 # Build Logz.io logs listener helm set
 function build_logzio_logs_listener_helm_set () {
     local listener_url=$(jq -r '.listenerUrl' logzio-temp/app.json)
     local helm_set=" --set logzio-fluentd.secrets.logzioListener=$listener_url"
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
+    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
 # Build Logz.io logs token helm set
 function build_logzio_logs_token_helm_set () {
     local shipping_token=$(jq -r '.shippingTokens.LOG_ANALYTICS' logzio-temp/app.json)
     local helm_set=" --set logzio-fluentd.secrets.logzioShippingToken=$shipping_token"
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
+    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
 # Build multiline Helm sets
@@ -91,5 +91,5 @@ function build_multiline_helm_sets () {
     local multiline_helm_sets+=" --set-file configmap.customSources=logzio-temp/sources.conf"
     multiline_helm_sets+=" --set-file configmap.customFilters=logzio-temp/filters.conf"
     multiline_helm_sets+=" --set daemonset.extraExclude=\"$paths\""
-    helm_sets+="'$multiline_helm_sets'"
+    echo -e "helm_sets+='$multiline_helm_sets'" > logzio-temp/run
 }
