@@ -11,6 +11,7 @@
 #   Exit Code 1
 function get_general_params () {
     local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json 2>/dev/null)
+    echo -e "$general_params"
     if [ $? -ne 0 ]; then
         echo -e "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' was not found in application JSON\"" > logzio-temp/run
         return 1
