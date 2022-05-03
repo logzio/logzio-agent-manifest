@@ -46,3 +46,9 @@ if $is_logs_option_selected; then
     echo -e "\nlogs:"
     source ./logzio-temp/logs.bash
 fi
+
+# Run metrics script
+if $is_metrics_option_selected; then
+    echo -e "\nmetrics:"
+    source ./logzio-temp/metrics.bash
+fi
