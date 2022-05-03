@@ -116,10 +116,6 @@ function build_tolerations_helm_sets () {
         echo -e "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\"" > logzio-temp/run
         return 3
     fi
-    if [ -z "$items" ]; then
-        echo -e "print_error \"installer.bash (3): '.items[]' is empty in kubectl get nodes JSON\"" > logzio-temp/run
-        return 3
-    fi
 
     local tolerations_sets=""
     local index=0
