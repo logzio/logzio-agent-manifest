@@ -36,7 +36,7 @@ function get_general_params () {
 # Error:
 #   Exit Code 2
 function get_which_products_were_selected () {
-    local is_telemetries_exist=$(jq -c '.configuration.subtypes[0].datasources[0] | has("telemetries")' logzio-temp/app.json)
+    local is_telemetries_exist=$(jq -r '.configuration.subtypes[0].datasources[0] | has("telemetries")' logzio-temp/app.json)
     if ! $is_telemetries_exist; then
         echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\"" > logzio-temp/run
         return 2
@@ -57,6 +57,7 @@ function get_which_products_were_selected () {
         local is_type_exist=$(echo -e "$telemetry" | jq -r 'has("type")')
         if ! $is_type_exist; then
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\"" > logzio-temp/run
+            return 2
         fi
 
         local type=$(echo "$telemetry" | jq -r '.type')
@@ -68,6 +69,7 @@ function get_which_products_were_selected () {
         local is_params_exist=$(echo -e "$telemetry" | jq -r 'has("params")')
         if ! $is_params_exist; then
             echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\"" > logzio-temp/run
+            return 2
         fi
 
         local params=$(echo -e "$telemetry" | jq -r '.params[]')
@@ -103,8 +105,19 @@ function build_tolerations_helm_sets () {
         return 3
     fi
 
-    local is_taint=$(echo -e "$is_taint_param" | jq -r 'select(.value != null)')
-    if ! $is_taint; then
+    local is_value_exist=$(echo -e "$is_taint_param" | jq -r 'has("value)')
+    if ! $is_value_exist; then
+        echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON\"" > logzio-temp/run
+        return 3
+    fi
+
+    local is_taint_value=$(echo -e "$is_taint_param" | jq -r '.value')
+    if [ -z $is_taint_value ]; then
+        echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON\"" > logzio-temp/run
+        return 3
+    fi
+
+    if ! $is_taint_value; then
         return
     fi
                     
