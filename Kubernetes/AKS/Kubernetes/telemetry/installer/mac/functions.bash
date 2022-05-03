@@ -97,13 +97,11 @@ function build_tolerations_helm_sets () {
         return 3
     fi
 
-    local is_value_exist=$(echo -e "$is_taint_param" | jq -r 'has("value)')
-    if ! $is_value_exist; then
+    local is_taint_value=$(echo -e "$is_taint_param" | jq -r '.value')
+    if [ "$is_taint_value" = null ]; then
         echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON\"" > logzio-temp/run
         return 3
     fi
-
-    local is_taint_value=$(echo -e "$is_taint_param" | jq -r '.value')
     if [ -z $is_taint_value ]; then
         echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON\"" > logzio-temp/run
         return 3
@@ -114,16 +112,34 @@ function build_tolerations_helm_sets () {
     fi
                     
     local items=$(kubectl get nodes -o json | jq -r '.items')
+    if [ "$items" = null ]; then
+        echo -e "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\"" > logzio-temp/run
+        return 3
+    fi
+    if [ -z "$items" ]; then
+        echo -e "print_error \"installer.bash (3): '.items[]' is empty in kubectl get nodes JSON\"" > logzio-temp/run
+        return 3
+    fi
+
     local tolerations_sets=""
     local index=0
 
     while read -r taint; do
         local key=$(echo -e "$taint" | jq -r '.key')
-        local operator="Exists"
-        local effect=$(echo -e "$taint" | jq -r '.effect')
+        if [ "$key" = null ]; then
+            echo -e "print_error \"installer.bash (3): '.items[{item}].key' was not found in kubectl get nodes JSON\"" > logzio-temp/run
+            return 3
+        fi
 
-        if $(echo "$taint" | jq -r 'has("value")'); then
-            local value=$(echo -e "$taint" | jq -r '.value')
+        local effect=$(echo -e "$taint" | jq -r '.effect')
+        if [ "$effect" = null ]; then
+            echo -e "print_error \"installer.bash (3): '.items[{item}].effect' was not found in kubectl get nodes JSON\"" > logzio-temp/run
+            return 3
+        fi
+
+        local operator="Exists"
+        local value=$(echo -e "$taint" | jq -r '.value')
+        if [ "$value" != null ]; then
             operator="Equal"
 
             if $is_logs_option_selected; then
@@ -162,7 +178,7 @@ function build_tolerations_helm_sets () {
         fi
 
         let "index++"
-    done < <(echo -e "$items" | jq -c '.[] | .spec | select(.taints!=null) | .taints[]')
+    done < <(echo -e "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]')
     echo -e "helm_sets+='$tolerations_sets'" > logzio-temp/run_post_task
 }
 
