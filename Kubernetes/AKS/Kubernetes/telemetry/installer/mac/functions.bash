@@ -102,7 +102,7 @@ function build_tolerations_helm_sets () {
         echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON\"" > logzio-temp/run
         return 3
     fi
-    if [ -z $is_taint_value ]; then
+    if [ -z "$is_taint_value" ]; then
         echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON\"" > logzio-temp/run
         return 3
     fi
@@ -190,7 +190,7 @@ function build_enable_metrics_or_traces_helm_set () {
 # Output:
 #   helm_sets - Contains all the Helm sets
 function build_environment_tag_helm_set () {
-    local env_tag=$(jq -r '.id' logzio-temp/app.json)   ########### TODO: change the .id to something else
+    local env_tag=$(jq -r '.id' logzio-temp/app.json)       ######################## Change the id to something else?
     local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
 }
