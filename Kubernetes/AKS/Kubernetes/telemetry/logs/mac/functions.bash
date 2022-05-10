@@ -4,7 +4,7 @@
 ##################################################### Logs Mac Functions ########################################################
 #################################################################################################################################
 
-# Build enable logs Helm set
+# Builds enable logs Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 function build_enable_logs_helm_set () {
@@ -12,7 +12,7 @@ function build_enable_logs_helm_set () {
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
-# Build Logz.io logs listener URL Helm set
+# Builds Logz.io logs listener URL Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 # Error:
@@ -32,7 +32,7 @@ function build_logzio_logs_listener_url_helm_set () {
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
-# Build Logz.io logs token Helm set
+# Builds Logz.io logs token Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 # Error:
@@ -52,7 +52,7 @@ function build_logzio_logs_token_helm_set () {
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
-# Build multiline Helm sets
+# Builds multiline Helm sets
 # Output:
 #   helm_sets - Contains all the Helm sets
 # Error:
