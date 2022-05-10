@@ -183,7 +183,7 @@ function build_tolerations_helm_sets () {
 #   helm_sets - Contains all the Helm sets
 function build_enable_metrics_or_traces_helm_set () {
     local helm_set+=" --set metricsOrTraces.enabled=true"
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
+    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
 # Builds metrics/traces environment tag helm set
@@ -192,7 +192,7 @@ function build_enable_metrics_or_traces_helm_set () {
 function build_environment_tag_helm_set () {
     local env_tag=$(jq -r '.id' logzio-temp/app.json)       ######################## Change the id to something else?
     local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
+    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
 # Gets logs scripts from logzio-agent-scripts repo
@@ -201,13 +201,13 @@ function build_environment_tag_helm_set () {
 function get_logs_scripts () {
     curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > logzio-temp/logs.bash 2>/dev/null
     if [ $? -ne 0 ]; then
-        echo -e "print_error \"installer.script (4): failed to get logs script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
+        echo -e "print_error \"installer.script (4): failed to get logs script file from logzio-agent-scripts repo\"" > logzio-temp/run
         return 4
     fi
 
     curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > logzio-temp/logs_functions.bash 2>/dev/null
     if [ $? -ne 0 ]; then
-        echo -e "print_error \"installer.script (4): failed to get logs functions script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
+        echo -e "print_error \"installer.script (4): failed to get logs functions script file from logzio-agent-scripts repo\"" > logzio-temp/run
         return 4
     fi
 }
@@ -218,13 +218,13 @@ function get_logs_scripts () {
 function get_metrics_scripts () {
     curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > logzio-temp/metrics.bash 2>/dev/null
     if [ $? -ne 0 ]; then
-        echo -e "print_error \"installer.script (5): failed to get metrics script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
+        echo -e "print_error \"installer.script (5): failed to get metrics script file from logzio-agent-scripts repo\"" > logzio-temp/run
         return 5
     fi
 
     curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > logzio-temp/metrics_functions.bash 2>/dev/null
     if [ $? -ne 0 ]; then
-        echo -e "print_error \"installer.script (5): failed to get metrics functions script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
+        echo -e "print_error \"installer.script (5): failed to get metrics functions script file from logzio-agent-scripts repo\"" > logzio-temp/run
         return 5
     fi
 }
@@ -235,13 +235,26 @@ function get_metrics_scripts () {
 function get_traces_scripts () {
     curl -fsSL $repo_path/telemetry/traces/mac/traces.bash > logzio-temp/traces.bash 2>/dev/null
     if [ $? -ne 0 ]; then
-        echo -e "print_error \"installer.script (6): failed to get traces script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
+        echo -e "print_error \"installer.script (6): failed to get traces script file from logzio-agent-scripts repo\"" > logzio-temp/run
         return 6
     fi
 
     curl -fsSL $repo_path/telemetry/traces/mac/functions.bash > logzio-temp/traces_functions.bash 2>/dev/null
     if [ $? -ne 0 ]; then
-        echo -e "print_error \"installer.script (6): failed to get traces functions script file from logzio-agent-scripts repo\"" > logzio-temp/run_post_task
+        echo -e "print_error \"installer.script (6): failed to get traces functions script file from logzio-agent-scripts repo\"" > logzio-temp/run
         return 6
+    fi
+}
+
+# Runs Helm install
+# Error:
+#   Exit Code 7
+function run_helm_install () {
+    helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring > logzio-temp/task_result 2>&1
+    if [ $? -ne 0 ]; then
+        local result=$(cat logzio-temp/task_result)
+        echo -e "echo -e \"$result\""  > logzio-temp/run
+        echo -e "print_error \"installer.bash (7): failed to run Helm install\"" >> logzio-temp/run
+        return 7
     fi
 }

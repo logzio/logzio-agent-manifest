@@ -58,3 +58,7 @@ if $is_traces_option_selected; then
     echo -e "\ntraces:"
     source ./logzio-temp/traces.bash
 fi
+
+# Run Helm install
+echo -e "\ninstaller:"
+execute_task "run_helm_install" "running Helm install"
