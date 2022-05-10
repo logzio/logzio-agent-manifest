@@ -37,9 +37,9 @@ if $is_metrics_option_selected; then
 fi
 
 # Get traces scripts
-#if $is_traces_option_selected; then
-#    execute_task "get_traces_scripts" "getting traces scripts"
-#fi
+if $is_traces_option_selected; then
+    execute_task "get_traces_scripts" "getting traces scripts"
+fi
 
 # Run logs script
 if $is_logs_option_selected; then
@@ -51,4 +51,10 @@ fi
 if $is_metrics_option_selected; then
     echo -e "\nmetrics:"
     source ./logzio-temp/metrics.bash
+fi
+
+# Run traces script
+if $is_traces_option_selected; then
+    echo -e "\nmetrics:"
+    source ./logzio-temp/traces.bash
 fi
