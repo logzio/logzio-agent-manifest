@@ -62,3 +62,6 @@ fi
 # Run Helm install
 echo -e "\ninstaller:"
 execute_task "run_helm_install" "running Helm install"
+
+print_success "Helm charts were installed successfully"
+print_info "run the following command to check if all pods are up and running: 'kubectl -n monitoring get pods'"
