@@ -4,7 +4,7 @@
 #################################################### Metrics Mac Functions ######################################################
 #################################################################################################################################
 
-# Build enable metrics Helm set
+# Builds enable metrics Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 function build_enable_metrics_helm_set () {
@@ -12,7 +12,7 @@ function build_enable_metrics_helm_set () {
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
 }
 
-# Build Logz.io metrics listener URL Helm set
+# Builds Logz.io metrics listener URL Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 # Error:
@@ -33,7 +33,7 @@ function build_logzio_metrics_listener_url_helm_set () {
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
-# Build Logz.io metrics token Helm set
+# Builds Logz.io metrics token Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 # Error:
@@ -78,7 +78,7 @@ function get_is_kubernetes_runs_on_windows_os () {
     echo -e "is_windows=$is_windows_value" > logzio-temp/run
 }
 
-# Build Windows Node username and password Helms sets (if Kubernetes runs on Windows OS)
+# Builds Windows Node username and password Helms sets (if Kubernetes runs on Windows OS)
 # Output:
 #   helm_sets - Contains all the Helm sets
 function build_windows_node_username_and_password_helm_sets () {
