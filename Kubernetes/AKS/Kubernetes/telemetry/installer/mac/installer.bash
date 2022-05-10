@@ -55,6 +55,6 @@ fi
 
 # Run traces script
 if $is_traces_option_selected; then
-    echo -e "\nmetrics:"
+    echo -e "\ntraces:"
     source ./logzio-temp/traces.bash
 fi
