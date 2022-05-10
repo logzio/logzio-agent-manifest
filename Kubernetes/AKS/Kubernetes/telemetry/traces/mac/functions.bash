@@ -9,7 +9,7 @@
 #   helm_sets - Contains all the Helm sets
 function build_enable_traces_helm_set () {
     local helm_set=" --set logzio-k8s-telemetry.traces.enabled=true"
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run_post_task
+    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
 # Builds Logz.io traces token Helm set
