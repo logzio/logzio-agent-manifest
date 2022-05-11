@@ -311,7 +311,7 @@ function get_traces_scripts () {
 #   Exit Code 8
 function run_helm_install () {
     echo -e "[INFO] Running Helm install ..." >> logzio_agent.log
-    echo -e "[INFO] helm_sets = $helm_Sets" >> logzio_agent.log
+    echo -e "[INFO] helm_sets = $helm_sets" >> logzio_agent.log
 
     helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring > logzio-temp/task_result 2>&1
     if [ $? -ne 0 ]; then
