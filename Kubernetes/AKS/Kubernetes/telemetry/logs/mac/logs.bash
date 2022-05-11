@@ -5,6 +5,7 @@
 #################################################################################################################################
 
 # Load functions
+echo -e "[INFO] Loading logs functions ..." >> logzio_agent.log
 source ./logzio-temp/logs_functions.bash
 
 # Build enable logs Helm set
