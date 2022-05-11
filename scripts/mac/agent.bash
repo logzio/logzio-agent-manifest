@@ -21,7 +21,7 @@ function get_agent_functions_scripts () {
     fi
 
     echo -e "[INFO] Getting utils functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
-    curl -fsSL $repo_url/scripts/mac/functions.bash > logzio-temp/utils_functions.bash 2>logzio-temp/task_result
+    curl -fsSL $repo_url/scripts/mac/utils_functions.bash > logzio-temp/utils_functions.bash 2>logzio-temp/task_result
     if [ $? -ne 0 ]; then
         cat logzio-temp/task_result >> logzio_agent.log
         echo -e "[ERROR] agent.script (1): failed to get utils functions script file from logzio-agent-scripts repo" >> logzio_agent.log
