@@ -83,12 +83,13 @@ function execute_task () {
 
     wait $pid
     local status=$?
+    local run=$(cat logzio-temp/run)
 
     if [ $status -ne 0 ]; then
         echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
         
-        eval ./logzio-temp/run
+        eval "$run"
         delete_temp_dir
         exit $status
     fi
@@ -96,6 +97,6 @@ function execute_task () {
     echo -ne "\r[ \033[1;32m✔\033[0;37m ] \033[1;32m$desc ...\033[0;37m\n"
     tput cnorm -- normal
 
-    eval ./logzio-temp/run
+    eval "$run"
     > logzio-temp/run
 }
