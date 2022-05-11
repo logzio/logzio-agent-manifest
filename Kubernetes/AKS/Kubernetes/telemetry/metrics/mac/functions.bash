@@ -96,9 +96,9 @@ function get_is_k8s_runs_on_windows_os () {
 function build_windows_node_username_and_password_helm_sets () {
     echo -e "[INFO] Building Windows Node username and password Helm sets ..." >> logzio_agent.log
 
-    echo -e "read -p \"\033[0;35mPlease enter your Windows Node username:\033[0;37m \" username" >> logzio-temp/run
-    echo -e "read -p \"\033[0;35mPlease enter your Windows Node password:\033[0;37m \" password" >> logzio-temp/run
-    echo -e "windows_sets=\" --set logzio-k8s-telemetry.secrets.windowsNodeUsername=$username\"" >> logzio-temp/run
+    echo -e "read -p \"\033[0;35mPlease enter your Windows Node username:\033[0;37m \" username </dev/tty" >> logzio-temp/run
+    echo -e "read -p \"\033[0;35mPlease enter your Windows Node password:\033[0;37m \" password </dev/tty" >> logzio-temp/run
+    echo -e "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodeUsername=$username\"" >> logzio-temp/run
     echo -e "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodePassword=$password\"" >> logzio-temp/run
     echo -e "echo -e \"[INFO] windows_sets = $windows_sets\" >> logzio_agent.log" >> logzio-temp/run
     echo -e "helm_sets+='$windows_sets'" >> logzio-temp/run
