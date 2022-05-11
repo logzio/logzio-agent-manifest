@@ -5,6 +5,7 @@
 #################################################################################################################################
 
 # Load functions
+echo -e "[INFO] Loading prerequisites functions script ..." >> logzio_agent.log
 source ./logzio-temp/prerequisites_functions.bash
 
 # Check if kubectl is installed
