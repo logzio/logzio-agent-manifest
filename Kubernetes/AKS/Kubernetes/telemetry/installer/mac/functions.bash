@@ -11,6 +11,7 @@
 #   Exit Code 1
 function get_general_params () {
     echo -e "[INFO] Getting general params ..." >> logzio_agent.log
+
     local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json)
     if [ "$general_params" = null ]; then
         echo -e "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON\"" > logzio-temp/run
@@ -37,6 +38,7 @@ function get_general_params () {
 #   Exit Code 2
 function get_which_products_were_selected () {
     echo -e "[INFO] Getting which products were selected ..." >> logzio_agent.log
+
     local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' logzio-temp/app.json)
     if [ "$telemetries" = null ]; then
         echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\"" > logzio-temp/run
@@ -104,6 +106,7 @@ function get_which_products_were_selected () {
 #   Exit Code 3
 function build_tolerations_helm_sets () {
     echo -e "[INFO] Building tolerations Helm set ..." >> logzio_agent.log
+
     local is_taint_param=$(find_param "$general_params" "isTaint")
     if [ -z "$is_taint_param" ]; then
         echo -e "print_error \"installer.bash (3): isTaint param was not found\"" > logzio-temp/run
@@ -199,6 +202,7 @@ function build_tolerations_helm_sets () {
 #   helm_sets - Contains all the Helm sets
 function build_enable_metrics_or_traces_helm_set () {
     echo -e "[INFO] Building enable metrics or traces Helm set ..." >> logzio_agent.log
+
     local helm_set+=" --set metricsOrTraces.enabled=true"
     echo -e "[INFO] helm_set = $helm_set" >> logzio_agent.log
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
@@ -207,9 +211,21 @@ function build_enable_metrics_or_traces_helm_set () {
 # Builds metrics/traces environment tag helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
+# Error:
+#   Exit Code 4
 function build_environment_tag_helm_set () {
     echo -e "[INFO] Building environment tag Helm set ..." >> logzio_agent.log
+
     local env_tag=$(jq -r '.id' logzio-temp/app.json)       ######################## Change the id to something else?
+    if [ "$env_tag" = null ]; then
+        echo -e "print_error \"installer.bash (4): '.id' was not found in application JSON\"" > logzio-temp/run
+        return 4
+    fi
+    if [ -z "$env_tag" ]; then
+        echo -e "print_error \"installer.bash (4): '.id' is empty in application JSON\"" > logzio-temp/run
+        return 4
+    fi
+
     local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
     echo -e "[INFO] helm_set = $helm_set" >> logzio_agent.log
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
@@ -217,7 +233,7 @@ function build_environment_tag_helm_set () {
 
 # Gets logs scripts from logzio-agent-scripts repo
 # Error:
-#   Exit Code 4
+#   Exit Code 5
 function get_logs_scripts () {
     echo -e "[INFO] Getting logs script file from logzio-agent-scripts repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > logzio-temp/logs.bash 2>logzio-temp/task_result
@@ -225,8 +241,8 @@ function get_logs_scripts () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (4): failed to get logs script file from logzio-agent-scripts repo\"" >> logzio-temp/run
-        return 4
+        echo -e "print_error \"installer.script (5): failed to get logs script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        return 5
     fi
 
     echo -e "[INFO] Getting logs functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
@@ -235,14 +251,14 @@ function get_logs_scripts () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (4): failed to get logs functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
-        return 4
+        echo -e "print_error \"installer.script (5): failed to get logs functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        return 5
     fi
 }
 
 # Gets metrics scripts from logzio-agent-scripts repo
 # Error:
-#   Exit Code 5
+#   Exit Code 6
 function get_metrics_scripts () {
     echo -e "[INFO] Getting metrics script file from logzio-agent-scripts repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > logzio-temp/metrics.bash 2>logzio-temp/task_result
@@ -250,8 +266,8 @@ function get_metrics_scripts () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get metrics script file from logzio-agent-scripts repo\"" >> logzio-temp/run
-        return 5
+        echo -e "print_error \"installer.script (6): failed to get metrics script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        return 6
     fi
 
     echo -e "[INFO] Getting metrics functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
@@ -260,14 +276,14 @@ function get_metrics_scripts () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get metrics functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
-        return 5
+        echo -e "print_error \"installer.script (6): failed to get metrics functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        return 6
     fi
 }
 
 # Gets traces scripts from logzio-agent-scripts repo
 # Error:
-#   Exit Code 6
+#   Exit Code 7
 function get_traces_scripts () {
     echo -e "[INFO] Getting traces script file from logzio-agent-scripts repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/traces/mac/traces.bash > logzio-temp/traces.bash 2>logzio-temp/task_result
@@ -275,8 +291,8 @@ function get_traces_scripts () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get traces script file from logzio-agent-scripts repo\"" >> logzio-temp/run
-        return 6
+        echo -e "print_error \"installer.script (7): failed to get traces script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        return 7
     fi
 
     echo -e "[INFO] Getting traces functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
@@ -285,22 +301,24 @@ function get_traces_scripts () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get traces functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
-        return 6
+        echo -e "print_error \"installer.script (7): failed to get traces functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        return 7
     fi
 }
 
 # Runs Helm install
 # Error:
-#   Exit Code 7
+#   Exit Code 8
 function run_helm_install () {
     echo -e "[INFO] Running Helm install ..." >> logzio_agent.log
+    echo -e "[INFO] helm_sets = $helm_Sets" >> logzio_agent.log
+
     helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring > logzio-temp/task_result 2>&1
     if [ $? -ne 0 ]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.bash (7): failed to run Helm install\"" >> logzio-temp/run
-        return 7
+        echo -e "print_error \"installer.bash (8): failed to run Helm install\"" >> logzio-temp/run
+        return 8
     fi
 }
