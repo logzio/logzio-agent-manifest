@@ -88,7 +88,7 @@ function execute_task () {
         echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
         
-        source ./logzio-temp/run
+        eval ./logzio-temp/run
         delete_temp_dir
         exit $status
     fi
@@ -96,6 +96,6 @@ function execute_task () {
     echo -ne "\r[ \033[1;32m✔\033[0;37m ] \033[1;32m$desc ...\033[0;37m\n"
     tput cnorm -- normal
 
-    source ./logzio-temp/run
+    eval ./logzio-temp/run
     > logzio-temp/run
 }
