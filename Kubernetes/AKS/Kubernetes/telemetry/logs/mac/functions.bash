@@ -135,15 +135,15 @@ function build_multiline_helm_sets () {
 
     paths=${paths:1}
 
-    local multiline_helm_sets+=" --set-file configmap.customSources=logzio-temp/sources.conf"
-    multiline_helm_sets+=" --set-file configmap.customFilters=logzio-temp/filters.conf"
-    multiline_helm_sets+=" --set daemonset.extraExclude=\"$paths\""
+    local multiline_sets+=" --set-file configmap.customSources=logzio-temp/sources.conf"
+    multiline_sets+=" --set-file configmap.customFilters=logzio-temp/filters.conf"
+    multiline_sets+=" --set daemonset.extraExclude=\"$paths\""
 
     echo -e "[INFO] sources.conf:" >> logzio_agent.log
     cat logzio-temp/sources.conf >> logzio_agent.log
     echo -e "[INFO] filters.conf:" >> logzio_agent.log
     cat logzio-temp/filters.conf >> logzio_agent.log
-    echo -e "[INFO] multiline_helm_sets = $multiline_helm_sets" >> logzio_agent.log
+    echo -e "[INFO] multiline_sets = $multiline_sets" >> logzio_agent.log
 
-    echo -e "helm_sets+='$multiline_helm_sets'" > logzio-temp/run
+    echo -e "helm_sets+='$multiline_sets'" > logzio-temp/run
 }
