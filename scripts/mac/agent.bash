@@ -40,6 +40,7 @@ repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2"
 # Create temp directory with run file
 mkdir -p logzio-temp
 touch logzio-temp/run
+chmod +x logzio-temp/run
 
 # Get agent functions scripts
 get_agent_functions_scripts
