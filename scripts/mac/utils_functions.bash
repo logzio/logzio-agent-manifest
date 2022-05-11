@@ -6,50 +6,70 @@
 
 # Prints error message in red
 # Input:
-#   Message text
+#   message - Message text
+# Output:
+#   The message
 function print_error () {
     local message="$1"
-
-    tput setaf 1
-    echo -e "$message"
-    tput setaf 7
+    echo -e "[ERROR] $message" >> logzio_agent.log
+    echo -e "\033[0;31m$message\033[0;37m"
 }
 
 # Prints success message in green
 # Input:
-#   Message text
+#   message - Message text
+# Output:
+#   The message
 function print_success () {
     local message="$1"
-
-    tput setaf 2
-    echo -e "$message"
-    tput setaf 7
+    echo -e "\033[0;32m$message\033[0;37m"
 }
 
+# Deletes the temp directory
 function delete_temp_dir () {
     rm -R logzio-temp
 }
 
+# Finds the requested parameter in params 
+# Inputs: 
+#   params - The parameters in the application json
+#   requested_name - The parameter name to find
+# Output:
+#   The requested parameter if requested_name was found, empty otherwise.
+function find_param () {
+    local params="$1"
+    local requested_name="$2"
+    local requested_param=""
+
+    while read -r param; do
+        local name=$(echo -e "$param" | jq -r '.name')
+        if [ "$name" = "$requested_name" ]; then
+            requested_param="$param"
+        fi
+    done < <(echo -e "$params" | jq -c '.')
+
+    echo -e "$requested_param"
+}
+
 # Executes command with progress indicator
 # Input:
-#   Command to execute
-#   Step description
+#   command - Command to execute
+#   desc - Task description
 # Error:
 #   Exit Code according the executed command
 function execute_task () {
     local command="$1"
-    local step="$2"
+    local desc="$2"
     local frame=("-" "\\" "|" "/")
     local frame_interval=0.25
 
     tput civis -- invisible
     
-    #$command > logzio-temp/result &
     $command &
     local pid=$!
 
     while true; do
-        echo -ne "\r[   ] $step ..."
+        echo -ne "\r[   ] $desc ..."
 
         for i in "${!frame[@]}"; do
             echo -ne "\r[ ${frame[i]} ]"
@@ -63,20 +83,19 @@ function execute_task () {
 
     wait $pid
     local status=$?
-    local result=$(cat logzio-temp/run_post_task)
 
     if [ $status -ne 0 ]; then
-        echo -ne "\r[ $(tput setaf 1)✗$(tput setaf 7) ] $step\n"
-        eval "$result"
-        #delete_temp_dir
-
+        echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
+        
+        source ./logzio-temp/run
+        delete_temp_dir
         exit $status
     fi
 
-    echo -ne "\r[ $(tput setaf 2)✔$(tput setaf 7) ] $step\n"
-    eval "$result"
-    #> logzio-temp/run_post_task
-
+    echo -ne "\r[ \033[1;32m✔\033[0;37m ] \033[1;32m$desc ...\033[0;37m\n"
     tput cnorm -- normal
+
+    source ./logzio-temp/run
+    > logzio-temp/run
 }
