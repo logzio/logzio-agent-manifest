@@ -44,18 +44,21 @@ fi
 
 # Run logs script
 if $is_logs_option_selected; then
+    echo -e "[INFO] Running logs script ..." >> logzio_agent.log
     echo -e "\nlogs:"
     source ./logzio-temp/logs.bash
 fi
 
 # Run metrics script
 if $is_metrics_option_selected; then
+    echo -e "[INFO] Running metrics script ..." >> logzio_agent.log
     echo -e "\nmetrics:"
     source ./logzio-temp/metrics.bash
 fi
 
 # Run traces script
 if $is_traces_option_selected; then
+    echo -e "[INFO] Running traces script ..." >> logzio_agent.log
     echo -e "\ntraces:"
     source ./logzio-temp/traces.bash
 fi
