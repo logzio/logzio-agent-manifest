@@ -5,6 +5,7 @@
 #################################################################################################################################
 
 # Load functions
+echo -e "[INFO] Loading installer functions ..." >> logzio_agent.log
 source ./logzio-temp/installer_functions.bash
 
 # Get general params
@@ -62,6 +63,3 @@ fi
 # Run Helm install
 echo -e "\ninstaller:"
 execute_task "run_helm_install" "running Helm install"
-
-print_success "\nHelm charts were installed successfully"
-print_info "run the following command to check if all pods are up and running: 'kubectl -n monitoring get pods'"
