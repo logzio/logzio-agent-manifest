@@ -58,7 +58,7 @@ function is_k8s_cluster_connected_to_logzio () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to create logzio connection test pod\"" >> logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to create logzio-connection-test pod\"" >> logzio-temp/run
         return 3
     fi
 
