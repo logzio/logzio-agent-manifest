@@ -198,9 +198,9 @@ function get_app_json () {
     echo -e "$app_json" > logzio-temp/app.json
 }
 
-# Builds path to logzio-agent-scripts repo according the app JSON
+# Builds path to logzio-agent-manifest repo according the app JSON
 # Output:
-#   repo_path - Path to logzio-agent-scripts repo according the app JSON
+#   repo_path - Path to logzio-agent-manifest repo according the app JSON
 # Error:
 #   Exit Code 5
 function build_repo_path () {
@@ -241,52 +241,52 @@ function build_repo_path () {
     echo -e "repo_path=\"$repo_path\"" > logzio-temp/run
 }
 
-# Gets prerequisites scripts from logzio-agent-scripts repo to logzio-temp directory
+# Gets prerequisites scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 6
 function get_prerequisite_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/prerequisites/mac/prerequisites.bash > logzio-temp/prerequisites.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (6): failed to get prerequisites script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"agent.bash (6): failed to get prerequisites script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 6
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/prerequisites/mac/functions.bash > logzio-temp/prerequisites_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (6): failed to get prerequisites functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"agent.bash (6): failed to get prerequisites functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 6
     fi
 }
 
-# Gets installer scripts from logzio-agent-scripts repo to logzio-temp directory
+# Gets installer scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 7
 function get_installer_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/installer/mac/installer.bash > logzio-temp/installer.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (7): failed to get installer script file from logzio-agent-scripts repo\"" > logzio-temp/run
+        echo -e "print_error \"agent.bash (7): failed to get installer script file from logzio-agent-manifest repo\"" > logzio-temp/run
         return 7
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/installer/mac/functions.bash > logzio-temp/installer_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (7): failed to get installer functions script file from logzio-agent-scripts repo\"" > logzio-temp/run
+        echo -e "print_error \"agent.bash (7): failed to get installer functions script file from logzio-agent-manifest repo\"" > logzio-temp/run
         return 7
     fi
 }

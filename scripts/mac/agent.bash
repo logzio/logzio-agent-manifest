@@ -8,26 +8,26 @@
 # Error:
 #   Exit Code 1
 function get_agent_functions_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting agent functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting agent functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_url/scripts/mac/functions.bash > logzio-temp/agent_functions.bash 2>logzio-temp/task_result
     if [ $? -ne 0 ]; then
         cat logzio-temp/task_result >> logzio_agent.log
-        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get agnet functions script file from logzio-agent-scripts repo" >> logzio_agent.log
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get agnet functions script file from logzio-agent-manifest repo" >> logzio_agent.log
 
         cat logzio-temp/task_result
-        echo -e "\033[0;31magent.script (1): failed to get agnet functions script file from logzio-agent-scripts repo\033[0;37m"
+        echo -e "\033[0;31magent.script (1): failed to get agnet functions script file from logzio-agent-manifest repo\033[0;37m"
         rm -R logzio-temp
         exit 1
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting utils functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting utils functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_url/scripts/mac/utils_functions.bash > logzio-temp/utils_functions.bash 2>logzio-temp/task_result
     if [ $? -ne 0 ]; then
         cat logzio-temp/task_result >> logzio_agent.log
-        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get utils functions script file from logzio-agent-scripts repo" >> logzio_agent.log
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get utils functions script file from logzio-agent-manifest repo" >> logzio_agent.log
 
         cat logzio-temp/task_result
-        echo -e "\033[0;31magent.script (1): failed to get utils functions script file from logzio-agent-scripts repo\033[0;37m"
+        echo -e "\033[0;31magent.script (1): failed to get utils functions script file from logzio-agent-manifest repo\033[0;37m"
         rm -R logzio-temp
         exit 1
     fi
@@ -63,7 +63,7 @@ execute_task "install_jq" "installing jq"                                       
 # Run last preparations
 echo -e "\nlast preparations:"
 execute_task "get_app_json" "getting application JSON"                              # Get app JSON
-execute_task "build_repo_path" "building path to logzio-agent-scripts repo"         # Build repo path to logzio-agent-scripts repo
+execute_task "build_repo_path" "building path to logzio-agent-manifest repo"        # Build repo path to logzio-agent-manifest repo
 execute_task "get_prerequisite_scripts" "getting prerequisites scripts"             # Get prerequisites scripts
 execute_task "get_installer_scripts" "getting installer scripts"                    # Get installer scripts
 
