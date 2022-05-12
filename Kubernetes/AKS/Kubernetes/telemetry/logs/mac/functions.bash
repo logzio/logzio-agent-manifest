@@ -110,7 +110,7 @@ function build_multiline_helm_sets () {
         local filter=$(cat logzio-temp/multiline_filter.conf)
         local name="custom$index"
 
-        local path=$(echo -e "$obj" | jq -r '.path')
+        local path=$(echo -e "$obj" | jq -r '.source')
         if [[ "$path" = null ]]; then
             echo -e "print_error \"logs.script (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].path' was not found in application JSON\"" > logzio-temp/run
             return 3
@@ -118,7 +118,7 @@ function build_multiline_helm_sets () {
 
         paths+=",$path"
 
-        local regex=$(echo -e "$obj" | jq -r '.regex')
+        local regex=$(echo -e "$obj" | jq -r '.pattern')
         if [[ "$path" = null ]]; then
             echo -e "print_error \"logs.script (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].regex' was not found in application JSON\"" > logzio-temp/run
             return 3
