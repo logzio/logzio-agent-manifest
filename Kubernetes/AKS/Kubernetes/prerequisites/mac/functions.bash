@@ -8,7 +8,7 @@
 # Error:
 #   Exit Code 1
 function is_kubectl_installed () {
-    echo -e "[INFO] Checking if kubectl is installed ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if kubectl is installed ..." >> logzio_agent.log
 
     which kubectl >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
