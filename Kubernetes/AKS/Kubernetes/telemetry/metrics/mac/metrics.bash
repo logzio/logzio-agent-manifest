@@ -5,7 +5,7 @@
 #################################################################################################################################
 
 # Load functions
-echo -e "[INFO] Loading metrics functions ..." >> logzio_agent.log
+echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading metrics functions ..." >> logzio_agent.log
 source ./logzio-temp/metrics_functions.bash
 
 # Build enable metrics Helm set
