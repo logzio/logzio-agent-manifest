@@ -63,10 +63,18 @@ function is_k8s_cluster_connected_to_logzio () {
     fi
 
     sleep 1
-    
-    local pod_logs=$(kubectl logs logzio-connection-test)
+
+    local pod_logs=$(kubectl logs logzio-connection-test 2>logzio-temp/task_result)
+    local result=$(cat logzio-temp/task_result)
+    if [[ ! -z "$result" ]]; then
+        cat logzio-temp/task_result >> logzio_agent.log
+
+        echo -e "cat logzio-temp/task_result" > logzio-temp/run
+        echo -e "print_warning \"prerequisites.script (3): failed to get logs of logzio-connection-test pod\"" >> logzio-temp/run
+        return 3
+    fi
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
-        kubectl delete pod logzio-connection-test 2>logzio-temp/task_result
+        kubectl delete pod logzio-connection-test >/dev/null 2>logzio-temp/task_result
         if [[ $? -ne 0 ]]; then
             cat logzio-temp/task_result >> logzio_agent.log
 
@@ -77,7 +85,7 @@ function is_k8s_cluster_connected_to_logzio () {
         return
     fi
 
-    kubectl delete pod logzio-connection-test 2>logzio-temp/task_result
+    kubectl delete pod logzio-connection-test >/dev/null 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
