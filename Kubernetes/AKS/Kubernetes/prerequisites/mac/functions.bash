@@ -53,7 +53,7 @@ function is_k8s_cluster_connected_to_logzio () {
         return 3
     fi
 
-    kubectl apply -f logzio-temp/logzio-connection-test.yaml 2>logzio-temp/task_result
+    kubectl apply -f logzio-temp/logzio_connection_test_pod.yaml 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
