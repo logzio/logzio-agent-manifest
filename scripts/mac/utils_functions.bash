@@ -15,6 +15,17 @@ function print_error () {
     echo -e "\033[0;31m$message\033[0;37m"
 }
 
+# Prints warning message in yellow
+# Input:
+#   message - Message text
+# Output:
+#   The message
+function print_warning () {
+    local message="$1"
+    echo -e "[WARN] [$(date +"%Y-%m-%d %H:%M:%S")] $message" >> logzio_agent.log
+    echo -e "\033[0;33m$message\033[0;37m"
+}
+
 # Deletes the temp directory
 function delete_temp_dir () {
     rm -R logzio-temp
