@@ -5,7 +5,7 @@
 #################################################################################################################################
 
 # Load functions
-echo -e "[INFO] Loading installer functions ..." >> logzio_agent.log
+echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading installer functions ..." >> logzio_agent.log
 source ./logzio-temp/installer_functions.bash
 
 # Get general params
@@ -44,21 +44,21 @@ fi
 
 # Run logs script
 if $is_logs_option_selected; then
-    echo -e "[INFO] Running logs script ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running logs script ..." >> logzio_agent.log
     echo -e "\nlogs:"
     source ./logzio-temp/logs.bash
 fi
 
 # Run metrics script
 if $is_metrics_option_selected; then
-    echo -e "[INFO] Running metrics script ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running metrics script ..." >> logzio_agent.log
     echo -e "\nmetrics:"
     source ./logzio-temp/metrics.bash
 fi
 
 # Run traces script
 if $is_traces_option_selected; then
-    echo -e "[INFO] Running traces script ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running traces script ..." >> logzio_agent.log
     echo -e "\ntraces:"
     source ./logzio-temp/traces.bash
 fi
