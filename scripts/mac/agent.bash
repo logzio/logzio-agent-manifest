@@ -8,7 +8,7 @@
 # Error:
 #   Exit Code 1
 function get_agent_functions_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting agent functions script file from logzio-agent-scripts repo ..." > logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting agent functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
     curl -fsSL $repo_url/scripts/mac/functions.bash > logzio-temp/agent_functions.bash 2>logzio-temp/task_result
     if [ $? -ne 0 ]; then
         cat logzio-temp/task_result >> logzio_agent.log
