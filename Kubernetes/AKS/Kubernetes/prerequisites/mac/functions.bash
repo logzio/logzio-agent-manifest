@@ -62,6 +62,8 @@ function is_k8s_cluster_connected_to_logzio () {
         return 3
     fi
 
+    sleep 1
+    
     local pod_logs=$(kubectl logs logzio-connection-test)
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
         kubectl delete pod logzio-connection-test 2>logzio-temp/task_result
