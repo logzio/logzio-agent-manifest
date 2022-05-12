@@ -256,7 +256,7 @@ function get_prerequisite_scripts () {
     fi
 
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/prerequisites/mac/functions.bash > logzio-temp/prerequisites_functions.bash 2>/dev/null
+    curl -fsSL $repo_path/prerequisites/mac/functions.bash > logzio-temp/prerequisites_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
