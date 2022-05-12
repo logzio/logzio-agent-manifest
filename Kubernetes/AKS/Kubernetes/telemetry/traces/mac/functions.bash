@@ -41,10 +41,27 @@ function build_logzio_traces_token_helm_set () {
 # Builds Logz.io region Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
+# Error:
+#   Error Code 3
 function build_logzio_region_helm_set () {
     echo -e "[INFO] Building Logz.io region Helm set ..." >> logzio_agent.log
 
-    local region="us"                                       ######################## Get region from app.json
+    local listener_url=$(jq -r '.listenerUrl' logzio-temp/app.json)
+    if [ "$listener_url" = null ]; then
+        echo -e "print_error \"metrics.bash (1): '.listenerUrl' was not found in application JSON\"" > logzio-temp/run
+        return 3
+    fi
+    if [ -z "$listener_url" ]; then
+        echo -e "print_error \"metrics.bash (1): '.listenerUrl' is empty in application JSON\"" > logzio-temp/run
+        return 3
+    fi
+
+    local region="us"
+    if [[ "$listener_url" = *"-"* ]]; then
+        local listener_part=$(cut -d "." -f1 <<< "$listener_url")
+        region=$(cut -d "-" -f2 <<< "$listener_part")
+    fi
+    
     local helm_set=" --set secrets.LogzioRegion=$region"
     echo -e "[INFO] helm_set = $helm_set" >> logzio_agent.log
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
