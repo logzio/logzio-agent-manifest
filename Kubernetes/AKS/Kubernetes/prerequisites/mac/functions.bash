@@ -11,7 +11,7 @@ function is_kubectl_installed () {
     echo -e "[INFO] Checking if kubectl is installed ..." >> logzio_agent.log
 
     which kubectl >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
+    if [[ $? -eq 0 ]]; then
         return
     fi
 
@@ -26,7 +26,7 @@ function is_kubectl_connected_to_k8s_cluster () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if kubectl is connected to an active Kubernetes cluster ..." >> logzio_agent.log
 
     kubectl cluster-info > logzio-temp/task_result 2>&1
-    if [ $? -eq 0 ]; then
+    if [[ $? -eq 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
         return
     fi
@@ -45,13 +45,13 @@ function is_helm_installed () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Helm is installed ..." >> logzio_agent.log
 
     which helm >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
+    if [[ $? -eq 0 ]]; then
         return
     fi
 
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Installing Helm ..." >> logzio_agent.log
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash > logzio-temp/task_result 2>&1
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
@@ -67,7 +67,7 @@ function add_logzio_helm_repo () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Adding Logz.io Helm repo ..." >> logzio_agent.log
 
     helm repo add logzio-helm https://logzio.github.io/logzio-helm > logzio-temp/task_result 2>&1
-    if [ $? -eq 0 ]; then
+    if [[ $? -eq 0 ]]; then
         return
     fi
 
@@ -85,7 +85,7 @@ function update_logzio_helm_repo () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Updating Logz.io Helm repo ..." >> logzio_agent.log
     
     helm repo update logzio-helm > logzio-temp/task_result 2>&1
-    if [ $? -eq 0 ]; then
+    if [[ $? -eq 0 ]]; then
         return
     fi
 
