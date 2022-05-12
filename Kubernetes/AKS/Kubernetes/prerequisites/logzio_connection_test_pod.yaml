@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: logzio-connection-test
+spec:
+  containers:
+  - name: logzio-connection-test
+    image: busybox:latest
+    command: [ "/bin/sh", "-c", "telnet listener.logz.io 5052" ]
