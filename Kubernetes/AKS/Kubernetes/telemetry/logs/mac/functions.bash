@@ -92,7 +92,7 @@ function build_multiline_helm_sets () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"logs.script (3): failed to get multiline source conf file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"logs.script (3): failed to get multiline source conf file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 3
     fi
 
@@ -101,7 +101,7 @@ function build_multiline_helm_sets () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"logs.script (3): failed to get multiline filter conf file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"logs.script (3): failed to get multiline filter conf file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 3
     fi
 
