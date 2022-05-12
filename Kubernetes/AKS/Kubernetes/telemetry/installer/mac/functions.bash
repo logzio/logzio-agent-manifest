@@ -231,77 +231,77 @@ function build_environment_tag_helm_set () {
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
 
-# Gets logs scripts from logzio-agent-scripts repo
+# Gets logs scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 5
 function get_logs_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > logzio-temp/logs.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get logs script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"installer.script (5): failed to get logs script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 5
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > logzio-temp/logs_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get logs functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"installer.script (5): failed to get logs functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 5
     fi
 }
 
-# Gets metrics scripts from logzio-agent-scripts repo
+# Gets metrics scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 6
 function get_metrics_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > logzio-temp/metrics.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get metrics script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"installer.script (6): failed to get metrics script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 6
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > logzio-temp/metrics_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get metrics functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"installer.script (6): failed to get metrics functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 6
     fi
 }
 
-# Gets traces scripts from logzio-agent-scripts repo
+# Gets traces scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 7
 function get_traces_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/traces/mac/traces.bash > logzio-temp/traces.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (7): failed to get traces script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"installer.script (7): failed to get traces script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 7
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/telemetry/traces/mac/functions.bash > logzio-temp/traces_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (7): failed to get traces functions script file from logzio-agent-scripts repo\"" >> logzio-temp/run
+        echo -e "print_error \"installer.script (7): failed to get traces functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 7
     fi
 }
