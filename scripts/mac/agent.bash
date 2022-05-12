@@ -4,7 +4,7 @@
 ####################################################### Agent Mac Script ########################################################
 #################################################################################################################################
 
-# Gets agent functions scripts from logzio-agent-scripts repo to logzio-temp directory
+# Gets agent functions scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 1
 function get_agent_functions_scripts () {
@@ -34,7 +34,7 @@ function get_agent_functions_scripts () {
 }
 
 
-# logzio-agent-scripts repo URL
+# logzio-agent-manifest repo URL
 repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2"
 
 # Create temp directory with run file
