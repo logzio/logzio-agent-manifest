@@ -11,18 +11,8 @@
 #   The message
 function print_error () {
     local message="$1"
-    echo -e "[ERROR] $message" >> logzio_agent.log
+    echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] $message" >> logzio_agent.log
     echo -e "\033[0;31m$message\033[0;37m"
-}
-
-# Prints success message in green
-# Input:
-#   message - Message text
-# Output:
-#   The message
-function print_success () {
-    local message="$1"
-    echo -e "\033[0;32m$message\033[0;37m"
 }
 
 # Deletes the temp directory
@@ -43,7 +33,7 @@ function find_param () {
 
     while read -r param; do
         local name=$(echo -e "$param" | jq -r '.name')
-        if [ "$name" = "$requested_name" ]; then
+        if [[ "$name" = "$requested_name" ]]; then
             requested_param="$param"
         fi
     done < <(echo -e "$params" | jq -c '.')
@@ -84,7 +74,7 @@ function execute_task () {
     wait $pid
     local status=$?
 
-    if [ $status -ne 0 ]; then
+    if [[ $status -ne 0 ]]; then
         echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
         

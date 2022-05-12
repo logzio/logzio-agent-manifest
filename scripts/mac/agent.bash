@@ -8,11 +8,11 @@
 # Error:
 #   Exit Code 1
 function get_agent_functions_scripts () {
-    echo -e "[INFO] Getting agent functions script file from logzio-agent-scripts repo ..." > logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting agent functions script file from logzio-agent-scripts repo ..." > logzio_agent.log
     curl -fsSL $repo_url/scripts/mac/functions.bash > logzio-temp/agent_functions.bash 2>logzio-temp/task_result
     if [ $? -ne 0 ]; then
         cat logzio-temp/task_result >> logzio_agent.log
-        echo -e "[ERROR] agent.script (1): failed to get agnet functions script file from logzio-agent-scripts repo" >> logzio_agent.log
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get agnet functions script file from logzio-agent-scripts repo" >> logzio_agent.log
 
         cat logzio-temp/task_result
         echo -e "\033[0;31magent.script (1): failed to get agnet functions script file from logzio-agent-scripts repo\033[0;37m"
@@ -20,11 +20,11 @@ function get_agent_functions_scripts () {
         exit 1
     fi
 
-    echo -e "[INFO] Getting utils functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting utils functions script file from logzio-agent-scripts repo ..." >> logzio_agent.log
     curl -fsSL $repo_url/scripts/mac/utils_functions.bash > logzio-temp/utils_functions.bash 2>logzio-temp/task_result
     if [ $? -ne 0 ]; then
         cat logzio-temp/task_result >> logzio_agent.log
-        echo -e "[ERROR] agent.script (1): failed to get utils functions script file from logzio-agent-scripts repo" >> logzio_agent.log
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get utils functions script file from logzio-agent-scripts repo" >> logzio_agent.log
 
         cat logzio-temp/task_result
         echo -e "\033[0;31magent.script (1): failed to get utils functions script file from logzio-agent-scripts repo\033[0;37m"
@@ -45,7 +45,7 @@ touch logzio-temp/run
 get_agent_functions_scripts
 
 # Load agent functions
-echo -e "[INFO] Loading agent functions ..." >> logzio_agent.log
+echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading agent functions ..." >> logzio_agent.log
 source ./logzio-temp/agent_functions.bash
 source ./logzio-temp/utils_functions.bash
 
@@ -68,12 +68,12 @@ execute_task "get_prerequisite_scripts" "getting prerequisites scripts"         
 execute_task "get_installer_scripts" "getting installer scripts"                    # Get installer scripts
 
 # Run prerequisites script
-echo -e "[INFO] Running prerequisites script ..." >> logzio_agent.log
+echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running prerequisites script ..." >> logzio_agent.log
 echo -e "\nprerequisites:"
 source ./logzio-temp/prerequisites.bash
 
 # Run installer script
-echo -e "[INFO] Running installer script ..." >> logzio_agent.log
+echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running installer script ..." >> logzio_agent.log
 echo -e "\ninstaller:"
 source ./logzio-temp/installer.bash
 
