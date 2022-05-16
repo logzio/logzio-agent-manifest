@@ -70,7 +70,7 @@ function get_arguments () {
                 ;;
             *)
                 print_error "agent.bash (2): unrecognized flag"
-                print_error "agent.bash (2): try './mac.bash --help' for more information"
+                print_error "agent.bash (2): try './agent.bash --help' for more information"
                 delete_temp_dir
                 exit 2
                 ;;
@@ -109,7 +109,7 @@ function check_validation () {
     fi
 
     if $is_error; then
-        print_error "agent.bash (2): try './mac.bash --help' for more information"
+        print_error "agent.bash (2): try './agent.bash --help' for more information"
         delete_temp_dir
         exit 2
     fi
