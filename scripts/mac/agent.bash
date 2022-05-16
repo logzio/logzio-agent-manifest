@@ -10,7 +10,7 @@
 function get_agent_functions_scripts () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting agent functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_url/scripts/mac/functions.bash > logzio-temp/agent_functions.bash 2>logzio-temp/task_result
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get agnet functions script file from logzio-agent-manifest repo" >> logzio_agent.log
 
@@ -22,7 +22,7 @@ function get_agent_functions_scripts () {
 
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting utils functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_url/scripts/mac/utils_functions.bash > logzio-temp/utils_functions.bash 2>logzio-temp/task_result
-    if [ $? -ne 0 ]; then
+    if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get utils functions script file from logzio-agent-manifest repo" >> logzio_agent.log
 
