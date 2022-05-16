@@ -123,7 +123,14 @@ function update_package_manager () {
     which apt-get >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Updating apt-get ..." >> logzio_agent.log
-        sudo apt-get -y update
+        sudo apt-get -y update > logzio-temp/task_result 2>&1
+        if [[ $? -ne 0 ]]; then
+            cat logzio-temp/task_result >> logzio_agent.log
+
+            echo -e "cat logzio-temp/task_result" > logzio-temp/run
+            echo -e "print_error \"agent.bash (3): failed to update apt-get\"" >> logzio-temp/run
+            return 3
+        fi
         return
     fi
 
@@ -131,7 +138,14 @@ function update_package_manager () {
     which yum >/dev/null 2>&1
     if [ $? -eq 0 ]; then
         echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Updating yum ..." >> logzio_agent.log
-        sudo yum -y update
+        sudo yum -y update > logzio-temp/task_result 2>&1
+        if [[ $? -ne 0 ]]; then
+            cat logzio-temp/task_result >> logzio_agent.log
+
+            echo -e "cat logzio-temp/task_result" > logzio-temp/run
+            echo -e "print_error \"agent.bash (3): failed to update yum\"" >> logzio-temp/run
+            return 3
+        fi
         return
     fi
 
