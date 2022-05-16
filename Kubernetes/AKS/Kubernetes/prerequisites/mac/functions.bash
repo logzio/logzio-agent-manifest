@@ -62,7 +62,7 @@ function is_k8s_cluster_connected_to_logzio () {
         return 3
     fi
 
-    sleep 1
+    sleep 3
 
     local pod_logs=$(kubectl logs logzio-connection-test 2>logzio-temp/task_result)
     local result=$(cat logzio-temp/task_result)
@@ -70,7 +70,7 @@ function is_k8s_cluster_connected_to_logzio () {
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_warning \"prerequisites.script (3): failed to get logs of logzio-connection-test pod\"" >> logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-connection-test pod\"" >> logzio-temp/run
         return 3
     fi
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
