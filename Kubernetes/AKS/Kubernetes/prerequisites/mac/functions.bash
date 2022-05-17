@@ -38,64 +38,124 @@ function is_kubectl_connected_to_k8s_cluster () {
     return 2
 }
 
-# Checks if Kubernetes cluster is connected to Logz.io
+# Checks if Kubernetes cluster is connected to Logz.io logs
 # Error:
 #   Exit Code 3
-function is_k8s_cluster_connected_to_logzio () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster is connected to Logz.io ..." >> logzio_agent.log
+function is_k8s_cluster_connected_to_logzio_logs () {
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster is connected to Logz.io logs ..." >> logzio_agent.log
 
-    curl -fsSL $repo_path/prerequisites/logzio_connection_test_pod.yaml > logzio-temp/logzio_connection_test_pod.yaml 2>logzio-temp/task_result
+    curl -fsSL $repo_path/prerequisites/logzio_logs_connection_test_pod.yaml > logzio-temp/logzio_logs_connection_test_pod.yaml 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logzio connection test pod yaml file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo\"" >> logzio-temp/run
         return 3
     fi
 
-    kubectl apply -f logzio-temp/logzio_connection_test_pod.yaml >/dev/null 2>logzio-temp/task_result
+    kubectl apply -f logzio-temp/logzio_logs_connection_test_pod.yaml >/dev/null 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to create logzio-connection-test pod\"" >> logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to create logzio-logs-connection-test pod\"" >> logzio-temp/run
         return 3
     fi
 
     sleep 3
 
-    local pod_logs=$(kubectl logs logzio-connection-test 2>logzio-temp/task_result)
+    local pod_logs=$(kubectl logs logzio-logs-connection-test 2>logzio-temp/task_result)
     local result=$(cat logzio-temp/task_result)
     if [[ ! -z "$result" ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-connection-test pod\"" >> logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-logs-connection-test pod\"" >> logzio-temp/run
         return 3
     fi
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
-        kubectl delete pod logzio-connection-test >/dev/null 2>logzio-temp/task_result
+        kubectl delete pod logzio-logs-connection-test >/dev/null 2>logzio-temp/task_result
         if [[ $? -ne 0 ]]; then
             cat logzio-temp/task_result >> logzio_agent.log
 
             echo -e "cat logzio-temp/task_result" > logzio-temp/run
-            echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-connection-test pod\"" >> logzio-temp/run
+            echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-logs-connection-test pod\"" >> logzio-temp/run
         fi
 
         return
     fi
 
-    kubectl delete pod logzio-connection-test >/dev/null 2>logzio-temp/task_result
+    kubectl delete pod logzio-logs-connection-test >/dev/null 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
 
         echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-connection-test pod\"" >> logzio-temp/run
+        echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-logs-connection-test pod\"" >> logzio-temp/run
     fi
 
-    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster is not connected to Logz.io\"" >> logzio-temp/run
+    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster is not connected to Logz.io logs\"" >> logzio-temp/run
     return 3
 }
+
+# Checks if Kubernetes cluster is connected to Logz.io metrics
+# Error:
+#   Exit Code 3
+function is_k8s_cluster_connected_to_logzio_metrics () {
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster is connected to Logz.io metrics ..." >> logzio_agent.log
+
+    curl -fsSL $repo_path/prerequisites/logzio_metrics_connection_test_pod.yaml > logzio-temp/logzio_metrics_connection_test_pod.yaml 2>logzio-temp/task_result
+    if [[ $? -ne 0 ]]; then
+        cat logzio-temp/task_result >> logzio_agent.log
+
+        echo -e "cat logzio-temp/task_result" > logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        return 3
+    fi
+
+    kubectl apply -f logzio-temp/logzio_metrics_connection_test_pod.yaml >/dev/null 2>logzio-temp/task_result
+    if [[ $? -ne 0 ]]; then
+        cat logzio-temp/task_result >> logzio_agent.log
+
+        echo -e "cat logzio-temp/task_result" > logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to create logzio-metrics-connection-test pod\"" >> logzio-temp/run
+        return 3
+    fi
+
+    sleep 3
+
+    local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>logzio-temp/task_result)
+    local result=$(cat logzio-temp/task_result)
+    if [[ ! -z "$result" ]]; then
+        cat logzio-temp/task_result >> logzio_agent.log
+
+        echo -e "cat logzio-temp/task_result" > logzio-temp/run
+        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-metrics-connection-test pod\"" >> logzio-temp/run
+        return 3
+    fi
+    if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
+        kubectl delete pod logzio-metrics-connection-test >/dev/null 2>logzio-temp/task_result
+        if [[ $? -ne 0 ]]; then
+            cat logzio-temp/task_result >> logzio_agent.log
+
+            echo -e "cat logzio-temp/task_result" > logzio-temp/run
+            echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod\"" >> logzio-temp/run
+        fi
+
+        return
+    fi
+
+    kubectl delete pod logzio-metrics-connection-test >/dev/null 2>logzio-temp/task_result
+    if [[ $? -ne 0 ]]; then
+        cat logzio-temp/task_result >> logzio_agent.log
+
+        echo -e "cat logzio-temp/task_result" > logzio-temp/run
+        echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod\"" >> logzio-temp/run
+    fi
+
+    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster is not connected to Logz.io metrics\"" >> logzio-temp/run
+    return 3
+}
+
 
 # Checks if Helm is installed
 # Error:
