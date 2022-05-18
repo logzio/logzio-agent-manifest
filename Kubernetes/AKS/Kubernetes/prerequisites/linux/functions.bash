@@ -38,11 +38,11 @@ function is_kubectl_connected_to_k8s_cluster () {
     return 2
 }
 
-# Checks if Kubernetes cluster is connected to Logz.io logs
+# Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
 # Error:
 #   Exit Code 3
-function is_k8s_cluster_connected_to_logzio_logs () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster is connected to Logz.io logs ..." >> logzio_agent.log
+function can_k8s_cluster_connect_to_logzio_logs () {
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster can connect to Logz.io logs (port 8071) ..." >> logzio_agent.log
 
     curl -fsSL $repo_path/prerequisites/logzio_logs_connection_test_pod.yaml > logzio-temp/logzio_logs_connection_test_pod.yaml 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
@@ -93,15 +93,15 @@ function is_k8s_cluster_connected_to_logzio_logs () {
         echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-logs-connection-test pod\"" >> logzio-temp/run
     fi
 
-    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster is not connected to Logz.io logs\"" >> logzio-temp/run
+    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)\"" >> logzio-temp/run
     return 3
 }
 
-# Checks if Kubernetes cluster is connected to Logz.io metrics
+# Checks if Kubernetes cluster can connect to Logz.io metrics (port 8053)
 # Error:
 #   Exit Code 3
-function is_k8s_cluster_connected_to_logzio_metrics () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster is connected to Logz.io metrics ..." >> logzio_agent.log
+function can_k8s_cluster_connect_to_logzio_metrics () {
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster can connect to Logz.io metrics (port 8053) ..." >> logzio_agent.log
 
     curl -fsSL $repo_path/prerequisites/logzio_metrics_connection_test_pod.yaml > logzio-temp/logzio_metrics_connection_test_pod.yaml 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
@@ -152,7 +152,7 @@ function is_k8s_cluster_connected_to_logzio_metrics () {
         echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod\"" >> logzio-temp/run
     fi
 
-    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster is not connected to Logz.io metrics\"" >> logzio-temp/run
+    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io metrics (port 8053)\"" >> logzio-temp/run
     return 3
 }
 
