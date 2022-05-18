@@ -62,7 +62,7 @@ function build_logzio_region_helm_set () {
         region=$(cut -d "-" -f2 <<< "$listener_part")
     fi
     
-    local helm_set=" --set secrets.LogzioRegion=$region"
+    local helm_set=" --set logzio-k8s-telemetry.secrets.LogzioRegion=$region"
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
     echo -e "helm_sets+='$helm_set'" > logzio-temp/run
 }
