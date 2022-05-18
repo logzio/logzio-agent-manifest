@@ -12,10 +12,10 @@ function get_agent_functions_scripts () {
     curl -fsSL $repo_url/scripts/mac/functions.bash > logzio-temp/agent_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
-        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get agnet functions script file from logzio-agent-manifest repo" >> logzio_agent.log
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): failed to get agnet functions script file from logzio-agent-manifest repo" >> logzio_agent.log
 
         cat logzio-temp/task_result
-        echo -e "\033[0;31magent.script (1): failed to get agnet functions script file from logzio-agent-manifest repo\033[0;37m"
+        echo -e "\033[0;31magent.bash (1): failed to get agnet functions script file from logzio-agent-manifest repo\033[0;37m"
         rm -R logzio-temp
         exit 1
     fi
@@ -24,10 +24,10 @@ function get_agent_functions_scripts () {
     curl -fsSL $repo_url/scripts/mac/utils_functions.bash > logzio-temp/utils_functions.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
         cat logzio-temp/task_result >> logzio_agent.log
-        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.script (1): failed to get utils functions script file from logzio-agent-manifest repo" >> logzio_agent.log
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): failed to get utils functions script file from logzio-agent-manifest repo" >> logzio_agent.log
 
         cat logzio-temp/task_result
-        echo -e "\033[0;31magent.script (1): failed to get utils functions script file from logzio-agent-manifest repo\033[0;37m"
+        echo -e "\033[0;31magent.bash (1): failed to get utils functions script file from logzio-agent-manifest repo\033[0;37m"
         rm -R logzio-temp
         exit 1
     fi
