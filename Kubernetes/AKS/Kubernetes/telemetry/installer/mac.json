@@ -169,6 +169,7 @@
             "description": "Run Helm install",
             "run": [
                 "echo \"Running Helm install...\";",
+                "echo \"$helm_sets\";",
                 "helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring --debug;",
                 "echo \"The Helm chart was installed successfully\";"
             ]
