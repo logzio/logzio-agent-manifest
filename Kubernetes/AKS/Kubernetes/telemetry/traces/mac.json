@@ -28,7 +28,6 @@
                     "listener_part=$(cut -d \".\" -f1 <<< \"$listener_url\");",
                     "region=$(cut -d \"-\" -f2 <<< \"$listener_part\");",
                 "fi;",
-                "echo \"$region\";",
                 "echo \"Creating logzio region Helm set...\";",
                 "helm_set=\"--set secrets.LogzioRegion=$region\";",
                 "helm_sets+=\" $helm_set\";"
