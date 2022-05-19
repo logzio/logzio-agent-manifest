@@ -8,11 +8,11 @@
 # Output:
 #   Help usage
 function show_help () {
-    echo "Usage: ./agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<app_json>]"
-    echo " --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)"
-    echo " --id=<agent_id>              Logz.io agent ID"
-    echo " --debug=<app_json>           Debug run using a local application JSON"
-    echo " --help                       Show usage"
+    echo -e "Usage: ./agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<app_json>]"
+    echo -e " --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)"
+    echo -e " --id=<agent_id>              Logz.io agent ID"
+    echo -e " --debug=<app_json>           Debug run using a local application JSON"
+    echo -e " --help                       Show usage"
 }
 
 # Gets arguments
