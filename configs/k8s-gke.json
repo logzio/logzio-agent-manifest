@@ -14,7 +14,7 @@
         {
           "name": "Kubernetes",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-          "description:
+          "description":
             "Logz.io uses OpenTelemetry instrumentation with FluenD and Helm charts to deploy and monitor Kubernetes architecture.",
           "hint": "Select the type of data you'd like to ship: logs, metrics, and traces.",
           "params": [
