@@ -1,4 +1,4 @@
- #################################################################################################################################
+  #################################################################################################################################
 ###################################################### Agent Windows Script #####################################################
 #################################################################################################################################
 
@@ -8,66 +8,74 @@
 function Get-AgentFunctionsScripts {
     Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Getting agent functions script file from logzio-agent-manifest repo ..." >> $logFile
     try {
-        Invoke-WebRequest -Uri $repoURL/scripts/linux/functions.bash -OutFile logzio-temp/functions.bash | Out-Null
+        Invoke-WebRequest -Uri $repoURL/scripts/windows/functions.ps1 -OutFile logzio-temp/agent_functions.ps1 | Out-Null
     }
     catch {
         $_ >> $logFile
-        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.script (1): failed to get agnet functions script file from logzio-agent-manifest repo" >> $logFile
+        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo" >> $logFile
 
         Write-Output $_
-        Write-Host "agent.script (1): failed to get agnet functions script file from logzio-agent-manifest repo" -ForegroundColor Red
+        Write-Host "agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo" -ForegroundColor Red
         Remove-Item -Path logzio-temp -Recurse
         Exit 1
     }
 
     Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Getting utils functions script file from logzio-agent-manifest repo ..." >> $logFile
     try {
-        Invoke-WebRequest -Uri $repoURL/scripts/linux/utils_functions.bash -OutFile logzio-temp/utils_functions.bash | Out-Null
+        Invoke-WebRequest -Uri $repoURL/scripts/windows/utils_functions.ps1 -OutFile logzio-temp/utils_functions.ps1 | Out-Null
     }
     catch {
         $_ >> $logFile
-        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.script (1): failed to get utils functions script file from logzio-agent-manifest repo" >> $logFile
+        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo" >> $logFile
 
         Write-Output $_
-        Write-Host "agent.script (1): failed to get utils functions script file from logzio-agent-manifest repo" -ForegroundColor Red
+        Write-Host "agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo" -ForegroundColor Red
         Remove-Item -Path logzio-temp -Recurse
         Exit 1
     }
 }
 
 
+# Remove last run globals
+Clear-Variable -Name appURL, agentID, appJsonFile -Force 2>&1 | Out-Null
+
 # logzio-agent-manifest repo URL
 $global:repoURL = "https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2"
 
-# log file path
+# Log file path
 $global:logFile = "logzio_agent.log"
 
 # Create temp directory with run file
 mkdir -p logzio-temp | Out-Null
-$null > logzio-temp/run.ps1
+$null > logzio-temp\run.ps1
 
 # Get agent functions scripts
-Get-AgentFunctionsScripts
+#Get-AgentFunctionsScripts
 
 # Load agent functions
 Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Loading agent functions ..." >> $logFile
-. ./functions.ps1
-. ./utils_functions.ps1
+. .\functions.ps1
+. .\utils_functions.ps1
 #. ./logzio-temp/agent_functions.ps1
 #. ./logzio-temp/utils_functions.ps1
 
 # Get arguments and check validation
 Get-Arguments $args
 
-<#
 # Print title
-echo -e "Running \033[0;34mLogz\033[0;33m.io\033[0;37m Agent:\n"
+Write-Host "Running " -NoNewline
+Write-Host "Logz" -ForegroundColor Blue -NoNewline
+Write-Host ".io " -ForegroundColor Yellow -NoNewline
+Write-Host "Agent:`n`n" -NoNewline
 
 # Run prerequisite installations
-echo -e "prerequisite installations:"
-execute_task "update_package_manager" "updating package manager"                    # update package manager (apt-get/yum)
-execute_task "install_jq" "installing jq"                                           # Install jq
+Write-Host "prerequisite installations:"
+Invoke-Task "Install-JQ" "installing jq"
+#Invoke-Task "Install-Chocolatey" "installing Chocolatey"                          # install Chocolatey
+<#
+Invoke-Task "install_jq" "installing jq"                                           # Install jq
 
+<#
 # Run last preparations
 echo -e "\nlast preparations:"
 execute_task "get_app_json" "getting application JSON"                              # Get app JSON
@@ -88,3 +96,4 @@ source ./logzio-temp/installer.bash
 # Delete temp directory
 delete_temp_dir
 #> 
+ 
