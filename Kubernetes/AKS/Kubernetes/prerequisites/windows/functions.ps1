@@ -6,6 +6,10 @@
 # Error:
 #   Exit Code 1
 function Test-IsKubectlInstalled {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
     Write-Log "INFO" "Checking if kubectl is installed ..."
 
     Get-Command kubectl 2>&1 | Out-Null
@@ -21,6 +25,10 @@ function Test-IsKubectlInstalled {
 # Error:
 #   Exit Code 2
 function Test-IsKubectlConnectedToKubernetesCluster () {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
     Write-Log "INFO" "Checking if kubectl is connected to an active Kubernetes cluster ..."
 
     kubectl cluster-info > logzio-temp/task_result 2>&1
