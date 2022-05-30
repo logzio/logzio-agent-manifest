@@ -64,7 +64,7 @@ execute_task "install_jq" "installing jq"                                       
 echo -e "\nlast preparations:"
 execute_task "get_app_json" "getting application JSON"                              # Get app JSON
 execute_task "build_repo_path" "building path to logzio-agent-manifest repo"        # Build repo path to logzio-agent-manifest repo
-execute_task "get_prerequisite_scripts" "getting prerequisites scripts"             # Get prerequisites scripts
+execute_task "get_prerequisites_scripts" "getting prerequisites scripts"            # Get prerequisites scripts
 execute_task "get_installer_scripts" "getting installer scripts"                    # Get installer scripts
 
 # Run prerequisites script

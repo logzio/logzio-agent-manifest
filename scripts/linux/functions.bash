@@ -207,13 +207,11 @@ function get_app_json () {
         return 4
     fi
 
-    local status_code=$(echo -e "$app_json" | jq -r '.statusCode')
+    local status_code=$(jq -r '.statusCode' logzio-temp/app.json)
     if [[ "$status_code" != null ]]; then
         echo -e "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent (statusCode $status_code). make sure your ID is valid\"" > logzio-temp/run
         return 4
     fi
-
-    echo -e "$app_json" > logzio-temp/app.json
 }
 
 # Builds path to logzio-agent-manifest repo according the app JSON
@@ -262,7 +260,7 @@ function build_repo_path () {
 # Gets prerequisites scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 6
-function get_prerequisite_scripts () {
+function get_prerequisites_scripts () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites script file from logzio-agent-manifest repo ..." >> logzio_agent.log
     curl -fsSL $repo_path/prerequisites/linux/prerequisites.bash > logzio-temp/prerequisites.bash 2>logzio-temp/task_result
     if [[ $? -ne 0 ]]; then
