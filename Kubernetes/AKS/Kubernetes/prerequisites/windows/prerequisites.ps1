@@ -12,13 +12,13 @@ Invoke-Task "Test-IsKubectlInstalled" "checking if kubectl is installed"
 # Check if kubectl is connected to an active Kubernetes cluster
 Invoke-Task "Test-IsKubectlConnectedToKubernetesCluster" "checking if kubectl is connected to Kubernetes cluster"
 
-<#
 # Check if Kubernetes cluster can connect to Logz.io logs (port 8071)
-execute_task "can_k8s_cluster_connect_to_logzio_logs" "checking if Kubernetes cluster can connect to Logz.io logs"
+Invoke-Task "Test-CanKubernetesClusterConnectToLogzioLogs" "checking if Kubernetes cluster can connect to Logz.io logs"
 
 # Check if Kubernetes cluster can connect to Logz.io metrics (port 8053)
-execute_task "can_k8s_cluster_connect_to_logzio_metrics" "checking if Kubernetes cluster can connect to Logz.io metrics"
+Invoke-Task "Test-CanKubernetesClusterConnectToLogzioMetrics" "checking if Kubernetes cluster can connect to Logz.io metrics"
 
+<#
 # Check if Helm is installed
 execute_task "is_helm_installed" "checking if Helm is installed"
 

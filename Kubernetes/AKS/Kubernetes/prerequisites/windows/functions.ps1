@@ -44,125 +44,129 @@ function Test-IsKubectlConnectedToKubernetesCluster {
     return 2
 }
 
-<#
 # Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
 # Error:
 #   Exit Code 3
-function can_k8s_cluster_connect_to_logzio_logs () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster can connect to Logz.io logs (port 8071) ..." >> logzio_agent.log
+function Test-CanKubernetesClusterConnectToLogzioLogs {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-    curl -fsSL $repo_path/prerequisites/logzio_logs_connection_test_pod.yaml > logzio-temp/logzio_logs_connection_test_pod.yaml 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+    Write-Log "INFO" "Checking if Kubernetes cluster can connect to Logz.io logs (port 8071) ..."
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/prerequisites/logzio_logs_connection_test_pod.yaml -OutFile $using:logzioTempDir\logzio_logs_connection_test_pod.yaml | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo. error: $_`""
         return 3
-    fi
+    }
 
-    kubectl apply -f logzio-temp/logzio_logs_connection_test_pod.yaml >/dev/null 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to create logzio-logs-connection-test pod\"" >> logzio-temp/run
+    kubectl apply -f $using:logzioTempDir\logzio_logs_connection_test_pod.yaml 2>$using:taskResultFile | Out-Null
+    if (-Not $?) {
+        $local:result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-logs-connection-test pod. $result`""
         return 3
-    fi
+    }
 
     sleep 3
 
-    local pod_logs=$(kubectl logs logzio-logs-connection-test 2>logzio-temp/task_result)
-    local result=$(cat logzio-temp/task_result)
-    if [[ ! -z "$result" ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-logs-connection-test pod\"" >> logzio-temp/run
+    $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskResultFile
+    $local:result = Get-Content $using:taskResultFile
+    if (-Not [string]::IsNullOrEmpty($result)) {
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod. $result`""
         return 3
-    fi
-    if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
-        kubectl delete pod logzio-logs-connection-test >/dev/null 2>logzio-temp/task_result
-        if [[ $? -ne 0 ]]; then
-            cat logzio-temp/task_result >> logzio_agent.log
+    }
 
-            echo -e "cat logzio-temp/task_result" > logzio-temp/run
-            echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-logs-connection-test pod\"" >> logzio-temp/run
-        fi
-
+    if ($podLogs = "Connected to listener.logz.io") {
+        kubectl delete pod logzio-logs-connection-test 2>$using:taskResultFile | Out-Null
+        if ($?) {
+            return
+        }
+        
+        $result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod. $result`""
         return
-    fi
+    }
 
-    kubectl delete pod logzio-logs-connection-test >/dev/null 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+    kubectl delete pod logzio-logs-connection-test 2>$using:taskResultFile | Out-Null
+    if (-Not $?) {
+        $result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod. $result`""
+    }
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-logs-connection-test pod\"" >> logzio-temp/run
-    fi
-
-    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)\"" >> logzio-temp/run
+    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)`""
     return 3
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io metrics (port 8053)
 # Error:
 #   Exit Code 3
-function can_k8s_cluster_connect_to_logzio_metrics () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster can connect to Logz.io metrics (port 8053) ..." >> logzio_agent.log
+function Test-CanKubernetesClusterConnectToLogzioMetrics () {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-    curl -fsSL $repo_path/prerequisites/logzio_metrics_connection_test_pod.yaml > logzio-temp/logzio_metrics_connection_test_pod.yaml 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+    Write-Log "INFO" "Checking if Kubernetes cluster can connect to Logz.io metrics (port 8053) ..."
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/prerequisites/logzio_metrics_connection_test_pod.yaml -OutFile $using:logzioTempDir\logzio_metrics_connection_test_pod.yaml | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo. error: $_`""
         return 3
-    fi
+    }
 
-    kubectl apply -f logzio-temp/logzio_metrics_connection_test_pod.yaml >/dev/null 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to create logzio-metrics-connection-test pod\"" >> logzio-temp/run
+    kubectl apply -f $using:logzioTempDir\logzio_metrics_connection_test_pod.yaml 2>$using:taskResultFile | Out-Null
+    if (-Not $?) {
+        $local:result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod. $result`""
         return 3
-    fi
+    }
 
     sleep 3
 
-    local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>logzio-temp/task_result)
-    local result=$(cat logzio-temp/task_result)
-    if [[ ! -z "$result" ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-metrics-connection-test pod\"" >> logzio-temp/run
+    $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskResultFile
+    $local:result = Get-Content $using:taskResultFile
+    if (-Not [string]::IsNullOrEmpty($result)) {
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod. $result`""
         return 3
-    fi
-    if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
-        kubectl delete pod logzio-metrics-connection-test >/dev/null 2>logzio-temp/task_result
-        if [[ $? -ne 0 ]]; then
-            cat logzio-temp/task_result >> logzio_agent.log
+    }
 
-            echo -e "cat logzio-temp/task_result" > logzio-temp/run
-            echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod\"" >> logzio-temp/run
-        fi
-
+    if ($podLogs = "Connected to listener.logz.io") {
+        kubectl delete pod logzio-logs-connection-test 2>$using:taskResultFile | Out-Null
+        if ($?) {
+            return
+        }
+        
+        $result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod. $result`""
         return
-    fi
+    }
 
-    kubectl delete pod logzio-metrics-connection-test >/dev/null 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+    kubectl delete pod logzio-logs-connection-test 2>$using:taskResultFile | Out-Null
+    if (-Not $?) {
+        $result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod. $result`""
+    }
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod\"" >> logzio-temp/run
-    fi
-
-    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io metrics (port 8053)\"" >> logzio-temp/run
+    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io metrics (port 8053)`""
     return 3
 }
 
+<#
 # Checks if Helm is installed
 # Error:
 #   Exit Code 4
