@@ -42,6 +42,7 @@ $script:repoURL = "https://raw.githubusercontent.com/logzio/logzio-agent-manifes
 $script:logzioTempDir = ".\logzio-temp"                                                     # Logz.io temp directory
 $script:logFile = ".\logzio_agent.log"                                                      # Log file path
 $script:runFile = "$logzioTempDir\run.ps1"                                                  # Run file path
+$script:taskResultFile = "$logzioTempDir\task_result.txt"                                   # Task result file path
 
 # Create temp directory with run file
 if (-Not (Test-Path logzio-temp)) {
