@@ -24,23 +24,23 @@ function Test-IsKubectlInstalled {
 # Checks if kubectl is connected to an active Kubernetes cluster
 # Error:
 #   Exit Code 2
-function Test-IsKubectlConnectedToKubernetesCluster () {
+function Test-IsKubectlConnectedToKubernetesCluster {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
 
     Write-Log "INFO" "Checking if kubectl is connected to an active Kubernetes cluster ..."
 
-    kubectl cluster-info > logzio-temp/task_result 2>&1
+    kubectl cluster-info > $using:taskResultFile 2>&1
     if ($?) {
-        Get-Content logzio-temp/task_result >> logzio_agent.log
+        $local:result = Get-Content $using:taskResultFile
+        Write-Log "INFO" "$result"
         return
     }
 
-    Get-Content logzio-temp/task_result >> logzio_agent.log
-
-    #echo -e "cat logzio-temp/task_result" > logzio-temp/run
-    Write-Run "Write-Error `"prerequisites.ps1 (2): kubectl is not connected to an active Kubernetes cluster`""
+    $local:result = Get-Content $using:taskResultFile
+    $result = $result[0..($result.length-7)]
+    Write-Run "Write-Error `"prerequisites.ps1 (2): kubectl is not connected to an active Kubernetes cluster. $result`""
     return 2
 }
 
