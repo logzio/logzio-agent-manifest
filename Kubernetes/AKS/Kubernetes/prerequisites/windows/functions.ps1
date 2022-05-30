@@ -155,7 +155,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics () {
         return
     }
 
-    kubectl delete pod logzio-logs-connection-test 2>$using:taskResultFile | Out-Null
+    kubectl delete pod logzio-metrics-connection-test 2>$using:taskResultFile | Out-Null
     if (-Not $?) {
         $result = Get-Content $using:taskResultFile
         $result = $result[0..($result.length-7)]
