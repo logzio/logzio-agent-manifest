@@ -1,4 +1,4 @@
- #!/bin/bash
+   #!/bin/bash
 
 #################################################################################################################################
 #################################################### Utils Windows Functions ####################################################
@@ -10,7 +10,7 @@
 # Output:
 #   The message
 function Write-Error ([string]$message) {
-    Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $message" >> logzio_agent.log
+    Write-Log "ERROR" "$message"
     Write-Host "$message" -ForegroundColor Red
 }
 
@@ -20,13 +20,28 @@ function Write-Error ([string]$message) {
 # Output:
 #   The message
 function Write-Warning ([string]$message) {
-    Write-Output "[WARN] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $message" >> logzio_agent.log
+    Write-Log "WARN" "$message"
     Write-Host "$message" -ForegroundColor Yellow
+}
+
+# Writes log into logzio_agent.log file
+# Input:
+#   logLevel - The level of the log (INFO/ERROR/WARN)
+#   log - Log text
+function Write-Log ([string]$logLevel, [string]$log) {
+    Write-Output "[$logLevel] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $log" >> $logFile
+}
+
+# Writes command into logzio-temp\run.ps1 file
+# Input:
+#   command - The command towrite into the file
+function Write-Run ([string]$command) {
+    Write-Output "$command" >> $runFile
 }
 
 # Deletes the temp directory
 function Remove-TempDir {
-    Remove-Item -Path logzio-temp -Recurse
+    Remove-Item -Path $logzioTempDir -Recurse
 }
 
 # Finds the requested parameter in params 
@@ -87,7 +102,7 @@ function Invoke-Task([string]$command, [string]$desc) {
 
         if ($counter -eq $timeout) {
             Remove-Job -Job $job -Force >$null
-            Write-Output "Write-Error `"timeout error - the task was not completed in time`"" >> logzio-temp/run
+            Write-Run "Write-Error `"timeout error: the task was not completed in time`""
             break
         }
     }
@@ -95,7 +110,7 @@ function Invoke-Task([string]$command, [string]$desc) {
     Wait-Job -Job $job | Out-Null
     $local:exitCode = Receive-Job -Job $job
 
-    if (-Not $jobState.Equals("Completed") -Or $exitCode -ne 0) {
+    if (-Not $jobState.Equals("Completed") -Or $exitCode -gt 0) {
         Write-Host "`r[ " -NoNewline
         Write-Host "X" -ForegroundColor red -NoNewline
         Write-Host " ]" -NoNewline
@@ -103,7 +118,7 @@ function Invoke-Task([string]$command, [string]$desc) {
 
         [Console]::CursorVisible = $true
         
-        . ./logzio-temp/run.ps1
+        . $runFile
         #Remove-TempDir
         Exit $exitCode
     }
@@ -115,7 +130,6 @@ function Invoke-Task([string]$command, [string]$desc) {
 
     [Console]::CursorVisible = $true
 
-    . ./logzio-temp/run.ps1
-    Clear-Content logzio-temp/run.ps1
+    . $runFile
+    Clear-Content $runFile
 }
- 

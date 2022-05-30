@@ -1,4 +1,4 @@
- #################################################################################################################################
+  #################################################################################################################################
 ##################################################### Agent Windows Functions ###################################################
 #################################################################################################################################
 
@@ -6,7 +6,7 @@
 # Output:
 #   Help usage
 function Show-Help {
-    Write-Host "Usage: ./agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<app_json>]"
+    Write-Host "Usage: .\agent.ps1 --url=<logzio_app_url> --id=<agent_id> [--debug=<app_json>]"
     Write-Host " --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)"
     Write-Host " --id=<agent_id>              Logz.io agent ID"
     Write-Host " --debug=<app_json>           Debug run using a local application JSON"
@@ -17,13 +17,17 @@ function Show-Help {
 # Input:
 #   Agent script arguments ($args)
 # Output:
-#   app_url - Logz.io app URL
-#   agent_id - Logz.io agent ID
-#   app_json_file - App JSON (only in debug)
+#   appURL - Logz.io app URL
+#   agentID - Logz.io agent ID
+#   appJsonFile - App JSON (only in debug)
 # Error:
 #   Exit Code 2
 function Get-Arguments ([string[]]$agentArgs) {
-    Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Getting arguments ..." >> logzio_agent.log
+    Write-Log "INFO" "Getting arguments ..."
+
+    $script:appURL = ""
+    $script:agentID = ""
+    $script:appJsonFile = ""
 
     for ($i=0; $i -lt $agentArgs.Count; $i++) {
         switch -Regex ($agentArgs[$i]) {
@@ -33,41 +37,41 @@ function Get-Arguments ([string[]]$agentArgs) {
                 Exit
             }
             --url=* {
-                $global:appURL = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
+                $appURL = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
                 if ([string]::IsNullOrEmpty($appURL)) {
-                    Write-Error "agent.bash (2): no Logz.io app URL specified!"
+                    Write-Error "agent.ps1 (2): no Logz.io app URL specified!"
                     Remove-TempDir
                     Exit 2
                 }
 
-                Write-Output "[INFO] [$(Get-Date -Format "yyy-MM-dd HH:mm:ss")] url = $appURL" >> logzio_agent.log
+                Write-Log "INFO" "url = $appURL"
                 continue
             }
             --id=* {
-                $global:agentID = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
+                $agentID = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
                 if ([string]::IsNullOrEmpty($agentID)) {
-                    Write-Error "agent.bash (2): no agent ID specified!"
+                    Write-Error "agent.ps1 (2): no agent ID specified!"
                     Remove-TempDir
                     Exit 2
                 }
 
-                Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] id = $agentID" >> logzio_agent.log
+                Write-Log "INFO" "id = $agentID"
                 continue
             }
             --debug=* {
-                $global:appJsonFile = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
+                $script:appJsonFile = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
                 if ([string]::IsNullOrEmpty($appJsonFile)) {
-                    Write-Error "agent.bash (2): no JSON file specified!"
+                    Write-Error "agent.ps1 (2): no JSON file specified!"
                     Remove-TempDir
                     Exit 2
                 }
 
-                Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] debug = $appJsonFile" >> logzio_agent.log
+                Write-Log "INFO" "debug = $appJsonFile"
                 break
             }
             default {
-                Write-Error "agent.bash (2): unrecognized flag"
-                Write-Error "agent.bash (2): try './agent.bash --help' for more information"
+                Write-Error "agent.ps1 (2): unrecognized flag"
+                Write-Error "agent.ps1 (2): try '.\agent.ps1 --help' for more information"
                 Remove-TempDir
                 Exit 2
             }
@@ -81,14 +85,14 @@ function Get-Arguments ([string[]]$agentArgs) {
 # Error:
 #   Exit Code 2
 function Test-ArgumentsValidation {
-    Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Checking validation ..." >> logzio_agent.log
+    Write-Log "INFO" "Checking validation ..."
 
     if (-Not [string]::IsNullOrEmpty($appJsonFile)) {
         if (Test-Path -Path $appJsonFile -PathType Leaf) {
             return
         }
 
-        Write-Error "agent.bash (2): the JSON file $app_json_file does not exist"
+        Write-Error "agent.ps1 (2): the JSON file $app_json_file does not exist"
         Remove-TempDir
         Exit 2
     }
@@ -97,150 +101,163 @@ function Test-ArgumentsValidation {
 
     if ([string]::IsNullOrEmpty($appURL)) {
         $isError = $true
-        Write-Error "agent.bash (2): Logz.io app URL must be specified"
+        Write-Error "agent.ps1 (2): Logz.io app URL must be specified"
     }
     if ([string]::IsNullOrEmpty($agentID)) {
         $isError = $true
-        Write-Error "agent.bash (2): agent ID must be specified"
+        Write-Error "agent.ps1 (2): agent ID must be specified"
     }
 
     if ($isError) {
-        Write-Error "agent.bash (2): try './agent.bash --help' for more information"
+        Write-Error "agent.ps1 (2): try '.\agent.ps1 --help' for more information"
         Remove-TempDir
         Exit 2
     }
 }
 
 
-# Downloads jq exe
+# Downloads jq exe if is not installed
 # Error:
 #   Exit Code 3
-function Install-JQ () {
-    Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Checking if jq is installed ..." >> logzio_agent.log
+function Get-JQ {
+    . .\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Checking if jq is installed ..."
     Get-Command jq 2>&1 | Out-Null
     if ($?) {
-        $global:jq = "jq"
-        return 0
+        Write-Run "`$script:jq = `"jq`""
+        return
     }
 
-    Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Downloading jq exe ..." >> $logFile
+    Write-Log "INFO" "Downloading jq exe ..."
     try {
-        Invoke-WebRequest -Uri https://github.com/stedolan/jq/releases/download1/jq-1.6/jq-win64.exe -OutFile logzio-temp\jq.exe | Out-Null
-        $global:jq = "logzio-temp\jq.exe"
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe -OutFile $using:logzioTempDir\jq.exe | Out-Null
+        $ProgressPreference = "Continue"
+        Write-Run "`$script:jq = `"logzio-temp\jq.exe`""
     }
     catch {
-        Write-Output $_ >> test.txt
-        Write-Output $_ >> $logFile
-        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (3): failed to get jq exe file from github" >> $logFile
-
-        Write-Output "Write-Host `"$_`"" > logzio-temp\run.ps1
-        Write-Output "Write-Error `"agent.ps1 (3): failed to get jq exe file from github`"" >> logzio-temp\run.ps1
+        Write-Run "Write-Error `"agent.ps1 (3): failed to get jq exe file from github. error: $_`""
         return 3
     }
 }
 
-<#
 # Gets the application JSON from the agent/local file into logzio-temp directory
 # Error:
 #   Exit Code 4
-function get_app_json () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting application JSON ..." >> logzio_agent.log
+function Get-AppJSON {
+    . .\utils_functions.ps1
+    $local:logFile = $using:logFile
 
-    if [[ ! -z "$app_json_file" ]]; then
+    Write-Log "INFO" "Getting application JSON ..."
+
+    if (-Not [string]::IsNullOrEmpty($using:appJsonFile)) {
         # Using local app JSON file
-        echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Using local application JSON file ..." >> logzio_agent.log
-        cp $app_json_file logzio-temp/app.json
+        Write-Log "INFO" "Using local application JSON file ..."
+        Copy-Item -Path $using:appJsonFile -Destination $using:logzioTempDir\app.json
         return
-    fi
+    }
 
     # Getting app JSON from agent
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting application JSON from agent ..." >> logzio_agent.log
-    curl -fsSL $app_url/telemetry-agent/public/agents/configuration/$agent_id > logzio-temp/app.json 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent. make sure your URL is valid\"" >> logzio-temp/run
+    Write-Log "INFO" "Getting application JSON from agent ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:appURL/telemetry-agent/public/agents/configuration/$using:agentID -OutFile $using:logzioTempDir\app.json | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent. make sure your URL is valid. error: $_`""
         return 4
-    fi
+    }
 
-    local status_code=$(echo -e "$app_json" | jq -r '.statusCode')
-    if [[ "$status_code" != null ]]; then
-        echo -e "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent (statusCode $status_code). make sure your ID is valid\"" > logzio-temp/run
+    $local:statusCode= jq -r '.statusCode' .\logzio-temp\app.json
+    if ([string]::IsNullOrEmpty($statusCode)) {
+        Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent (statusCode $statusCode). make sure your ID is valid`""
         return 4
-    fi
-
-    echo -e "$app_json" > logzio-temp/app.json
+    }
 }
 
 # Builds path to logzio-agent-manifest repo according the app JSON
 # Output:
-#   repo_path - Path to logzio-agent-manifest repo according the app JSON
+#   repoPath - Path to logzio-agent-manifest repo according the app JSON
 # Error:
 #   Exit Code 5
-function build_repo_path () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building repo path ..." >> logzio_agent.log
-    
-    local dir1=$(jq -r '.configuration.name' logzio-temp/app.json)
-    if [[ "$dir1" = null ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.name' was not found in application JSON\"" > logzio-temp/run
-        return 5
-    fi
-    if [[ -z "$dir1" ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.name' is empty in application JSON\"" > logzio-temp/run
-        return 5
-    fi
+function Build-RepoPath {
+    . .\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-    local dir2=$(jq -r '.configuration.subtypes[0].name' logzio-temp/app.json)
-    if [[ "$dir2" = null ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].name' was not found in application JSON\"" > logzio-temp/run
-        return 5
-    fi
-    if [[ -z "$dir2" ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].name' is empty in application JSON\"" > logzio-temp/run
-        return 5
-    fi
+    Write-Log "INFO" "Building repo path ..."
 
-    local dir3=$(jq -r '.configuration.subtypes[0].datasources[0].name' logzio-temp/app.json)
-    if [[ "$dir3" = null ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON\"" > logzio-temp/run
+    $local:dir1 = Invoke-Expression -Command "$using:jq -r '.configuration.name' $using:logzioTempDir\app.json"
+    if ($null -eq $dir1) {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' was not found in application JSON`""
         return 5
-    fi
-    if [[ -z "$dir3" ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' is empty in application JSON\"" > logzio-temp/run
+    }
+    if ($dir1 -eq "") {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' is empty in application JSON`""
         return 5
-    fi
+    }
 
-    local repo_path="$repo_url/$dir1/$dir2/$dir3"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] repo_path = $repo_path" >> logzio_agent.log
-    echo -e "repo_path=\"$repo_path\"" > logzio-temp/run
+    $local:dir2 = Invoke-Expression -Command "$using:jq -r '.configuration.subtypes[0].name' $using:logzioTempDir\app.json"
+    if ($null -eq $dir2) {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' was not found in application JSON`""
+        return 5
+    }
+    if ($dir2 -eq "") {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' is empty in application JSON`""
+        return 5
+    }
+
+    $local:dir3 = Invoke-Expression -Command "$using:jq -r '.configuration.subtypes[0].datasources[0].name' $using:logzioTempDir\app.json"
+    if ($null -eq $dir3) {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON`""
+        return 5
+    }
+    if ($dir3 -eq "") {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' is empty in application JSON`""
+        return 5
+    }
+
+    $local:repoPath = "$using:repoURL/$dir1/$dir2/$dir3"
+    Write-Log "INFO" "repoPath = $repoPath"
+    Write-Run "`$script:repoPath = `"$repoPath`""
 }
 
 # Gets prerequisites scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 6
-function get_prerequisite_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/prerequisites/linux/prerequisites.bash > logzio-temp/prerequisites.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+function Get-PrerequisitesScripts () {
+    . .\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (6): failed to get prerequisites script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    Write-Log "INFO" "Getting prerequisites script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/prerequisites/windows/prerequisites.ps1 -OutFile $using:logzioTempDir\prerequisites.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites script file from logzio-agent-manifest repo. error: $_`""
         return 6
-    fi
+    }
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/prerequisites/linux/functions.bash > logzio-temp/prerequisites_functions.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (6): failed to get prerequisites functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    Write-Log "INFO" "Getting prerequisites functions script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/prerequisites/windows/functions.ps1 -OutFile $using:logzioTempDir\prerequisites_functions.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites functions script file from logzio-agent-manifest repo. error: $_`""
         return 6
-    fi
+    }
 }
 
+<#
 # Gets installer scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 7
@@ -265,4 +282,4 @@ function get_installer_scripts () {
         return 7
     fi
 }
-#> 
+#>
