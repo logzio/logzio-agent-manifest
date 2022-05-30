@@ -120,7 +120,7 @@ function Test-ArgumentsValidation {
 # Error:
 #   Exit Code 3
 function Get-JQ {
-    . .\utils_functions.ps1
+    . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
 
@@ -148,7 +148,7 @@ function Get-JQ {
 # Error:
 #   Exit Code 4
 function Get-AppJSON {
-    . .\utils_functions.ps1
+    . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
 
     Write-Log "INFO" "Getting application JSON ..."
@@ -185,7 +185,7 @@ function Get-AppJSON {
 # Error:
 #   Exit Code 5
 function Build-RepoPath {
-    . .\utils_functions.ps1
+    . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
 
@@ -230,7 +230,7 @@ function Build-RepoPath {
 # Error:
 #   Exit Code 6
 function Get-PrerequisitesScripts () {
-    . .\utils_functions.ps1
+    . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
 
