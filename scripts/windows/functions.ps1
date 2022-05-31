@@ -131,11 +131,15 @@ function Install-Chocolatey {
     }
 
     Write-Log "INFO" "Installing Chocolatey ..."
+    $ProgressPreference = "SilentlyContinue"
+    Invoke-WebRequest -Uri https://community.chocolatey.org/install.ps1 -OutFile $using:logzioTempDir\choco.ps1 | Out-Null
+    $ProgressPreference = "Continue"
+    . $using:logzioTempDir\choco.ps1
     #Start-Process powershell.exe -Argument "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')" -RedirectStandardError $taskResultFile -PassThru -Wait
     #if ($process.ExitCode -eq 0) {
     #    return
     #}
-    Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    #Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
     $local:result = Get-Content $using:taskResultFile
     $result = $result[0..($result.length-7)]
