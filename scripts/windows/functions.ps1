@@ -122,7 +122,7 @@ function Install-Chocolatey {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
-    $local:taskResultFile = $using:taskResultFile
+    #$local:taskResultFile = $using:taskResultFile
 
     Write-Log "INFO" "Checking if Chocolatey is installed ..."
     Get-Command choco 2>&1 | Out-Null
@@ -131,19 +131,14 @@ function Install-Chocolatey {
     }
 
     Write-Log "INFO" "Installing Chocolatey ..."
-    $ProgressPreference = "SilentlyContinue"
-    Invoke-WebRequest -Uri https://community.chocolatey.org/install.ps1 -OutFile $using:logzioTempDir\choco.ps1 | Out-Null
-    $ProgressPreference = "Continue"
-    . $using:logzioTempDir\choco.ps1
-    #Start-Process powershell.exe -Argument "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')" -RedirectStandardError $taskResultFile -PassThru -Wait
-    #if ($process.ExitCode -eq 0) {
-    #    return
-    #}
-    #Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
-    #$local:result = Get-Content $using:taskResultFile
-    #$result = $result[0..($result.length-7)]
-    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey.`""
+    Start-Process powershell.exe -Argument "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')" -RedirectStandardError $using:taskResultFile -PassThru -Wait
+    if ($process.ExitCode -eq 0) {
+        return
+    }
+    
+    $local:result = Get-Content $using:taskResultFile
+    $result = $result[0..($result.length-7)]
+    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey. $result`""
     return 3
 }
 
