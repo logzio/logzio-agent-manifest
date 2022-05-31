@@ -15,7 +15,7 @@ function Get-AgentFunctionsScripts {
     catch {
         Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo. error: $_" >> $logFile
 
-        Write-Host "agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo. error: $_" -ForegroundColor Red
+        Write-Host "agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo. $_" -ForegroundColor Red
         Remove-Item -Path $logzioTempDir -Recurse
         Exit 1
     }
@@ -30,7 +30,7 @@ function Get-AgentFunctionsScripts {
         $_ >> $logFile
         Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo. error: $_" >> $logFile
 
-        Write-Host "agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo. error: $_" -ForegroundColor Red
+        Write-Host "agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo. $_" -ForegroundColor Red
         Remove-Item -Path $logzioTempDir -Recurse
         Exit 1
     }
@@ -70,7 +70,8 @@ Write-Host "Agent:`n`n" -NoNewline
 
 # Run prerequisite installations
 Write-Host "prerequisite installations:"
-Invoke-Task "Get-JQ" "getting jq exe"                                                       # Get jq exe file
+Invoke-Task "Install-Chocolatey" "installing Chocolatey"                                    # Install Chocolatey
+Invoke-Task "Install-JQ" "installing jq"                                                    # Install jq
 
 # Run last preparations
 Write-Host "`nlast preparations:"

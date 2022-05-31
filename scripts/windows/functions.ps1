@@ -1,4 +1,4 @@
-  #################################################################################################################################
+#################################################################################################################################
 ##################################################### Agent Windows Functions ###################################################
 #################################################################################################################################
 
@@ -115,11 +115,36 @@ function Test-ArgumentsValidation {
     }
 }
 
-
-# Downloads jq exe if is not installed
+# Installs Chocolatey
 # Error:
 #   Exit Code 3
-function Get-JQ {
+function Install-Chocolatey {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Checking if Chocolatey is installed ..."
+    Get-Command choco 2>&1 | Out-Null
+    if ($?) {
+        return
+    }
+
+    Write-Log "INFO" "Installing Chocolatey ..."
+    try {
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+        iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
+    }
+    catch {
+        Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey. $_`""
+        return 3
+    }
+}
+
+# Installs jq
+# Error:
+#   Exit Code 3
+function Install-JQ {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
@@ -127,19 +152,23 @@ function Get-JQ {
     Write-Log "INFO" "Checking if jq is installed ..."
     Get-Command jq 2>&1 | Out-Null
     if ($?) {
-        Write-Run "`$script:jq = `"jq`""
+        choco upgrade jq -y 2>$using:taskResultFile | Out-Null
+        if (-Not $?) {
+            $local:result = Get-Content $using:taskResultFile
+            $result = $result[0..($result.length-7)]
+            Write-Run "Write-Error `"agent.ps1 (3): failed to upgrade jq. $result`""
+            return 3
+        }
+
         return
     }
 
-    Write-Log "INFO" "Downloading jq exe ..."
-    try {
-        $ProgressPreference = "SilentlyContinue"
-        Invoke-WebRequest -Uri https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe -OutFile $using:logzioTempDir\jq.exe | Out-Null
-        $ProgressPreference = "Continue"
-        Write-Run "`$script:jq = `"logzio-temp\jq.exe`""
-    }
-    catch {
-        Write-Run "Write-Error `"agent.ps1 (3): failed to get jq exe file from github. error: $_`""
+    Write-Log "INFO" "Installing jq ..."
+    choco upgrade jq -y 2>$using:taskResultFile | Out-Null
+    if (-Not $?) {
+        $local:result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Error `"agent.ps1 (3): failed to install jq. $result`""
         return 3
     }
 }
@@ -168,7 +197,7 @@ function Get-AppJSON {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent. make sure your URL is valid. error: $_`""
+        Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent. make sure your URL is valid. $_`""
         return 4
     }
 
@@ -191,7 +220,7 @@ function Build-RepoPath {
 
     Write-Log "INFO" "Building repo path ..."
 
-    $local:dir1 = Invoke-Expression -Command "$using:jq -r '.configuration.name' $using:logzioTempDir\app.json"
+    $local:dir1 = jq -r '.configuration.name' $using:logzioTempDir\app.json
     if ($null -eq $dir1) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' was not found in application JSON`""
         return 5
@@ -201,7 +230,7 @@ function Build-RepoPath {
         return 5
     }
 
-    $local:dir2 = Invoke-Expression -Command "$using:jq -r '.configuration.subtypes[0].name' $using:logzioTempDir\app.json"
+    $local:dir2 = jq -r '.configuration.subtypes[0].name' $using:logzioTempDir\app.json
     if ($null -eq $dir2) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' was not found in application JSON`""
         return 5
@@ -211,7 +240,7 @@ function Build-RepoPath {
         return 5
     }
 
-    $local:dir3 = Invoke-Expression -Command "$using:jq -r '.configuration.subtypes[0].datasources[0].name' $using:logzioTempDir\app.json"
+    $local:dir3 = jq -r '.configuration.subtypes[0].datasources[0].name' $using:logzioTempDir\app.json
     if ($null -eq $dir3) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON`""
         return 5
@@ -241,7 +270,7 @@ function Get-PrerequisitesScripts () {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites script file from logzio-agent-manifest repo. error: $_`""
+        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites script file from logzio-agent-manifest repo. $_`""
         return 6
     }
 
@@ -252,7 +281,7 @@ function Get-PrerequisitesScripts () {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites functions script file from logzio-agent-manifest repo. error: $_`""
+        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites functions script file from logzio-agent-manifest repo. $_`""
         return 6
     }
 }
