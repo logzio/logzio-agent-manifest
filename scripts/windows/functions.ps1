@@ -122,6 +122,7 @@ function Install-Chocolatey {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
+    $local:taskResultFile = $using:taskResultFile
 
     Write-Log "INFO" "Checking if Chocolatey is installed ..."
     Get-Command choco 2>&1 | Out-Null
@@ -130,10 +131,10 @@ function Install-Chocolatey {
     }
 
     Write-Log "INFO" "Installing Chocolatey ..."
-    Start-Process powershell.exe -Argument "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')" -RedirectStandardError $using:taskResultFile
-    #if ($process.ExitCode -eq 0) {
-    #    return
-    #}
+    Start-Process powershell.exe -Argument "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')" -RedirectStandardError $taskResultFile -PassThru -Wait
+    if ($process.ExitCode -eq 0) {
+        return
+    }
 
     $local:result = Get-Content $using:taskResultFile
     $result = $result[0..($result.length-7)]
