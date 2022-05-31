@@ -141,9 +141,9 @@ function Install-Chocolatey {
     #}
     #Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 
-    $local:result = Get-Content $using:taskResultFile
-    $result = $result[0..($result.length-7)]
-    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey. $result`""
+    #$local:result = Get-Content $using:taskResultFile
+    #$result = $result[0..($result.length-7)]
+    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey.`""
     return 3
 }
 
