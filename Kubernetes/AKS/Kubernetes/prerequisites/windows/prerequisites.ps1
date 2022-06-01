@@ -18,12 +18,11 @@ Invoke-Task "Test-CanKubernetesClusterConnectToLogzioLogs" "checking if Kubernet
 # Check if Kubernetes cluster can connect to Logz.io metrics (port 8053)
 Invoke-Task "Test-CanKubernetesClusterConnectToLogzioMetrics" "checking if Kubernetes cluster can connect to Logz.io metrics"
 
-<#
 # Check if Helm is installed
-execute_task "is_helm_installed" "checking if Helm is installed"
+Invoke-Task "Test-IsHelmInstalled" "checking if Helm is installed"
 
 # Add Logz.io Helm repo
-execute_task "add_logzio_helm_repo" "adding Logz.io Helm repo"
+Invoke-Task "Add-LogzioHelmRepo" "adding Logz.io Helm repo"
 
 # Update Logz.io Helm repo
-execute_task "update_logzio_helm_repo" "updating Logz.io Helm repo"#>
+Invoke-Task "Update-LogzioHelmRepo" "updating Logz.io Helm repo"
