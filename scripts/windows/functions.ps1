@@ -156,24 +156,26 @@ function Install-JQ {
     Get-Command jq 2>&1 | Out-Null
     if ($?) {
         choco upgrade jq -y 2>$using:taskResultFile | Out-Null
-        if (-Not $?) {
-            $local:result = Get-Content $using:taskResultFile
-            $result = $result[0..($result.length-7)]
-            Write-Run "Write-Error `"agent.ps1 (3): failed to upgrade jq. $result`""
-            return 3
+        if ($?) {
+            return
         }
 
-        return
+        $local:result = Get-Content $using:taskResultFile
+        $result = $result[0..($result.length-7)]
+        Write-Run "Write-Error `"agent.ps1 (3): failed to upgrade jq. $result`""
+        return 3
     }
 
     Write-Log "INFO" "Installing jq ..."
     choco upgrade jq -y 2>$using:taskResultFile | Out-Null
-    if (-Not $?) {
-        $local:result = Get-Content $using:taskResultFile
-        $result = $result[0..($result.length-7)]
-        Write-Run "Write-Error `"agent.ps1 (3): failed to install jq. $result`""
-        return 3
+    if ($?) {
+        return
     }
+
+    $local:result = Get-Content $using:taskResultFile
+    $result = $result[0..($result.length-7)]
+    Write-Run "Write-Error `"agent.ps1 (3): failed to install jq. $result`""
+    return 3
 }
 
 # Gets the application JSON from the agent/local file into logzio-temp directory
