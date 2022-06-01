@@ -206,11 +206,13 @@ function Get-AppJSON {
         return 4
     }
 
-    $local:statusCode= jq -r '.statusCode' .\logzio-temp\app.json
+    $local:statusCode= jq -r '.statusCode' $using:logzioTempDir\app.json
     if ([string]::IsNullOrEmpty($statusCode)) {
-        Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent (statusCode $statusCode). make sure your ID is valid`""
-        return 4
+        return
     }
+
+    Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent (statusCode $statusCode). make sure your ID is valid`""
+    return 4
 }
 
 # Builds path to logzio-agent-manifest repo according the app JSON
