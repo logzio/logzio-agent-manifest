@@ -130,7 +130,7 @@ function Install-Chocolatey {
     }
 
     Write-Log "INFO" "Installing Chocolatey ..."
-    Start-Process -FilePath "powershell" -ArgumentList "Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')" -RedirectStandardError $using:taskResultFile -Wait
+    Start-Process -FilePath "powershell" -ArgumentList "[Console]::InputEncoding = New-Object Text.UTF8Encoding $false; Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')" -RedirectStandardError $using:taskResultFile -Wait
 
     $local:result = Get-Content $using:taskResultFile
     if ([string]::IsNullOrEmpty($result)) {
