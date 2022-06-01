@@ -144,7 +144,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     }
 
     if ($podLogs = "Connected to listener.logz.io") {
-        kubectl delete pod logzio-logs-connection-test 2>$using:taskResultFile | Out-Null
+        kubectl delete pod logzio-metrics-connection-test 2>$using:taskResultFile | Out-Null
         if ($?) {
             return
         }
