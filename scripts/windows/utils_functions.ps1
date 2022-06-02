@@ -109,7 +109,10 @@ function Invoke-Task([string]$command, [string]$desc) {
 
     Wait-Job -Job $job | Out-Null
     $local:exitCode = Receive-Job -Job $job
-    Write-Output $exitCode >> test.txt
+    if ([string]::IsNullOrEmpty($exitCode)) {
+        $exitCode = 0
+    }
+    
     if (-Not $jobState.Equals("Completed") -Or $exitCode -gt 0) {
         Write-Host "`r[ " -NoNewline
         Write-Host "X" -ForegroundColor red -NoNewline
