@@ -129,7 +129,10 @@ function Install-JQ {
         return
     }
 
-    Install-Chocolatey 3
+    $local:result = Install-Chocolatey
+    if (-Not [string]::IsNullOrEmpty($result) -and $result -gt 0) {
+        return 3
+    }
 
     Write-Log "INFO" "Installing jq ..."
     choco install jq -y 2>$using:taskErrorFile | Out-Null

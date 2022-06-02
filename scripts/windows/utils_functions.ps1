@@ -65,11 +65,9 @@ function Find-Params ([string]$params, [string]$requestedName) {
 }
 
 # Installs Chocolatey
-# Input:
-#   errorExitCode - The exit code to return if got error
 # Error:
-#   Exit Code according the errorExitCode argument
-function Install-Chocolatey([int]$errorExitCode) {
+#   Exit Code 1
+function Install-Chocolatey {
     Write-Log "INFO" "Checking if Chocolatey is installed ..."
     Get-Command choco 2>&1 | Out-Null
     if ($?) {
@@ -85,8 +83,8 @@ function Install-Chocolatey([int]$errorExitCode) {
         return
     }
     
-    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey.`n  run the following command 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))' and rerun Logz.io agent script`""
-    return $exitCode
+    Write-Run "Write-Error `"utils_functions.ps1 (1): failed to install Chocolatey.`n  run the following command 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))' and rerun Logz.io agent script`""
+    return 1
 }
 
 # Executes command with progress indicator
@@ -94,7 +92,7 @@ function Install-Chocolatey([int]$errorExitCode) {
 #   command - Command to execute
 #   desc - Task description
 # Error:
-#   Exit Code according the executed command
+#   Exit Code 2 if got timeout error, otherwise Exit Code according the executed command
 function Invoke-Task([string]$command, [string]$desc) {
     $local:funcCode = Get-Command $command | Select-Object -ExpandProperty ScriptBlock
     $local:scriptBlock = [ScriptBlock]::Create($funcCode)
@@ -127,17 +125,22 @@ function Invoke-Task([string]$command, [string]$desc) {
 
         if ($counter -eq $timeout) {
             Remove-Job -Job $job -Force >$null
-            Write-Run "Write-Error `"timeout error: the task was not completed in time`""
+            $jobState = "Timeout"
+            Write-Run "Write-Error `"utils_functions.ps1 (2): timeout error: the task was not completed in time`""
             break
         }
     }
 
     Wait-Job -Job $job | Out-Null
-    $local:exitCode = Receive-Job -Job $job
-    if ([string]::IsNullOrEmpty($exitCode) -or $exitCode -isnot [int]) {
-        $exitCode = 0
+    $local:exitCode = 2
+    
+    if (-Not $jobState.Equals("Timeout")) {
+        $exitCode = Receive-Job -Job $job
+        if ([string]::IsNullOrEmpty($exitCode) -or $exitCode -isnot [int]) {
+            $exitCode = 0
+        }
     }
-
+    
     if (-Not $jobState.Equals("Completed") -or $exitCode -gt 0) {
         Write-Host "`r[ " -NoNewline
         Write-Host "X" -ForegroundColor red -NoNewline
