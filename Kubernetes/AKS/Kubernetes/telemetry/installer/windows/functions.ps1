@@ -20,12 +20,12 @@ function Get-GeneralParams {
         return 1
     }
     if ($generalParams.Equals("")) {
-        Write-Run "Write-Error `"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON`""
+        Write-Run "Write-Error `"installer.ps1 (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON`""
         return 1
     }
 
-    Write-Log "INFO" "generalParams = $general_params"
-    Write-Run "`$script:generalParams = '$general_params'"
+    Write-Log "INFO" "generalParams = $generalParams"
+    Write-Run "`$script:generalParams = '$generalParams'"
 }
 
 <#
