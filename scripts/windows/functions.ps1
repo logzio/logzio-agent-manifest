@@ -260,29 +260,33 @@ function Get-PrerequisitesScripts () {
     }
 }
 
-<#
 # Gets installer scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 7
-function get_installer_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/installer/linux/installer.bash > logzio-temp/installer.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+function Get-InstallerScripts {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (7): failed to get installer script file from logzio-agent-manifest repo\"" > logzio-temp/run
+    Write-Log "INFO" "Getting installer script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/installer/windows/installer.ps1 -OutFile $using:logzioTempDir\installer.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"agent.ps1 (7): failed to get installer script file from logzio-agent-manifest repo.`n  $_`""
         return 7
-    fi
+    }
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/installer/linux/functions.bash > logzio-temp/installer_functions.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (7): failed to get installer functions script file from logzio-agent-manifest repo\"" > logzio-temp/run
+    Write-Log "INFO" "Getting installer functions script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/installer/windows/functions.ps1 -OutFile $using:logzioTempDir\installer_functions.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"agent.ps1 (7): failed to get installer functions script file from logzio-agent-manifest repo.`n  $_`""
         return 7
-    fi
+    }
 }
-#>
