@@ -168,13 +168,11 @@ function Test-IsHelmInstalled {
 
     Get-Command helm 2>&1 | Out-Null
     if ($?) {
-        choco upgrade kubernetes-helm -y 2>$using:taskErrorFile | Out-Null
-        if ($?) {
-            return
-        }
-        
-        $local:err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Error `"prerequisites.ps1 (4): failed to upgrade Helm.`n  $err`""
+        return
+    }
+
+    $local:result = Install-Chocolatey
+    if (-Not [string]::IsNullOrEmpty($result) -and $result -gt 0) {
         return 4
     }
 
