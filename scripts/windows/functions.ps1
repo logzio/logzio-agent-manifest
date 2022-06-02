@@ -138,7 +138,7 @@ function Install-JQ {
     }
 
     $local:err = Get-Content $using:taskErrorFile
-    Write-Run "Write-Error `"agent.ps1 (3): failed to install jq. $err`""
+    Write-Run "Write-Error `"agent.ps1 (3): failed to install jq.`n  $err`""
     return 3
 }
 
@@ -166,7 +166,7 @@ function Get-AppJSON {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent. make sure your URL is valid. $_`""
+        Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent. make sure your URL is valid.`n  $_`""
         return 4
     }
 
@@ -241,7 +241,7 @@ function Get-PrerequisitesScripts () {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites script file from logzio-agent-manifest repo. $_`""
+        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites script file from logzio-agent-manifest repo.`n  $_`""
         return 6
     }
 
@@ -252,7 +252,7 @@ function Get-PrerequisitesScripts () {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites functions script file from logzio-agent-manifest repo. $_`""
+        Write-Run "Write-Error `"agent.ps1 (6): failed to get prerequisites functions script file from logzio-agent-manifest repo.`n  $_`""
         return 6
     }
 }
