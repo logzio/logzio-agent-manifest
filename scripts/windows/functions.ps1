@@ -148,7 +148,7 @@ function Install-Chocolatey {
 # Error:
 #   Exit Code 3
 function Install-JQ {
-    . $using:logzioTempDir\agent_function.ps1
+    . $using:logzioTempDir\agent_functions.ps1
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
