@@ -92,7 +92,7 @@ function Test-ArgumentsValidation {
             return
         }
 
-        Write-Error "agent.ps1 (2): the JSON file $app_json_file does not exist"
+        Write-Error "agent.ps1 (2): the JSON file $appJsonFile does not exist"
         Remove-TempDir
         Exit 2
     }
@@ -135,12 +135,12 @@ function Install-Chocolatey {
     #$local:result = Receive-Job -Job $job2 | Out-Null
     #Write-Output $result > test.txt
 
-    $local:result = Get-Content $using:taskResultFile
-    if ([string]::IsNullOrEmpty($result)) {
+    $local:err = Get-Content $using:taskErrorFile
+    if ([string]::IsNullOrEmpty($err)) {
         return
     }
     
-    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey. $result`""
+    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey. $err`""
     return 3
 }
 
@@ -161,14 +161,13 @@ function Install-JQ {
     Install-Chocolatey
 
     Write-Log "INFO" "Installing jq ..."
-    choco install jq -y 2>$using:taskResultFile | Out-Null
+    choco install jq -y 2>$using:taskErrorFile | Out-Null
     if ($?) {
         return
     }
 
-    $local:result = Get-Content $using:taskResultFile
-    $result = $result[0..($result.length-7)]
-    Write-Run "Write-Error `"agent.ps1 (3): failed to install jq. $result`""
+    $local:err = Get-Content $using:taskErrorFile
+    Write-Run "Write-Error `"agent.ps1 (3): failed to install jq. $err`""
     return 3
 }
 
@@ -184,7 +183,7 @@ function Get-AppJSON {
     if (-Not [string]::IsNullOrEmpty($using:appJsonFile)) {
         # Using local app JSON file
         Write-Log "INFO" "Using local application JSON file ..."
-        Copy-Item -Path $using:appJsonFile -Destination $using:logzioTempDir\app.json
+        Copy-Item -Path $using:appJsonFile -Destination $using:appJSON
         return
     }
 
@@ -192,7 +191,7 @@ function Get-AppJSON {
     Write-Log "INFO" "Getting application JSON from agent ..."
     try {
         $ProgressPreference = "SilentlyContinue"
-        Invoke-WebRequest -Uri $using:appURL/telemetry-agent/public/agents/configuration/$using:agentID -OutFile $using:logzioTempDir\app.json | Out-Null
+        Invoke-WebRequest -Uri $using:appURL/telemetry-agent/public/agents/configuration/$using:agentID -OutFile $using:appJSON | Out-Null
         $ProgressPreference = "Continue"
     }
     catch {
@@ -200,7 +199,7 @@ function Get-AppJSON {
         return 4
     }
 
-    $local:statusCode= jq -r '.statusCode' $using:logzioTempDir\app.json
+    $local:statusCode= jq -r '.statusCode' $using:appJSON
     if ([string]::IsNullOrEmpty($statusCode)) {
         return
     }
@@ -221,7 +220,7 @@ function Build-RepoPath {
 
     Write-Log "INFO" "Building repo path ..."
 
-    $local:dir1 = jq -r '.configuration.name' $using:logzioTempDir\app.json
+    $local:dir1 = jq -r '.configuration.name' $using:appJSON
     if ($null -eq $dir1) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' was not found in application JSON`""
         return 5
@@ -231,7 +230,7 @@ function Build-RepoPath {
         return 5
     }
 
-    $local:dir2 = jq -r '.configuration.subtypes[0].name' $using:logzioTempDir\app.json
+    $local:dir2 = jq -r '.configuration.subtypes[0].name' $using:appJSON
     if ($null -eq $dir2) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' was not found in application JSON`""
         return 5
@@ -241,7 +240,7 @@ function Build-RepoPath {
         return 5
     }
 
-    $local:dir3 = jq -r '.configuration.subtypes[0].datasources[0].name' $using:logzioTempDir\app.json
+    $local:dir3 = jq -r '.configuration.subtypes[0].datasources[0].name' $using:appJSON
     if ($null -eq $dir3) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON`""
         return 5
