@@ -199,7 +199,7 @@ function Build-RepoPath {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' was not found in application JSON`""
         return 5
     }
-    if ($dir1 -eq "") {
+    if ($dir1.Equals("")) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' is empty in application JSON`""
         return 5
     }
@@ -209,7 +209,7 @@ function Build-RepoPath {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' was not found in application JSON`""
         return 5
     }
-    if ($dir2 -eq "") {
+    if ($dir2.Equals("")) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' is empty in application JSON`""
         return 5
     }
@@ -219,7 +219,7 @@ function Build-RepoPath {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON`""
         return 5
     }
-    if ($dir3 -eq "") {
+    if ($dir3.Equals("")) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' is empty in application JSON`""
         return 5
     }
