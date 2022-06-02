@@ -131,9 +131,9 @@ function Install-Chocolatey {
 
     Write-Log "INFO" "Installing Chocolatey ..."
     $local:job2 = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')}
-    echo "test1"
+    Write-Output "test1" >> test.txt
     Wait-Job -Job $job2
-    echo "test2"
+    Write-Output "test2" >> test.txt
     #$local:result = Receive-Job -Job $job2 | Out-Null
     #Write-Output $result > test.txt
 
