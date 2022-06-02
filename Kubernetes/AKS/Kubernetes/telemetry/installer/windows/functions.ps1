@@ -102,108 +102,109 @@ function Get-WhichProductsWereSelected {
 
     Write-Run "`$script:isLogsOptionSelected = $isLogsOptionSelected"
     Write-Run "`$script:isMetricsOptionSelected = $isMetricsOptionSelected"
-    Write-Run "`$isTracesOptionSelected = $isTracesOptionSelected"
+    Write-Run "`$script:isTracesOptionSelected = $isTracesOptionSelected"
+}
+
+# Builds tolerations Helm sets
+# Output:
+#   helmSets - Contains all the Helm sets
+# Error:
+#   Exit Code 3
+function Build-TolerationsHelmSets {
+    Write-Log "INFO" "Building tolerations Helm set ..."
+
+    $local:isTaintParam = Find-Param "$generalParams" "isTaint"
+    if ([string]::IsNullOrEmpty($isTaintParam)) {
+        Write-Run "Write-Error `"installer.ps1 (3): isTaint param was not found`""
+        return 3
+    }
+
+    $local:isTaintValue = Write-Output "$isTaintParam" | jq -r '.value'
+    if ($null -eq $is_taint_value) {
+        Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON`""
+        return 3
+    }
+    if ($isTaintValue.Equals("")) {
+        Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON`""
+        return 3
+    }
+
+    if (-Not $isTaintValue) {
+        Write-Log "INFO" "isTaint value = false"
+        return
+    }
+                    
+    $local:items = kubectl get nodes -o json | jq -r '.items'
+    if ($null -eq $items) {
+        Write-Run "Write-Error `"installer.ps1 (3): '.items[]' was not found in kubectl get nodes JSON`""
+        return 3
+    }
+
+    $local:tolerationsSets = ""
+    $local:index = 0
+    $local:taints = Write-Output "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]'
+
+    foreach ($taint in $taints) {
+        $local:key = Write-Output "$taint" | jq -r '.key'
+        if ($null -eq $key) {
+            Write-Run "Write-Error `"installer.ps1 (3): '.items[{item}].key' was not found in kubectl get nodes JSON`""
+            return 3
+        }
+
+        $local:effect = Write-Output "$taint" | jq -r '.effect'
+        if ($null -eq $effect) {
+            Write-Run "Write-Error `"installer.ps1 (3): '.items[{item}].effect' was not found in kubectl get nodes JSON`""
+            return 3
+        }
+
+        $local:operator = "Exists"
+        $local:value = Write-Output "$taint" | jq -r '.value'
+        if ($null -eq $value) {
+            $operator = "Equal"
+
+            if ($isLogsOptionSelected) {
+                $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].value=$value"
+                $tolerationsSets += " --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].value=$value"
+            }
+            if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
+                $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].value=$value"
+                $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].value=$value"
+                $tolerationsSets += " --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].value=$value"
+                $tolerationsSets += " --set-string logzio-k8s-telemetry.tolerations[$index].value=$value"
+            }
+        }
+
+        if ($isLogsOptionSelected) {
+            $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].key=$key"
+            $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].operator=$operator"
+            $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].effect=$effect"
+            $tolerationsSets += " --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].key=$key"
+            $tolerationsSets += " --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].operator=$operator"
+            $tolerationsSets += " --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].effect=$effect"
+        }
+        if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].key=$key"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].operator=$operator"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].effect=$effect"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].key=$key"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].operator=$operator"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].effect=$effect"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].key=$key"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].operator=$operator"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].effect=$effect"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.tolerations[$index].key=$key"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.tolerations[$index].operator=$operator"
+            $tolerationsSets += " --set-string logzio-k8s-telemetry.tolerations[$index].effect=$effect"
+        }
+
+        $index++
+    }
+
+    Write-Log "INFO" "tolerationsSets = $tolerationsSets"
+    Write-Run "`$helmSets += '$tolerationsSets'"
 }
 
 <#
-# Builds tolerations Helm sets
-# Output:
-#   helm_sets - Contains all the Helm sets
-# Error:
-#   Exit Code 3
-function build_tolerations_helm_sets () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building tolerations Helm set ..." >> logzio_agent.log
-
-    local is_taint_param=$(find_param "$general_params" "isTaint")
-    if [[ -z "$is_taint_param" ]]; then
-        echo -e "print_error \"installer.bash (3): isTaint param was not found\"" > logzio-temp/run
-        return 3
-    fi
-
-    local is_taint_value=$(echo -e "$is_taint_param" | jq -r '.value')
-    if [[ "$is_taint_value" = null ]]; then
-        echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON\"" > logzio-temp/run
-        return 3
-    fi
-    if [[ -z "$is_taint_value" ]]; then
-        echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON\"" > logzio-temp/run
-        return 3
-    fi
-
-    if ! $is_taint_value; then
-        echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] isTaint value = false" >> logzio_agent.log
-        return
-    fi
-                    
-    local items=$(kubectl get nodes -o json | jq -r '.items')
-    if [[ "$items" = null ]]; then
-        echo -e "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\"" > logzio-temp/run
-        return 3
-    fi
-
-    local tolerations_sets=""
-    local index=0
-
-    while read -r taint; do
-        local key=$(echo -e "$taint" | jq -r '.key')
-        if [[ "$key" = null ]]; then
-            echo -e "print_error \"installer.bash (3): '.items[{item}].key' was not found in kubectl get nodes JSON\"" > logzio-temp/run
-            return 3
-        fi
-
-        local effect=$(echo -e "$taint" | jq -r '.effect')
-        if [[ "$effect" = null ]]; then
-            echo -e "print_error \"installer.bash (3): '.items[{item}].effect' was not found in kubectl get nodes JSON\"" > logzio-temp/run
-            return 3
-        fi
-
-        local operator="Exists"
-        local value=$(echo -e "$taint" | jq -r '.value')
-        if [[ "$value" != null ]]; then
-            operator="Equal"
-
-            if $is_logs_option_selected; then
-                tolerations_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$index].value=$value"
-                tolerations_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].value=$value"
-            fi
-            if $is_metrics_option_selected || $is_traces_option_selected; then
-                tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].value=$value"
-                tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].value=$value"
-                tolerations_sets+=" --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].value=$value"
-                tolerations_sets+=" --set-string logzio-k8s-telemetry.tolerations[$index].value=$value"
-            fi
-        fi
-
-        if $is_logs_option_selected; then
-            tolerations_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$index].key=$key"
-            tolerations_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$index].operator=$operator"
-            tolerations_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$index].effect=$effect"
-            tolerations_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].key=$key"
-            tolerations_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].operator=$operator"
-            tolerations_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].effect=$effect"
-        fi
-        if $is_metrics_option_selected || $is_traces_option_selected; then
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].key=$key"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].operator=$operator"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].effect=$effect"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].key=$key"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].operator=$operator"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].effect=$effect"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].key=$key"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].operator=$operator"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].effect=$effect"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.tolerations[$index].key=$key"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.tolerations[$index].operator=$operator"
-            tolerations_sets+=" --set-string logzio-k8s-telemetry.tolerations[$index].effect=$effect"
-        fi
-
-        let "index++"
-    done < <(echo -e "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]')
-
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] tolerations_sets = $tolerations_sets" >> logzio_agent.log
-    echo -e "helm_sets+='$tolerations_sets'" > logzio-temp/run
-}
-
 # Builds enable metrics or traces Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets

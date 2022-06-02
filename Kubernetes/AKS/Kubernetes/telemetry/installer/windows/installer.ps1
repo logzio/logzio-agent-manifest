@@ -6,16 +6,19 @@
 Write-Log "INFO" "Loading installer functions ..."
 . $logzioTempDir\installer_functions.ps1
 
+# Helm sets
+$script:helmSets = ""
+
 # Get general params
 Invoke-Task "Get-GeneralParams" "getting general params"
 
 # Get which products were selected
 Invoke-Task "Get-WhichProductsWereSelected" "getting which products were selected"
 
-<#
 # Build tolerations helm sets
-execute_task "build_tolerations_helm_sets" "getting tolerations helm sets"
+Invoke-Task "Build-TolerationsHelmSets" "building tolerations helm sets"
 
+<#
 # Build enable metrics or traces helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
     execute_task "build_enable_metrics_or_traces_helm_set" "getting enable metrics or traces helm set"
