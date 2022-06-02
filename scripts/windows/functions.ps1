@@ -119,9 +119,9 @@ function Test-ArgumentsValidation {
 # Error:
 #   Exit Code 3
 function Install-Chocolatey {
-    . $using:logzioTempDir\utils_functions.ps1
-    $local:logFile = $using:logFile
-    $local:runFile = $using:runFile
+    #. $using:logzioTempDir\utils_functions.ps1
+    #$local:logFile = $using:logFile
+    #$local:runFile = $using:runFile
 
     Write-Log "INFO" "Checking if Chocolatey is installed ..."
     Get-Command choco 2>&1 | Out-Null
@@ -130,10 +130,10 @@ function Install-Chocolatey {
     }
 
     Write-Log "INFO" "Installing Chocolatey ..."
-    $local:job2 = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'); return 0}
+    $local:job2 = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')}
     Wait-Job -Job $job2
-    $local:result = Receive-Job -Job $job2 | Out-Null
-    Write-Output $result > test.txt
+    #$local:result = Receive-Job -Job $job2 | Out-Null
+    #Write-Output $result > test.txt
 
     $local:result = Get-Content $using:taskResultFile
     if ([string]::IsNullOrEmpty($result)) {
@@ -155,19 +155,13 @@ function Install-JQ {
     Write-Log "INFO" "Checking if jq is installed ..."
     Get-Command jq 2>&1 | Out-Null
     if ($?) {
-        choco upgrade jq -y 2>$using:taskResultFile | Out-Null
-        if ($?) {
-            return
-        }
-
-        $local:result = Get-Content $using:taskResultFile
-        $result = $result[0..($result.length-7)]
-        Write-Run "Write-Error `"agent.ps1 (3): failed to upgrade jq. $result`""
-        return 3
+        return
     }
 
+    Install-Chocolatey
+
     Write-Log "INFO" "Installing jq ..."
-    choco upgrade jq -y 2>$using:taskResultFile | Out-Null
+    choco install jq -y 2>$using:taskResultFile | Out-Null
     if ($?) {
         return
     }
