@@ -28,80 +28,84 @@ function Get-GeneralParams {
     Write-Run "`$script:generalParams = '$generalParams'"
 }
 
-<#
-# Gets which products were selected (logs/metrics/tracing)
+# Gets which products were selected (logs/metrics/traces)
 # Output:
-#   is_logs_option_selected - Tells if logs option was selected (true/false)
-#   logs_params - The logs params if logs option was selected
-#   is_metrics_option_selected - Tells if metrics option was selected (true/false)
-#   metrics_params - The metrics params if metrics option was selected
-#   is_traces_option_selected - Tells if traces option was selected (true/false)
-#   traces_params - The traces params if traces option was selected
+#   isLogsOptionSelected - Tells if logs option was selected (true/false)
+#   logsParams - The logs params if logs option was selected
+#   isMetricsOptionSelected - Tells if metrics option was selected (true/false)
+#   metricsParams - The metrics params if metrics option was selected
+#   isTracesOptionSelected - Tells if traces option was selected (true/false)
+#   tracesParams - The traces params if traces option was selected
 # Error:
 #   Exit Code 2
-function get_which_products_were_selected () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting which products were selected ..." >> logzio_agent.log
+function Get-WhichProductsWereSelected {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-    local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' logzio-temp/app.json)
-    if [[ "$telemetries" = null ]]; then
-        echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\"" > logzio-temp/run
+    Write-Log "INFO" "Getting which products were selected ..."
+
+    $local:telemetries = jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $using:appJSON
+    if ($null -eq $telemetries) {
+        Write-Run "Write-Error `"installer.ps1 (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON`""
         return 2
-    fi
-    if [[ -z "$telemetries" ]]; then
-        echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\"" > logzio-temp/run
+    }
+    if ($telemetries.Equals("")) {
+        Write-Run "Write-Error `"installer.ps1 (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON`""
         return 2
-    fi
+    }
 
-    local is_logs_option_selected=false
-    local is_metrics_option_selected=false
-    local is_traces_option_selected=false
-    local index=0
+    $local:isLogsOptionSelected = $false
+    $local:isMetricsOptionSelected = $false
+    $local:isTracesOptionSelected = $false
+    $local:index = 0
 
-    while read -r telemetry; do
-        local type=$(echo "$telemetry" | jq -r '.type')
-        if [[ "$type" = null ]]; then
-            echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\"" > logzio-temp/run
+    foreach ($telemetry in $telemetries) {
+        $local:type = Write-Output "$telemetry" | jq -r '.type'
+        if ($null -eq $type) {
+            Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON`""
             return 2
-        fi
-        if [[ -z "$type" ]]; then
-            echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\"" > logzio-temp/run
+        }
+        if ($type.Equals("")) {
+            Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON`""
             return 2
-        fi
+        }
 
-        local params=$(echo -e "$telemetry" | jq -r '.params[]')
-        if [[ "$params" = null ]]; then
-            echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\"" > logzio-temp/run
+        $local:params = Write-Output "$telemetry" | jq -r '.params[]'
+        if ($null -eq $params) {
+            Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON`""
             return 2
-        fi
+        }
 
-        if [[ "$type" = "LOG_ANALYTICS" ]]; then
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] is_logs_option_selected = true" >> logzio_agent.log
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] logs_params = $params" >> logzio_agent.log
+        if ($type.Equals("LOG_ANALYTICS")) {
+            Write-Log "INFO" "isLogsOptionSelected = true"
+            Write-Log "INFO" "logsParams = $params"
 
-            is_logs_option_selected=true
-            echo -e "logs_params='$params'" >> logzio-temp/run
-        elif [[ "$type" = "METRICS" ]]; then
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] is_metrics_option_selected = true" >> logzio_agent.log
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] metrics_params = $params" >> logzio_agent.log
+            isLogsOptionSelected=true
+            Write-Run "`$script:logsParams = '$params'"
+        } elseif ($type.Equals("METRICS")) {
+            Write-Log "INFO" "isMetricsOptionSelected = true"
+            Write-Log "INFO" "metricsParams = $params"
 
-            is_metrics_option_selected=true
-            echo -e "metrics_params='$params'" >> logzio-temp/run
-        elif [[ "$type" = "TRACING" ]]; then
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] is_traces_option_selected = true" >> logzio_agent.log
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] traces_params = $params" >> logzio_agent.log
+            isMetricsOptionSelected=true
+            Write-Run "metricsParams = '$params'"
+        } elseif ($type.Equals("TRACING")) {
+            Write-Log "INFO" "isTracesOptionSelected = true"
+            Write-Log "INFO" "tracesParams = $params"
 
-            is_traces_option_selected=true
-            echo -e "traces_params='$params'" >> logzio-temp/run
-        fi
+            isTracesOptionSelected=true
+            Write-Run "`$script:tracesParams = '$params'"
+        }
 
-        let "index++"
-    done < <(echo -e "$telemetries")
+        $index++
+    }
 
-    echo -e "is_logs_option_selected=$is_logs_option_selected" >> logzio-temp/run
-    echo -e "is_metrics_option_selected=$is_metrics_option_selected" >> logzio-temp/run
-    echo -e "is_traces_option_selected=$is_traces_option_selected" >> logzio-temp/run
+    Write-Run "`$script:isLogsOptionSelected = $isLogsOptionSelected"
+    Write-Run "`$script:isMetricsOptionSelected = $isMetricsOptionSelected"
+    Write-Run "`$isTracesOptionSelected = $isTracesOptionSelected"
 }
 
+<#
 # Builds tolerations Helm sets
 # Output:
 #   helm_sets - Contains all the Helm sets

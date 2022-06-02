@@ -9,10 +9,10 @@ Write-Log "INFO" "Loading installer functions ..."
 # Get general params
 Invoke-Task "Get-GeneralParams" "getting general params"
 
-<#
 # Get which products were selected
-execute_task "get_which_products_were_selected" "getting which products were selected"
+Invoke-Task "Get-WhichProductsWereSelected" "getting which products were selected"
 
+<#
 # Build tolerations helm sets
 execute_task "build_tolerations_helm_sets" "getting tolerations helm sets"
 
