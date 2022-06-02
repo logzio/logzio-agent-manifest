@@ -38,7 +38,7 @@ function Test-IsKubectlConnectedToKubernetesCluster {
         return
     }
 
-    Write-Run "Write-Error `"prerequisites.ps1 (2): kubectl is not connected to an active Kubernetes cluster. $err`""
+    Write-Run "Write-Error `"prerequisites.ps1 (2): kubectl is not connected to an active Kubernetes cluster.`n  $err`""
     return 2
 }
 
@@ -58,14 +58,14 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo. $_`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo.`n  $_`""
         return 3
     }
 
     kubectl apply -f $using:logzioTempDir\logzio_logs_connection_test_pod.yaml 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-logs-connection-test pod. $err`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-logs-connection-test pod.`n  $err`""
         return 3
     }
 
@@ -74,7 +74,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
     $local:err = Get-Content $using:taskErrorFile
     if (-Not [string]::IsNullOrEmpty($result)) {
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod. $err`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod.`n  $err`""
         return 3
     }
 
@@ -85,14 +85,14 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
         }
         
         $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod. $err`""
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
         return
     }
 
     kubectl delete pod logzio-logs-connection-test 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod. $err`""
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
     }
 
     Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)`""
@@ -115,14 +115,14 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo. $_`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo.`n  $_`""
         return 3
     }
 
     kubectl apply -f $using:logzioTempDir\logzio_metrics_connection_test_pod.yaml 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod. $err`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod.`n  $err`""
         return 3
     }
 
@@ -131,7 +131,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
     $local:err = Get-Content $using:taskErrorFile
     if (-Not [string]::IsNullOrEmpty($err)) {
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod. $err`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  $err`""
         return 3
     }
 
@@ -142,14 +142,14 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
         }
         
         $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod. $err`""
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod.`n  $err`""
         return
     }
 
     kubectl delete pod logzio-metrics-connection-test 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod. $err`""
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod.`n  $err`""
     }
 
     Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io metrics (port 8053)`""
@@ -174,7 +174,7 @@ function Test-IsHelmInstalled {
         }
         
         $local:err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Error `"prerequisites.ps1 (4): failed to upgrade Helm. $err`""
+        Write-Run "Write-Error `"prerequisites.ps1 (4): failed to upgrade Helm.`n  $err`""
         return 4
     }
 
@@ -185,7 +185,7 @@ function Test-IsHelmInstalled {
     }
 
     $local:err = Get-Content $using:taskErrorFile
-    Write-Run "Write-Error `"prerequisites.ps1 (4): failed to install Helm. $err`""
+    Write-Run "Write-Error `"prerequisites.ps1 (4): failed to install Helm.`n  $err`""
     return 4
 }
 
@@ -205,7 +205,7 @@ function Add-LogzioHelmRepo {
     }
 
     $local:err = Get-Content $using:taskErrorFile
-    Write-Run "Write-Error `"prerequisites.ps1 (5): failed to add Logz.io Helm repo. $err`""
+    Write-Run "Write-Error `"prerequisites.ps1 (5): failed to add Logz.io Helm repo.`n  $err`""
     return 5
 }
 
@@ -225,6 +225,6 @@ function Update-LogzioHelmRepo {
     }
 
     $local:err = Get-Content $using:taskErrorFile
-    Write-Run "Write-Error `"prerequisites.ps1 (6): failed to update Logz.io Helm repo. $err`""
+    Write-Run "Write-Error `"prerequisites.ps1 (6): failed to update Logz.io Helm repo.`n  $err`""
     return 6
 }
