@@ -64,6 +64,31 @@ function Find-Params ([string]$params, [string]$requestedName) {
     Write-Output "$requestedParam"
 }
 
+# Installs Chocolatey
+# Input:
+#   errorExitCode - The exit code to return if got error
+# Error:
+#   Exit Code according the errorExitCode argument
+function Install-Chocolatey([int]$errorExitCode) {
+    Write-Log "INFO" "Checking if Chocolatey is installed ..."
+    Get-Command choco 2>&1 | Out-Null
+    if ($?) {
+        return
+    }
+
+    Write-Log "INFO" "Installing Chocolatey ..."
+    $local:job = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')}
+    Wait-Job -Job $job
+
+    Get-Command choco 2>&1 | Out-Null
+    if ($?) {
+        return
+    }
+    
+    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey`""
+    return $exitCode
+}
+
 # Executes command with progress indicator
 # Input:
 #   command - Command to execute
@@ -112,7 +137,6 @@ function Invoke-Task([string]$command, [string]$desc) {
     if ([string]::IsNullOrEmpty($exitCode) -or $exitCode -isnot [int]) {
         $exitCode = 0
     }
-    Write-Output $exitCode >> test.txt
 
     if (-Not $jobState.Equals("Completed") -or $exitCode -gt 0) {
         Write-Host "`r[ " -NoNewline

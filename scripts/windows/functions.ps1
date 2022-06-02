@@ -115,38 +115,10 @@ function Test-ArgumentsValidation {
     }
 }
 
-# Installs Chocolatey
-# Error:
-#   Exit Code 3
-function Install-Chocolatey {
-    #. $using:logzioTempDir\utils_functions.ps1
-    #$local:logFile = $using:logFile
-    #$local:runFile = $using:runFile
-
-    Write-Log "INFO" "Checking if Chocolatey is installed ..."
-    Get-Command choco 2>&1 | Out-Null
-    if ($?) {
-        return
-    }
-
-    Write-Log "INFO" "Installing Chocolatey ..."
-    $local:job = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')}
-    Wait-Job -Job $job
-
-    $local:err = Get-Content $using:taskErrorFile
-    if ([string]::IsNullOrEmpty($err)) {
-        return
-    }
-    
-    Write-Run "Write-Error `"agent.ps1 (3): failed to install Chocolatey. $err`""
-    return 3
-}
-
 # Installs jq
 # Error:
 #   Exit Code 3
 function Install-JQ {
-    . $using:logzioTempDir\agent_functions.ps1
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
@@ -157,7 +129,7 @@ function Install-JQ {
         return
     }
 
-    Install-Chocolatey
+    Install-Chocolatey 3
 
     Write-Log "INFO" "Installing jq ..."
     choco install jq -y 2>$using:taskErrorFile | Out-Null
