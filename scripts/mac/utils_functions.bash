@@ -33,7 +33,7 @@ function print_warning () {
 function write_log () {
     local log_level="$1"
     local log="$2"
-    echo -e "[$log_level] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $log" >> $logFile
+    echo -e "[$log_level] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $log" >> $log_file
 }
 
 # Writes command into run file in Logz.io temp directory
@@ -41,7 +41,7 @@ function write_log () {
 #   command - The command to write into the file
 function write_run () {
     local command="$1"
-    echo -e "$command" >> $runFile
+    echo -e "$command" >> $run_file
 }
 
 # Deletes the temp directory
