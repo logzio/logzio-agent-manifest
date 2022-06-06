@@ -33,7 +33,7 @@ function print_warning () {
 function write_log () {
     local log_level="$1"
     local log="$2"
-    echo -e "[$log_level] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $log" >> $log_file
+    echo -e "[$log_level] [$(date +"%Y-%m-%d %H:%M:%S")] $log" >> $log_file
 }
 
 # Writes command into run file in Logz.io temp directory
