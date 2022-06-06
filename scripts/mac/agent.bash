@@ -56,13 +56,8 @@ get_arguments "$@"
 # Print title
 echo -e "Running \033[0;36mLogz\033[0;33m.io\033[0;37m Agent:\n"
 
-function test_timeout () {
-    sleep 60
-}
-
 # Run prerequisite installations
 echo -e "prerequisite installations:"
-execute_task "test_timeout" "testing timeout"
 execute_task "install_jq" "installing jq"                                           # Install jq
 
 # Run last preparations
