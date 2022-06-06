@@ -5,7 +5,7 @@
 #################################################################################################################################
 
 # Load functions
-echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading prerequisites functions ..." >> logzio_agent.log
+write_log "INFO" "Loading prerequisites functions ..."
 source ./logzio-temp/prerequisites_functions.bash
 
 # Check if kubectl is installed

@@ -8,14 +8,14 @@
 # Error:
 #   Exit Code 1
 function is_kubectl_installed () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if kubectl is installed ..." >> logzio_agent.log
+    write_log "INFO" "Checking if kubectl is installed ..."
 
     which kubectl >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         return
     fi
 
-    echo -e "print_error \"prerequisites.bash (1): kubectl is not installed\"" > logzio-temp/run
+    write_run "print_error \"prerequisites.bash (1): kubectl is not installed\""
     return 1
 }
 
@@ -23,77 +23,70 @@ function is_kubectl_installed () {
 # Error:
 #   Exit Code 2
 function is_kubectl_connected_to_k8s_cluster () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if kubectl is connected to an active Kubernetes cluster ..." >> logzio_agent.log
+    write_log "INFO" "Checking if kubectl is connected to an active Kubernetes cluster ..."
 
-    kubectl cluster-info > logzio-temp/task_result 2>&1
-    if [[ $? -eq 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+    local cluster_info=$(kubectl cluster-info 2> $task_error_file)
+    local err=$(cat $task_error_file)
+    if [[ -z "$err" ]]; then
+        write_log "INFO" "$cluster_info"
         return
     fi
 
-    cat logzio-temp/task_result >> logzio_agent.log
-
-    echo -e "cat logzio-temp/task_result" > logzio-temp/run
-    echo -e "print_error \"prerequisites.bash (2): kubectl is not connected to an active Kubernetes cluster\"" >> logzio-temp/run
+    write_run "print_error \"prerequisites.bash (2): kubectl is not connected to an active Kubernetes cluster.\n  $err\""
     return 2
+}
+
+# Deletes test pod from Kubernetes cluster
+# Input:
+#   pod_name - The name of the pod to delete
+# Error:
+#   Exit Code 3
+function delete_test_pod () {
+    local pod_name="$1"
+
+    kubectl delete pod $pod_name >/dev/null 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod.\n  $err\""
+    fi
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
 # Error:
 #   Exit Code 3
 function can_k8s_cluster_connect_to_logzio_logs () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster can connect to Logz.io logs (port 8071) ..." >> logzio_agent.log
+    write_log "INFO" "Checking if Kubernetes cluster can connect to Logz.io logs (port 8071) ..."
 
-    curl -fsSL $repo_path/prerequisites/logzio_logs_connection_test_pod.yaml > logzio-temp/logzio_logs_connection_test_pod.yaml 2>logzio-temp/task_result
+    curl -fsSL $repo_path/prerequisites/logzio_logs_connection_test_pod.yaml > $logzio_temp_dir/logzio_logs_connection_test_pod.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.script (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
-    kubectl apply -f logzio-temp/logzio_logs_connection_test_pod.yaml >/dev/null 2>logzio-temp/task_result
+    kubectl apply -f $logzio_temp_dir/logzio_logs_connection_test_pod.yaml >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to create logzio-logs-connection-test pod\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.script (3): failed to create logzio-logs-connection-test pod.\n  $err\""
         return 3
     fi
 
     sleep 3
 
-    local pod_logs=$(kubectl logs logzio-logs-connection-test 2>logzio-temp/task_result)
-    local result=$(cat logzio-temp/task_result)
-    if [[ ! -z "$result" ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-logs-connection-test pod\"" >> logzio-temp/run
+    local pod_logs=$(kubectl logs logzio-logs-connection-test 2>$task_error_file)
+    local err=$(cat $task_error_file)
+    if [[ ! -z "$err" ]]; then
+        delete_test_pod "logzio-logs-connection-test"
+        write_run "print_error \"prerequisites.script (3): failed to get logs of logzio-logs-connection-test pod.\n  $err\""
         return 3
     fi
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
-        kubectl delete pod logzio-logs-connection-test >/dev/null 2>logzio-temp/task_result
-        if [[ $? -ne 0 ]]; then
-            cat logzio-temp/task_result >> logzio_agent.log
-
-            echo -e "cat logzio-temp/task_result" > logzio-temp/run
-            echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-logs-connection-test pod\"" >> logzio-temp/run
-        fi
-
+        delete_test_pod "logzio-logs-connection-test"
         return
     fi
 
-    kubectl delete pod logzio-logs-connection-test >/dev/null 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-logs-connection-test pod\"" >> logzio-temp/run
-    fi
-
-    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)\"" >> logzio-temp/run
+    delete_test_pod "logzio-logs-connection-test"
+    write_run "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)\""
     return 3
 }
 
@@ -101,80 +94,57 @@ function can_k8s_cluster_connect_to_logzio_logs () {
 # Error:
 #   Exit Code 3
 function can_k8s_cluster_connect_to_logzio_metrics () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Kubernetes cluster can connect to Logz.io metrics (port 8053) ..." >> logzio_agent.log
+    write_log "INFO" "Checking if Kubernetes cluster can connect to Logz.io metrics (port 8053) ..."
 
-    curl -fsSL $repo_path/prerequisites/logzio_metrics_connection_test_pod.yaml > logzio-temp/logzio_metrics_connection_test_pod.yaml 2>logzio-temp/task_result
+    curl -fsSL $repo_path/prerequisites/logzio_metrics_connection_test_pod.yaml > $logzio_temp_dir/logzio_metrics_connection_test_pod.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.script (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
-    kubectl apply -f logzio-temp/logzio_metrics_connection_test_pod.yaml >/dev/null 2>logzio-temp/task_result
+    kubectl apply -f $logzio_temp_dir/logzio_metrics_connection_test_pod.yaml >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to create logzio-metrics-connection-test pod\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.script (3): failed to create logzio-metrics-connection-test pod.\n  $err\""
         return 3
     fi
 
     sleep 3
 
-    local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>logzio-temp/task_result)
-    local result=$(cat logzio-temp/task_result)
-    if [[ ! -z "$result" ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.script (3): failed to get logs of logzio-metrics-connection-test pod\"" >> logzio-temp/run
+    local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>$task_error_file)
+    local err=$(cat $task_error_file)
+    if [[ ! -z "$err" ]]; then
+        delete_test_pod "logzio-metrics-connection-test"
+        write_run "print_error \"prerequisites.script (3): failed to get logs of logzio-metrics-connection-test pod.\n  $err\""
         return 3
     fi
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
-        kubectl delete pod logzio-metrics-connection-test >/dev/null 2>logzio-temp/task_result
-        if [[ $? -ne 0 ]]; then
-            cat logzio-temp/task_result >> logzio_agent.log
-
-            echo -e "cat logzio-temp/task_result" > logzio-temp/run
-            echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod\"" >> logzio-temp/run
-        fi
-
+        delete_test_pod "logzio-metrics-connection-test"
         return
     fi
 
-    kubectl delete pod logzio-metrics-connection-test >/dev/null 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod\"" >> logzio-temp/run
-    fi
-
+    delete_test_pod "logzio-metrics-connection-test"
     echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io metrics (port 8053)\"" >> logzio-temp/run
     return 3
 }
-
 
 # Checks if Helm is installed
 # Error:
 #   Exit Code 4
 function is_helm_installed () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Helm is installed ..." >> logzio_agent.log
+    write_log "INFO" "Checking if Helm is installed ..."
 
     which helm >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         return
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Installing Helm ..." >> logzio_agent.log
-    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash > logzio-temp/task_result 2>&1
+    write_log "INFO" "Installing Helm ..."
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"prerequisites.bash (4): failed to install Helm\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (4): failed to install Helm.\n  $err\""
         return 4
     fi
 }
@@ -183,17 +153,15 @@ function is_helm_installed () {
 # Error:
 #   Exit Code 5
 function add_logzio_helm_repo () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Adding Logz.io Helm repo ..." >> logzio_agent.log
+    write_log "INFO" "Adding Logz.io Helm repo ..."
 
-    helm repo add logzio-helm https://logzio.github.io/logzio-helm > logzio-temp/task_result 2>&1
+    helm repo add logzio-helm https://logzio.github.io/logzio-helm >/dev/null 2>$task_error_file
     if [[ $? -eq 0 ]]; then
         return
     fi
 
-    cat logzio-temp/task_result >> logzio_agent.log
-
-    echo -e "cat logzio-temp/task_result" > logzio-temp/run
-    echo -e "print_error \"prerequisites.bash (5): failed to add Logz.io Helm repo\"" >> logzio-temp/run
+    local err=$(cat $task_error_file)
+    write_run "print_error \"prerequisites.bash (5): failed to add Logz.io Helm repo.\n  $err\""
     return 5
 }
 
@@ -201,16 +169,14 @@ function add_logzio_helm_repo () {
 # Error:
 #   Exit Code 6
 function update_logzio_helm_repo () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Updating Logz.io Helm repo ..." >> logzio_agent.log
+    write_log "INFO" "Updating Logz.io Helm repo ..."
     
-    helm repo update logzio-helm > logzio-temp/task_result 2>&1
+    helm repo update logzio-helm >/dev/null 2>$task_error_file
     if [[ $? -eq 0 ]]; then
         return
     fi
 
-    cat logzio-temp/task_result >> logzio_agent.log
-
-    echo -e "cat logzio-temp/task_result" > logzio-temp/run
-    echo -e "print_error \"prerequisites.bash (6): failed to update Logz.io Helm repo\"" >> logzio-temp/run
+    local err=$(cat $task_error_file)
+    write_run "print_error \"prerequisites.bash (6): failed to update Logz.io Helm repo.\n  $err\""
     return 6
 }
