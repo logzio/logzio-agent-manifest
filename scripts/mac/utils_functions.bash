@@ -114,8 +114,8 @@ function execute_task () {
 
     wait $pid
     local exit_code=$?
-    echo $is_timeout
-    if [[ $exit_code -ne 0 || $is_timeout ]]; then
+
+    if [[ $exit_code -ne 0 ]] || $is_timeout; then
         echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
         
