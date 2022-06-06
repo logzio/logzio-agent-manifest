@@ -47,7 +47,7 @@ function delete_test_pod () {
     kubectl delete pod $pod_name >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_warning \"prerequisites.script (3): failed to delete logzio-metrics-connection-test pod.\n  $err\""
+        write_run "print_warning \"prerequisites.bash (3): failed to delete logzio-metrics-connection-test pod.\n  $err\""
     fi
 }
 
@@ -60,14 +60,14 @@ function can_k8s_cluster_connect_to_logzio_logs () {
     curl -fsSL $repo_path/prerequisites/logzio_logs_connection_test_pod.yaml > $logzio_temp_dir/logzio_logs_connection_test_pod.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.script (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"prerequisites.bash (3): failed to get logzio logs connection test pod yaml file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
     kubectl apply -f $logzio_temp_dir/logzio_logs_connection_test_pod.yaml >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.script (3): failed to create logzio-logs-connection-test pod.\n  $err\""
+        write_run "print_error \"prerequisites.bash (3): failed to create logzio-logs-connection-test pod.\n  $err\""
         return 3
     fi
 
@@ -77,7 +77,7 @@ function can_k8s_cluster_connect_to_logzio_logs () {
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
         delete_test_pod "logzio-logs-connection-test"
-        write_run "print_error \"prerequisites.script (3): failed to get logs of logzio-logs-connection-test pod.\n  $err\""
+        write_run "print_error \"prerequisites.bash (3): failed to get logs of logzio-logs-connection-test pod.\n  $err\""
         return 3
     fi
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
@@ -99,14 +99,14 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
     curl -fsSL $repo_path/prerequisites/logzio_metrics_connection_test_pod.yaml > $logzio_temp_dir/logzio_metrics_connection_test_pod.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.script (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"prerequisites.bash (3): failed to get logzio metrics connection test pod yaml file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
     kubectl apply -f $logzio_temp_dir/logzio_metrics_connection_test_pod.yaml >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.script (3): failed to create logzio-metrics-connection-test pod.\n  $err\""
+        write_run "print_error \"prerequisites.bash (3): failed to create logzio-metrics-connection-test pod.\n  $err\""
         return 3
     fi
 
@@ -116,7 +116,7 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
         delete_test_pod "logzio-metrics-connection-test"
-        write_run "print_error \"prerequisites.script (3): failed to get logs of logzio-metrics-connection-test pod.\n  $err\""
+        write_run "print_error \"prerequisites.bash (3): failed to get logs of logzio-metrics-connection-test pod.\n  $err\""
         return 3
     fi
     if [[ "$pod_logs" = "Connected to listener.logz.io" ]]; then
