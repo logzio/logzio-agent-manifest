@@ -91,6 +91,7 @@ function execute_task () {
     local pid=$!
 
     while true; do
+        let "counter++"
         echo -ne "\r[   ] $desc ..."
 
         for i in "${!frame[@]}"; do
@@ -103,7 +104,6 @@ function execute_task () {
         fi
 
         if [[ $counter -eq $timeout ]]; then
-            write_log "ERROR" "TIMEOUT"
             kill $pid
             isTimeout=true
             write_run "print_error \"utils_functions.bash (1): timeout error: the task was not completed in time\""
