@@ -121,6 +121,11 @@ function execute_task () {
         
         source $run_file
         delete_temp_dir
+
+        if $isTimeout; then
+            exit 1
+        fi
+        
         exit $exit_code
     fi
 
