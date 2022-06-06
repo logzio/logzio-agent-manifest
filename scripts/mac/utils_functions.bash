@@ -11,7 +11,7 @@
 #   The message
 function print_error () {
     local message="$1"
-    echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] $message" >> logzio_agent.log
+    write_log "ERROR" "$message"
     echo -e "\033[0;31m$message\033[0;37m"
 }
 
@@ -22,13 +22,31 @@ function print_error () {
 #   The message
 function print_warning () {
     local message="$1"
-    echo -e "[WARN] [$(date +"%Y-%m-%d %H:%M:%S")] $message" >> logzio_agent.log
+    write_log "WARN" "$message"
     echo -e "\033[0;33m$message\033[0;37m"
+}
+
+# Writes log into Logz.io agent log file
+# Input:
+#   log_level - The level of the log (INFO/ERROR/WARN)
+#   log - Log text
+function write_log () {
+    local log_level="$1"
+    local log="$2"
+    echo -e "[$log_level] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $log" >> $logFile
+}
+
+# Writes command into run file in Logz.io temp directory
+# Input:
+#   command - The command to write into the file
+function write_run () {
+    local command="$1"
+    echo -e "$command" >> $runFile
 }
 
 # Deletes the temp directory
 function delete_temp_dir () {
-    rm -R logzio-temp
+    rm -R $logzio_temp_dir
 }
 
 # Finds the requested parameter in params 
@@ -57,12 +75,15 @@ function find_param () {
 #   command - Command to execute
 #   desc - Task description
 # Error:
-#   Exit Code according the executed command
+#   Exit Code 1 if got timeout error, otherwise Exit Code according the executed command
 function execute_task () {
     local command="$1"
     local desc="$2"
     local frame=("-" "\\" "|" "/")
     local frame_interval=0.25
+    local isTimeout=false
+    local timeout=30
+    local counter=0
 
     tput civis -- invisible
     
@@ -80,23 +101,30 @@ function execute_task () {
         if ! ps -p $pid &>/dev/null; then
             break
         fi
+
+        if [[ $counter -eq $timeout ]]; then
+            kill $pid
+            isTimeout=true
+            write_run "print_error \"utils_functions.bash (1): timeout error: the task was not completed in time\""
+            break
+        fi
     done
 
     wait $pid
-    local status=$?
+    local exit_code=$?
 
-    if [[ $status -ne 0 ]]; then
+    if [[ $exit_code -ne 0 || $isTimeout ]]; then
         echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
         
-        source ./logzio-temp/run
+        source $run_file
         delete_temp_dir
-        exit $status
+        exit $exit_code
     fi
 
     echo -ne "\r[ \033[1;32m✔\033[0;37m ] \033[1;32m$desc ...\033[0;37m\n"
     tput cnorm -- normal
 
-    source ./logzio-temp/run
-    > logzio-temp/run
+    source $run_file
+    > $run_file
 }
