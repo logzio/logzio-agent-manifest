@@ -91,13 +91,14 @@ function execute_task () {
     local pid=$!
 
     while true; do
-        let "counter++"
         echo -ne "\r[   ] $desc ..."
 
         for i in "${!frame[@]}"; do
             echo -ne "\r[ ${frame[i]} ]"
             sleep $frame_interval
         done
+
+        let "counter++"
 
         if ! ps -p $pid &>/dev/null; then
             break
@@ -113,7 +114,7 @@ function execute_task () {
 
     wait $pid
     local exit_code=$?
-
+    echo $exit_code
     if [[ $exit_code -ne 0 || $isTimeout ]]; then
         echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
