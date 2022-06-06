@@ -5,8 +5,8 @@
 #################################################################################################################################
 
 # Load functions
-echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading logs functions ..." >> logzio_agent.log
-source ./logzio-temp/logs_functions.bash
+write_log "INFO" "Loading logs functions ..."
+source $logzio_temp_dir/logs_functions.bash
 
 # Build enable logs Helm set
 execute_task "build_enable_logs_helm_set" "building enable logs Helm set"

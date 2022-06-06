@@ -8,11 +8,11 @@
 # Output:
 #   helm_sets - Contains all the Helm sets
 function build_enable_logs_helm_set () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building enable logs Helm set ..." >> logzio_agent.log
+    write_log "INFO" "Building enable logs Helm set ..."
     
     local helm_set=" --set logs.enabled=true"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "helm_sets+='$helm_set'"
 }
 
 # Builds Logz.io logs listener URL Helm set
@@ -21,21 +21,21 @@ function build_enable_logs_helm_set () {
 # Error:
 #   Exit Code 1
 function build_logzio_logs_listener_url_helm_set () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building Logz.io logs listener URL Helm set ..." >> logzio_agent.log
+    write_log "INFO" "Building Logz.io logs listener URL Helm set ..."
 
-    local listener_url=$(jq -r '.listenerUrl' logzio-temp/app.json)
+    local listener_url=$(jq -r '.listenerUrl' $app_json)
     if [[ "$listener_url" = null ]]; then
-        echo -e "print_error \"logs.bash (1): '.listenerUrl' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"logs.bash (1): '.listenerUrl' was not found in application JSON\""
         return 1
     fi
     if [[ -z "$listener_url" ]]; then
-        echo -e "print_error \"logs.bash (1): '.listenerUrl' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"logs.bash (1): '.listenerUrl' is empty in application JSON\""
         return 1
     fi
 
     local helm_set=" --set logzio-fluentd.secrets.logzioListener=$listener_url"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "helm_sets+='$helm_set'"
 }
 
 # Builds Logz.io logs token Helm set
@@ -44,21 +44,21 @@ function build_logzio_logs_listener_url_helm_set () {
 # Error:
 #   Exit Code 2
 function build_logzio_logs_token_helm_set () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building Logz.io logs token Helm set ..." >> logzio_agent.log
+    write_log "INFO" "Building Logz.io logs token Helm set ..."
 
-    local shipping_token=$(jq -r '.shippingTokens.LOG_ANALYTICS' logzio-temp/app.json)
+    local shipping_token=$(jq -r '.shippingTokens.LOG_ANALYTICS' $app_json)
     if [[ "$shipping_token" = null ]]; then
-        echo -e "print_error \"logs.bash (2): '.shippingTokens.LOG_ANALYTICS' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"logs.bash (2): '.shippingTokens.LOG_ANALYTICS' was not found in application JSON\""
         return 2
     fi
     if [[ -z "$shipping_token" ]]; then
-        echo -e "print_error \"logs.bash (2): '.shippingTokens.LOG_ANALYTICS' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"logs.bash (2): '.shippingTokens.LOG_ANALYTICS' is empty in application JSON\""
         return 2
     fi
 
     local helm_set=" --set logzio-fluentd.secrets.logzioShippingToken=$shipping_token"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "helm_sets+='$helm_set'"
 }
 
 # Builds multiline Helm sets
@@ -67,17 +67,17 @@ function build_logzio_logs_token_helm_set () {
 # Error:
 #   Exit Code 3
 function build_multiline_helm_sets () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building multiline Helm sets ..." >> logzio_agent.log
+    write_log "INFO" "Building multiline Helm sets ..."
 
     local multiline_param=$(find_param "$logs_params" "multiline")
     if [[ -z "$multiline_param" ]]; then
-        echo -e "print_error \"logs.bash (3): multiline param was not found\"" > logzio-temp/run
+        write_run "print_error \"logs.bash (3): multiline param was not found\""
         return 3
     fi
 
     local multiline_value=$(echo -e "$multiline_param" | jq -c '.value[]')
     if [[ "$multiline_value" = null ]]; then
-        echo -e "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[]' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[]' was not found in application JSON\""
         return 3
     fi
     if [[ -z "$multiline_value" ]]; then
@@ -87,32 +87,28 @@ function build_multiline_helm_sets () {
     local paths=""
     local index=1
 
-    curl -fsSL $repo_path/telemetry/logs/multiline_source.conf > logzio-temp/multiline_source.conf 2>logzio-temp/task_result
+    curl -fsSL $repo_path/telemetry/logs/multiline_source.conf > $logzio_temp_dir/multiline_source.conf 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"logs.script (3): failed to get multiline source conf file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"logs.bash (3): failed to get multiline source conf file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
-    curl -fsSL $repo_path/telemetry/logs/multiline_filter.conf > logzio-temp/multiline_filter.conf 2>logzio-temp/task_result
+    curl -fsSL $repo_path/telemetry/logs/multiline_filter.conf > $logzio_temp_dir/multiline_filter.conf 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"logs.script (3): failed to get multiline filter conf file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"logs.bash (3): failed to get multiline filter conf file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
     while read -r obj; do
-        local source=$(cat logzio-temp/multiline_source.conf)
-        local filter=$(cat logzio-temp/multiline_filter.conf)
+        local source=$(cat $logzio_temp_dir/multiline_source.conf)
+        local filter=$(cat $logzio_temp_dir/multiline_filter.conf)
         local name="custom$index"
 
         local path=$(echo -e "$obj" | jq -r '.source')
         if [[ "$path" = null ]]; then
-            echo -e "print_error \"logs.script (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].path' was not found in application JSON\"" > logzio-temp/run
+            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].path' was not found in application JSON\""
             return 3
         fi
 
@@ -120,7 +116,7 @@ function build_multiline_helm_sets () {
 
         local regex=$(echo -e "$obj" | jq -r '.pattern')
         if [[ "$path" = null ]]; then
-            echo -e "print_error \"logs.script (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].regex' was not found in application JSON\"" > logzio-temp/run
+            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].regex' was not found in application JSON\""
             return 3
         fi
 
@@ -139,11 +135,11 @@ function build_multiline_helm_sets () {
     multiline_sets+=" --set-file configmap.customFilters=logzio-temp/filters.conf"
     multiline_sets+=" --set daemonset.extraExclude=\"$paths\""
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] sources.conf:" >> logzio_agent.log
-    cat logzio-temp/sources.conf >> logzio_agent.log
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] filters.conf:" >> logzio_agent.log
-    cat logzio-temp/filters.conf >> logzio_agent.log
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] multiline_sets = $multiline_sets" >> logzio_agent.log
+    local sources=$(cat $logzio_temp_dir/sources.conf)
+    local filters=$(cat $logzio_temp_dir/filters.conf)
+    write_log "INFO" "sources.conf:\n$sources"
+    write_log "INFO" "filters.conf:\n$filters"
+    write_log "INFO" "multiline_sets = $multiline_sets"
 
-    echo -e "helm_sets+='$multiline_sets'" > logzio-temp/run
+    write_run "helm_sets+='$multiline_sets'"
 }
