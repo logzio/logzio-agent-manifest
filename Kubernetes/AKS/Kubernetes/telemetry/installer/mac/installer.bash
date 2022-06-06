@@ -6,7 +6,7 @@
 
 # Load functions
 write_log "INFO" "Loading installer functions ..."
-source ./logzio-temp/installer_functions.bash
+source $logzio_temp_dir/installer_functions.bash
 
 # Get general params
 execute_task "get_general_params" "getting general params"
@@ -46,21 +46,21 @@ fi
 if $is_logs_option_selected; then
     write_log "INFO" "Running logs script ..."
     echo -e "\nlogs:"
-    source ./logzio-temp/logs.bash
+    source $logzio_temp_dir/logs.bash
 fi
 
 # Run metrics script
 if $is_metrics_option_selected; then
     write_log "INFO" "Running metrics script ..."
     echo -e "\nmetrics:"
-    source ./logzio-temp/metrics.bash
+    source $logzio_temp_dir/metrics.bash
 fi
 
 # Run traces script
 if $is_traces_option_selected; then
     write_log "INFO" "Running traces script ..."
     echo -e "\ntraces:"
-    source ./logzio-temp/traces.bash
+    source $logzio_temp_dir/traces.bash
 fi
 
 # Run Helm install
