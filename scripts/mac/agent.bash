@@ -31,11 +31,11 @@ function get_agent_functions_scripts () {
 
 # Consts
 repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2"      # logzio-agent-manifest repo URL
-logzio_temp_dir = "./logzio-temp"                                                   # Logz.io temp directory
-log_file = "./logzio_agent.log"                                                     # Log file path
-run_file = "$logzio_temp_dir/run"                                                   # Run file path
-task_error_file = "$logzio_temp_dir/task_error"                                     # Task error file path
-app_json = "$logzio_temp_dir/app.json"                                              # App JSON path
+logzio_temp_dir="./logzio-temp"                                                     # Logz.io temp directory
+log_file="./logzio_agent.log"                                                       # Log file path
+run_file="$logzio_temp_dir/run"                                                     # Run file path
+task_error_file="$logzio_temp_dir/task_error"                                       # Task error file path
+app_json="$logzio_temp_dir/app.json"                                                # App JSON path
 
 # Create temp directory with files
 mkdir -p $logzio_temp_dir
@@ -56,8 +56,13 @@ get_arguments "$@"
 # Print title
 echo -e "Running \033[0;36mLogz\033[0;33m.io\033[0;37m Agent:\n"
 
+function test_timeout () {
+    sleep 60
+}
+
 # Run prerequisite installations
 echo -e "prerequisite installations:"
+execute_task "test_timeout" "testing timeout"
 execute_task "install_jq" "installing jq"                                           # Install jq
 
 # Run last preparations
