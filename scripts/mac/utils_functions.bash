@@ -120,7 +120,7 @@ function execute_task () {
         tput cnorm -- normal
         
         source $run_file
-        #delete_temp_dir
+        delete_temp_dir
 
         if $is_timeout; then
             exit 1
