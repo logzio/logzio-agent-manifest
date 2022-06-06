@@ -10,20 +10,20 @@
 # Error:
 #   Exit Code 1
 function get_general_params () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting general params ..." >> logzio_agent.log
+    write_log "INFO" "Getting general params ..."
 
-    local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' logzio-temp/app.json)
+    local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' $app_json)
     if [[ "$general_params" = null ]]; then
-        echo -e "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON\""
         return 1
     fi
     if [[ -z "$general_params" ]]; then
-        echo -e "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON\""
         return 1
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] general_params = $general_params" >> logzio_agent.log
-    echo -e "general_params='$general_params'" > logzio-temp/run
+    write_log "INFO" "general_params = $general_params"
+    write_run "general_params='$general_params'"
 }
 
 # Gets which products were selected (logs/metrics/tracing)
@@ -37,15 +37,15 @@ function get_general_params () {
 # Error:
 #   Exit Code 2
 function get_which_products_were_selected () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting which products were selected ..." >> logzio_agent.log
+    write_log "INFO" "Getting which products were selected ..."
 
-    local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' logzio-temp/app.json)
+    local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then
-        echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\""
         return 2
     fi
     if [[ -z "$telemetries" ]]; then
-        echo -e "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\""
         return 2
     fi
 
@@ -57,46 +57,46 @@ function get_which_products_were_selected () {
     while read -r telemetry; do
         local type=$(echo "$telemetry" | jq -r '.type')
         if [[ "$type" = null ]]; then
-            echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\"" > logzio-temp/run
+            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\""
             return 2
         fi
         if [[ -z "$type" ]]; then
-            echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\"" > logzio-temp/run
+            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\""
             return 2
         fi
 
         local params=$(echo -e "$telemetry" | jq -r '.params[]')
         if [[ "$params" = null ]]; then
-            echo -e "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\"" > logzio-temp/run
+            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\""
             return 2
         fi
 
         if [[ "$type" = "LOG_ANALYTICS" ]]; then
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] is_logs_option_selected = true" >> logzio_agent.log
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] logs_params = $params" >> logzio_agent.log
+            write_log "INFO" "is_logs_option_selected = true"
+            write_log "INFO" "logs_params = $params"
 
             is_logs_option_selected=true
-            echo -e "logs_params='$params'" >> logzio-temp/run
+            write_run "logs_params='$params'"
         elif [[ "$type" = "METRICS" ]]; then
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] is_metrics_option_selected = true" >> logzio_agent.log
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] metrics_params = $params" >> logzio_agent.log
+            write_log "INFO" "is_metrics_option_selected = true"
+            write_log "INFO" "metrics_params = $params"
 
             is_metrics_option_selected=true
-            echo -e "metrics_params='$params'" >> logzio-temp/run
+            write_run "metrics_params='$params'"
         elif [[ "$type" = "TRACING" ]]; then
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] is_traces_option_selected = true" >> logzio_agent.log
-            echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] traces_params = $params" >> logzio_agent.log
+            write_log "INFO" "is_traces_option_selected = true"
+            write_log "INFO" "traces_params = $params"
 
             is_traces_option_selected=true
-            echo -e "traces_params='$params'" >> logzio-temp/run
+            write_run "traces_params='$params'"
         fi
 
         let "index++"
     done < <(echo -e "$telemetries")
 
-    echo -e "is_logs_option_selected=$is_logs_option_selected" >> logzio-temp/run
-    echo -e "is_metrics_option_selected=$is_metrics_option_selected" >> logzio-temp/run
-    echo -e "is_traces_option_selected=$is_traces_option_selected" >> logzio-temp/run
+    write_run "is_logs_option_selected=$is_logs_option_selected"
+    write_run "is_metrics_option_selected=$is_metrics_option_selected"
+    write_run "is_traces_option_selected=$is_traces_option_selected"
 }
 
 # Builds tolerations Helm sets
@@ -105,32 +105,32 @@ function get_which_products_were_selected () {
 # Error:
 #   Exit Code 3
 function build_tolerations_helm_sets () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building tolerations Helm set ..." >> logzio_agent.log
+    write_log "INFO" "Building tolerations Helm set ..."
 
     local is_taint_param=$(find_param "$general_params" "isTaint")
     if [[ -z "$is_taint_param" ]]; then
-        echo -e "print_error \"installer.bash (3): isTaint param was not found\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (3): isTaint param was not found\""
         return 3
     fi
 
     local is_taint_value=$(echo -e "$is_taint_param" | jq -r '.value')
     if [[ "$is_taint_value" = null ]]; then
-        echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON\""
         return 3
     fi
     if [[ -z "$is_taint_value" ]]; then
-        echo -e "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON\""
         return 3
     fi
 
     if ! $is_taint_value; then
-        echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] isTaint value = false" >> logzio_agent.log
+        write_log "INFO isTaint value = false"
         return
     fi
                     
     local items=$(kubectl get nodes -o json | jq -r '.items')
     if [[ "$items" = null ]]; then
-        echo -e "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\""
         return 3
     fi
 
@@ -140,13 +140,13 @@ function build_tolerations_helm_sets () {
     while read -r taint; do
         local key=$(echo -e "$taint" | jq -r '.key')
         if [[ "$key" = null ]]; then
-            echo -e "print_error \"installer.bash (3): '.items[{item}].key' was not found in kubectl get nodes JSON\"" > logzio-temp/run
+            write_run "print_error \"installer.bash (3): '.items[{item}].key' was not found in kubectl get nodes JSON\""
             return 3
         fi
 
         local effect=$(echo -e "$taint" | jq -r '.effect')
         if [[ "$effect" = null ]]; then
-            echo -e "print_error \"installer.bash (3): '.items[{item}].effect' was not found in kubectl get nodes JSON\"" > logzio-temp/run
+            write_run "print_error \"installer.bash (3): '.items[{item}].effect' was not found in kubectl get nodes JSON\""
             return 3
         fi
 
@@ -193,19 +193,19 @@ function build_tolerations_helm_sets () {
         let "index++"
     done < <(echo -e "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]')
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] tolerations_sets = $tolerations_sets" >> logzio_agent.log
-    echo -e "helm_sets+='$tolerations_sets'" > logzio-temp/run
+    write_log "INFO" "tolerations_sets = $tolerations_sets"
+    write_run "helm_sets+='$tolerations_sets'"
 }
 
 # Builds enable metrics or traces Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 function build_enable_metrics_or_traces_helm_set () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building enable metrics or traces Helm set ..." >> logzio_agent.log
+    write_log "INFO" "Building enable metrics or traces Helm set ..."
 
     local helm_set+=" --set metricsOrTraces.enabled=true"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "helm_sets+='$helm_set'"
 }
 
 # Builds metrics/traces environment tag helm set
@@ -214,44 +214,40 @@ function build_enable_metrics_or_traces_helm_set () {
 # Error:
 #   Exit Code 4
 function build_environment_tag_helm_set () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building environment tag Helm set ..." >> logzio_agent.log
+    write_log "INFO" "Building environment tag Helm set ..."
 
-    local env_tag=$(jq -r '.id' logzio-temp/app.json)       ######################## Change the id to something else?
+    local env_tag=$(jq -r '.id' $app_json)       ######################## Change the id to something else?
     if [[ "$env_tag" = null ]]; then
-        echo -e "print_error \"installer.bash (4): '.id' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (4): '.id' was not found in application JSON\""
         return 4
     fi
     if [[ -z "$env_tag" ]]; then
-        echo -e "print_error \"installer.bash (4): '.id' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"installer.bash (4): '.id' is empty in application JSON\""
         return 4
     fi
 
     local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "helm_sets+='$helm_set'"
 }
 
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 5
 function get_logs_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > logzio-temp/logs.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting logs script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > $logzio_temp_dir/logs.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get logs script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.script (5): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
         return 5
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > logzio-temp/logs_functions.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting logs functions script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > $logzio_temp_dir/logs_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get logs functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.script (5): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
         return 5
     fi
 }
@@ -260,23 +256,19 @@ function get_logs_scripts () {
 # Error:
 #   Exit Code 6
 function get_metrics_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > logzio-temp/metrics.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting metrics script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > $logzio_temp_dir/metrics.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get metrics script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.script (6): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
         return 6
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > logzio-temp/metrics_functions.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting metrics functions script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > $logzio_temp_dir/metrics_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get metrics functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.script (6): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
         return 6
     fi
 }
@@ -285,23 +277,19 @@ function get_metrics_scripts () {
 # Error:
 #   Exit Code 7
 function get_traces_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/traces/mac/traces.bash > logzio-temp/traces.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting traces script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/traces/mac/traces.bash > $logzio_temp_dir/traces.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (7): failed to get traces script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.script (7): failed to get traces script file from logzio-agent-manifest repo.\n  $err\""
         return 7
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/traces/mac/functions.bash > logzio-temp/traces_functions.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting traces functions script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/traces/mac/functions.bash > $logzio_temp_dir/traces_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (7): failed to get traces functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.script (7): failed to get traces functions script file from logzio-agent-manifest repo.\n  $err\""
         return 7
     fi
 }
@@ -310,15 +298,13 @@ function get_traces_scripts () {
 # Error:
 #   Exit Code 8
 function run_helm_install () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running Helm install ..." >> logzio_agent.log
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_sets = $helm_sets" >> logzio_agent.log
+    write_log "INFO" "Running Helm install ..."
+    write_log "INFO" "helm_sets = $helm_sets"
 
-    helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring > logzio-temp/task_result 2>&1
+    helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.bash (8): failed to run Helm install\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (8): failed to run Helm install.\n  $err\""
         return 8
     fi
 }
