@@ -25,7 +25,7 @@ function show_help () {
 # Error:
 #   Exit Code 2
 function get_arguments () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting arguments ..." >> logzio_agent.log
+    write_log "INFO" "Getting arguments ..."
 
     while true; do
         case "$1" in
@@ -36,13 +36,13 @@ function get_arguments () {
                 ;;
             --url=*)
                 app_url=$(echo "$1" | cut -d "=" -f2)
-                if [[ "$app_url" = "" ]]; then
+                if [[ "$app_url" != "" ]]; then
                     print_error "agent.bash (2): no Logz.io app URL specified!"
                     delete_temp_dir
                     exit 2
                 fi
 
-                echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] url = $app_url" >> logzio_agent.log
+                write_log "INFO" "url = $app_url"
                 ;;
             --id=*)
                 agent_id=$(echo "$1" | cut -d "=" -f2)
@@ -52,7 +52,7 @@ function get_arguments () {
                     exit 2
                 fi
 
-                echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] id = $agent_id" >> logzio_agent.log
+                write_log "INFO" "id = $agent_id"
                 ;;
             --debug=*)
                 app_json_file=$(echo "$1" | cut -d "=" -f2)
@@ -62,7 +62,7 @@ function get_arguments () {
                     exit 2
                 fi
 
-                echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] debug = $app_json_file" >> logzio_agent.log
+                write_log "INFO" "debug = $app_json_file"
                 break
                 ;;
             "")
@@ -85,7 +85,7 @@ function get_arguments () {
 # Error:
 #   Exit Code 2
 function check_validation () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking validation ..." >> logzio_agent.log
+    write_log "INFO" "Checking validation ..."
 
     if [[ ! -z "$app_json_file" ]]; then
         if [[ -f "$app_json_file" ]]; then
@@ -115,31 +115,21 @@ function check_validation () {
     fi
 }
 
-# Installs and updates Homebrew
+# Installs Homebrew
 # Error:
 #   Exit Code 3
-function install_update_homebrew () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if Homebrew is installed ..." >> logzio_agent.log
+function install_homebrew () {
+    write_log "INFO" "Checking if Homebrew is installed ..."
     which brew >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
-        echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Installing Hombrew ..." >> logzio_agent.log
-        curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash > logzio-temp/task_result 2>&1
-        if [[ $? -ne 0 ]]; then
-            cat logzio-temp/task_result >> logzio_agent.log
-
-            echo -e "cat logzio-temp/task_result" > logzio-temp/run
-            echo -e "print_error \"agent.bash (3): failed to install Homebrew\"" >> logzio-temp/run
-            return 3
-        fi
+    if [[ $? -eq 0 ]]; then
+        return
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Updating Hombrew ..." >> logzio_agent.log
-    brew update > logzio-temp/task_result 2>&1
+    write_log "INFO" "Installing Hombrew ..."
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (3): failed to update Homebrew\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"agent.bash (3): failed to install Homebrew.\n  $err\""
         return 3
     fi
 }
@@ -148,50 +138,50 @@ function install_update_homebrew () {
 # Error:
 #   Exit Code 3
 function install_jq () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking if jq is installed ..." >> logzio_agent.log
+    write_log "INFO" "Checking if jq is installed ..."
     which jq >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         return
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Installing jq ..." >> logzio_agent.log
-    brew install jq > logzio-temp/task_result 2>&1
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+    install_homebrew
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (3): failed to install jq\"" >> logzio-temp/run
-        return 3
+    write_log "INFO" "Installing jq ..."
+    brew install jq >/dev/null 2>$task_error_file
+    if [[ $? -eq 0 ]]; then
+        return
     fi
+
+    local err=$(cat $task_error_file)
+    write_run "print_error \"agent.bash (3): failed to install jq.\n  $err\""
+    return 3
 }
 
 # Gets the application JSON from the agent/local file into logzio-temp directory
 # Error:
 #   Exit Code 4
 function get_app_json () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting application JSON ..." >> logzio_agent.log
+    write_log "INFO" "Getting application JSON ..."
 
     if [[ ! -z "$app_json_file" ]]; then
         # Using local app JSON file
-        echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Using local application JSON file ..." >> logzio_agent.log
-        cp $app_json_file logzio-temp/app.json
+        write_log "INFO" "Using local application JSON file ..."
+        cp $app_json_file $app_json
         return
     fi
 
     # Getting app JSON from agent
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting application JSON from agent ..." >> logzio_agent.log
-    curl -fsSL $app_url/telemetry-agent/public/agents/configuration/$agent_id > logzio-temp/app.json 2>logzio-temp/task_result
+    write_log "INFO" "Getting application JSON from agent ..."
+    curl -fsSL $app_url/telemetry-agent/public/agents/configuration/$agent_id > $app_json 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent. make sure your URL is valid\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent. make sure your URL is valid.\n  $err\""
         return 4
     fi
 
-    local status_code=$(jq -r '.statusCode' logzio-temp/app.json)
+    local status_code=$(jq -r '.statusCode' $app_json)
     if [[ "$status_code" != null ]]; then
-        echo -e "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent (statusCode $status_code). make sure your ID is valid\"" > logzio-temp/run
+        write_run "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent (statusCode $status_code). make sure your ID is valid\""
         return 4
     fi
 }
@@ -202,64 +192,60 @@ function get_app_json () {
 # Error:
 #   Exit Code 5
 function build_repo_path () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building repo path ..." >> logzio_agent.log
+    write_log "INFO" "Building repo path ..."
     
-    local dir1=$(jq -r '.configuration.name' logzio-temp/app.json)
+    local dir1=$(jq -r '.configuration.name' $app_json)
     if [[ "$dir1" = null ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.name' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"agent.bash (5): '.configuration.name' was not found in application JSON\""
         return 5
     fi
     if [[ -z "$dir1" ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.name' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"agent.bash (5): '.configuration.name' is empty in application JSON\""
         return 5
     fi
 
-    local dir2=$(jq -r '.configuration.subtypes[0].name' logzio-temp/app.json)
+    local dir2=$(jq -r '.configuration.subtypes[0].name' $app_json)
     if [[ "$dir2" = null ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].name' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].name' was not found in application JSON\""
         return 5
     fi
     if [[ -z "$dir2" ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].name' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].name' is empty in application JSON\""
         return 5
     fi
 
-    local dir3=$(jq -r '.configuration.subtypes[0].datasources[0].name' logzio-temp/app.json)
+    local dir3=$(jq -r '.configuration.subtypes[0].datasources[0].name' $app_json)
     if [[ "$dir3" = null ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON\"" > logzio-temp/run
+        write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON\""
         return 5
     fi
     if [[ -z "$dir3" ]]; then
-        echo -e "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' is empty in application JSON\"" > logzio-temp/run
+        write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' is empty in application JSON\""
         return 5
     fi
 
     local repo_path="$repo_url/$dir1/$dir2/$dir3"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] repo_path = $repo_path" >> logzio_agent.log
-    echo -e "repo_path=\"$repo_path\"" > logzio-temp/run
+    write_log "INFO" "repo_path = $repo_path"
+    write_run "repo_path=\"$repo_path\""
 }
 
 # Gets prerequisites scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 6
 function get_prerequisites_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/prerequisites/mac/prerequisites.bash > logzio-temp/prerequisites.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting prerequisites script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/prerequisites/mac/prerequisites.bash > $logzio_temp_dir/prerequisites.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (6): failed to get prerequisites script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"agent.bash (6): failed to get prerequisites script file from logzio-agent-manifest repo.\n  $err\""
         return 6
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting prerequisites functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/prerequisites/mac/functions.bash > logzio-temp/prerequisites_functions.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting prerequisites functions script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/prerequisites/mac/functions.bash > $logzio_temp_dir/prerequisites_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (6): failed to get prerequisites functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"agent.bash (6): failed to get prerequisites functions script file from logzio-agent-manifest repo.\n  $err\""
         return 6
     fi
 }
@@ -268,23 +254,19 @@ function get_prerequisites_scripts () {
 # Error:
 #   Exit Code 7
 function get_installer_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/installer/mac/installer.bash > logzio-temp/installer.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting installer script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/installer/mac/installer.bash > $logzio_temp_dir/installer.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (7): failed to get installer script file from logzio-agent-manifest repo\"" > logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"agent.bash (7): failed to get installer script file from logzio-agent-manifest repo.\n  $err\""
         return 7
     fi
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting installer functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/installer/mac/functions.bash > logzio-temp/installer_functions.bash 2>logzio-temp/task_result
+    write_log "INFO" "Getting installer functions script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/telemetry/installer/mac/functions.bash > $logzio_temp_dir/installer_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"agent.bash (7): failed to get installer functions script file from logzio-agent-manifest repo\"" > logzio-temp/run
+        local err=$(cat $task_error_file)
+        write_run "print_error \"agent.bash (7): failed to get installer functions script file from logzio-agent-manifest repo.\n  $err\""
         return 7
     fi
 }
