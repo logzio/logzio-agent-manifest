@@ -81,7 +81,7 @@ function execute_task () {
     local desc="$2"
     local frame=("-" "\\" "|" "/")
     local frame_interval=0.25
-    local isTimeout=false
+    local is_timeout=false
     local timeout=30
     local counter=0
 
@@ -106,7 +106,7 @@ function execute_task () {
 
         if [[ $counter -eq $timeout ]]; then
             kill $pid
-            isTimeout=true
+            is_timeout=true
             write_run "print_error \"utils_functions.bash (1): timeout error: the task was not completed in time\""
             break
         fi
@@ -114,18 +114,18 @@ function execute_task () {
 
     wait $pid
     local exit_code=$?
-    echo $exit_code
-    if [[ $exit_code -ne 0 || $isTimeout ]]; then
+    echo $is_timeout
+    if [[ $exit_code -ne 0 || $is_timeout ]]; then
         echo -ne "\r[ \033[1;31m✗\033[0;37m ] \033[1;31m$desc ...\033[0;37m\n"
         tput cnorm -- normal
         
         source $run_file
-        delete_temp_dir
+        #delete_temp_dir
 
-        if $isTimeout; then
+        if $is_timeout; then
             exit 1
         fi
-        
+
         exit $exit_code
     fi
 
