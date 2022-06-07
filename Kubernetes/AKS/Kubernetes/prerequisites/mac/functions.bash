@@ -88,7 +88,7 @@ function can_k8s_cluster_connect_to_logzio_logs () {
     fi
 
     delete_test_pod "logzio-logs-connection-test"
-    write_run "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for the port 8071\""
+    write_run "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for port 8071\""
     return 3
 }
 
@@ -127,7 +127,7 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
     fi
 
     delete_test_pod "logzio-metrics-connection-test"
-    write_run "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for the port 8053\"" >> logzio-temp/run
+    write_run "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for port 8053\"" >> logzio-temp/run
     return 3
 }
 
