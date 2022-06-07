@@ -54,7 +54,7 @@ function Remove-TestPod ([string]$podName) {
     }
 
     $err = Get-Content $using:taskErrorFile
-    Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
+    Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  '$err'`""
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
