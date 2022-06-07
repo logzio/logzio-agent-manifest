@@ -46,7 +46,7 @@ touch $task_error_file
 get_agent_functions_scripts
 
 # Load agent functions
-echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading agent functions ..." >> logzio_agent.log
+echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading agent functions ..." >> $log_file
 source ./logzio-temp/agent_functions.bash
 source ./logzio-temp/utils_functions.bash
 
