@@ -48,7 +48,7 @@ function Remove-TempDir {
 # Output:
 #   The task error message
 function Get-TaskError {
-    $local:err = Get-Content $using:taskErrorFile -First 1
+    $local:err = Get-Content $taskErrorFile -First 1
 
     $err = $err.Replace("`"", "'")
     Write-Output "$err"

@@ -122,6 +122,7 @@ function Install-JQ {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
+    $local:taskErrorFile = $using:taskErrorFile
 
     Write-Log "INFO" "Checking if jq is installed ..."
     Get-Command jq 2>&1 | Out-Null
@@ -140,7 +141,7 @@ function Install-JQ {
         return
     }
 
-    $local:err = Get-Content $using:taskErrorFile
+    $local:err = Get-TaskError
     Write-Run "Write-Error `"agent.ps1 (3): failed to install jq.`n  $err`""
     return 3
 }

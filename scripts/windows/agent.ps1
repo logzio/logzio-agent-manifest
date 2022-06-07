@@ -13,9 +13,9 @@ function Get-AgentFunctionsScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo. error: $_" >> $logFile
+        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo.`n  $_" >> $logFile
 
-        Write-Host "agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo. $_" -ForegroundColor Red
+        Write-Host "agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo.`n  $_" -ForegroundColor Red
         Remove-Item -Path $logzioTempDir -Recurse
         Exit 1
     }
@@ -28,9 +28,9 @@ function Get-AgentFunctionsScripts {
     }
     catch {
         $_ >> $logFile
-        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo. error: $_" >> $logFile
+        Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo.`n  $_" >> $logFile
 
-        Write-Host "agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo. $_" -ForegroundColor Red
+        Write-Host "agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo.`n  $_" -ForegroundColor Red
         Remove-Item -Path $logzioTempDir -Recurse
         Exit 1
     }
@@ -42,14 +42,16 @@ $script:repoURL = "https://raw.githubusercontent.com/logzio/logzio-agent-manifes
 $script:logzioTempDir = ".\logzio-temp"                                                     # Logz.io temp directory
 $script:logFile = ".\logzio_agent.log"                                                      # Log file path
 $script:runFile = "$logzioTempDir\run.ps1"                                                  # Run file path
-$script:taskResultFile = "$logzioTempDir\task_result.txt"                                   # Task result file path
+$script:taskErrorFile = "$logzioTempDir\task_error.txt"                                     # Task error file path
+$script:appJSON = "$logzioTempDir\app.json"                                                 # App JSON path
 
-# Create temp directory with run file
+# Create temp directory with files
 if (-Not (Test-Path logzio-temp)) {
     New-Item -Path $logzioTempDir -ItemType Directory | Out-Null    
 }
 
 $null > $runFile
+$null > $taskErrorFile
 
 # Get agent functions scripts
 Get-AgentFunctionsScripts
@@ -64,13 +66,12 @@ Get-Arguments $args
 
 # Print title
 Write-Host "Running " -NoNewline
-Write-Host "Logz" -ForegroundColor Blue -NoNewline
+Write-Host "Logz" -ForegroundColor Cyan -NoNewline
 Write-Host ".io " -ForegroundColor Yellow -NoNewline
 Write-Host "Agent:`n`n" -NoNewline
 
 # Run prerequisite installations
 Write-Host "prerequisite installations:"
-Invoke-Task "Install-Chocolatey" "installing Chocolatey"                                    # Install Chocolatey
 Invoke-Task "Install-JQ" "installing jq"                                                    # Install jq
 
 # Run last preparations
@@ -78,19 +79,19 @@ Write-Host "`nlast preparations:"
 Invoke-Task "Get-AppJSON" "getting application JSON"                                        # Get app JSON
 Invoke-Task "Build-RepoPath" "building path to logzio-agent-manifest repo"                  # Build repo path to logzio-agent-manifest rep
 Invoke-Task "Get-PrerequisitesScripts" "getting prerequisites scripts"                      # Get prerequisites scripts
-#execute_task "get_installer_scripts" "getting installer scripts"                           # Get installer scripts
+Invoke-Task "Get-InstallerScripts" "getting installer scripts"                              # Get installer scripts
 
 # Run prerequisites script
 Write-Log "INFO" "Running prerequisites script ..."
 Write-Host "`nprerequisites:"
 . $logzioTempDir\prerequisites.ps1
 
-<#
 # Run installer script
-echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running installer script ..." >> logzio_agent.log
-echo -e "\ninstaller:"
-source ./logzio-temp/installer.bash
+Write-Log "INFO" "Running installer script ..."
+Write-Host "`ninstaller:"
+. $logzioTempDir\installer.ps1
 
+<#
 # Delete temp directory
 delete_temp_dir
 #>
