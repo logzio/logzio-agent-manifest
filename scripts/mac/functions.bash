@@ -36,7 +36,7 @@ function get_arguments () {
                 ;;
             --url=*)
                 app_url=$(echo "$1" | cut -d "=" -f2)
-                if [[ "$app_url" != "" ]]; then
+                if [[ "$app_url" = "" ]]; then
                     print_error "agent.bash (2): no Logz.io app URL specified!"
                     delete_temp_dir
                     exit 2
