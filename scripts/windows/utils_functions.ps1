@@ -163,5 +163,5 @@ function Invoke-Task([string]$command, [string]$desc) {
     [Console]::CursorVisible = $true
 
     . $runFile
-    Clear-Content $runFile
+    #Clear-Content $runFile
 }
