@@ -53,11 +53,7 @@ function Remove-TestPod ([string]$podName) {
         return
     }
 
-    $local:err = Get-Content $using:taskErrorFile
-    Write-Output $err >> test.txt
-    Write-Output $err.IndexOf("At") >> test.txt
-    $err = $err.Substring(0, $err.IndexOf("At"))
-    #$err = $err.Replace("`"", "'")
+    $local:err = Get-TaskError
     Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
 }
 
