@@ -17,7 +17,7 @@ function Test-IsKubectlInstalled {
         return
     }
 
-    Write-Run "Write-Error `"prerequisites.ps1 (1): kubectl is not installed`""
+    Write-Run "Write-Error `"prerequisites.ps1 (1): kubectl is not installed. please install it and rerun the agent script`""
     return 1
 }
 
@@ -38,8 +38,21 @@ function Test-IsKubectlConnectedToKubernetesCluster {
         return
     }
 
-    Write-Run "Write-Error `"prerequisites.ps1 (2): kubectl is not connected to an active Kubernetes cluster.`n  $err`""
+    Write-Run "Write-Error `"prerequisites.ps1 (2): kubectl is not connected to an active Kubernetes cluster. please configure your computer to access a Kubernetes cluster and rerun the agent script`n  $err`""
     return 2
+}
+
+# Deletes test pod from Kubernetes cluster
+# Input:
+#   podName - The name of the pod to delete
+# Error:
+#   Exit Code 3
+function Remove-TestPod ([string]$podName) {
+    kubectl delete pod logzio-logs-connection-test 2>$using:taskErrorFile | Out-Null
+    if (-Not $?) {
+        $err = Get-Content $using:taskErrorFile
+        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
+    }
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
@@ -74,28 +87,18 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
     $local:err = Get-Content $using:taskErrorFile
     if (-Not [string]::IsNullOrEmpty($result)) {
+        Remove-TestPod "logzio-logs-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod.`n  $err`""
         return 3
     }
 
     if ($podLogs = "Connected to listener.logz.io") {
-        kubectl delete pod logzio-logs-connection-test 2>$using:taskErrorFile | Out-Null
-        if ($?) {
-            return
-        }
-        
-        $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
+        Remove-TestPod "logzio-logs-connection-test"
         return
     }
 
-    kubectl delete pod logzio-logs-connection-test 2>$using:taskErrorFile | Out-Null
-    if (-Not $?) {
-        $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
-    }
-
-    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)`""
+    Remove-TestPod "logzio-logs-connection-test"
+    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for the port 8071`""
     return 3
 }
 
@@ -104,6 +107,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
 #   Exit Code 3
 function Test-CanKubernetesClusterConnectToLogzioMetrics {
     . $using:logzioTempDir\utils_functions.ps1
+    . $using:logzioTempDir\prerequisites_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
 
@@ -131,28 +135,18 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
     $local:err = Get-Content $using:taskErrorFile
     if (-Not [string]::IsNullOrEmpty($err)) {
+        Remove-TestPod "logzio-logs-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  $err`""
         return 3
     }
 
     if ($podLogs = "Connected to listener.logz.io") {
-        kubectl delete pod logzio-metrics-connection-test 2>$using:taskErrorFile | Out-Null
-        if ($?) {
-            return
-        }
-        
-        $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod.`n  $err`""
+        Remove-TestPod "logzio-logs-connection-test"
         return
     }
 
-    kubectl delete pod logzio-metrics-connection-test 2>$using:taskErrorFile | Out-Null
-    if (-Not $?) {
-        $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-metrics-connection-test pod.`n  $err`""
-    }
-
-    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io metrics (port 8053)`""
+    Remove-TestPod "logzio-logs-connection-test"
+    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for the port 8053`""
     return 3
 }
 
