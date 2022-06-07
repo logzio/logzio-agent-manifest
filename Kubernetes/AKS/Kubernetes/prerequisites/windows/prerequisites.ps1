@@ -19,10 +19,10 @@ Invoke-Task "Test-CanKubernetesClusterConnectToLogzioLogs" "checking if Kubernet
 Invoke-Task "Test-CanKubernetesClusterConnectToLogzioMetrics" "checking if Kubernetes cluster can connect to Logz.io metrics"
 
 # Check if Helm is installed
-Invoke-Task "Test-IsHelmInstalled" "checking if Helm is installed"
+#Invoke-Task "Test-IsHelmInstalled" "checking if Helm is installed"
 
 # Add Logz.io Helm repo
-Invoke-Task "Add-LogzioHelmRepo" "adding Logz.io Helm repo"
+#Invoke-Task "Add-LogzioHelmRepo" "adding Logz.io Helm repo"
 
 # Update Logz.io Helm repo
-Invoke-Task "Update-LogzioHelmRepo" "updating Logz.io Helm repo"
+#Invoke-Task "Update-LogzioHelmRepo" "updating Logz.io Helm repo"
