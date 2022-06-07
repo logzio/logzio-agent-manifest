@@ -29,6 +29,7 @@ function get_agent_functions_scripts () {
     fi
 }
 
+
 # Consts
 repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2"      # logzio-agent-manifest repo URL
 logzio_temp_dir="./logzio-temp"                                                     # Logz.io temp directory
