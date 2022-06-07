@@ -136,17 +136,17 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
     $local:err = Get-Content $using:taskErrorFile
     if (-Not [string]::IsNullOrEmpty($err)) {
-        Remove-TestPod "logzio-logs-connection-test"
+        Remove-TestPod "logzio-metrics-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  $err`""
         return 3
     }
 
     if ($podLogs = "Connected to listener.logz.io") {
-        Remove-TestPod "logzio-logs-connection-test"
+        Remove-TestPod "logzio-metrics-connection-test"
         return
     }
 
-    Remove-TestPod "logzio-logs-connection-test"
+    Remove-TestPod "logzio-metrics-connection-test"
     Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for the port 8053`""
     return 3
 }
