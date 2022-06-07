@@ -132,7 +132,7 @@ function get_prerequisite_scripts () {
 # Consts
 repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2"      # logzio-agent-manifest repo URL
 logzio_temp_dir="./logzio-temp"                                                     # Logz.io temp directory
-log_file="./logzio_run_prerequisites.log"                                           # Log file path
+log_file="./logzio_agent_troubleshooting.log"                                       # Log file path
 run_file="$logzio_temp_dir/run"                                                     # Run file path
 task_error_file="$logzio_temp_dir/task_error"                                       # Task error file path
 
