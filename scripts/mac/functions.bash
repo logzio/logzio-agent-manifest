@@ -180,10 +180,12 @@ function get_app_json () {
     fi
 
     local status_code=$(jq -r '.statusCode' $app_json)
-    if [[ "$status_code" != null ]]; then
-        write_run "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent (statusCode $status_code). make sure your ID is valid\""
-        return 4
+    if [[ "$status_code" = null ]]; then
+        return
     fi
+
+    write_run "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent (statusCode $status_code). make sure your ID is valid\""
+    return 4
 }
 
 # Builds path to logzio-agent-manifest repo according the app JSON
