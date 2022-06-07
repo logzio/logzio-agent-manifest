@@ -130,7 +130,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     kubectl apply -f $using:logzioTempDir\logzio_metrics_connection_test_pod.yaml 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod.`n  $err`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod.`n  '$err'`""
         return 3
     }
 
@@ -140,7 +140,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     $local:err = Get-Content $using:taskErrorFile
     if (-Not [string]::IsNullOrEmpty($err)) {
         Remove-TestPod "logzio-metrics-connection-test"
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  $err`""
+        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  '$err'`""
         return 3
     }
 
