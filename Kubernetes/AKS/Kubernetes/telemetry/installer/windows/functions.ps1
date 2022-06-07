@@ -71,7 +71,7 @@ function Get-WhichProductsWereSelected {
             return 2
         }
 
-        <#$local:params = Write-Output "$telemetry" | jq -r '.params[]'
+        $local:params = Write-Output "$telemetry" | jq -r '.params[]'
         if ($params.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON`""
             return 2
@@ -97,7 +97,7 @@ function Get-WhichProductsWereSelected {
             Write-Run "`$script:tracesParams = '$params'"
         }
 
-        $index++#>
+        $index++
     }
 
     <#if ($isLogsOptionSelected) {
