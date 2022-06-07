@@ -100,9 +100,23 @@ function Get-WhichProductsWereSelected {
         $index++
     }
 
-    Write-Run "`$script:isLogsOptionSelected = $isLogsOptionSelected"
-    Write-Run "`$script:isMetricsOptionSelected = $isMetricsOptionSelected"
-    Write-Run "`$script:isTracesOptionSelected = $isTracesOptionSelected"
+    if ($isLogsOptionSelected) {
+        Write-Run "`$script:isLogsOptionSelected = `$true"
+    } else {
+        Write-Run "`$script:isLogsOptionSelected = `$false"
+    }
+
+    if ($isMetricsOptionSelected) {
+        Write-Run "`$script:isMetricsOptionSelected = `$true"
+    } else {
+        Write-Run "`$script:isMetricsOptionSelected = `$false"
+    }
+
+    if ($isTracesOptionSelected) {
+        Write-Run "`$script:isTracesOptionSelected = `$true"
+    } else {
+        Write-Run "`$script:isTracesOptionSelected = `$false"
+    }
 }
 
 # Builds tolerations Helm sets
