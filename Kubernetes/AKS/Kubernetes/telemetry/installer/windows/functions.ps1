@@ -93,7 +93,7 @@ function Get-WhichProductsWereSelected {
             Write-Log "INFO" "isTracesOptionSelected = true"
             Write-Log "INFO" "tracesParams = $params"
 
-            $isTracesOptionSelected=true
+            $isTracesOptionSelected = $true
             Write-Run "`$script:tracesParams = '$params'"
         }
 

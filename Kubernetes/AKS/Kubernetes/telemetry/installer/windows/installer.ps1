@@ -16,7 +16,7 @@ Invoke-Task "Get-GeneralParams" "getting general params"
 Invoke-Task "Get-WhichProductsWereSelected" "getting which products were selected"
 
 # Build tolerations helm sets
-Invoke-Task "Build-TolerationsHelmSets" "building tolerations helm sets"
+#Invoke-Task "Build-TolerationsHelmSets" "building tolerations helm sets"
 
 <#
 # Build enable metrics or traces helm set
