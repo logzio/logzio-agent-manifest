@@ -24,7 +24,7 @@ function Write-Warning ([string]$message) {
     Write-Host "$message" -ForegroundColor Yellow
 }
 
-# Writes log into logzio_agent.log file
+# Writes log into Logz.io agent log file
 # Input:
 #   logLevel - The level of the log (INFO/ERROR/WARN)
 #   log - Log text
@@ -32,9 +32,9 @@ function Write-Log ([string]$logLevel, [string]$log) {
     Write-Output "[$logLevel] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $log" >> $logFile
 }
 
-# Writes command into logzio-temp\run.ps1 file
+# Writes command into run file in Logz.io temp directory
 # Input:
-#   command - The command towrite into the file
+#   command - The command to write into the file
 function Write-Run ([string]$command) {
     Write-Output "$command" >> $runFile
 }
@@ -47,9 +47,9 @@ function Remove-TempDir {
 # Finds the requested parameter in params 
 # Inputs: 
 #   params - The parameters in the application json
-#   requested_name - The parameter name to find
+#   requestedName - The parameter name to find
 # Output:
-#   The requested parameter if requested_name was found, empty otherwise.
+#   The requested parameter if requestedName was found, empty otherwise.
 function Find-Params ([string]$params, [string]$requestedName) {
     $local:paramsList = Write-Output $params | jq -c '.'
     $local:requestedParam = ""
@@ -107,13 +107,14 @@ function Invoke-Task([string]$command, [string]$desc) {
     $local:jobState = ""
 
     while ($true) {
-        $counter++
         Write-Host "`r[   ] $desc ..." -NoNewline
 
         for ($i=0; $i -lt $frame.Count; $i++) {
             Write-Host "`r[ $($frame[$i]) ]" -NoNewline
             Start-Sleep -Milliseconds $frameInterval
         }
+
+        $counter++
 
         $jobState = $job.State | Write-Output
         if ($jobState.Equals("Completed")) {
