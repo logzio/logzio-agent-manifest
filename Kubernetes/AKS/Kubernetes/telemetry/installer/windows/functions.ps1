@@ -81,19 +81,19 @@ function Get-WhichProductsWereSelected {
             Write-Log "INFO" "isLogsOptionSelected = true"
             Write-Log "INFO" "logsParams = $params"
 
-            isLogsOptionSelected=true
+            $isLogsOptionSelected=true
             Write-Run "`$script:logsParams = '$params'"
         } elseif ($type.Equals("METRICS")) {
             Write-Log "INFO" "isMetricsOptionSelected = true"
             Write-Log "INFO" "metricsParams = $params"
 
-            isMetricsOptionSelected=true
-            Write-Run "metricsParams = '$params'"
+            $isMetricsOptionSelected=true
+            Write-Run "`$script:metricsParams = '$params'"
         } elseif ($type.Equals("TRACING")) {
             Write-Log "INFO" "isTracesOptionSelected = true"
             Write-Log "INFO" "tracesParams = $params"
 
-            isTracesOptionSelected=true
+            $isTracesOptionSelected=true
             Write-Run "`$script:tracesParams = '$params'"
         }
 
