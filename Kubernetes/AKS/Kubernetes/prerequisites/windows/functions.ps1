@@ -95,7 +95,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
         return 3
     }
 
-    if ($podLogs = "Connected to listener.logz.io") {
+    if ($podLogs.Equals("Connected to listener.logz.io")) {
         Remove-TestPod "logzio-logs-connection-test"
         return
     }
@@ -143,7 +143,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
         return 3
     }
 
-    if ($podLogs = "Connected to listener.logz.io") {
+    if ($podLogs.Equals("Connected to listener.logz.io")) {
         Remove-TestPod "logzio-metrics-connection-test"
         return
     }
