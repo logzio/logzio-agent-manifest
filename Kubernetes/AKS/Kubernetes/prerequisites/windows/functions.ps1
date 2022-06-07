@@ -49,10 +49,12 @@ function Test-IsKubectlConnectedToKubernetesCluster {
 #   Exit Code 3
 function Remove-TestPod ([string]$podName) {
     kubectl delete pod logzio-logs-connection-test 2>$using:taskErrorFile | Out-Null
-    if (-Not $?) {
-        $err = Get-Content $using:taskErrorFile
-        Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
+    if ($?) {
+        return
     }
+
+    $err = Get-Content $using:taskErrorFile
+    Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
