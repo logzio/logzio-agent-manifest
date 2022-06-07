@@ -101,7 +101,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     }
 
     Remove-TestPod "logzio-logs-connection-test"
-    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for the port 8071`""
+    Write-Run "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for the port 8071`""
     return 3
 }
 
@@ -149,7 +149,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     }
 
     Remove-TestPod "logzio-metrics-connection-test"
-    Write-Log "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for the port 8053`""
+    Write-Run "Write-Error `"prerequisites.ps1 (3): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for the port 8053`""
     return 3
 }
 
