@@ -60,7 +60,7 @@ function Get-WhichProductsWereSelected {
     $local:isTracesOptionSelected = $false
     $local:index = 0
 
-    foreach ($telemetry in $telemetries) {
+    <#foreach ($telemetry in $telemetries) {
         $local:type = Write-Output "$telemetry" | jq -r '.type'
         if ($type.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON`""
@@ -116,7 +116,7 @@ function Get-WhichProductsWereSelected {
         Write-Run "`$script:isTracesOptionSelected = `$true"
     } else {
         Write-Run "`$script:isTracesOptionSelected = `$false"
-    }
+    }#>
 }
 
 # Builds tolerations Helm sets
