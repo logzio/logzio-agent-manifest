@@ -60,6 +60,7 @@ function Remove-TestPod ([string]$podName) {
 #   Exit Code 3
 function Test-CanKubernetesClusterConnectToLogzioLogs {
     . $using:logzioTempDir\utils_functions.ps1
+    . $using:logzioTempDir\prerequisites_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
 
