@@ -15,11 +15,11 @@ function Get-GeneralParams {
     Write-Log "INFO" "Getting general params ..."
 
     $local:generalParams = jq -r '.configuration.subtypes[0].datasources[0].params[]' $using:appJSON
-    if ($null -eq $generalParams) {
+    if ($generalParams.Equals("null")) {
         Write-Run "Write-Error `"installer.ps1 (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON`""
         return 1
     }
-    if ($generalParams.Equals("")) {
+    if ([string]::IsNullOrEmpty($generalParams)) {
         Write-Run "Write-Error `"installer.ps1 (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON`""
         return 1
     }
@@ -46,11 +46,11 @@ function Get-WhichProductsWereSelected {
     Write-Log "INFO" "Getting which products were selected ..."
 
     $local:telemetries = jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $using:appJSON
-    if ($null -eq $telemetries) {
+    if ($telemetries.Equals("null")) {
         Write-Run "Write-Error `"installer.ps1 (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON`""
         return 2
     }
-    if ($telemetries.Equals("")) {
+    if ([string]::IsNullOrEmpty($telemetries)) {
         Write-Run "Write-Error `"installer.ps1 (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON`""
         return 2
     }
@@ -62,17 +62,17 @@ function Get-WhichProductsWereSelected {
 
     foreach ($telemetry in $telemetries) {
         $local:type = Write-Output "$telemetry" | jq -r '.type'
-        if ($null -eq $type) {
+        if ($type.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON`""
             return 2
         }
-        if ($type.Equals("")) {
+        if ([string]::IsNullOrEmpty($type)) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON`""
             return 2
         }
 
         $local:params = Write-Output "$telemetry" | jq -r '.params[]'
-        if ($null -eq $params) {
+        if ($params.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON`""
             return 2
         }
@@ -120,11 +120,11 @@ function Build-TolerationsHelmSets {
     }
 
     $local:isTaintValue = Write-Output "$isTaintParam" | jq -r '.value'
-    if ($null -eq $is_taint_value) {
+    if ($isTaintValue.Equals("null")) {
         Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON`""
         return 3
     }
-    if ($isTaintValue.Equals("")) {
+    if ([string]::IsNullOrEmpty($isTaintValue)) {
         Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON`""
         return 3
     }
@@ -135,7 +135,7 @@ function Build-TolerationsHelmSets {
     }
                     
     $local:items = kubectl get nodes -o json | jq -r '.items'
-    if ($null -eq $items) {
+    if ($items.Equals("null")) {
         Write-Run "Write-Error `"installer.ps1 (3): '.items[]' was not found in kubectl get nodes JSON`""
         return 3
     }
@@ -146,20 +146,20 @@ function Build-TolerationsHelmSets {
 
     foreach ($taint in $taints) {
         $local:key = Write-Output "$taint" | jq -r '.key'
-        if ($null -eq $key) {
+        if ($key.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (3): '.items[{item}].key' was not found in kubectl get nodes JSON`""
             return 3
         }
 
         $local:effect = Write-Output "$taint" | jq -r '.effect'
-        if ($null -eq $effect) {
+        if ($effect.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (3): '.items[{item}].effect' was not found in kubectl get nodes JSON`""
             return 3
         }
 
         $local:operator = "Exists"
         $local:value = Write-Output "$taint" | jq -r '.value'
-        if ($null -eq $value) {
+        if ($value.Equals("null")) {
             $operator = "Equal"
 
             if ($isLogsOptionSelected) {
