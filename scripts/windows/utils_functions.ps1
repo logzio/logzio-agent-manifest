@@ -52,7 +52,7 @@ function Get-TaskError {
     if ([string]::IsNullOrEmpty($err)) {
         return
     }
-    
+
     $err = $err.Replace("`"", "'")
     Write-Output "$err"
 }
@@ -69,6 +69,10 @@ function Find-Params ([string]$params, [string]$requestedName) {
 
     foreach ($param in $paramsList) {
         $local:name = Write-Output "$param" | jq -r '.name'
+        if ([string]::IsNullOrEmpty($name) -or $name.Equals("null")) {
+            continue
+        }
+        
         if ($name.Equals($requestedName)) {
             $requestedParam = "$param"
         }
