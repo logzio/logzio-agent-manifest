@@ -45,10 +45,12 @@ function delete_test_pod () {
     local pod_name="$1"
 
     kubectl delete pod $pod_name >/dev/null 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_warning \"prerequisites.bash (3): failed to delete logzio-metrics-connection-test pod.\n  $err\""
+    if [[ $? -eq 0 ]]; then
+        return
     fi
+
+    local err=$(cat $task_error_file)
+    write_run "print_warning \"prerequisites.bash (3): failed to delete logzio-metrics-connection-test pod.\n  $err\""
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
