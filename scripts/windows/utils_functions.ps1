@@ -44,6 +44,16 @@ function Remove-TempDir {
     Remove-Item -Path $logzioTempDir -Recurse
 }
 
+# Gets task error file error message
+# Output:
+#   The task error message
+function Get-TaskError {
+    $local:err = Get-Content $using:taskErrorFile -First 1
+
+    $err = $err.Replace("`"", "'")
+    Write-Output "$err"
+}
+
 # Finds the requested parameter in params 
 # Inputs: 
 #   params - The parameters in the application json
