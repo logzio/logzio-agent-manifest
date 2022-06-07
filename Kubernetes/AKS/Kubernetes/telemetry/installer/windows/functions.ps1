@@ -111,6 +111,10 @@ function Get-WhichProductsWereSelected {
 # Error:
 #   Exit Code 3
 function Build-TolerationsHelmSets {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
     Write-Log "INFO" "Building tolerations Helm set ..."
 
     $local:isTaintParam = Find-Param "$generalParams" "isTaint"
