@@ -60,7 +60,7 @@ function Get-WhichProductsWereSelected {
     $local:isTracesOptionSelected = $false
     $local:index = 0
 
-    <#foreach ($telemetry in $telemetries) {
+    foreach ($telemetry in $telemetries) {
         $local:type = Write-Output "$telemetry" | jq -r '.type'
         if ($type.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON`""
@@ -71,7 +71,7 @@ function Get-WhichProductsWereSelected {
             return 2
         }
 
-        $local:params = Write-Output "$telemetry" | jq -r '.params[]'
+        <#$local:params = Write-Output "$telemetry" | jq -r '.params[]'
         if ($params.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON`""
             return 2
@@ -97,10 +97,10 @@ function Get-WhichProductsWereSelected {
             Write-Run "`$script:tracesParams = '$params'"
         }
 
-        $index++
+        $index++#>
     }
 
-    if ($isLogsOptionSelected) {
+    <#if ($isLogsOptionSelected) {
         Write-Run "`$script:isLogsOptionSelected = `$true"
     } else {
         Write-Run "`$script:isLogsOptionSelected = `$false"
