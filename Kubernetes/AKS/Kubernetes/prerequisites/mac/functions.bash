@@ -15,7 +15,7 @@ function is_kubectl_installed () {
         return
     fi
 
-    write_run "print_error \"prerequisites.bash (1): kubectl is not installed\""
+    write_run "print_error \"prerequisites.bash (1): kubectl is not installed. please install it and rerun the agent script\""
     return 1
 }
 
@@ -32,7 +32,7 @@ function is_kubectl_connected_to_k8s_cluster () {
         return
     fi
 
-    write_run "print_error \"prerequisites.bash (2): kubectl is not connected to an active Kubernetes cluster.\n  $err\""
+    write_run "print_error \"prerequisites.bash (2): kubectl is not connected to an active Kubernetes cluster. please configure your computer to access a Kubernetes cluster and rerun the agent script.\n  $err\""
     return 2
 }
 
@@ -86,7 +86,7 @@ function can_k8s_cluster_connect_to_logzio_logs () {
     fi
 
     delete_test_pod "logzio-logs-connection-test"
-    write_run "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs (port 8071)\""
+    write_run "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for the port 8071\""
     return 3
 }
 
@@ -125,7 +125,7 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
     fi
 
     delete_test_pod "logzio-metrics-connection-test"
-    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io metrics (port 8053)\"" >> logzio-temp/run
+    echo -e "print_error \"prerequisites.bash (3): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for the port 8053\"" >> logzio-temp/run
     return 3
 }
 
