@@ -190,11 +190,11 @@ function Build-TolerationsHelmSets {
         if ($value.Equals("null")) {
             $operator = "Equal"
 
-            if ($isLogsOptionSelected) {
+            if ($using:isLogsOptionSelected) {
                 $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].value=$value"
                 $tolerationsSets += " --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].value=$value"
             }
-            if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
+            if ($using:isMetricsOptionSelected -or $using:isTracesOptionSelected) {
                 $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].value=$value"
                 $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-node-exporter.tolerations[$index].value=$value"
                 $tolerationsSets += " --set-string logzio-k8s-telemetry.kube-state-metrics.tolerations[$index].value=$value"
@@ -202,7 +202,7 @@ function Build-TolerationsHelmSets {
             }
         }
 
-        if ($isLogsOptionSelected) {
+        if ($using:isLogsOptionSelected) {
             $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].key=$key"
             $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].operator=$operator"
             $tolerationsSets += " --set-string logzio-fluentd.daemonset.tolerations[$index].effect=$effect"
@@ -210,7 +210,7 @@ function Build-TolerationsHelmSets {
             $tolerationsSets += " --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].operator=$operator"
             $tolerationsSets += " --set-string logzio-fluentd.windowsDaemonset.tolerations[$index].effect=$effect"
         }
-        if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
+        if ($using:isMetricsOptionSelected -or $using:isTracesOptionSelected) {
             $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].key=$key"
             $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].operator=$operator"
             $tolerationsSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$index].effect=$effect"
