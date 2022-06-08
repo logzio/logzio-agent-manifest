@@ -133,8 +133,8 @@ function Build-TolerationsHelmSets {
     $local:runFile = $using:runFile
 
     Write-Log "INFO" "Building tolerations Helm set ..."
-    Write-Output $generalParams >> test.txt
-    $local:isTaintParam = Find-Param "$generalParams" "isTaint"
+
+    $local:isTaintParam = Find-Param "$using:generalParams" "isTaint"
     if ([string]::IsNullOrEmpty($isTaintParam)) {
         Write-Run "Write-Error `"installer.ps1 (3): isTaint param was not found`""
         return 3
