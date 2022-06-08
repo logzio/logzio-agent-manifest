@@ -121,6 +121,6 @@ function Build-WindowsNodeUsernameAndPasswordHelmSets {
     Write-Run "`$local:windowUsernameSet = `" --set logzio-k8s-telemetry.secrets.windowsNodeUsername=`$username`""
     Write-Run "`$local:windowsPasswordSet = `" --set logzio-k8s-telemetry.secrets.windowsNodePassword=`""
     Write-Run "`$local:securedPassword = `$password[0]`*`*`*`*`*`$password[`$password.Length-1]"
-    Write-Run "Write-Log `"INFO`" `"windowsSets = `$windowUsernameSet `$windowsPasswordSet`$securedPassword`""
+    Write-Run "Write-Log `"INFO`" `"windowsSets = `$windowUsernameSet`$windowsPasswordSet`$securedPassword`""
     Write-Run "`$helmSets += `"`$windowUsernameSet`$windowsPasswordSet`$password`""
 }
