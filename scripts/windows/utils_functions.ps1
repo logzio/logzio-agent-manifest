@@ -64,21 +64,16 @@ function Get-TaskError {
 # Output:
 #   The requested parameter if requestedName was found, empty otherwise.
 function Find-Param ([string]$params, [string]$requestedName) {
-    Write-Output $params >> test.txt
     $local:paramsList = Write-Output $params | jq -c '.'
-    Write-Output $paramsList >> test.txt
     $local:requestedParam = ""
 
     foreach ($param in $paramsList) {
-        Write-Output $param >> test.txt
         $local:name = Write-Output "$param" | jq -r '.name'
-        Write-Output $name >> test.txt
         if ([string]::IsNullOrEmpty($name) -or $name.Equals("null")) {
             continue
         }
         
         if ($name.Equals($requestedName)) {
-            Write-Output "yes" >> test.txt
             $requestedParam = "$param"
         }
     }
