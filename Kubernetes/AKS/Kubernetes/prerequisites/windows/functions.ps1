@@ -97,7 +97,6 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
         return 3
     }
 
-    Write-Output $podLogs >> test.txt
     if ($podLogs = "Connected to listener.logz.io") {
         Remove-TestPod "logzio-logs-connection-test"
         return
