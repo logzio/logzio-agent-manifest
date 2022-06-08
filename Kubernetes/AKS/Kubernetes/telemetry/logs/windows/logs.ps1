@@ -7,7 +7,7 @@ Write-Log "INFO" "Loading logs functions ..."
 . $logzio_temp_dir\logs_functions.ps1
 
 # Build enable logs Helm set
-Invoke-Task "build_enable_logs_helm_set" "building enable logs Helm set"
+Invoke-Task "Build-EnableLogsHelmSet" "building enable logs Helm set"
 
 # Build Logz.io logs listener URL Helm set
 Invoke-Task "Build-LogzioLogsListenerUrlHelmSet" "building Logz.io logs listener URL Helm set"
