@@ -4,7 +4,7 @@
 
 # Load functions
 Write-Log "INFO" "Loading logs functions ..."
-. $logzio_temp_dir\logs_functions.ps1
+. $logzioTempDir\logs_functions.ps1
 
 # Build enable logs Helm set
 Invoke-Task "Build-EnableLogsHelmSet" "building enable logs Helm set"
