@@ -168,6 +168,9 @@ function Build-TolerationsHelmSets {
     $local:tolerationsSets = ""
     $local:index = 0
     $local:taints = Write-Output "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]'
+    if ([string]::IsNullOrEmpty($taints)) {
+        $taints = ""
+    }
 
     foreach ($taint in $taints) {
         $local:key = Write-Output "$taint" | jq -r '.key'
