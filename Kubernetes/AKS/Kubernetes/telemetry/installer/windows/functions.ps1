@@ -15,12 +15,12 @@ function Get-GeneralParams {
     Write-Log "INFO" "Getting general params ..."
 
     $local:generalParams = jq -r '.configuration.subtypes[0].datasources[0].params[]' $using:appJSON
-    if ($generalParams.Equals("null")) {
-        Write-Run "Write-Error `"installer.ps1 (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON`""
-        return 1
-    }
     if ([string]::IsNullOrEmpty($generalParams)) {
         Write-Run "Write-Error `"installer.ps1 (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON`""
+        return 1
+    }
+    if ($generalParams.Equals("null")) {
+        Write-Run "Write-Error `"installer.ps1 (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON`""
         return 1
     }
 
@@ -46,12 +46,12 @@ function Get-WhichProductsWereSelected {
     Write-Log "INFO" "Getting which products were selected ..."
 
     $local:telemetries = jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $using:appJSON
-    if ($telemetries.Equals("null")) {
-        Write-Run "Write-Error `"installer.ps1 (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON`""
-        return 2
-    }
     if ([string]::IsNullOrEmpty($telemetries)) {
         Write-Run "Write-Error `"installer.ps1 (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON`""
+        return 2
+    }
+    if ($telemetries.Equals("null")) {
+        Write-Run "Write-Error `"installer.ps1 (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON`""
         return 2
     }
 
@@ -61,19 +61,20 @@ function Get-WhichProductsWereSelected {
     $local:index = 0
 
     foreach ($telemetry in $telemetries) {
-        Write-Output $telemetry >> test.txt
         $local:type = Write-Output "$telemetry" | jq -r '.type'
-        Write-Output $type >> test.txt
-        if ($type.Equals("null")) {
-            Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON`""
-            return 2
-        }
         if ([string]::IsNullOrEmpty($type)) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON`""
             return 2
         }
+        if ($type.Equals("null")) {
+            Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON`""
+            return 2
+        }
 
         $local:params = Write-Output "$telemetry" | jq -r '.params[]'
+        if ([string]::IsNullOrEmpty($params)) {
+            $params = ""
+        }
         if ($params.Equals("null")) {
             Write-Run "Write-Error `"installer.ps1 (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON`""
             return 2
