@@ -207,7 +207,7 @@ function build_tolerations_helm_sets () {
 function build_enable_metrics_or_traces_helm_set () {
     write_log "INFO" "Building enable metrics or traces Helm set ..."
 
-    local helm_set+=" --set metricsOrTraces.enabled=true"
+    local helm_set=" --set metricsOrTraces.enabled=true"
     write_log "INFO" "helm_set = $helm_set"
     write_run "helm_sets+='$helm_set'"
 }

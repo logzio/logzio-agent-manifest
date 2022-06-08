@@ -232,18 +232,18 @@ function Build-TolerationsHelmSets {
     Write-Run "`$helmSets += '$tolerationsSets'"
 }
 
-<#
 # Builds enable metrics or traces Helm set
 # Output:
-#   helm_sets - Contains all the Helm sets
-function build_enable_metrics_or_traces_helm_set () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building enable metrics or traces Helm set ..." >> logzio_agent.log
+#   helmSets - Contains all the Helm sets
+function Build-EnableMetricsOrTracesHelmSet () {
+    Write-Log "INFO" "Building enable metrics or traces Helm set ..."
 
-    local helm_set+=" --set metricsOrTraces.enabled=true"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
+    $local:helmSet = " --set metricsOrTraces.enabled=true"
+    Write-Log "INFO" "helmSet = $helm_set"
+    Write-Run "`$helmSets+='$helmSet'"
 }
 
+<#
 # Builds metrics/traces environment tag helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
