@@ -141,12 +141,12 @@ function Build-TolerationsHelmSets {
     }
 
     $local:isTaintValue = Write-Output "$isTaintParam" | jq -r '.value'
-    if ($isTaintValue.Equals("null")) {
-        Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON`""
-        return 3
-    }
     if ([string]::IsNullOrEmpty($isTaintValue)) {
         Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' is empty in application JSON`""
+        return 3
+    }
+    if ($isTaintValue.Equals("null")) {
+        Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON`""
         return 3
     }
 
@@ -156,6 +156,10 @@ function Build-TolerationsHelmSets {
     }
                     
     $local:items = kubectl get nodes -o json | jq -r '.items'
+    if ([string]::IsNullOrEmpty($items)) {
+        Write-Run "Write-Error `"installer.ps1 (3): '.items[]' is empty in kubectl get nodes JSON`""
+        return 3
+    }
     if ($items.Equals("null")) {
         Write-Run "Write-Error `"installer.ps1 (3): '.items[]' was not found in kubectl get nodes JSON`""
         return 3
