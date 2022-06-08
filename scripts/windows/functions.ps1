@@ -175,6 +175,9 @@ function Get-AppJSON {
     }
 
     $local:statusCode= jq -r '.statusCode' $using:appJSON
+    if ([string]::IsNullOrEmpty($statusCode)) {
+        $statusCode = ""
+    }
     if ($statusCode.Equals("null")) {
         return
     }
@@ -196,32 +199,32 @@ function Build-RepoPath {
     Write-Log "INFO" "Building repo path ..."
 
     $local:dir1 = jq -r '.configuration.name' $using:appJSON
-    if ($dir1.Equals("null")) {
-        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' was not found in application JSON`""
-        return 5
-    }
     if ([string]::IsNullOrEmpty($dir1)) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' is empty in application JSON`""
         return 5
     }
-
-    $local:dir2 = jq -r '.configuration.subtypes[0].name' $using:appJSON
-    if ($dir2.Equals("null")) {
-        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' was not found in application JSON`""
+    if ($dir1.Equals("null")) {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.name' was not found in application JSON`""
         return 5
     }
+
+    $local:dir2 = jq -r '.configuration.subtypes[0].name' $using:appJSON
     if ([string]::IsNullOrEmpty($dir2)) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' is empty in application JSON`""
         return 5
     }
-
-    $local:dir3 = jq -r '.configuration.subtypes[0].datasources[0].name' $using:appJSON
-    if ($dir3.Equals("null")) {
-        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON`""
+    if ($dir2.Equals("null")) {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].name' was not found in application JSON`""
         return 5
     }
+
+    $local:dir3 = jq -r '.configuration.subtypes[0].datasources[0].name' $using:appJSON
     if ([string]::IsNullOrEmpty($dir3)) {
         Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' is empty in application JSON`""
+        return 5
+    }
+    if ($dir3.Equals("null")) {
+        Write-Run "Write-Error `"agent.ps1 (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON`""
         return 5
     }
 
