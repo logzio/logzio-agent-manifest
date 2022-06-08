@@ -97,7 +97,7 @@ function build_windows_node_username_and_password_helm_sets () {
     write_log "INFO" "Building Windows Node username and password Helm sets ..."
 
     write_run "read -p \"\033[0;35mPlease enter your Windows Node username:\033[0;37m \" username"
-    write_run "read -p \"\033[0;35mPlease enter your Windows Node password:\033[0;37m \" password"
+    write_run "read -s -p \"\033[0;35mPlease enter your Windows Node password:\033[0;37m \" password"
     write_run "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodeUsername=\$username\""
     write_run "windows_sets+=\" --set logzio-k8s-telemetry.secrets.windowsNodePassword=\$password\""
     write_run "write_log \"INFO\" \"windows_sets = \$windows_sets\""
