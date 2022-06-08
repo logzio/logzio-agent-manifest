@@ -28,12 +28,12 @@ if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
     Invoke-Task "Build-EnvironmentTagHelmSet" "building metrics/traces environment tag helm set"
 }
 
-<#
 # Get logs scripts
-if $is_logs_option_selected; then
-    execute_task "get_logs_scripts" "getting logs scripts"
-fi
+if ($isLogsOptionSelected) {
+    Invoke-Task "Get-LogsScripts" "getting logs scripts"
+}
 
+<#
 # Get metrics scripts
 if $is_metrics_option_selected; then
     execute_task "get_metrics_scripts" "getting metrics scripts"
@@ -42,15 +42,16 @@ fi
 # Get traces scripts
 if $is_traces_option_selected; then
     execute_task "get_traces_scripts" "getting traces scripts"
-fi
+fi#>
 
 # Run logs script
-if $is_logs_option_selected; then
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running logs script ..." >> logzio_agent.log
-    echo -e "\nlogs:"
-    source ./logzio-temp/logs.bash
-fi
+if ($isLogsOptionSelected) {
+    Write-Log "INFO" "Running logs script ..."
+    Write-Host "`nlogs:"
+    . $logzioTempDir\logs.ps1
+}
 
+<#
 # Run metrics script
 if $is_metrics_option_selected; then
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running metrics script ..." >> logzio_agent.log

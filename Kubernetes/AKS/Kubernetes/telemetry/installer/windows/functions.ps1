@@ -274,32 +274,35 @@ function Build-EnvironmentTagHelmSet {
     Write-Run "`$helmSets += '$helmSet'"
 }
 
-<#
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 5
-function get_logs_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > logzio-temp/logs.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get logs script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+function Get-LogsScripts () {
+    Write-Log "INFO" "Getting logs script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/logs/windows/logs.ps1 -OutFile $using:logzioTempDir\logs.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (5): failed to get logs script file from logzio-agent-manifest repo.`n  $_`""
         return 5
-    fi
+    }
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting logs functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > logzio-temp/logs_functions.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (5): failed to get logs functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    Write-Log "INFO" "Getting logs functions script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/logs/windows/functions.ps1 -OutFile $using:logzioTempDir\logs_functions.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (5): failed to get logs functions script file from logzio-agent-manifest repo.`n  $_`""
         return 5
-    fi
+    }
 }
 
+<#
 # Gets metrics scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 6
