@@ -306,32 +306,38 @@ function Get-LogsScripts {
     }
 }
 
-<#
 # Gets metrics scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 6
-function get_metrics_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > logzio-temp/metrics.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+function Get-MetricsScripts {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get metrics script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    Write-Log "INFO" "Getting metrics script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/metrics/windows/metrics.ps1 -OutFile $using:logzioTempDir\metrics.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (6): failed to get metrics script file from logzio-agent-manifest repo.`n  $_`""
         return 6
-    fi
+    }
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting metrics functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > logzio-temp/metrics_functions.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (6): failed to get metrics functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    Write-Log "INFO" "Getting metrics functions script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/metrics/windows/functions.ps1 -OutFile $using:logzioTempDir\metrics_functions.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (6): failed to get metrics functions script file from logzio-agent-manifest repo.`n  $_`""
         return 6
-    fi
+    }
 }
 
+<#
 # Gets traces scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 7

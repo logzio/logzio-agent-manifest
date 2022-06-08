@@ -35,7 +35,7 @@ if ($isLogsOptionSelected) {
 
 # Get metrics scripts
 if ($isMetricsOptionSelected) {
-    Invoke-Task "get-MetricsScripts" "getting metrics scripts"
+    Invoke-Task "Get-MetricsScripts" "getting metrics scripts"
 }
 
 <#
