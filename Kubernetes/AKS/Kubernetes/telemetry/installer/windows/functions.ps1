@@ -277,7 +277,11 @@ function Build-EnvironmentTagHelmSet {
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 5
-function Get-LogsScripts () {
+function Get-LogsScripts {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
     Write-Log "INFO" "Getting logs script file from logzio-agent-manifest repo ..."
     try {
         $ProgressPreference = "SilentlyContinue"
