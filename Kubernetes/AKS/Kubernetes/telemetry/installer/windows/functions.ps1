@@ -235,7 +235,11 @@ function Build-TolerationsHelmSets {
 # Builds enable metrics or traces Helm set
 # Output:
 #   helmSets - Contains all the Helm sets
-function Build-EnableMetricsOrTracesHelmSet () {
+function Build-EnableMetricsOrTracesHelmSet {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
     Write-Log "INFO" "Building enable metrics or traces Helm set ..."
 
     $local:helmSet = " --set metricsOrTraces.enabled=true"
@@ -243,30 +247,34 @@ function Build-EnableMetricsOrTracesHelmSet () {
     Write-Run "`$helmSets+='$helmSet'"
 }
 
-<#
 # Builds metrics/traces environment tag helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
 # Error:
 #   Exit Code 4
-function build_environment_tag_helm_set () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Building environment tag Helm set ..." >> logzio_agent.log
+function Build-EnvironmentTagHelmSet {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-    local env_tag=$(jq -r '.id' logzio-temp/app.json)       ######################## Change the id to something else?
-    if [[ "$env_tag" = null ]]; then
-        echo -e "print_error \"installer.bash (4): '.id' was not found in application JSON\"" > logzio-temp/run
-        return 4
-    fi
-    if [[ -z "$env_tag" ]]; then
-        echo -e "print_error \"installer.bash (4): '.id' is empty in application JSON\"" > logzio-temp/run
-        return 4
-    fi
+    Write-Log "INFO" "Building environment tag Helm set ..."
 
-    local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_set = $helm_set" >> logzio_agent.log
-    echo -e "helm_sets+='$helm_set'" > logzio-temp/run
+    $local:envTag = jq -r '.id' $using:appJSON       ######################## Change the id to something else?
+    if ([string]::IsNullOrEmpty($envTag)) {
+        Write-Run "Write-Error `"installer.ps1 (4): '.id' is empty in application JSON`""
+        return 4
+    }
+    if ($envTag.Equals("null")) {
+        Write-Run "Write-Error `"installer.ps1 (4): '.id' was not found in application JSON`""
+        return 4
+    }
+
+    $local:helmSet = " --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
+    Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$helmSets += '$helmSet'"
 }
 
+<#
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 5

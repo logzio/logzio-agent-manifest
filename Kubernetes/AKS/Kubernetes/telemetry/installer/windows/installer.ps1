@@ -18,17 +18,17 @@ Invoke-Task "Get-WhichProductsWereSelected" "getting which products were selecte
 # Build tolerations helm sets
 Invoke-Task "Build-TolerationsHelmSets" "building tolerations helm sets"
 
-<#
 # Build enable metrics or traces helm set
-if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "build_enable_metrics_or_traces_helm_set" "getting enable metrics or traces helm set"
-fi
+if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
+    Invoke-Task "Build-EnableMetricsOrTracesHelmSet" "building enable metrics or traces helm set"
+}
 
 # Build metrics/traces environment tag helm set
-if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "build_environment_tag_helm_set" "getting metrics/traces environment tag helm set"
-fi
+if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
+    Invoke-Task "Build-EnvironmentTagHelmSet" "building metrics/traces environment tag helm set"
+}
 
+<#
 # Get logs scripts
 if $is_logs_option_selected; then
     execute_task "get_logs_scripts" "getting logs scripts"
