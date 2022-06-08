@@ -118,7 +118,7 @@ function Build-WindowsNodeUsernameAndPasswordHelmSets {
     Write-Run "`$local:username = Read-Host"
     Write-Run "Write-Host `"Please enter your Windows Node password: `" -ForegroundColor Magenta -NoNewline"
     Write-Run "`$local:securedPassword = Read-Host -AsSecureString"
-    Write-Run "`$local:password = [System.Runtime.InteropeServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR(`$securedPassword))"
+    Write-Run "`$local:password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR(`$securedPassword))"
     Write-Run "`$local:windowUsernameSet = `" --set logzio-k8s-telemetry.secrets.windowsNodeUsername=`$username`""
     Write-Run "`$local:windowsPasswordSet = `" --set logzio-k8s-telemetry.secrets.windowsNodePassword=`""
     Write-Run "`$local:logPassword = `"`$password[0]*****`$password[`$password.Length-1]`""
