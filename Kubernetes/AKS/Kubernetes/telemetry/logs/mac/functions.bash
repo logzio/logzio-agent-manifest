@@ -84,9 +84,6 @@ function build_multiline_helm_sets () {
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[]' is empty in application JSON\""
         return 3
     fi
-                    
-    local paths=""
-    local index=1
 
     curl -fsSL $repo_path/telemetry/logs/multiline_source.conf > $logzio_temp_dir/multiline_source.conf 2>$task_error_file
     if [[ $? -ne 0 ]]; then
@@ -101,6 +98,9 @@ function build_multiline_helm_sets () {
         write_run "print_error \"logs.bash (3): failed to get multiline filter conf file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
+
+    local paths=""
+    local index=1
 
     while read -r obj; do
         local source=$(cat $logzio_temp_dir/multiline_source.conf)
