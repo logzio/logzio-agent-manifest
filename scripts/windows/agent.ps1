@@ -66,8 +66,7 @@ Get-Arguments $args
 
 # Print title
 Write-Host "Running " -NoNewline
-Write-Host "Logz" -ForegroundColor Cyan -NoNewline
-Write-Host ".io " -ForegroundColor Yellow -NoNewline
+Write-Host "Logz.io " -ForegroundColor Cyan -NoNewline
 Write-Host "Agent:`n`n" -NoNewline
 
 # Run prerequisite installations

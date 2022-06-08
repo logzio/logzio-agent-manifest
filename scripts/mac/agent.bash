@@ -55,7 +55,7 @@ source ./logzio-temp/utils_functions.bash
 get_arguments "$@"
 
 # Print title
-echo -e "Running \033[0;36mLogz\033[0;33m.io\033[0;37m Agent:\n"
+echo -e "Running \033[0;36mLogz.io\033[0;37m Agent:\n"
 
 # Run prerequisite installations
 echo -e "prerequisite installations:"
