@@ -133,7 +133,7 @@ function build_tolerations_helm_sets () {
         write_run "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\""
         return 3
     fi
-    if [[ -z "$items"]]; then
+    if [[ -z "$items" ]]; then
         write_run "print_error \"installer.bash (3): '.items[]' is empty in kubectl get nodes JSON\""
         return 3
     fi
