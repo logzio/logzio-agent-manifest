@@ -46,7 +46,7 @@ function Build-LogzioLogsListenerUrlHelmSet {
 
 # Builds Logz.io logs token Helm set
 # Output:
-#   helm_sets - Contains all the Helm sets
+#   helmSets - Contains all the Helm sets
 # Error:
 #   Exit Code 2
 function Build-LogzioLogsTokenHelmSet {
@@ -73,7 +73,7 @@ function Build-LogzioLogsTokenHelmSet {
 
 # Builds multiline Helm sets
 # Output:
-#   helm_sets - Contains all the Helm sets
+#   helmSets - Contains all the Helm sets
 # Error:
 #   Exit Code 3
 function Build-MultilineHelmSets {
