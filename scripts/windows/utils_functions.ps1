@@ -63,7 +63,7 @@ function Get-TaskError {
 #   requestedName - The parameter name to find
 # Output:
 #   The requested parameter if requestedName was found, empty otherwise.
-function Find-Params ([string]$params, [string]$requestedName) {
+function Find-Param ([string]$params, [string]$requestedName) {
     $local:paramsList = Write-Output $params | jq -c '.'
     $local:requestedParam = ""
 
