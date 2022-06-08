@@ -39,7 +39,7 @@ function Build-LogzioMetricsListenerUrlHelmSet {
         return 1
     }
 
-    listenerURL = "https://$listener_url:8053"
+    $listenerURL = "https://$listener_url:8053"
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.ListenerHost=$listenerURL"
     Write-Log "INFO" "helmSet = $helmSet"
     Write-Run "`$helmSets += '$helmSet'"
@@ -101,7 +101,7 @@ function Get-IsKubernetesRunsOnWindowsOS {
     }
 
     Write-Log "INFO" "isWindows = $isWindowsValue"
-    Write-Run "`$script:isWindows = $isWindowsValue"
+    Write-Run "`$script:isWindows = `$$isWindowsValue"
 }
 
 # Builds Windows Node username and password Helms sets (if Kubernetes runs on Windows OS)
