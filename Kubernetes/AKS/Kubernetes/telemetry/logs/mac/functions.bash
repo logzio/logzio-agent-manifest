@@ -81,7 +81,8 @@ function build_multiline_helm_sets () {
         return 3
     fi
     if [[ -z "$multiline_value" ]]; then
-        return
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[]' is empty in application JSON\""
+        return 3
     fi
                     
     local paths=""
@@ -108,15 +109,23 @@ function build_multiline_helm_sets () {
 
         local path=$(echo -e "$obj" | jq -r '.source')
         if [[ "$path" = null ]]; then
-            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].path' was not found in application JSON\""
+            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].source' was not found in application JSON\""
+            return 3
+        fi
+        if [[ -z "$path" ]]; then
+            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].source' is empty in application JSON\""
             return 3
         fi
 
         paths+=",$path"
 
         local regex=$(echo -e "$obj" | jq -r '.pattern')
-        if [[ "$path" = null ]]; then
-            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].regex' was not found in application JSON\""
+        if [[ "$regex" = null ]]; then
+            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].pattern' was not found in application JSON\""
+            return 3
+        fi
+        if [[ -z "$regex" ]]; then
+            write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].pattern' is empty in application JSON\""
             return 3
         fi
 

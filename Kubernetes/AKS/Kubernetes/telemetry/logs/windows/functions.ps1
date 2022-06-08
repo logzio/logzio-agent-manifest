@@ -129,23 +129,23 @@ function Build-MultilineHelmSets {
 
         $local:path = Write-Output "$multilineObj" | jq -r '.source'
         if ([string]::IsNullOrEmpty($path)) {
-            Write-Run "Write-Error `"logs.ps1 (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].path' is empty in application JSON`""
+            Write-Run "Write-Error `"logs.ps1 (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].source' is empty in application JSON`""
             return 3
         }
         if ($path.Equals("null")) {
-            Write-Run "Write-Error `"logs.ps1 (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].path' was not found in application JSON`""
+            Write-Run "Write-Error `"logs.ps1 (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].source' was not found in application JSON`""
             return 3
         }
 
         $paths += ",$path"
 
         $local:regex = Write-Output "$multilineObj" | jq -r '.pattern'
-        if ([string]::IsNullOrEmpty($path)) {
-            Write-Run "Write-Error `"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].regex' is empty in application JSON`""
+        if ([string]::IsNullOrEmpty($regex)) {
+            Write-Run "Write-Error `"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].pattern' is empty in application JSON`""
             return 3
         }
         if ($regex.Equals("null")) {
-            Write-Run "Write-Error `"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].regex' was not found in application JSON`""
+            Write-Run "Write-Error `"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].pattern' was not found in application JSON`""
             return 3
         }
 
