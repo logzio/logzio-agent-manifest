@@ -198,6 +198,7 @@ function build_tolerations_helm_sets () {
     done < <(echo -e "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]')
 
     write_log "INFO" "tolerations_sets = $tolerations_sets"
+    write_run "log_helm_sets+='$tolerations_sets'"
     write_run "helm_sets+='$tolerations_sets'"
 }
 
@@ -209,6 +210,7 @@ function build_enable_metrics_or_traces_helm_set () {
 
     local helm_set=" --set metricsOrTraces.enabled=true"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -232,6 +234,7 @@ function build_environment_tag_helm_set () {
 
     local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -303,7 +306,7 @@ function get_traces_scripts () {
 #   Exit Code 8
 function run_helm_install () {
     write_log "INFO" "Running Helm install ..."
-    write_log "INFO" "helm_sets = $helm_sets"
+    write_log "INFO" "helm_sets = $log_helm_sets"
 
     helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >/dev/null 2>$task_error_file
     if [[ $? -eq 0 ]]; then

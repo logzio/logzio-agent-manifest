@@ -215,6 +215,7 @@ function Build-TolerationsHelmSets {
     }
 
     Write-Log "INFO" "tolerationsSets = $tolerationsSets"
+    Write-Run "`$script:logHelmSets += '$tolerationsSets'"
     Write-Run "`$script:helmSets += '$tolerationsSets'"
 }
 
@@ -230,6 +231,7 @@ function Build-EnableMetricsOrTracesHelmSet {
 
     $local:helmSet = " --set metricsOrTraces.enabled=true"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -257,6 +259,7 @@ function Build-EnvironmentTagHelmSet {
 
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$envTag"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -364,7 +367,7 @@ function Invoke-HelmInstall {
     $local:taskErrorFile = $using:taskErrorFile
 
     Write-Log "INFO" "Running Helm install ..."
-    Write-Log "INFO" "helmSets = $using:helmSets"
+    Write-Log "INFO" "helmSets = $using:logHelmSets"
     
     Invoke-Expression -Command "helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring" 2>$using:taskErrorFile | Out-Null
     $local:err = Get-TaskError
