@@ -365,7 +365,7 @@ function Invoke-HelmInstall {
 
     Write-Log "INFO" "Running Helm install ..."
     Write-Log "INFO" "helmSets = $using:helmSets"
-
+    Write-Output "helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >$null 2>$using:taskErrorFile" > test.txt
     helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >$null 2>$using:taskErrorFile
     if ($?) {
         return
