@@ -59,7 +59,7 @@ fi
 # Run traces script
 if $is_traces_option_selected; then
     write_log "INFO" "Running traces script ..."
-    echo -e "\n\ntraces:"
+    echo -e "\ntraces:"
     source $logzio_temp_dir/traces.bash
 fi
 
