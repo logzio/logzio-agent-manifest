@@ -330,7 +330,7 @@ function Get-TracesScripts {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
-    
+
     Write-Log "INFO" "Getting traces script file from logzio-agent-manifest repo ..."
     try {
         $ProgressPreference = "SilentlyContinue"
@@ -354,20 +354,23 @@ function Get-TracesScripts {
     }
 }
 
-<#
 # Runs Helm install
 # Error:
 #   Exit Code 8
-function run_helm_install () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running Helm install ..." >> logzio_agent.log
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] helm_sets = $helm_sets" >> logzio_agent.log
+function Invoke-HelmInstall {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
-    helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring > logzio-temp/task_result 2>&1
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
+    Write-Log "INFO" "Running Helm install ..."
+    Write-Log "INFO" "helmSets = $using:helmSets"
 
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.bash (8): failed to run Helm install\"" >> logzio-temp/run
-        return 8
-    fi
-}#>
+    helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring 2>$using:taskErrorFile | Out-Null
+    if ($?) {
+        return
+    }
+        
+    $local:err = Get-TaskError
+    Write-Run "Write-Error `"installer.ps1 (8): failed to run Helm install.`n  $err`""
+    return 8
+}

@@ -64,7 +64,6 @@ if ($isTracesOptionSelected) {
     . $logzioTempDir\traces.ps1
 }
 
-<#
 # Run Helm install
-echo -e "\ninstaller:"
-execute_task "run_helm_install" "running Helm install"#>
+Write-Host "\ninstaller:"
+Invoke-Task "Invoke-HelmInstall" "running Helm install"
