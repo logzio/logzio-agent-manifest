@@ -17,6 +17,7 @@ Invoke-Task "Get-WhichProductsWereSelected" "getting which products were selecte
 
 # Build tolerations helm sets
 Invoke-Task "Build-TolerationsHelmSets" "building tolerations Helm sets"
+Write-Output $helmSets >> test.txt
 
 # Build enable metrics or traces helm set
 if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
@@ -49,7 +50,7 @@ if ($isLogsOptionSelected) {
     Write-Host "`nlogs:"
     . $logzioTempDir\logs.ps1
 }
-Write-Output $helmSets >> test.txt
+
 # Run metrics script
 if ($isMetricsOptionSelected) {
     Write-Log "INFO" "Running metrics script ..."

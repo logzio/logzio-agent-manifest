@@ -215,7 +215,7 @@ function Build-TolerationsHelmSets {
     }
 
     Write-Log "INFO" "tolerationsSets = $tolerationsSets"
-    Write-Run "`$helmSets += '$tolerationsSets'"
+    Write-Run "`$script:helmSets += '$tolerationsSets'"
 }
 
 # Builds enable metrics or traces Helm set
