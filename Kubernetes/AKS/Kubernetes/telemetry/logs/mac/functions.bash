@@ -12,6 +12,7 @@ function build_enable_logs_helm_set () {
     
     local helm_set=" --set logs.enabled=true"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -35,6 +36,7 @@ function build_logzio_logs_listener_url_helm_set () {
 
     local helm_set=" --set logzio-fluentd.secrets.logzioListener=$listener_url"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -58,6 +60,7 @@ function build_logzio_logs_token_helm_set () {
 
     local helm_set=" --set logzio-fluentd.secrets.logzioShippingToken=$shipping_token"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -150,5 +153,6 @@ function build_multiline_helm_sets () {
     write_log "INFO" "filters.conf:\n$filters"
     write_log "INFO" "multiline_sets = $multiline_sets"
 
+    write_run "log_helm_sets+='$multiline_sets'"
     write_run "helm_sets+='$multiline_sets'"
 }

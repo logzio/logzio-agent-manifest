@@ -14,6 +14,7 @@ function Build-EnableLogsHelmSet {
     
     $local:helmSet = " --set logs.enabled=true"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -41,6 +42,7 @@ function Build-LogzioLogsListenerUrlHelmSet {
 
     $local:helmSet = " --set logzio-fluentd.secrets.logzioListener=$listenerURL"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -68,6 +70,7 @@ function Build-LogzioLogsTokenHelmSet {
 
     $local:helmSet = " --set logzio-fluentd.secrets.logzioShippingToken=$shippingToken"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -170,5 +173,6 @@ function Build-MultilineHelmSets {
     Write-Log "INFO" "filters.conf:`n$filters"
     Write-Log "INFO" "multilineSets = $multilineSets"
 
+    Write-Run "`$script:logHelmSets += '$multilineSets'"
     Write-Run "`$script:helmSets += '$multilineSets'"
 }
