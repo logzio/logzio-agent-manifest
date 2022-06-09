@@ -103,5 +103,5 @@ function build_windows_node_username_and_password_helm_sets () {
     write_run "windows_password_set=\" --set logzio-k8s-telemetry.secrets.windowsNodePassword=\""
     write_run "secured_password=\"\${password:0:1}*****\${password: -1}\""
     write_run "write_log \"INFO\" \"windows_sets = \$windows_username_set\$windows_password_set\$secured_password\""
-    write_run "helm_sets+=\"'\$windows_username_set\$windows_password_set\$password'\""
+    write_run "helm_sets+=\"\$windows_username_set\$windows_password_set\$password\""
 }

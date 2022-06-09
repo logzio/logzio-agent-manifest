@@ -125,5 +125,5 @@ function Build-WindowsNodeUsernameAndPasswordHelmSets {
     Write-Run "`$local:passwordLastChar = `$password[`$password.Length-1]"
     Write-Run "`$local:logPassword = `"`$passwordFirstChar*****`$passwordLastChar`""
     Write-Run "Write-Log `"INFO`" `"windowsSets = `$windowUsernameSet`$windowsPasswordSet`$logPassword`""
-    Write-Run "`$script:helmSets += `"'`$windowUsernameSet`$windowsPasswordSet`$password'`""
+    Write-Run "`$script:helmSets += `"`$windowUsernameSet`$windowsPasswordSet`$password`""
 }
