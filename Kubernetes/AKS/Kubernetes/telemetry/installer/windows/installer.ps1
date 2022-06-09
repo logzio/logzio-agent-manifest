@@ -65,5 +65,5 @@ if ($isTracesOptionSelected) {
 }
 
 # Run Helm install
-Write-Host "\ninstaller:"
+Write-Host "`ninstaller:"
 Invoke-Task "Invoke-HelmInstall" "running Helm install"
