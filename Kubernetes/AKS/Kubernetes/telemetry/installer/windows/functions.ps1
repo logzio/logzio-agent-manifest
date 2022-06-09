@@ -361,11 +361,12 @@ function Invoke-HelmInstall {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
+    $local:taskErrorFile = $using:taskErrorFile
 
     Write-Log "INFO" "Running Helm install ..."
     Write-Log "INFO" "helmSets = $using:helmSets"
 
-    helm install -n monitoring --create-namespace logzio-monitoring logzio-helm/logzio-monitoring 2>$using:taskErrorFile
+    helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring 2>test.txt
     if ($?) {
         return
     }
