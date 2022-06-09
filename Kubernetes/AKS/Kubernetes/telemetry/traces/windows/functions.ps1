@@ -19,9 +19,9 @@ function Build-EnableTracesHelmSet {
 
 # Builds Logz.io traces token Helm set
 # Output:
-#   helm_sets - Contains all the Helm sets
+#   helmSets - Contains all the Helm sets
 # Error:
-#   Exit Code 2
+#   Exit Code 1
 function Build-LogzioTracesTokenHelmSet {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -31,12 +31,12 @@ function Build-LogzioTracesTokenHelmSet {
 
     $local:shippingToken = jq -r '.shippingTokens.TRACING' $using:appJSON
     if ([string]::IsNullOrEmpty($shippingToken)) {
-        Write-Run "Write-Error `"traces.ps1 (2): '.shippingTokens.TRACING' is empty in application JSON`""
-        return 2
+        Write-Run "Write-Error `"traces.ps1 (1): '.shippingTokens.TRACING' is empty in application JSON`""
+        return 1
     }
     if ($shippingToken.Equals("null")) {
-        Write-Run "Write-Error `"traces.ps1 (2): '.shippingTokens.TRACING' was not found in application JSON`""
-        return 2
+        Write-Run "Write-Error `"traces.ps1 (1): '.shippingTokens.TRACING' was not found in application JSON`""
+        return 1
     }
     
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.TracesToken=$shippingToken"
@@ -46,9 +46,9 @@ function Build-LogzioTracesTokenHelmSet {
 
 # Builds Logz.io region Helm set
 # Output:
-#   helm_sets - Contains all the Helm sets
+#   helmSets - Contains all the Helm sets
 # Error:
-#   Error Code 3
+#   Error Code 2
 function Build-LogzioRegionHelmSet {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -58,12 +58,12 @@ function Build-LogzioRegionHelmSet {
 
     $local:listenerURL = jq -r '.listenerUrl' $using:appJSON
     if ([string]::IsNullOrEmpty($listenerURL)) {
-        Write-Run "Write-Error `"traces.ps1 (3): '.listenerUrl' is empty in application JSON`""
-        return 3
+        Write-Run "Write-Error `"traces.ps1 (2): '.listenerUrl' is empty in application JSON`""
+        return 2
     }
     if ($listenerURL.Equals("null")) {
-        Write-Run "Write-Error `"traces.ps1 (3): '.listenerUrl' was not found in application JSON`""
-        return 3
+        Write-Run "Write-Error `"traces.ps1 (2): '.listenerUrl' was not found in application JSON`""
+        return 2
     }
 
     $local:region = "us"
