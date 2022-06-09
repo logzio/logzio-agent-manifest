@@ -152,7 +152,7 @@ source $logzio_temp_dir/utils_functions.bash
 get_arguments "$@"
 
 # Print title
-echo -e "Running \033[0;36mLogz\033[0;33m.io\033[0;37m Agent Troubleshooting Tool:\n"
+echo -e "Running \033[0;36mLogz.io\033[0;37m Agent Troubleshooting Tool:\n"
 
 # Run last preparations
 echo -e "last preparations:"
