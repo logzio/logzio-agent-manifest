@@ -58,14 +58,14 @@ if ($isMetricsOptionSelected) {
     . $logzioTempDir\metrics.ps1
 }
 
-<#
 # Run traces script
-if $is_traces_option_selected; then
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running traces script ..." >> logzio_agent.log
-    echo -e "\ntraces:"
-    source ./logzio-temp/traces.bash
-fi
+if ($isTracesOptionSelected) {
+    Write-Log "INFO" "Running traces script ..."
+    Write-Host "`ntraces:"
+    . $logzioTempDir\traces.ps1
+}
 
+<#
 # Run Helm install
 echo -e "\ninstaller:"
 execute_task "run_helm_install" "running Helm install"#>

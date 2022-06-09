@@ -323,32 +323,34 @@ function Get-MetricsScripts {
     }
 }
 
-<#
 # Gets traces scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 7
-function get_traces_scripts () {
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/traces/mac/traces.bash > logzio-temp/traces.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (7): failed to get traces script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+function Get-TracesScripts {
+    Write-Log "INFO" "Getting traces script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/traces/windows/traces.ps1 -OutFile $using:logzioTempDir\traces.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (7): failed to get traces script file from logzio-agent-manifest repo.`n  $_`""
         return 7
-    fi
+    }
 
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting traces functions script file from logzio-agent-manifest repo ..." >> logzio_agent.log
-    curl -fsSL $repo_path/telemetry/traces/mac/functions.bash > logzio-temp/traces_functions.bash 2>logzio-temp/task_result
-    if [[ $? -ne 0 ]]; then
-        cat logzio-temp/task_result >> logzio_agent.log
-
-        echo -e "cat logzio-temp/task_result" > logzio-temp/run
-        echo -e "print_error \"installer.script (7): failed to get traces functions script file from logzio-agent-manifest repo\"" >> logzio-temp/run
+    Write-Log "INFO" "Getting traces functions script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/traces/windows/functions.ps1 -OutFile $using:logzioTempDir\traces_functions.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (7): failed to get traces functions script file from logzio-agent-manifest repo.`n  $_`""
         return 7
-    fi
+    }
 }
 
+<#
 # Runs Helm install
 # Error:
 #   Exit Code 8
