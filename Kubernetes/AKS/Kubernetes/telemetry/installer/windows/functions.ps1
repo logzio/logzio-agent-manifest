@@ -366,7 +366,7 @@ function Invoke-HelmInstall {
     Write-Log "INFO" "Running Helm install ..."
     Write-Log "INFO" "helmSets = $using:helmSets"
     
-    Invoke-Expression -Command "helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring" >$null 2>$using:taskErrorFile
+    Invoke-Expression -Command "helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring" 2>$using:taskErrorFile | Out-Null
     $local:err = Get-TaskError
     if ([string]::IsNullOrEmpty($err) -or ($err -notmatch ".*Error.*")) {
         return
