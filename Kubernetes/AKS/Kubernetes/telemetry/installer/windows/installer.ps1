@@ -8,6 +8,7 @@ Write-Log "INFO" "Loading installer functions ..."
 
 # Helm sets
 $script:helmSets = ""
+$script:logHelmSets = ""
 
 # Get general params
 Invoke-Task "Get-GeneralParams" "getting general params"
