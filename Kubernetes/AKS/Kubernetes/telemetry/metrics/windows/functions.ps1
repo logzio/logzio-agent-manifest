@@ -14,7 +14,7 @@ function Build-EnableMetricsHelmSet {
 
     $local:helmSet = " --set logzio-k8s-telemetry.metrics.enabled=true"
     Write-Log "INFO" "helmSet = $helmSet"
-    Write-Run "`$helmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
 }
 
 # Builds Logz.io metrics listener URL Helm set
@@ -42,7 +42,7 @@ function Build-LogzioMetricsListenerUrlHelmSet {
     $listenerURL = "https://$listener_url:8053"
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.ListenerHost=$listenerURL"
     Write-Log "INFO" "helmSet = $helmSet"
-    Write-Run "`$helmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
 }
 
 # Builds Logz.io metrics token Helm set
@@ -69,7 +69,7 @@ function Build-LogzioMetricsTokenHelmSet {
     
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.MetricsToken=$shippingToken"
     Write-Log "INFO" "helmSet = $helmSet"
-    Write-Run "`$helmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
 }
 
 # Gets is Kubernetes runs on Windows OS
@@ -125,5 +125,5 @@ function Build-WindowsNodeUsernameAndPasswordHelmSets {
     Write-Run "`$local:passwordLastChar = `$password[`$password.Length-1]"
     Write-Run "`$local:logPassword = `"`$passwordFirstChar*****`$passwordLastChar`""
     Write-Run "Write-Log `"INFO`" `"windowsSets = `$windowUsernameSet`$windowsPasswordSet`$logPassword`""
-    Write-Run "`$helmSets += `"`$windowUsernameSet`$windowsPasswordSet`$password`""
+    Write-Run "`$script:helmSets += `"'`$windowUsernameSet`$windowsPasswordSet`$password'`""
 }
