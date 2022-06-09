@@ -230,7 +230,7 @@ function Build-EnableMetricsOrTracesHelmSet {
 
     $local:helmSet = " --set metricsOrTraces.enabled=true"
     Write-Log "INFO" "helmSet = $helmSet"
-    Write-Run "`$helmSets+='$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
 }
 
 # Builds metrics/traces environment tag helm set
@@ -257,7 +257,7 @@ function Build-EnvironmentTagHelmSet {
 
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$envTag"
     Write-Log "INFO" "helmSet = $helmSet"
-    Write-Run "`$helmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
 }
 
 # Gets logs scripts from logzio-agent-manifest repo

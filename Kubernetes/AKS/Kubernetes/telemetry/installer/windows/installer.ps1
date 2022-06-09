@@ -17,7 +17,6 @@ Invoke-Task "Get-WhichProductsWereSelected" "getting which products were selecte
 
 # Build tolerations helm sets
 Invoke-Task "Build-TolerationsHelmSets" "building tolerations Helm sets"
-Write-Output $helmSets >> test.txt
 
 # Build enable metrics or traces helm set
 if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
