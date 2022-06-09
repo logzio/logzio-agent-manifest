@@ -46,7 +46,7 @@ $script:taskErrorFile = "$logzioTempDir\task_error.txt"                         
 $script:appJSON = "$logzioTempDir\app.json"                                                 # App JSON path
 
 # Create temp directory with files
-if (-Not (Test-Path logzio-temp)) {
+if (-Not (Test-Path $logzioTempDir)) {
     New-Item -Path $logzioTempDir -ItemType Directory | Out-Null    
 }
 
