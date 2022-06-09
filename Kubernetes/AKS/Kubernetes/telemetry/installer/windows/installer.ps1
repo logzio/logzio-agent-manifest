@@ -49,7 +49,7 @@ if ($isLogsOptionSelected) {
     Write-Host "`nlogs:"
     . $logzioTempDir\logs.ps1
 }
-
+Write-Output $helmSets >> test.txt
 # Run metrics script
 if ($isMetricsOptionSelected) {
     Write-Log "INFO" "Running metrics script ..."
