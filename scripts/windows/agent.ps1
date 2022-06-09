@@ -90,7 +90,5 @@ Write-Log "INFO" "Running installer script ..."
 Write-Host "`ninstaller:"
 . $logzioTempDir\installer.ps1
 
-<#
 # Delete temp directory
-delete_temp_dir
-#>
+Remove-TempDir
