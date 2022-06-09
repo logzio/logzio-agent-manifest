@@ -14,6 +14,7 @@ function Build-EnableMetricsHelmSet {
 
     $local:helmSet = " --set logzio-k8s-telemetry.metrics.enabled=true"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -42,6 +43,7 @@ function Build-LogzioMetricsListenerUrlHelmSet {
     $listenerURL = "https://$listenerURL`:8053"
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.ListenerHost=$listenerURL"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -69,6 +71,7 @@ function Build-LogzioMetricsTokenHelmSet {
     
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.MetricsToken=$shippingToken"
     Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -125,5 +128,6 @@ function Build-WindowsNodeUsernameAndPasswordHelmSets {
     Write-Run "`$local:passwordLastChar = `$password[`$password.Length-1]"
     Write-Run "`$local:logPassword = `"`$passwordFirstChar*****`$passwordLastChar`""
     Write-Run "Write-Log `"INFO`" `"windowsSets = `$windowUsernameSet`$windowsPasswordSet`$logPassword`""
+    Write-Run "`$script:logHelmSets += `"`$windowUsernameSet`$windowsPasswordSet`$logPassword`""
     Write-Run "`$script:helmSets += `"`$windowUsernameSet`$windowsPasswordSet`$password`""
 }

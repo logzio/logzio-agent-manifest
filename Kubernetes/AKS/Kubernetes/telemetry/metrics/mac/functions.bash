@@ -12,6 +12,7 @@ function build_enable_metrics_helm_set () {
 
     local helm_set=" --set logzio-k8s-telemetry.metrics.enabled=true"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -36,6 +37,7 @@ function build_logzio_metrics_listener_url_helm_set () {
     listener_url="https://$listener_url:8053"
     local helm_set=" --set logzio-k8s-telemetry.secrets.ListenerHost=$listener_url"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -59,6 +61,7 @@ function build_logzio_metrics_token_helm_set () {
     
     local helm_set=" --set logzio-k8s-telemetry.secrets.MetricsToken=$shipping_token"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -103,5 +106,6 @@ function build_windows_node_username_and_password_helm_sets () {
     write_run "windows_password_set=\" --set logzio-k8s-telemetry.secrets.windowsNodePassword=\""
     write_run "secured_password=\"\${password:0:1}*****\${password: -1}\""
     write_run "write_log \"INFO\" \"windows_sets = \$windows_username_set\$windows_password_set\$secured_password\""
+    write_run "log_helm_sets+=\"\$windows_username_set\$windows_password_set\$secured_password\""
     write_run "helm_sets+=\"\$windows_username_set\$windows_password_set\$password\""
 }
