@@ -14,7 +14,7 @@ function Build-EnableLogsHelmSet {
     
     $local:helmSet = " --set logs.enabled=true"
     Write-Log "INFO" "helmSet = $helmSet"
-    Write-Run "`$script: helmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
 }
 
 # Builds Logz.io logs listener URL Helm set
@@ -41,7 +41,7 @@ function Build-LogzioLogsListenerUrlHelmSet {
 
     $local:helmSet = " --set logzio-fluentd.secrets.logzioListener=$listenerURL"
     Write-Log "INFO" "helmSet = $helmSet"
-    Write-Run "`$script: helmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
 }
 
 # Builds Logz.io logs token Helm set
