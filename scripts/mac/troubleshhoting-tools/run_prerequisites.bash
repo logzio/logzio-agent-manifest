@@ -25,7 +25,7 @@ function get_utils_functions_script () {
 # Output:
 #   Help usage
 function show_help () {
-    echo "Usage: ./agent.bash --path=<repo_path>"
+    echo "Usage: ./run_prerequisites.bash --path=<repo_path>"
     echo " --path=<logzio_repo_inner_path>      logzio-agent-manifest repo inner path (dir1/dir2/dir3)"
     echo " --help                               Show usage"
 }
@@ -85,12 +85,14 @@ function check_validation () {
         delete_temp_dir
         exit 2
     fi
-    if [[ "$repo_inner_path" != *"/"*"/"* ]]; then
-        print_error "run_prerequisites.bash (2): logzio-agent-manifest repo inner path's format must be 'dir1/dir2/dir3'"
-        print_error "run_prerequisites.bash (2): try './run_prerequisites.bash --help' for more information"
-        delete_temp_dir
-        exit 2
+    if [[ "$repo_inner_path" = *"/"*"/"* ]]; then
+        return
     fi
+
+    print_error "run_prerequisites.bash (2): logzio-agent-manifest repo inner path's format must be 'dir1/dir2/dir3'"
+    print_error "run_prerequisites.bash (2): try './run_prerequisites.bash --help' for more information"
+    delete_temp_dir
+    exit 2
 }
 
 # Builds path to logzio-agent-manifest repo according the app JSON
@@ -111,7 +113,7 @@ function build_repo_path () {
 # Gets prerequisites scripts from logzio-agent-manifest repo to logzio-temp directory
 # Error:
 #   Exit Code 3
-function get_prerequisite_scripts () {
+function get_prerequisites_scripts () {
     write_log "INFO" "Getting prerequisites script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/prerequisites/mac/prerequisites.bash > $logzio_temp_dir/prerequisites.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
@@ -157,7 +159,7 @@ echo -e "Running \033[0;36mLogz.io\033[0;37m Agent Troubleshooting Tool:\n"
 # Run last preparations
 echo -e "last preparations:"
 execute_task "build_repo_path" "building path to logzio-agent-manifest repo"        # Build repo path to logzio-agent-manifest repo
-execute_task "get_prerequisite_scripts" "getting prerequisites scripts"             # Get prerequisites scripts
+execute_task "get_prerequisites_scripts" "getting prerequisites scripts"             # Get prerequisites scripts
 
 # Run prerequisites script
 write_log "INFO" "Running prerequisites script ..."
