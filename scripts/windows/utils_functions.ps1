@@ -41,7 +41,9 @@ function Write-Run ([string]$command) {
 
 # Deletes the temp directory
 function Remove-TempDir {
-    Remove-Item -Path $logzioTempDir -Recurse
+    if (Test-Path $logzioTempDir) {
+        Remove-Item -Path $logzioTempDir -Recurse
+    }
 }
 
 # Gets task error file error message
