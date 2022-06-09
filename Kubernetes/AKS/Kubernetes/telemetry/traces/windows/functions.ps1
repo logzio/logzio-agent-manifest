@@ -14,6 +14,7 @@ function Build-EnableTracesHelmSet {
 
     $local:helmSet = " --set logzio-k8s-telemetry.traces.enabled=true"
     Write-Log "INFO" "helm_set = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -41,6 +42,7 @@ function Build-LogzioTracesTokenHelmSet {
     
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.TracesToken=$shippingToken"
     Write-Log "INFO" "helm_set = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
@@ -74,5 +76,6 @@ function Build-LogzioRegionHelmSet {
     
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.LogzioRegion=$region"
     Write-Log "INFO" "helm_set = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
     Write-Run "`$script:helmSets += '$helmSet'"
 }

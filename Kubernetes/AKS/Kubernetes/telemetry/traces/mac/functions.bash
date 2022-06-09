@@ -12,6 +12,7 @@ function build_enable_traces_helm_set () {
 
     local helm_set=" --set logzio-k8s-telemetry.traces.enabled=true"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -35,6 +36,7 @@ function build_logzio_traces_token_helm_set () {
     
     local helm_set=" --set logzio-k8s-telemetry.secrets.TracesToken=$shipping_token"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
 
@@ -64,5 +66,6 @@ function build_logzio_region_helm_set () {
     
     local helm_set=" --set logzio-k8s-telemetry.secrets.LogzioRegion=$region"
     write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
