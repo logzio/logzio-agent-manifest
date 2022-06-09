@@ -327,6 +327,10 @@ function Get-MetricsScripts {
 # Error:
 #   Exit Code 7
 function Get-TracesScripts {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+    
     Write-Log "INFO" "Getting traces script file from logzio-agent-manifest repo ..."
     try {
         $ProgressPreference = "SilentlyContinue"
