@@ -173,7 +173,7 @@ function Build-TolerationsHelmSets {
 
         $local:operator = "Exists"
         $local:value = Write-Output "$taint" | jq -r '.value'
-        if ($value.Equals("null")) {
+        if (-Not $value.Equals("null")) {
             $operator = "Equal"
 
             if ($using:isLogsOptionSelected) {
@@ -366,7 +366,7 @@ function Invoke-HelmInstall {
     Write-Log "INFO" "Running Helm install ..."
     Write-Log "INFO" "helmSets = $using:helmSets"
     
-    helm install -n monitoring $(Write-Output "$using:helmSets") --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >$null 2>$using:taskErrorFile
+    helm install -n monitoring "$using:helmSets" --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >$null 2>$using:taskErrorFile
     if ($?) {
         return
     }
