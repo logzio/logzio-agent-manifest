@@ -38,11 +38,10 @@ if ($isMetricsOptionSelected) {
     Invoke-Task "Get-MetricsScripts" "getting metrics scripts"
 }
 
-<#
 # Get traces scripts
-if $is_traces_option_selected; then
-    execute_task "get_traces_scripts" "getting traces scripts"
-fi#>
+if ($isTracesOptionSelected) {
+    Invoke-Task "Get-TracesScripts" "getting traces scripts"
+}
 
 # Run logs script
 if ($isLogsOptionSelected) {
