@@ -10,7 +10,7 @@ jobs:
       - name: Run script
         uses: actions/setup-node@v2
         with:
-          node-version: node-version
+          node-version: 12
           cache: 'npm'
       - run: node script.js
       - name: push file to main
