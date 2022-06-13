@@ -1,7 +1,5 @@
 name: build unified json file
-on:
-  release:
-    types: [published]
+on: [push]
 jobs:
   build_file:
     name: build unified json file
