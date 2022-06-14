@@ -21,7 +21,7 @@ jobs:
             print(os.getcwd())
             outfilename = 'barak.js'
             with open(outfilename, 'wb') as outfile:
-                for filename in glob.glob('configs/*.json'):
+                for filename in os.listdir('./configs'):
                     if filename == outfilename:
                         # don't want to copy the output into the output
                         continue
