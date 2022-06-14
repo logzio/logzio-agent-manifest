@@ -21,8 +21,8 @@ jobs:
             print(json_files)
             for filename in os.scandir('configs'):
               print(filename)
-              with open(filename) as f:
-                with open("manifest.json") as t:
+              with open(filename, "r") as f:
+                with open("manifest.json", "r") as t:
                   to_insert = json.load(f)
                   destination = json.load(t)
                   destination.append(to_insert)
