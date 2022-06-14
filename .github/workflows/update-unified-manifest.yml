@@ -22,7 +22,6 @@ jobs:
             outfilename = 'barak.js'
             for filename in os.scandir('configs'):
               if filename.is_file():
-                print(filename.path)
                 with open(filename, 'rb') as readfile:
                   shutil.copyfileobj(readfile, outfile)
 #            with open(outfilename, 'wb') as outfile:
