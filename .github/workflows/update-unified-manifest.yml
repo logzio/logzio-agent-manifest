@@ -21,10 +21,10 @@ jobs:
             print(json_files)
             for filename in os.scandir('configs'):
               print(filename)
-              with open(filename, "r") as from:
-                with open("barak.json", "r") as to:
-                  to_insert = json.load(from)
-                  destination = json.load(to)
+              with open(filename) as f:
+                with open("barak.json") as t:
+                  to_insert = json.load(f)
+                  destination = json.load(t)
                   destination.append(to_insert)
               print(destination)
               with open("barak.json", "w") as to:
