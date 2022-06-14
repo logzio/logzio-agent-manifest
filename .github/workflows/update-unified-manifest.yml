@@ -25,13 +25,13 @@ jobs:
                 with open(filename, 'rb') as readfile:
                 print(filename.path)
                 shutil.copyfileobj(readfile, outfile)
-            with open(outfilename, 'wb') as outfile:
-                for filename in os.listdir('configs'):
-                    if filename == outfilename:
-                        # don't want to copy the output into the output
-                        continue
-                    with open(filename, 'rb') as readfile:
-                        shutil.copyfileobj(readfile, outfile)
+#            with open(outfilename, 'wb') as outfile:
+#                for filename in os.listdir('configs'):
+#                    if filename == outfilename:
+#                        # don't want to copy the output into the output
+#                        continue
+#                    with open(filename, 'rb') as readfile:
+#                        shutil.copyfileobj(readfile, outfile)
             os.system("cat ./barak.js")
       - name: push file to main
         uses: EndBug/add-and-commit@v9
