@@ -22,12 +22,12 @@ jobs:
             for filename in os.scandir('configs'):
               print(filename)
               with open(filename) as f:
-                with open("barak.json") as t:
+                with open("manifest.json") as t:
                   to_insert = json.load(f)
                   destination = json.load(t)
                   destination.append(to_insert)
               print(destination)
-              with open("barak.json", "w") as to:
+              with open("manifest.json", "w") as to:
                 json.dump(to, destination)
       #            print("Directory contents:")
 #            for f in os.listdir():
