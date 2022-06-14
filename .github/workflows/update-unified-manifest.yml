@@ -7,8 +7,10 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Run script
+      - name: setup python
         uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
       - name: Run script
         uses: jannekem/run-python-script-action@v1
         with:
