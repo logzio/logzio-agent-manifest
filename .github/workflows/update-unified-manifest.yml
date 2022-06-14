@@ -7,15 +7,17 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-      - uses: jannekem/run-python-script-action@v1
-      with:
-        script: |
-          import os
-          print("Directory contents:")
-          for f in os.listdir():
-              print(f)
-          print(os.getcwd())
+      - name: Run script
+        uses: actions/setup-python@v2
+      - name: Run script
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os
+            print("Directory contents:")
+            for f in os.listdir():
+                print(f)
+            print(os.getcwd())
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
