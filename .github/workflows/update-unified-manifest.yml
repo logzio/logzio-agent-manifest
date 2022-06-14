@@ -13,17 +13,19 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os
-            import shutil
-#            print("Directory contents:")
+            import os, json, shutil
+            path_to_json = 'configs/'
+            json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
+            print(json_files)
+      #            print("Directory contents:")
 #            for f in os.listdir():
 #                print(f)
 #            print(os.getcwd())
-            outfilename = 'barak.js'
-            for filename in os.scandir('configs'):
-              if filename.is_file():
-                with open(filename, 'rb') as readfile:
-                  shutil.copyfileobj(readfile, outfile)
+#            outfilename = 'barak.js'
+#            for filename in os.scandir('configs'):
+#              if filename.is_file():
+#                with open(filename, 'rb') as readfile:
+#                  shutil.copyfileobj(readfile, outfile)
 #            with open(outfilename, 'wb') as outfile:
 #                for filename in os.listdir('configs'):
 #                    if filename == outfilename:
@@ -31,7 +33,7 @@ jobs:
 #                        continue
 #                    with open(filename, 'rb') as readfile:
 #                        shutil.copyfileobj(readfile, outfile)
-            os.system("cat ./barak.js")
+#            os.system("cat ./barak.js")
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
