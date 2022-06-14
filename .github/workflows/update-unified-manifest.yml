@@ -21,14 +21,14 @@ jobs:
             print(json_files)
             with open("manifest.json", "r+") as t:
               t.truncate(0)
-              t.append('[')
+              t.write('[')
               for filename in os.scandir('configs'):
                 print(filename)
                 with open(filename, "r") as f:
                   content = f.read()
                   t.append(content)
-                  t.append(',')
-              t.append(']')
+                  t.write(',')
+              t.write(']')
             barak = open("manifest.json", "r+")
             contentb = barak.read()
             print(contentb)
