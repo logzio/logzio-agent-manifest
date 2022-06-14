@@ -19,11 +19,13 @@ jobs:
             print(json_files)
             for filename in os.scandir('configs'):
               print(filename)
-              f = open(filename)
-              data = json.load(f)
-              for i in data['emp_details']:
-                print(i)
-              f.close()
+              with open(filename, "r") as from, open("barak.json", "r") as to:
+                to_insert = json.load(from)
+                destination = json.load(to)
+                destination.append(to_insert)
+              print(destination)
+              with open("barak.json", "w") as to:
+                json.dump(to, destination)
       #            print("Directory contents:")
 #            for f in os.listdir():
 #                print(f)
