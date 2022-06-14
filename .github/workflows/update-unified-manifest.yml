@@ -19,13 +19,15 @@ jobs:
             for f in os.listdir():
                 print(f)
             print(os.getcwd())
-            with open(outfilename, 'barak') as outfile:
+            outfilename = 'barak.js'
+            with open(outfilename, 'wb') as outfile:
                 for filename in glob.glob('configs/*.json'):
                     if filename == outfilename:
                         # don't want to copy the output into the output
                         continue
                     with open(filename, 'rb') as readfile:
                         shutil.copyfileobj(readfile, outfile)
+            os.system("cat ./barak.js")
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
