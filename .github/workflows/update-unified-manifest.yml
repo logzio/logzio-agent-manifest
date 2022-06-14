@@ -16,9 +16,6 @@ jobs:
         with:
           script: |
             import os, json, shutil
-            path_to_json = 'configs/'
-            json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
-            print(json_files)
             with open("manifest.json", "r+") as t:
               t.truncate(0)
               t.write('[')
@@ -28,29 +25,12 @@ jobs:
                   content = f.read()
                   t.write(content)
                   t.write(',')
+              t.seek(-1, os.SEEK_END)
+              t.truncate()
               t.write(']')
             barak = open("manifest.json", "r+")
             contentb = barak.read()
             print(contentb)
-#                with open("manifest.json", "w") as to:
-#                  json.dump(to, destination)
-      #            print("Directory contents:")
-#            for f in os.listdir():
-#                print(f)
-#            print(os.getcwd())
-#            outfilename = 'barak.js'
-#            for filename in os.scandir('configs'):
-#              if filename.is_file():
-#                with open(filename, 'rb') as readfile:
-#                  shutil.copyfileobj(readfile, outfile)
-#            with open(outfilename, 'wb') as outfile:
-#                for filename in os.listdir('configs'):
-#                    if filename == outfilename:
-#                        # don't want to copy the output into the output
-#                        continue
-#                    with open(filename, 'rb') as readfile:
-#                        shutil.copyfileobj(readfile, outfile)
-#            os.system("cat ./barak.js")
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
