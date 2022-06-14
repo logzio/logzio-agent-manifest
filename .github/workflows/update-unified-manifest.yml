@@ -23,7 +23,8 @@ jobs:
               print(filename)
               with open(filename, "r") as f:
                 with open("manifest.json", "r") as t:
-                  to_insert = json.load(f)
+                  contents = f.read()
+                  print(contents)
                   destination = json.load(t)
                   destination.append(to_insert)
               print(destination)
