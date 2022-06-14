@@ -20,8 +20,11 @@ jobs:
                 print(f)
             print(os.getcwd())
             outfilename = 'barak.js'
+            for filename in os.scandir('configs'):
+              if filename.is_file():
+                print(filename.path)
             with open(outfilename, 'wb') as outfile:
-                for filename in os.listdir('./configs'):
+                for filename in os.listdir('configs'):
                     if filename == outfilename:
                         # don't want to copy the output into the output
                         continue
