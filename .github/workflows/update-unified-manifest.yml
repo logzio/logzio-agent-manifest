@@ -15,10 +15,10 @@ jobs:
           script: |
             import os
             import shutil
-            print("Directory contents:")
-            for f in os.listdir():
-                print(f)
-            print(os.getcwd())
+#            print("Directory contents:")
+#            for f in os.listdir():
+#                print(f)
+#            print(os.getcwd())
             outfilename = 'barak.js'
             for filename in os.scandir('configs'):
               if filename.is_file():
