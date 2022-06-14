@@ -26,7 +26,7 @@ jobs:
                 print(filename)
                 with open(filename, "r") as f:
                   content = f.read()
-                  t.append(content)
+                  t.write(content)
                   t.write(',')
               t.write(']')
             barak = open("manifest.json", "r+")
