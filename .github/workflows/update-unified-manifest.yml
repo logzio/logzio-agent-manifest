@@ -19,17 +19,21 @@ jobs:
             path_to_json = 'configs/'
             json_files = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.json')]
             print(json_files)
-            for filename in os.scandir('configs'):
-              print(filename)
-              with open(filename, "r") as f:
-                with open("manifest.json", "r") as t:
-                  contents = f.read()
-                  print(contents)
-                  destination = json.load(t)
-                  destination.append(to_insert)
-              print(destination)
-              with open("manifest.json", "w") as to:
-                json.dump(to, destination)
+            with open("manifest.json", "r+") as t:
+              f.truncate(0)
+              f.append('[')
+              for filename in os.scandir('configs'):
+                print(filename)
+                with open(filename, "r") as f:
+                  content = f.read()
+                  f.append(content)
+                  f.append(',')
+              f.append(']')
+            barak = open("manifest.json", "r+")
+            contentb = barak.read()
+            print(contentb)
+#                with open("manifest.json", "w") as to:
+#                  json.dump(to, destination)
       #            print("Directory contents:")
 #            for f in os.listdir():
 #                print(f)
