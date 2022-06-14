@@ -14,10 +14,18 @@ jobs:
         with:
           script: |
             import os
+            import shutil
             print("Directory contents:")
             for f in os.listdir():
                 print(f)
             print(os.getcwd())
+            with open(outfilename, 'barak') as outfile:
+                for filename in glob.glob('configs/*.json'):
+                    if filename == outfilename:
+                        # don't want to copy the output into the output
+                        continue
+                    with open(filename, 'rb') as readfile:
+                        shutil.copyfileobj(readfile, outfile)
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
