@@ -19,6 +19,11 @@ jobs:
             print(json_files)
             for filename in json_files:
               print(filename)
+              f = open(filename)
+              data = json.load(f)
+              for i in data['emp_details']:
+                print(i)
+              f.close()
       #            print("Directory contents:")
 #            for f in os.listdir():
 #                print(f)
