@@ -15,6 +15,7 @@ jobs:
           print("Directory contents:")
           for f in os.listdir():
               print(f)
+          print(os.getcwd())
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
