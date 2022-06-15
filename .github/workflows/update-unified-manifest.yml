@@ -44,7 +44,7 @@ jobs:
                     first = False
                   else:
                     t.write(',')
-                  t.write(flattenContent)
+                  t.write(json.dumps(flattenContent))
               t.write(']')
             barak = open("manifest.json", "r+")
             contentb = barak.read()
