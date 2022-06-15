@@ -27,7 +27,9 @@ jobs:
                   t.write(',')
                 with open(filename, "r") as f:
                   content = f.read()
-                t.write(json.dumps(content, indent=0))
+                barak = json.dumps(content, indent=0)
+                isinstance(barak, dict)
+                t.write(barak)
               t.write(']')
       - name: push file to main
         uses: EndBug/add-and-commit@v9
