@@ -28,7 +28,7 @@ jobs:
                   else:
                     t.write(',')
                   content = f.read()
-                  t.write(json.dumps(content).replace('\n', ''))
+                  t.write(json.dumps(content,indent=None))
               t.write(']')
       - name: push file to main
         uses: EndBug/add-and-commit@v9
