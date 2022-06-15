@@ -16,21 +16,12 @@ jobs:
         with:
           script: |
             import os, json
-            def flatten_data(y):
-              out = {}
-              def flatten(x, name=''):
-                if type(x) is dict:
-                  for a in x:
-                    flatten(x[a], name + a + '_')
-                elif type(x) is list:
-                  i = 0
-                  for a in x:
-                    flatten(a, name + str(i) + '_')
-                    i += 1
+            def flatten(json_data):
+              for key, value in get_items(json_data):
+                if hasattr(value, 'strip'):
+                  json_data[key] = value.strip()
                 else:
-                  out[name[:-1]] = x
-              flatten(y)
-              return out
+                  strip_whitespace(value)
             with open("manifest.json", "r+") as t:
               t.truncate(0)
               t.write('[')
@@ -38,17 +29,13 @@ jobs:
               for filename in os.scandir('configs'):
                 print(filename)
                 with open(filename, "r") as f:
-                  content = f.read()
-                  flattenContent = flatten_data(content)
                   if first:
                     first = False
                   else:
                     t.write(',')
-                  t.write(json.dumps(flattenContent))
+                  content = f.read()
+                  t.write(json.dumps(flatten(content)))
               t.write(']')
-            barak = open("manifest.json", "r+")
-            contentb = barak.read()
-            print(contentb)
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
