@@ -15,7 +15,22 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os, json, shutil
+            import os, json
+            def flatten_data(y):
+              out = {}
+              def flatten(x, name=''):
+                if type(x) is dict:
+                  for a in x:
+                    flatten(x[a], name + a + '_')
+                elif type(x) is list:
+                  i = 0
+                  for a in x:
+                    flatten(a, name + str(i) + '_')
+                    i += 1
+                else:
+                  out[name[:-1]] = x
+              flatten(y)
+              return out
             with open("manifest.json", "r+") as t:
               t.truncate(0)
               t.write('[')
@@ -24,11 +39,12 @@ jobs:
                 print(filename)
                 with open(filename, "r") as f:
                   content = f.read()
+                  flattenContent = flatten_data(content)
                   if first:
                     first = False
                   else:
                     t.write(',')
-                  t.write(content)
+                  t.write(flattenContent)
               t.write(']')
             barak = open("manifest.json", "r+")
             contentb = barak.read()
