@@ -16,6 +16,9 @@ jobs:
         with:
           script: |
             import os, json
+            @get_items.register(dict)
+              def _(obj):
+                return obj.items() # json object. Edit: iteritems() was removed in Python 3
             def flatten(json_data):
               for key, value in get_items(json_data):
                 if hasattr(value, 'strip'):
