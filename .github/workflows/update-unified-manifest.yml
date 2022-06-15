@@ -19,14 +19,16 @@ jobs:
             with open("manifest.json", "r+") as t:
               t.truncate(0)
               t.write('[')
+              first = True
               for filename in os.scandir('configs'):
                 print(filename)
                 with open(filename, "r") as f:
                   content = f.read()
+                  if first:
+                    first = False
+                  else:
+                    t.write(',')
                   t.write(content)
-                  t.write(',')
-              t.seek(-1, os.SEEK_END)
-              t.truncate()
               t.write(']')
             barak = open("manifest.json", "r+")
             contentb = barak.read()
