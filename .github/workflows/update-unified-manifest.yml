@@ -28,8 +28,7 @@ jobs:
                 with open(filename, "r") as f:
                   content = f.read()
                 barak = json.dumps(content, indent=0)
-                print(barak.replace("\n", "").replace("\\", ""))
-                print(isinstance(barak, str))
+                print(barak.replace("\n", ""))
                 t.write(barak)
               t.write(']')
       - name: push file to main
