@@ -28,7 +28,8 @@ jobs:
                   else:
                     t.write(',')
                   content = f.read()
-                  t.write(json.JSONDecoder().decode(json.dumps(content)))
+                  json.dumps(content, t, indent=0)
+#                  t.write(json.JSONDecoder().decode(json.dumps(content, indent=0)))
               t.write(']')
       - name: push file to main
         uses: EndBug/add-and-commit@v9
