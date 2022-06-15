@@ -28,6 +28,7 @@ jobs:
                 with open(filename, "r") as f:
                   content = f.read()
                 barak = json.dumps(content, indent=0)
+                print(barak.decode('string_escape'))
                 print(isinstance(barak, str))
                 t.write(barak)
               t.write(']')
