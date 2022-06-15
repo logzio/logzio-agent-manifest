@@ -28,9 +28,7 @@ jobs:
                     content = f.read()
                   else:
                     content = ',' + f.read()
-                  print(content)
-                  print(isinstance(content, str))
-                  json.dumps(content, t, indent=0)
+                  t.write(json.dumps(content, indent=0))
               t.write(']')
       - name: push file to main
         uses: EndBug/add-and-commit@v9
