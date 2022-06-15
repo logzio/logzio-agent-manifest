@@ -21,14 +21,13 @@ jobs:
               t.write('[')
               first = True
               for filename in os.scandir('configs'):
-                print(filename)
+                if first:
+                  first = False
+                else:
+                  t.write(',')
                 with open(filename, "r") as f:
-                  if first:
-                    first = False
-                    content = f.read()
-                  else:
-                    content = ',' + f.read()
-                  t.write(json.dumps(content, indent=0))
+                  content = f.read()
+                t.write(json.dumps(content, indent=0))
               t.write(']')
       - name: push file to main
         uses: EndBug/add-and-commit@v9
