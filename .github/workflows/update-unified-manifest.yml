@@ -25,9 +25,9 @@ jobs:
                 with open(filename, "r") as f:
                   if first:
                     first = False
-                    content = f.read().replace('\n', ' ')
+                    content = f.read()
                   else:
-                    content = ',' + f.read().replace('\n', ' ')
+                    content = ',' + f.read()
                   json.dumps(content, t, indent=0)
               t.write(']')
       - name: push file to main
