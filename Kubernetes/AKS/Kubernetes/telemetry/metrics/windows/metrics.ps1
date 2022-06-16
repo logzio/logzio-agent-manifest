@@ -22,3 +22,6 @@ Invoke-Task "Get-IsKubernetesRunsOnWindowsOS" "getting is Kubernetes runs on Win
 if ($isWindows) {
     Invoke-Task "Build-WindowsNodeUsernameAndPasswordHelmSets" "building Windows Node username and password Helm sets"
 }
+
+# Finished successfully
+Exit 0

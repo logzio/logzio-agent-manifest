@@ -49,6 +49,9 @@ if ($isLogsOptionSelected) {
     Write-Log "INFO" "Running logs script ..."
     Write-Host "`nlogs:"
     . $logzioTempDir\logs.ps1
+    if ($LASTEXITCODE -gt 0) {
+        Exit $LASTEXITCODE
+    }
 }
 
 # Run metrics script
@@ -56,6 +59,9 @@ if ($isMetricsOptionSelected) {
     Write-Log "INFO" "Running metrics script ..."
     Write-Host "`nmetrics:"
     . $logzioTempDir\metrics.ps1
+    if ($LASTEXITCODE -gt 0) {
+        Exit $LASTEXITCODE
+    }
 }
 
 # Run traces script
@@ -63,6 +69,9 @@ if ($isTracesOptionSelected) {
     Write-Log "INFO" "Running traces script ..."
     Write-Host "`ntraces:"
     . $logzioTempDir\traces.ps1
+    if ($LASTEXITCODE -gt 0) {
+        Exit $LASTEXITCODE
+    }
 }
 
 # Run Helm install
@@ -72,3 +81,6 @@ Invoke-Task "Invoke-HelmInstall" "running Helm install"
 # Print success message
 Write-Host
 Write-Info "##### Logz.io agent was finished successfully #####"
+
+# Finished successfully
+Exit 0

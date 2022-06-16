@@ -26,3 +26,6 @@ Invoke-Task "Add-LogzioHelmRepo" "adding Logz.io Helm repo"
 
 # Update Logz.io Helm repo
 Invoke-Task "Update-LogzioHelmRepo" "updating Logz.io Helm repo"
+
+# Finished successfully
+Exit 0

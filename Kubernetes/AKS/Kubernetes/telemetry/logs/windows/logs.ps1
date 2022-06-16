@@ -17,3 +17,6 @@ Invoke-Task "Build-LogzioLogsTokenHelmSet" "building Logz.io logs token Helm set
 
 # Build multiline Helm sets
 #Invoke-Task "Build-MultilineHelmSets" "building multiline Helm sets"
+
+# Finished successfully
+Exit 0

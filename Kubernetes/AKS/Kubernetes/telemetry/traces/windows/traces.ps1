@@ -14,3 +14,6 @@ Invoke-Task "Build-LogzioTracesTokenHelmSet" "building Logz.io traces token Helm
 
 # Build Logz.io region Helm set
 Invoke-Task "Build-LogzioRegionHelmSet" "building Logz.io region Helm set"
+
+# Finished successfully
+Exit 0
