@@ -84,11 +84,17 @@ Invoke-Task "Get-InstallerScripts" "getting installer scripts"                  
 Write-Log "INFO" "Running prerequisites script ..."
 Write-Host "`nprerequisites:"
 . $logzioTempDir\prerequisites.ps1
+if ($LASTEXITCODE -gt 0) {
+    Exit $LASTEXITCODE
+}
 
 # Run installer script
 Write-Log "INFO" "Running installer script ..."
 Write-Host "`ninstaller:"
 . $logzioTempDir\installer.ps1
+if ($LASTEXITCODE -gt 0) {
+    Exit $LASTEXITCODE
+}
 
 # Delete temp directory
 Remove-TempDir
