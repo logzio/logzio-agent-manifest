@@ -66,3 +66,7 @@ fi
 # Run Helm install
 echo -e "\ninstaller:"
 execute_task "run_helm_install" "running Helm install"
+
+# Print success message
+echo
+write_info "##### Logz.io agent was finished successfully #####"

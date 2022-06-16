@@ -4,6 +4,17 @@
 ###################################################### Utils Mac Functions ######################################################
 #################################################################################################################################
 
+# Prints info message in green
+# Input:
+#   message - Message text
+# Output:
+#   The message
+function print_info () {
+    local message="$1"
+    write_log "INFO" "$message"
+    echo -e "\033[1;32m$message\033[0;37m"
+}
+
 # Prints error message in red
 # Input:
 #   message - Message text

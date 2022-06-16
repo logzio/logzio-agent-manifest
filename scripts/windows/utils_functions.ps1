@@ -4,6 +4,16 @@
 #################################################### Utils Windows Functions ####################################################
 #################################################################################################################################
 
+# Prints info message in green
+# Input:
+#   message - Message text
+# Output:
+#   The message
+function Write-Info ([string]$message) {
+    Write-Log "INFO" "$message"
+    Write-Host "$message" -ForegroundColor Green
+}
+
 # Prints error message in red
 # Input:
 #   message - Message text

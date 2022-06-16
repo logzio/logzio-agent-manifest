@@ -68,3 +68,7 @@ if ($isTracesOptionSelected) {
 # Run Helm install
 Write-Host "`ninstaller:"
 Invoke-Task "Invoke-HelmInstall" "running Helm install"
+
+# Print success message
+Write-Host
+Write-Info "##### Logz.io agent was finished successfully #####"
