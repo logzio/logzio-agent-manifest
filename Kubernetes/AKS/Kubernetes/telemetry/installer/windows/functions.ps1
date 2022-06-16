@@ -247,7 +247,7 @@ function Build-EnvironmentTagHelmSet {
 
     Write-Log "INFO" "Building environment tag Helm set ..."
 
-    $local:envTag = jq -r '.id' $using:appJSON       ######################## Change the id to something else?
+    $local:envTag = jq -r '.id' $using:appJSON
     if ([string]::IsNullOrEmpty($envTag)) {
         Write-Run "Write-Error `"installer.ps1 (4): '.id' is empty in application JSON`""
         return 4

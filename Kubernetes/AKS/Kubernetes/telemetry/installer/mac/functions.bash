@@ -222,7 +222,7 @@ function build_enable_metrics_or_traces_helm_set () {
 function build_environment_tag_helm_set () {
     write_log "INFO" "Building environment tag Helm set ..."
 
-    local env_tag=$(jq -r '.id' $app_json)       ######################## Change the id to something else?
+    local env_tag=$(jq -r '.id' $app_json)
     if [[ "$env_tag" = null ]]; then
         write_run "print_error \"installer.bash (4): '.id' was not found in application JSON\""
         return 4
