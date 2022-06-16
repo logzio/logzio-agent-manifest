@@ -220,7 +220,7 @@ function Update-LogzioHelmRepo {
 
     Write-Log "INFO" "Updating Logz.io Helm repo ..."
     
-    helm repo update logzio-helm 2>$using:taskErrorFile | Out-Null
+    helm repo update 2>$using:taskErrorFile | Out-Null
     if ($?) {
         return
     }

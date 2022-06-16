@@ -173,7 +173,7 @@ function add_logzio_helm_repo () {
 function update_logzio_helm_repo () {
     write_log "INFO" "Updating Logz.io Helm repo ..."
     
-    helm repo update logzio-helm >/dev/null 2>$task_error_file
+    helm repo update >/dev/null 2>$task_error_file
     if [[ $? -eq 0 ]]; then
         return
     fi
