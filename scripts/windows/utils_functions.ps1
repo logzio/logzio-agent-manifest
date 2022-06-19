@@ -180,7 +180,7 @@ function Invoke-Task([string]$command, [string]$desc) {
         [Console]::CursorVisible = $true
         
         . $runFile
-        #Remove-TempDir
+        Remove-TempDir
         Exit $exitCode
     }
 

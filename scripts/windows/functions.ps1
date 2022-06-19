@@ -37,7 +37,7 @@ function Get-Arguments ([string[]]$agentArgs) {
                 Exit
             }
             --url=* {
-                $appURL = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
+                $script:appURL = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
                 if ([string]::IsNullOrEmpty($appURL)) {
                     Write-Error "agent.ps1 (2): no Logz.io app URL specified!"
                     Remove-TempDir
@@ -48,7 +48,7 @@ function Get-Arguments ([string[]]$agentArgs) {
                 continue
             }
             --id=* {
-                $agentID = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
+                $script:agentID = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
                 if ([string]::IsNullOrEmpty($agentID)) {
                     Write-Error "agent.ps1 (2): no agent ID specified!"
                     Remove-TempDir
@@ -152,6 +152,7 @@ function Install-JQ {
 function Get-AppJSON {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
 
     Write-Log "INFO" "Getting application JSON ..."
 
@@ -170,8 +171,6 @@ function Get-AppJSON {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Output $using:appURL/telemetry-agent/public/agents/configuration/$using:agentID >> test.txt
-        Write-Output "error: $_" >> test.txt
         Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent. make sure your URL is valid.`n  $_`""
         return 4
     }
