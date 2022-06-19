@@ -174,7 +174,7 @@ function Get-AppJSON {
         return 4
     }
 
-    $local:statusCode= jq -r '.statusCode' $using:appJSON
+    $local:statusCode = jq -r '.statusCode' $using:appJSON
     if ([string]::IsNullOrEmpty($statusCode)) {
         $statusCode = ""
     }
