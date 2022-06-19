@@ -5,8 +5,8 @@
 #################################################################################################################################
 
 # Load functions
-echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading installer functions ..." >> logzio_agent.log
-source ./logzio-temp/installer_functions.bash
+write_log "INFO" "Loading installer functions ..."
+source $logzio_temp_dir/installer_functions.bash
 
 # Get general params
 execute_task "get_general_params" "getting general params"
@@ -15,16 +15,16 @@ execute_task "get_general_params" "getting general params"
 execute_task "get_which_products_were_selected" "getting which products were selected"
 
 # Build tolerations helm sets
-execute_task "build_tolerations_helm_sets" "getting tolerations helm sets"
+execute_task "build_tolerations_helm_sets" "building tolerations Helm sets"
 
 # Build enable metrics or traces helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "build_enable_metrics_or_traces_helm_set" "getting enable metrics or traces helm set"
+    execute_task "build_enable_metrics_or_traces_helm_set" "building enable metrics or traces Helm set"
 fi
 
 # Build metrics/traces environment tag helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "build_environment_tag_helm_set" "getting metrics/traces environment tag helm set"
+    execute_task "build_environment_tag_helm_set" "building metrics/traces environment tag Helm set"
 fi
 
 # Get logs scripts
@@ -44,25 +44,29 @@ fi
 
 # Run logs script
 if $is_logs_option_selected; then
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running logs script ..." >> logzio_agent.log
+    write_log "INFO" "Running logs script ..."
     echo -e "\nlogs:"
-    source ./logzio-temp/logs.bash
+    source $logzio_temp_dir/logs.bash
 fi
 
 # Run metrics script
 if $is_metrics_option_selected; then
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running metrics script ..." >> logzio_agent.log
+    write_log "INFO" "Running metrics script ..."
     echo -e "\nmetrics:"
-    source ./logzio-temp/metrics.bash
+    source $logzio_temp_dir/metrics.bash
 fi
 
 # Run traces script
 if $is_traces_option_selected; then
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Running traces script ..." >> logzio_agent.log
+    write_log "INFO" "Running traces script ..."
     echo -e "\ntraces:"
-    source ./logzio-temp/traces.bash
+    source $logzio_temp_dir/traces.bash
 fi
 
 # Run Helm install
 echo -e "\ninstaller:"
 execute_task "run_helm_install" "running Helm install"
+
+# Print success message
+echo
+print_info "##### Logz.io agent was finished successfully #####"
