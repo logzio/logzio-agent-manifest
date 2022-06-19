@@ -170,6 +170,8 @@ function Get-AppJSON {
         $ProgressPreference = "Continue"
     }
     catch {
+        Write-Output $using:appURL/telemetry-agent/public/agents/configuration/$using:agentID >> test.txt
+        Write-Output "error: $_" >> test.txt
         Write-Run "Write-Error `"agent.ps1 (4): failed to get Logz.io application JSON from agent. make sure your URL is valid.`n  $_`""
         return 4
     }
