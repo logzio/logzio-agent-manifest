@@ -34,7 +34,8 @@ function Test-IsKubectlConnectedToKubernetesCluster {
 
     $local:clusterInfo = kubectl cluster-info 2>$using:taskErrorFile
     $local:err = Get-TaskError
-    if ([string]::IsNullOrEmpty($err)) {
+    if ([string]::IsNullOrEmpty($err) -or $err -notcontains "ERROR") {
+        Clear-Content $using:taskErrorFile
         Write-Log "INFO" "$clusterInfo"
         return
     }
@@ -83,15 +84,19 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     kubectl apply -f $using:logzioTempDir\logzio_logs_connection_test_pod.yaml 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-TaskError
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-logs-connection-test pod.`n  $err`""
-        return 3
+        if ($err -contains "ERROR") {
+            Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-logs-connection-test pod.`n  $err`""
+            return 3
+        }
+
+        Clear-Content $using:taskErrorFile
     }
 
     sleep 3
 
     $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
-    if (-Not [string]::IsNullOrEmpty($result)) {
+    if (-Not [string]::IsNullOrEmpty($err)) {
         Remove-TestPod "logzio-logs-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod.`n  $err`""
         return 3
