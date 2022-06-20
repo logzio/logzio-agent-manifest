@@ -32,9 +32,10 @@ function Test-IsKubectlConnectedToKubernetesCluster {
 
     Write-Log "INFO" "Checking if kubectl is connected to an active Kubernetes cluster ..."
 
+    $WarningPreference = "SilentlyContinue"
     $local:clusterInfo = kubectl cluster-info 2> $using:taskErrorFile
     $local:err = Get-TaskError
-    if ([string]::IsNullOrEmpty($err) -or $err -notcontains "ERROR") {
+    if ([string]::IsNullOrEmpty($err)) {
         Write-Log "INFO" "$clusterInfo"
         return
     }
