@@ -34,7 +34,7 @@ function Test-IsKubectlConnectedToKubernetesCluster {
 
     $local:clusterInfo = kubectl cluster-info 2> $using:taskErrorFile
     $local:err = Get-TaskError
-    if ([string]::IsNullOrEmpty($err)) {
+    if ([string]::IsNullOrEmpty($err) -or $err -notcontains "ERROR") {
         Write-Log "INFO" "$clusterInfo"
         return
     }
