@@ -131,7 +131,6 @@ function Install-JQ {
     }
 
     $local:result = Install-Chocolatey
-    Write-Output $result >> test.txt
     if (-Not [string]::IsNullOrEmpty($result) -and $result -gt 0) {
         return 3
     }
