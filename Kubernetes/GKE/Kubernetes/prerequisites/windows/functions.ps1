@@ -56,6 +56,11 @@ function Remove-TestPod ([string]$podName) {
     }
 
     $local:err = Get-TaskError
+    if ($err -notcontains "ERROR") {
+        Clear-Content $using:taskErrorFile
+        return
+    }
+
     Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
 }
 
@@ -96,11 +101,13 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
 
     $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
-    if (-Not [string]::IsNullOrEmpty($err)) {
+    if (-Not [string]::IsNullOrEmpty($err) -and $err -contains "ERROR") {
         Remove-TestPod "logzio-logs-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod.`n  $err`""
         return 3
     }
+
+    Clear-Content $using:taskErrorFile
 
     if ($podLogs = "Connected to listener.logz.io") {
         Remove-TestPod "logzio-logs-connection-test"
@@ -137,19 +144,25 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     kubectl apply -f $using:logzioTempDir\logzio_metrics_connection_test_pod.yaml 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-TaskError
-        Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod.`n  $err`""
-        return 3
+        if ($err -contains "ERROR") {
+            Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod.`n  $err`""
+            return 3
+        }
+
+        Clear-Content $using:taskErrorFile
     }
 
     sleep 3
 
     $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
-    if (-Not [string]::IsNullOrEmpty($err)) {
+    if (-Not [string]::IsNullOrEmpty($err) -and $err -contains "ERROR") {
         Remove-TestPod "logzio-metrics-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  $err`""
         return 3
     }
+
+    Clear-Content $using:taskErrorFile
 
     if ($podLogs.Equals("Connected to listener.logz.io")) {
         Remove-TestPod "logzio-metrics-connection-test"
