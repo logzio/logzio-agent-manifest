@@ -64,6 +64,11 @@ Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Loading agent f
 # Get arguments and check validation
 Get-Arguments $args
 
+# Append environment variable Path
+if ($env:Path -notcontains "C:\ProgramData\chocolatey\bin;") {
+    $env:Path += "C:\ProgramData\chocolatey\bin;"
+}
+
 # Print title
 Write-Host "Running " -NoNewline
 Write-Host "Logz.io " -ForegroundColor Cyan -NoNewline

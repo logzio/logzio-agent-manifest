@@ -107,8 +107,6 @@ function Install-Chocolatey {
     $local:job = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')}
     Wait-Job -Job $job | Out-Null
 
-    $env:Path += "C:\ProgramData\chocolatey\bin;"
-
     Get-Command choco 2>&1 | Out-Null
     if ($?) {
         return
