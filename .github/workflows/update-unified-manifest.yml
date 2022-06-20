@@ -37,5 +37,5 @@ jobs:
           committer_name: Committer Name
           committer_email: mail@example.com
           default_author: github_actor
-          message: 'Update manifest unified file'
+          message: 'Update manifest'
           push: true
