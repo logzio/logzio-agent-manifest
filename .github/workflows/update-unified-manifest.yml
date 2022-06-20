@@ -1,8 +1,8 @@
-name: build unified manifest file
+name: build manifest
 on: [push]
 jobs:
   build_file:
-    name: build unified manifest file
+    name: build manifest
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
