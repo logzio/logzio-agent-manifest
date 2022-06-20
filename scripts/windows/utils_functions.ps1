@@ -108,6 +108,7 @@ function Install-Chocolatey {
     Wait-Job -Job $job | Out-Null
 
     Write-Output $env:Path >> test.txt
+    $env:Path += "C:\ProgramData\chocolatey\bin;"
 
     Get-Command choco 2>&1 | Out-Null
     if ($?) {
