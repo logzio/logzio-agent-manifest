@@ -1,8 +1,8 @@
-name: verify manifest
+name: validate manifest
 on: [push]
 jobs:
   build_file:
-    name: verify manifest
+    name: validate manifest
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,8 +20,8 @@ jobs:
             with open("manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
               
-              response = requests.post(url, json = manifest, verify=False)
+              response = requests.post(url, json = manifest)
             
-            message = response.json()['message']
-            if message != 'valid':
+            isValid = response.json()['valid']
+            if isValid != true:
               sys.exit(message)
