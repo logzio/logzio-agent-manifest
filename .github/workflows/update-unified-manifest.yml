@@ -15,7 +15,7 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os, json
+            import os
             with open("manifest.json", "r+") as t:
               t.truncate(0)
               t.write('[')
@@ -27,7 +27,6 @@ jobs:
                   t.write(',')
                 with open(filename, "r") as f:
                   content = f.read()
-                barak = json.dumps(content, indent=0)
                 t.write(content)
               t.write(']')
       - name: ValidateJSON
