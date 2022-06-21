@@ -143,7 +143,7 @@ function is_helm_installed () {
     fi
 
     write_log "INFO" "Installing Helm ..."
-    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash >/dev/null 2>$task_error_file
+    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | DESIRED_VERSION=v3.8.2 bash >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (4): failed to install Helm.\n  $err\""
