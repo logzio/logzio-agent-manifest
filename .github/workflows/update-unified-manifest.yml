@@ -15,7 +15,7 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os
+            import os, requests
             with open("manifest.json", "r+") as t:
               t.truncate(0)
               t.write('[')
@@ -29,6 +29,9 @@ jobs:
                   content = f.read()
                 t.write(content)
               t.write(']')
+              final = t.read()
+              print('barak:')
+              print(final)
       - name: ValidateJSON
         uses: TobiasOlofsson88/github-action-validate-json-request-result@v1.0.5
         with:
