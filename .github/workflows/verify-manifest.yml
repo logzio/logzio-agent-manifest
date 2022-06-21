@@ -13,7 +13,7 @@ jobs:
       - uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os, requests, json, core
+            import os, requests, json
   
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
 
