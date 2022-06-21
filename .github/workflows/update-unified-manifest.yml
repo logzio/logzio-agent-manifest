@@ -37,14 +37,6 @@ jobs:
               final = t.read()
               print('barak:')
               print(barak)
-      - name: ValidateJSON
-        uses: TobiasOlofsson88/github-action-validate-json-request-result@v1.0.5
-        with:
-          request-method: "POST"
-          request-url: "https://app.logz.io/telemetry-agent/public/manifest/validate"
-          request-headers: '{ "Content-Type": "application/json" }'
-          request-body: '{ "Attribute": "Value" }'
-          should-fail: false
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
