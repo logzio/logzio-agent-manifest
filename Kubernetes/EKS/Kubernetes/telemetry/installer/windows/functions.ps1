@@ -155,7 +155,8 @@ function Build-TolerationsHelmSets {
     $local:index = 0
     $local:taints = Write-Output "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]'
     if ([string]::IsNullOrEmpty($taints)) {
-        $taints = ""
+        Write-Log "INFO" "No tanints found"
+        return
     }
 
     foreach ($taint in $taints) {
