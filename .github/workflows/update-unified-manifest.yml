@@ -16,27 +16,23 @@ jobs:
         with:
           script: |
             import os
-            barak = ""
+            newArray = ""
             with open("manifest.json", "r+") as t:
-              t.truncate(0)
-              t.write('[')
-              barak += '['
+              newArray += '['
               first = True
               for filename in os.scandir('configs'):
                 if first:
                   first = False
                 else:
-                  t.write(',')
-                  barak += ','
+                  newArray += ','
                 with open(filename, "r") as f:
                   content = f.read()
-                t.write(content)
-                barak += content
-              t.write(']')
-              barak += ']'
-              final = t.read()
-              print('barak:')
-              print(barak)
+                newArray += content
+              newArray += ']'
+              t.truncate(0)
+              t.write(newArray)
+              print('new array:')
+              print(newArray)
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
