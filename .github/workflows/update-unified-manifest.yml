@@ -28,11 +28,23 @@ jobs:
                 content = f.read()
               newArray += content
             newArray += ']'
-            with open("manifest.json", "r+") as t:
-              t.truncate(0)
-              t.write(newArray)
-              print('new array:')
-              print(newArray)
+            with open("manifest.json", mode='w', encoding='utf-8') as f:
+              f.truncate(0)
+              json.dump([], f)
+            with open("manifest.json", mode='w', encoding='utf-8') as feedsjson:
+              feeds = []
+              entry = {'name': 'barak', 'url': 'app.logz.io'}
+              entry2 = {'name': 'jamui', 'url': 'google.com'}
+              feeds.append(entry)
+              feeds.append(entry2)
+              print(feeds)
+              json.dump(feeds, feedsjson)
+            
+            #with open("manifest.json", "r+") as t:
+            #  t.truncate(0)
+            #  t.write(newArray)
+            #  print('new array:')
+            #  print(newArray)
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
