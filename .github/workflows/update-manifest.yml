@@ -5,24 +5,16 @@ jobs:
     name: build manifest
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v2
-      - name: setup python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.8
-      - name: Run script
-        uses: jannekem/run-python-script-action@v1
-        with:
-          script: |
-            import os, json
-            configs = []
-            for filename in os.scandir('configs'):
-              with open(filename, mode='r', encoding='utf-8') as file:
-                configs.append(json.load(file))
-            with open("manifest.json", mode='w', encoding='utf-8') as f:
-              f.truncate(0)
-              json.dump(configs, f)
+      - name: build manifest
+        run: |
+          import os, json
+          configs = []
+          for filename in os.scandir('configs'):
+            with open(filename, mode='r', encoding='utf-8') as file:
+              configs.append(json.load(file))
+          with open("manifest.json", mode='w', encoding='utf-8') as f:
+            f.truncate(0)
+            json.dump(configs, f)
       - name: push file to main
         uses: EndBug/add-and-commit@v9
         with:
