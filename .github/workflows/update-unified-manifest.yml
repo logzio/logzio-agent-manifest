@@ -15,7 +15,7 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os
+            import os, json
             newArray = ""
             newArray += '['
             first = True
