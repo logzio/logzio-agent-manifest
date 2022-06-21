@@ -24,5 +24,4 @@ jobs:
             
             message = response.json()['message']
             if message != 'valid':
-              error(message)
-            message == 'valid'
+              sys.exit(message)
