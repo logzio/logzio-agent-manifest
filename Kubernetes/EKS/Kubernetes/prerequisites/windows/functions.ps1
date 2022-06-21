@@ -178,7 +178,7 @@ function Test-IsHelmInstalled {
     }
 
     Write-Log "INFO" "Installing Helm ..."
-    choco install kubernetes-helm -y 2>$using:taskErrorFile | Out-Null
+    choco install kubernetes-helm --version 3.8.2 -y 2>$using:taskErrorFile | Out-Null
     if ($?) {
         return
     }
