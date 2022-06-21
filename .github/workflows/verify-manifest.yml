@@ -24,4 +24,4 @@ jobs:
             
             message = response.json()['message']
             if message != 'valid':
-              core.setFailed(message)
+              error(message)
