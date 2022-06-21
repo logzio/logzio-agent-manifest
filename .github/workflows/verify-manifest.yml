@@ -1,0 +1,61 @@
+name: build manifest
+on: [push]
+jobs:
+  build_file:
+    name: build manifest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Run script
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os, json
+            newArray = ""
+            newArray += '['
+            first = True
+            configs = []
+            for filename in os.scandir('configs'):
+              if first:
+                first = False
+              else:
+                newArray += ','
+              with open(filename, "r") as f:
+                content = f.read()
+              newArray += content
+              with open(filename, mode='r', encoding='utf-8') as fileAsJson:
+                configs.append(fileAsJson.read())
+            newArray += ']'
+            print('configs:')
+            print(configs)
+            with open("manifest.json", mode='w', encoding='utf-8') as f:
+              f.truncate(0)
+              json.dump([], f)
+            with open("manifest.json", mode='w', encoding='utf-8') as feedsjson:
+              feeds = []
+              entry = {'name': 'barak', 'url': 'app.logz.io'}
+              entry2 = {'name': 'jamui', 'url': 'google.com'}
+              feeds.append(entry)
+              feeds.append(entry2)
+              print(feeds)
+              json.dump(feeds, feedsjson)
+            
+            #with open("manifest.json", "r+") as t:
+            #  t.truncate(0)
+            #  t.write(newArray)
+            #  print('new array:')
+            #  print(newArray)
+      - name: push file to main
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'manifest.json'
+          committer_name: Committer Name
+          committer_email: mail@example.com
+          default_author: github_actor
+          message: 'Update manifest'
+          push: true
