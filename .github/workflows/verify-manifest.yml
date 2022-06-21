@@ -1,8 +1,8 @@
-name: build manifest
+name: verify manifest
 on: [push]
 jobs:
   build_file:
-    name: build manifest
+    name: verify manifest
     runs-on: ubuntu-latest
     steps:
       - name: setup python
@@ -13,7 +13,7 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os, requests, json
+            import os, requests, json, core
   
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
 
