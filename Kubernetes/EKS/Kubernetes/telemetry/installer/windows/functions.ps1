@@ -140,7 +140,7 @@ function Build-TolerationsHelmSets {
         Write-Log "INFO" "isTaint value = false"
         return
     }
-                    
+
     $local:items = kubectl get nodes -o json | jq -r '.items'
     if ([string]::IsNullOrEmpty($items)) {
         Write-Run "Write-Error `"installer.ps1 (3): '.items[]' is empty in kubectl get nodes JSON`""
@@ -277,7 +277,6 @@ function Get-LogsScripts {
         Write-Run "Write-Error `"installer.ps1 (5): failed to get logs script file from logzio-agent-manifest repo.`n  $_`""
         return 5
     }
-
 
     Write-Log "INFO" "Getting logs functions script file from logzio-agent-manifest repo ..."
     try {
