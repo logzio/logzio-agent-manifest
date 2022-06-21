@@ -127,7 +127,7 @@ function Invoke-Task([string]$command, [string]$desc) {
     $local:scriptBlock = [ScriptBlock]::Create($funcCode)
     $local:frame = "-", "\", "|", "/"
     $local:frameInterval = 250
-    $local:timeout = 30
+    $local:timeout = 60
     $local:counter = 0
 
     [Console]::CursorVisible = $false
