@@ -17,18 +17,18 @@ jobs:
           script: |
             import os
             newArray = ""
+            newArray += '['
+            first = True
+            for filename in os.scandir('configs'):
+              if first:
+                first = False
+              else:
+                newArray += ','
+              with open(filename, "r") as f:
+                content = f.read()
+              newArray += content
+            newArray += ']'
             with open("manifest.json", "r+") as t:
-              newArray += '['
-              first = True
-              for filename in os.scandir('configs'):
-                if first:
-                  first = False
-                else:
-                  newArray += ','
-                with open(filename, "r") as f:
-                  content = f.read()
-                newArray += content
-              newArray += ']'
               t.truncate(0)
               t.write(newArray)
               print('new array:')
