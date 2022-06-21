@@ -154,6 +154,7 @@ function Build-TolerationsHelmSets {
     $local:tolerationsSets = ""
     $local:index = 0
     $local:taints = Write-Output "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]'
+    Write-Output $taints >> test.txt
     if ([string]::IsNullOrEmpty($taints)) {
         $taints = ""
     }
