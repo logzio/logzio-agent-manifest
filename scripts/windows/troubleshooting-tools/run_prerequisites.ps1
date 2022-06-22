@@ -26,22 +26,22 @@ function Get-UtilsFunctionsScript {
 # Output:
 #   Help usage
 function Show-Help {
-    Write-Host "Usage: .\run_prerequisites.ps1 --path=<repo_path>"
-    Write-Host " --path=<logzio_repo_inner_path>      logzio-agent-manifest repo inner path (dir1/dir2/dir3)"
-    Write-Host " --help                               Show usage"
+    Write-Host "Usage: .\run_prerequisites.ps1 --path=<logzio_repo_datasource_path>"
+    Write-Host " --path=<logzio_repo_datasource_path>       logzio-agent-manifest repo datasource path (dir1/dir2/dir3)"
+    Write-Host " --help                                     Show usage"
 }
 
 # Gets arguments
 # Input:
 #   Run prerequisites script arguments ($args)
 # Output:
-#   repoInnerPath - logzio-agent-manifest inner path (dir1/dir2/dir3)
+#   repoDatasourcePath - logzio-agent-manifest datasource path (dir1/dir2/dir3)
 # Error:
 #   Exit Code 2
 function Get-Arguments ([string[]]$agentArgs) {
     Write-Log "INFO" "Getting arguments ..."
 
-    $script:repoInnerPath = ""
+    $script:repoDatasourcePath = ""
 
     for ($i=0; $i -lt $agentArgs.Count; $i++) {
         switch -Regex ($agentArgs[$i]) {
@@ -51,14 +51,14 @@ function Get-Arguments ([string[]]$agentArgs) {
                 Exit
             }
             --path=* {
-                $repoInnerPath = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
-                if ([string]::IsNullOrEmpty($repoInnerPath)) {
-                    Write-Error "run_prerequisites.ps1 (2): no logzio-agent-manifest repo inner path specified!"
+                $repoDatasourcePath = (Write-Output $agentArgs[$i]).Split("=", 2)[1]
+                if ([string]::IsNullOrEmpty($repoDatasourcePath)) {
+                    Write-Error "run_prerequisites.ps1 (2): no logzio-agent-manifest repo datasource path specified!"
                     Remove-TempDir
                     Exit 2
                 }
 
-                Write-Log "INFO" "path = $repoInnerPath"
+                Write-Log "INFO" "path = $repoDatasourcePath"
                 continue
             }
             default {
@@ -79,17 +79,17 @@ function Get-Arguments ([string[]]$agentArgs) {
 function Test-ArgumentsValidation {
     Write-Log "INFO" "Checking validation ..."
 
-    if ([string]::IsNullOrEmpty($repoInnerPath)) {
-        Write-Error "run_prerequisites.ps1 (2): logzio-agent-manifest repo inner path must be specified"
+    if ([string]::IsNullOrEmpty($repoDatasourcePath)) {
+        Write-Error "run_prerequisites.ps1 (2): logzio-agent-manifest repo datasource path must be specified"
         Write-Error "run_prerequisites.ps1 (2): try '.\run_prerequisites.bash --help' for more information"
         Remove-TempDir
         Exit 2
     }
-    if ($repoInnerPath -match ".*/.*/.*") {
+    if ($repoDatasourcePath -match ".*/.*/.*") {
         return
     }
 
-    Write-Error "run_prerequisites.ps1 (2): logzio-agent-manifest repo inner path's format must be 'dir1/dir2/dir3'"
+    Write-Error "run_prerequisites.ps1 (2): logzio-agent-manifest repo datasource path's format must be 'dir1/dir2/dir3'"
     Write-Error "run_prerequisites.ps1 (2): try '.\run_prerequisites.ps1 --help' for more information"
     Remove-TempDir
     Exit 2
@@ -97,7 +97,7 @@ function Test-ArgumentsValidation {
 
 # Builds path to logzio-agent-manifest repo according the app JSON
 # Output:
-#   repoPath - Path to logzio-agent-manifest repo using repo_inner_path
+#   repoPath - Path to logzio-agent-manifest repo using repoDatasourcePath
 function Build-RepoPath {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -105,9 +105,9 @@ function Build-RepoPath {
 
     Write-Log "INFO" "Building repo path ..."
     
-    $local:dir1 = $repoInnerPath.Split("/")[0]
-    $local:dir2 = $repoInnerPath.Split("/")[1]
-    $local:dir3 = $repoInnerPath.Split("/")[2]
+    $local:dir1 = $repoDatasourcePath.Split("/")[0]
+    $local:dir2 = $repoDatasourcePath.Split("/")[1]
+    $local:dir3 = $repoDatasourcePath.Split("/")[2]
     $local:repoPath = "$repoURL/$dir1/$dir2/$dir3"
 
     Write-Log "INFO" "repoPath = $repoPath"
@@ -187,3 +187,10 @@ Write-Host "`nprerequisites:"
 
 # Delete temp directory
 Remove-TempDir
+
+# Print success message
+Write-Host
+Write-Info "##### Logz.io agent troubleshooting tool was finished successfully #####"
+
+# Finished successfully
+Exit 0

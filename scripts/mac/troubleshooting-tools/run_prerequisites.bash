@@ -9,7 +9,7 @@
 #   Exit Code 1
 function get_utils_functions_script () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting utils functions script file from logzio-agent-manifest repo ..." >> $log_file
-    curl -fsSL $repo_url/scripts/mac/utils_functions.bash > $logzio_temp_dir/utils_functions.bash 2>$task_error_file
+    curl -fsSL $repo_url/scripts/linux/utils_functions.bash > $logzio_temp_dir/utils_functions.bash 2>$task_error_file
     if [[ $? -eq 0 ]]; then
         return
     fi
@@ -25,16 +25,16 @@ function get_utils_functions_script () {
 # Output:
 #   Help usage
 function show_help () {
-    echo "Usage: ./run_prerequisites.bash --path=<repo_path>"
-    echo " --path=<logzio_repo_inner_path>      logzio-agent-manifest repo inner path (dir1/dir2/dir3)"
-    echo " --help                               Show usage"
+    echo "Usage: ./run_prerequisites.bash --path=<logzio_repo_datasource_path>"
+    echo " --path=<logzio_repo_datasource_path>     logzio-agent-manifest repo datasource path (dir1/dir2/dir3)"
+    echo " --help                                   Show usage"
 }
 
 # Gets arguments
 # Input:
 #   Run prerequisites script arguments ($@)
 # Output:
-#   repo_inner_path - logzio-agent-manifest inner path (dir1/dir2/dir3)
+#   repo_datasource_path - logzio-agent-manifest datasource path (dir1/dir2/dir3)
 # Error:
 #   Exit Code 2
 function get_arguments () {
@@ -48,14 +48,14 @@ function get_arguments () {
                 exit
                 ;;
             --path=*)
-                repo_inner_path=$(echo "$1" | cut -d "=" -f2)
-                if [[ "$repo_inner_path" = "" ]]; then
-                    print_error "run_prerequisites.bash (2): no logzio-agent-manifest repo inner path specified!"
+                repo_datasource_path=$(echo "$1" | cut -d "=" -f2)
+                if [[ "$repo_datasource_path" = "" ]]; then
+                    print_error "run_prerequisites.bash (2): no logzio-agent-manifest repo datasource path specified!"
                     delete_temp_dir
                     exit 2
                 fi
 
-                write_log "INFO" "path = $repo_inner_path"
+                write_log "INFO" "path = $repo_datasource_path"
                 ;;
             "")
                 break
@@ -79,17 +79,17 @@ function get_arguments () {
 function check_validation () {
     write_log "INFO" "Checking validation ..."
 
-    if [[ -z "$repo_inner_path" ]]; then
-        print_error "run_prerequisites.bash (2): logzio-agent-manifest repo inner path must be specified"
+    if [[ -z "$repo_datasource_path" ]]; then
+        print_error "run_prerequisites.bash (2): logzio-agent-manifest repo datasource path must be specified"
         print_error "run_prerequisites.bash (2): try './run_prerequisites.bash --help' for more information"
         delete_temp_dir
         exit 2
     fi
-    if [[ "$repo_inner_path" = *"/"*"/"* ]]; then
+    if [[ "$repo_datasource_path" = *"/"*"/"* ]]; then
         return
     fi
 
-    print_error "run_prerequisites.bash (2): logzio-agent-manifest repo inner path's format must be 'dir1/dir2/dir3'"
+    print_error "run_prerequisites.bash (2): logzio-agent-manifest repo datasource path's format must be 'dir1/dir2/dir3'"
     print_error "run_prerequisites.bash (2): try './run_prerequisites.bash --help' for more information"
     delete_temp_dir
     exit 2
@@ -97,13 +97,13 @@ function check_validation () {
 
 # Builds path to logzio-agent-manifest repo according the app JSON
 # Output:
-#   repo_path - Path to logzio-agent-manifest repo using repo_inner_path
+#   repo_path - Path to logzio-agent-manifest repo using repo_datasource_path
 function build_repo_path () {
     write_log "INFO" "Building repo path ..."
     
-    local dir1=$(echo -e "$repo_inner_path" | cut -d "/" -f1)
-    local dir2=$(echo -e "$repo_inner_path" | cut -d "/" -f2)
-    local dir3=$(echo -e "$repo_inner_path" | cut -d "/" -f3)
+    local dir1=$(echo -e "$repo_datasource_path" | cut -d "/" -f1)
+    local dir2=$(echo -e "$repo_datasource_path" | cut -d "/" -f2)
+    local dir3=$(echo -e "$repo_datasource_path" | cut -d "/" -f3)
     local repo_path="$repo_url/$dir1/$dir2/$dir3"
 
     write_log "INFO" "repo_path = $repo_path"
@@ -115,7 +115,7 @@ function build_repo_path () {
 #   Exit Code 3
 function get_prerequisites_scripts () {
     write_log "INFO" "Getting prerequisites script file from logzio-agent-manifest repo ..."
-    curl -fsSL $repo_path/prerequisites/mac/prerequisites.bash > $logzio_temp_dir/prerequisites.bash 2>$task_error_file
+    curl -fsSL $repo_path/prerequisites/linux/prerequisites.bash > $logzio_temp_dir/prerequisites.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"run_prerequisites.bash (3): failed to get prerequisites script file from logzio-agent-manifest repo.\n  $err\""
@@ -123,7 +123,7 @@ function get_prerequisites_scripts () {
     fi
 
     write_log "INFO" "Getting prerequisites functions script file from logzio-agent-manifest repo ..."
-    curl -fsSL $repo_path/prerequisites/mac/functions.bash > $logzio_temp_dir/prerequisites_functions.bash 2>$task_error_file
+    curl -fsSL $repo_path/prerequisites/linux/functions.bash > $logzio_temp_dir/prerequisites_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"run_prerequisites.bash (3): failed to get prerequisites functions script file from logzio-agent-manifest repo.\n  $err\""
@@ -168,3 +168,7 @@ source $logzio_temp_dir/prerequisites.bash
 
 # Delete temp directory
 delete_temp_dir
+
+# Print success message
+echo
+print_info "##### Logz.io agent troubleshooting tool was finished successfully #####"
