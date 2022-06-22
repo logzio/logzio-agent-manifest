@@ -9,9 +9,9 @@
     - [Windows](#windows)
 - [Troubleshooting Tools](#troubleshooting-tools)
     - [Script Arguments](#script-arguments)
-        - [Linux](#linux-1)
-        - [MacOS](#macos-1)
-        - [Windows](#windows-1)
+    - [Linux](#linux-1)
+    - [MacOS](#macos-1)
+    - [Windows](#windows-1)
 
 This repo contains all the scripts needed to ship logs, metrics and traces to Logz.io for supported datasources using the Logz.io agent.
 
