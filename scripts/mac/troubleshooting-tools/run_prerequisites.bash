@@ -9,7 +9,7 @@
 #   Exit Code 1
 function get_utils_functions_script () {
     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting utils functions script file from logzio-agent-manifest repo ..." >> $log_file
-    curl -fsSL $repo_url/scripts/linux/utils_functions.bash > $logzio_temp_dir/utils_functions.bash 2>$task_error_file
+    curl -fsSL $repo_url/scripts/mac/utils_functions.bash > $logzio_temp_dir/utils_functions.bash 2>$task_error_file
     if [[ $? -eq 0 ]]; then
         return
     fi
@@ -115,7 +115,7 @@ function build_repo_path () {
 #   Exit Code 3
 function get_prerequisites_scripts () {
     write_log "INFO" "Getting prerequisites script file from logzio-agent-manifest repo ..."
-    curl -fsSL $repo_path/prerequisites/linux/prerequisites.bash > $logzio_temp_dir/prerequisites.bash 2>$task_error_file
+    curl -fsSL $repo_path/prerequisites/mac/prerequisites.bash > $logzio_temp_dir/prerequisites.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"run_prerequisites.bash (3): failed to get prerequisites script file from logzio-agent-manifest repo.\n  $err\""
@@ -123,7 +123,7 @@ function get_prerequisites_scripts () {
     fi
 
     write_log "INFO" "Getting prerequisites functions script file from logzio-agent-manifest repo ..."
-    curl -fsSL $repo_path/prerequisites/linux/functions.bash > $logzio_temp_dir/prerequisites_functions.bash 2>$task_error_file
+    curl -fsSL $repo_path/prerequisites/mac/functions.bash > $logzio_temp_dir/prerequisites_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"run_prerequisites.bash (3): failed to get prerequisites functions script file from logzio-agent-manifest repo.\n  $err\""
