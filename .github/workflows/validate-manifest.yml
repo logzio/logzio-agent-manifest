@@ -23,5 +23,7 @@ jobs:
               response = requests.post(url, json = manifest)
             
             isValid = response.json()['valid']
+            
             if isValid != True:
+              message = (response.json()['message'])
               sys.exit(message)
