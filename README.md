@@ -95,19 +95,19 @@ Each agent script has the following flags:
 ### Linux
 
 ```Bash
-bash <(curl -LSs https://github.com/logzio/logzio-agent-manifest/releases/download/latest/agent_linux.bash) --url=LOGZIO_APP_URL --id=AGENT_ID
+bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/download/latest/agent_linux.bash) --url=LOGZIO_APP_URL --id=AGENT_ID
 ```
 
 ### MacOS
 
 ```Bash
-bash <(curl -LSs https://github.com/logzio/logzio-agent-manifest/releases/download/latest/agent_mac.bash) --url=LOGZIO_APP_URL --id=AGENT_ID
+bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/download/latest/agent_mac.bash) --url=LOGZIO_APP_URL --id=AGENT_ID
 ```
 
 ### Windows
 
 * Must run from `Windows PowerShell` (NOT Windows PowerShell (x86) or Windows PowerShell ISE).
-* Must run from a directory with permissions. We recommand to run from `Documents` directory.
+* Must run from a directory with write permissions.
 
 ```PowerShell
 powershell { iex “& { $(irm https://raw.githubusercontent.com/logzio/logzio-agent-manifest/releases/download/latest/agent_windows.ps1) } --url=LOGZIO_APP_URL --id=AGENT_ID” }
@@ -130,19 +130,19 @@ under each OS in scripts directory, there is troubleshooting-tools directory whi
 ### Linux
 
 ```Bash
-bash <(curl -LSs https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_linux.bash) --path=LOGZIO_REPO_DATASOURCE_PATH
+bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_linux.bash) --path=LOGZIO_REPO_DATASOURCE_PATH
 ```
 
 ### MacOS
 
 ```Bash
-bash <(curl -LSs https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_mac.bash) --path=LOGZIO_REPO_DATASOURCE_PATH
+bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_mac.bash) --path=LOGZIO_REPO_DATASOURCE_PATH
 ```
 
 ### Windows
 
 * Must run from `Windows PowerShell` (NOT Windows PowerShell (x86) or Windows PowerShell ISE).
-* Must run from a directory with permissions. We recommand to run from `Documents` directory.
+* Must run from a directory with wirte permissions.
 
 ```PowerShell
 powershell { iex “& { $(irm https://raw.githubusercontent.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_windows.ps1) } --path=LOGZIO_REPO_DATASOURCE_PATH” }
