@@ -141,6 +141,9 @@ bash <(curl -LSs https://github.com/logzio/logzio-agent-manifest/releases/downlo
 
 ### Windows
 
+* Must run from `Windows PowerShell` (NOT Windows PowerShell (x86) or Windows PowerShell ISE).
+* Must run from a directory with permissions. We recommand to run from `Documents` directory.
+
 ```PowerShell
 powershell { iex “& { $(irm https://raw.githubusercontent.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_windows.ps1) } --path=LOGZIO_REPO_DATASOURCE_PATH” }
 ```
