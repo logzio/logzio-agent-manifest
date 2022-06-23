@@ -27,3 +27,5 @@ jobs:
             if isValid != True:
               message = (response.json()['message'])
               sys.exit(message)
+            else:
+              print('Validation pass')
