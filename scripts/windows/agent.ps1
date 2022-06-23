@@ -38,7 +38,7 @@ function Get-AgentFunctionsScripts {
 
 
 # Consts
-$script:repoURL = "https://raw.githubusercontent.com/logzio/logzio-agent-manifest/v0.2"     # logzio-agent-manifest repo URL
+$script:repoURL = "https://raw.githubusercontent.com/logzio/logzio-agent-manifest/master"   # logzio-agent-manifest repo URL
 $script:logzioTempDir = ".\logzio-temp"                                                     # Logz.io temp directory
 $script:logFile = ".\logzio_agent.log"                                                      # Log file path
 $script:runFile = "$logzioTempDir\run.ps1"                                                  # Run file path
