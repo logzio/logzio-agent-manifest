@@ -110,7 +110,7 @@ bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/downlo
 * Must run from a directory with write permissions.
 
 ```PowerShell
-powershell { iex “& { $(irm https://raw.githubusercontent.com/logzio/logzio-agent-manifest/releases/download/latest/agent_windows.ps1) } --url=LOGZIO_APP_URL --id=AGENT_ID” }
+powershell { iex “& { $(irm https://github.com/logzio/logzio-agent-manifest/releases/download/latest/agent_windows.ps1) } --url=LOGZIO_APP_URL --id=AGENT_ID” }
 ```
 
 ## Troubleshooting Tools
@@ -145,5 +145,5 @@ bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/downlo
 * Must run from a directory with wirte permissions.
 
 ```PowerShell
-powershell { iex “& { $(irm https://raw.githubusercontent.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_windows.ps1) } --path=LOGZIO_REPO_DATASOURCE_PATH” }
+powershell { iex “& { $(irm https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_windows.ps1) } --path=LOGZIO_REPO_DATASOURCE_PATH” }
 ```
