@@ -47,8 +47,8 @@ jobs:
             configs:
               - 'configs/**'
       - name: push new manifest file
-        if: steps.changes.outputs.configs == 'true'
         uses: EndBug/add-and-commit@v9
+        if: steps.changes.outputs.configs == 'true'
         with:
           add: 'manifest.json'
           committer_name: github actions
