@@ -35,6 +35,12 @@ jobs:
               sys.exit(message)
             else:
               print('Validation pass')
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            config:
+              - 'configs/**'
       - name: push new manifest file
         uses: EndBug/add-and-commit@v9
         with:
