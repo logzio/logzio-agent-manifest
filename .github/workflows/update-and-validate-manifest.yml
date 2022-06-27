@@ -1,3 +1,4 @@
+
 name: build and verify manifest
 on: [push]
 jobs:
@@ -24,16 +25,11 @@ jobs:
               json.dump(configs, f)
             
             # Validate new manifest
-
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
-
             with open("manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
-
               response = requests.post(url, json = manifest)
-
             isValid = response.json()['valid']
-
             if isValid != True:
               message = (response.json()['message'])
               sys.exit(message)
@@ -41,7 +37,7 @@ jobs:
               print('Validation pass')
       - name: push new manifest file
         uses: EndBug/add-and-commit@v9
-        run:
+        with:
           add: 'manifest.json'
           committer_name: github actions
           committer_email: actions@github.com
