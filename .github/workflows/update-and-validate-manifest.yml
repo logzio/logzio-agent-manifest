@@ -40,9 +40,16 @@ jobs:
             else:
               print('Validation pass')
       - name: push new manifest file
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            configs:
+              - 'configs/**'
+      - name: push new manifest file
       - uses: EndBug/add-and-commit@v9
         if: steps.changes.outputs.configs == 'true'
-        with:
+        run:
           add: 'manifest.json'
           committer_name: github actions
           committer_email: actions@github.com
