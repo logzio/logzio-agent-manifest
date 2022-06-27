@@ -40,7 +40,7 @@ jobs:
             else:
               print('Validation pass')
       - name: push new manifest file
-      - uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v9
         run:
           add: 'manifest.json'
           committer_name: github actions
