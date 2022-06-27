@@ -5,7 +5,7 @@
    "manifest":true,
    "subtypes":[
       {
-         "name":"AKS-change",
+         "name":"AKS-barak",
          "logo":"https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
          "description":"Azure Kubernetes Service",
          "datasources":[
