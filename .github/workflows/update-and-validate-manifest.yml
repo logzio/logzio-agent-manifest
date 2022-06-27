@@ -39,9 +39,10 @@ jobs:
         id: filter
         with:
           filters: |
-            config:
+            configs:
               - 'configs/**'
       - name: push new manifest file
+        if: steps.filter.outputs.configs == 'true'
         uses: EndBug/add-and-commit@v9
         with:
           add: 'manifest.json'
