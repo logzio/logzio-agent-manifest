@@ -153,7 +153,6 @@ function install_jq () {
     local result=0 
 
     if [[ "$package_manager" = "apt-get" ]]; then
-        echo "apt-get" >> test.txt
         sudo apt-get install -y jq >/dev/null 2>$task_error_file
         if [[ $? -eq 0 ]]; then
             echo "success apt-get" >> test.txt
@@ -166,7 +165,6 @@ function install_jq () {
     fi
 
     if [[ "$package_manager" = "yum" ]]; then
-        echo "yum" >> test.txt
         sudo yum install -y jq >/dev/null 2>$task_error_file
         if [[ $? -eq 0 ]]; then
             echo "success yum" >> test.txt
