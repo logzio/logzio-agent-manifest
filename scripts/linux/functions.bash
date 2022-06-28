@@ -123,7 +123,7 @@ function is_package_manager_installed () {
     which apt-get >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         write_log "INFO" "package_manager = apt-get"
-        package_manager="apt-get"
+        write_run "package_manager=\"apt-get\""
         return
     fi
 
@@ -131,7 +131,7 @@ function is_package_manager_installed () {
     which yum >/dev/null 2>&1
     if [ $? -eq 0 ]; then
         write_log "INFO" "package_manager = yum"
-        package_manager="yum"
+        write_run "package_manager=\"yum\""
         return
     fi
 
