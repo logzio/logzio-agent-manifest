@@ -59,7 +59,7 @@ jobs:
           prerelease: true
           name: testing
           files: manifest.json
-          allow_override: yes
+          allow_override: true
           gzip: false
 
 
