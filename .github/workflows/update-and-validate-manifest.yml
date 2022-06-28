@@ -56,10 +56,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: latest
+          allow_override: true
           prerelease: true
           name: testing
           files: manifest.json
-          allow_override: true
           gzip: false
 
 
