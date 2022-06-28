@@ -58,5 +58,6 @@ jobs:
           tag: v1.0.0
           name: testing
           files: manifest.json
+          allow_override: yes
 
 
