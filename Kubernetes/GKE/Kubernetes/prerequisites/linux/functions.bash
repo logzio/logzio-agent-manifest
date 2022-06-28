@@ -27,7 +27,7 @@ function is_kubectl_connected_to_k8s_cluster () {
 
     local cluster_info=$(kubectl cluster-info 2> $task_error_file)
     local err=$(cat $task_error_file)
-    if [[ -z "$err" ]]; then
+    if [[ -z "$err" || "$err" != *"ERROR"* ]]; then
         write_log "INFO" "$cluster_info"
         return
     fi
