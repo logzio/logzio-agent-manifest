@@ -51,3 +51,10 @@ jobs:
           default_author: github_actions
           message: 'Create manifest file from configs by github action'
           push: true
+      - name: Update release
+        uses: johnwbyrd/update-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          asset: ./manifest.json
+          release: testing
+          prerelease: true
