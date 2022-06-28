@@ -27,7 +27,7 @@ function is_kubectl_connected_to_k8s_cluster () {
 
     local cluster_info=$(kubectl cluster-info 2> $task_error_file)
     local err=$(cat $task_error_file)
-    if [[ -z "$err" ]]; then
+    if [[ -z "$err" || "$err" != *"ERROR"* ]]; then
         write_log "INFO" "$cluster_info"
         return
     fi
@@ -50,6 +50,10 @@ function delete_test_pod () {
     fi
 
     local err=$(cat $task_error_file)
+    if [[ "$err" != *"ERROR"* ]]; then
+        return
+    fi
+
     write_run "print_warning \"prerequisites.bash (3): failed to delete logzio-metrics-connection-test pod.\n  $err\""
 }
 
@@ -69,6 +73,10 @@ function can_k8s_cluster_connect_to_logzio_logs () {
     kubectl apply -f $logzio_temp_dir/logzio_logs_connection_test_pod.yaml >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
+        if [[ "$err" != *"ERROR"* ]]; then
+            return
+        fi
+
         write_run "print_error \"prerequisites.bash (3): failed to create logzio-logs-connection-test pod.\n  $err\""
         return 3
     fi
@@ -77,7 +85,7 @@ function can_k8s_cluster_connect_to_logzio_logs () {
 
     local pod_logs=$(kubectl logs logzio-logs-connection-test 2>$task_error_file)
     local err=$(cat $task_error_file)
-    if [[ ! -z "$err" ]]; then
+    if [[ ! -z "$err" && "$err" == *"ERROR"* ]]; then
         delete_test_pod "logzio-logs-connection-test"
         write_run "print_error \"prerequisites.bash (3): failed to get logs of logzio-logs-connection-test pod.\n  $err\""
         return 3
@@ -108,6 +116,10 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
     kubectl apply -f $logzio_temp_dir/logzio_metrics_connection_test_pod.yaml >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
+        if [[ "$err" != *"ERROR"* ]]; then
+            return
+        fi
+
         write_run "print_error \"prerequisites.bash (3): failed to create logzio-metrics-connection-test pod.\n  $err\""
         return 3
     fi
@@ -116,7 +128,7 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
 
     local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>$task_error_file)
     local err=$(cat $task_error_file)
-    if [[ ! -z "$err" ]]; then
+    if [[ ! -z "$err" && "$err" == *"ERROR"* ]]; then
         delete_test_pod "logzio-metrics-connection-test"
         write_run "print_error \"prerequisites.bash (3): failed to get logs of logzio-metrics-connection-test pod.\n  $err\""
         return 3

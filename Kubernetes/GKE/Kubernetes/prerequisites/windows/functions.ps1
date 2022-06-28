@@ -34,7 +34,7 @@ function Test-IsKubectlConnectedToKubernetesCluster {
 
     $local:clusterInfo = kubectl cluster-info 2>$using:taskErrorFile
     $local:err = Get-TaskError
-    if ([string]::IsNullOrEmpty($err)) {
+    if ([string]::IsNullOrEmpty($err) -or $err -notcontains "ERROR") {
         Write-Log "INFO" "$clusterInfo"
         return
     }
@@ -55,6 +55,10 @@ function Remove-TestPod ([string]$podName) {
     }
 
     $local:err = Get-TaskError
+    if ($err -notcontains "ERROR") {
+        return
+    }
+
     Write-Run "Write-Warning `"prerequisites.ps1 (3): failed to delete logzio-logs-connection-test pod.`n  $err`""
 }
 
@@ -83,6 +87,10 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     kubectl apply -f $using:logzioTempDir\logzio_logs_connection_test_pod.yaml 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-TaskError
+        if ($err -notcontains "ERROR") {
+            return
+        }
+
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-logs-connection-test pod.`n  $err`""
         return 3
     }
@@ -91,7 +99,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
 
     $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
-    if (-Not [string]::IsNullOrEmpty($err)) {
+    if (-Not [string]::IsNullOrEmpty($err) -and $err -contains "ERROR") {
         Remove-TestPod "logzio-logs-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod.`n  $err`""
         return 3
@@ -132,6 +140,10 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     kubectl apply -f $using:logzioTempDir\logzio_metrics_connection_test_pod.yaml 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-TaskError
+        if ($err -notcontains "ERROR") {
+            return
+        }
+
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to create logzio-metrics-connection-test pod.`n  $err`""
         return 3
     }
@@ -140,7 +152,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
 
     $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
-    if (-Not [string]::IsNullOrEmpty($err)) {
+    if (-Not [string]::IsNullOrEmpty($err) -and $err -contains "ERROR") {
         Remove-TestPod "logzio-metrics-connection-test"
         Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  $err`""
         return 3
