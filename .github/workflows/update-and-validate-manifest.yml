@@ -55,6 +55,7 @@ jobs:
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v1.0.0
           name: testing
 
 
