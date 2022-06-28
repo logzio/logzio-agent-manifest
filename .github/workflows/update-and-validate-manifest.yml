@@ -60,5 +60,6 @@ jobs:
           name: testing
           files: manifest.json
           allow_override: yes
+          gzip: false
 
 
