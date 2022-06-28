@@ -141,7 +141,7 @@ function Build-TolerationsHelmSets {
         return
     }
 
-    $local:items = kubectl get nodes -o json | jq -r '.items'
+    $local:items = kubectl get nodes -o json 2>$null | jq -r '.items'
     if ([string]::IsNullOrEmpty($items)) {
         Write-Run "Write-Error `"installer.ps1 (3): '.items[]' is empty in kubectl get nodes JSON`""
         return 3

@@ -128,7 +128,7 @@ function build_tolerations_helm_sets () {
         return
     fi
                     
-    local items=$(kubectl get nodes -o json | jq -r '.items')
+    local items=$(kubectl get nodes -o json 2>/dev/null | jq -r '.items')
     if [[ "$items" = null ]]; then
         write_run "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\""
         return 3
