@@ -16,15 +16,6 @@ jobs:
             configs:
               - 'configs/**'
 
-  print_output:
-    name: barak
-    needs: changes
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Get color
-        run: echo "The selected color is ${{ needs.changes.outputs.configs }}"
-
   build_manifest_file:
     name: build and verify manifest
     needs: changes
