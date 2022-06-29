@@ -17,8 +17,12 @@ jobs:
               - 'configs/**'
 
   print_output:
-    name: Get color
-    run: echo "The selected color is ${{ needs.changes.outputs.configs }}"
+    name: condition
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        name: Get color
+        run: echo "The selected color is ${{ needs.changes.outputs.configs }}"
 
   build_manifest_file:
     name: build and verify manifest
