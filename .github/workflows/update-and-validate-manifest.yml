@@ -4,6 +4,7 @@ on: [push]
 jobs:
   changes:
     name: condition
+    uses: actions/checkout@v2.3.4
     runs-on: ubuntu-latest
     outputs:
       configs: ${{ steps.filter.outputs.configs }}
