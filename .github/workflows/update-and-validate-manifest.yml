@@ -7,13 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       configs: ${{ steps.filter.outputs.configs }}
-#    steps:
-#      - uses: dorny/paths-filter@v2
-#        id: filter
-#        with:
-#          filters: |
-#            configs:
-#              - 'configs/**'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            configs:
+              - 'configs/**'
 
   build_manifest_file:
     name: build and verify manifest
