@@ -17,7 +17,7 @@ jobs:
               - 'configs/**'
 
   print_output:
-    name: condition
+    name: barak
     needs: changes
     runs-on: ubuntu-latest
     steps:
