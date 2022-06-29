@@ -4,17 +4,16 @@ on: [push]
 jobs:
   changes:
     name: condition
-    uses: actions/checkout@v2.3.4
     runs-on: ubuntu-latest
     outputs:
       configs: ${{ steps.filter.outputs.configs }}
-    steps:
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            configs:
-              - 'configs/**'
+#    steps:
+#      - uses: dorny/paths-filter@v2
+#        id: filter
+#        with:
+#          filters: |
+#            configs:
+#              - 'configs/**'
 
   build_manifest_file:
     name: build and verify manifest
