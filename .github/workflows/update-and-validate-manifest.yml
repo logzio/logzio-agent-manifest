@@ -16,6 +16,10 @@ jobs:
             configs:
               - 'configs/**'
 
+  print_output:
+    name: Get color
+    run: echo "The selected color is ${{ needs.changes.outputs.configs }}"
+
   build_manifest_file:
     name: build and verify manifest
     needs: changes
