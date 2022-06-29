@@ -2,8 +2,22 @@
 name: build and verify manifest
 on: [push]
 jobs:
-  build_file:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      configs: ${{ steps.filter.outputs.configs }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            configs:
+              - 'configs/**'
+
+  build_manifest_file:
     name: build and verify manifest
+    needs: changes
+    if: ${{ needs.changes.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -35,14 +49,7 @@ jobs:
               sys.exit(message)
             else:
               print('Validation pass')
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            configs:
-              - 'configs/**'
       - name: update testing pre release
-        if: steps.filter.outputs.configs == 'true'
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
