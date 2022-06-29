@@ -41,16 +41,6 @@ jobs:
           filters: |
             configs:
               - 'configs/**'
-#      - name: push new manifest file
-#        if: steps.filter.outputs.configs == 'true'
-#        uses: EndBug/add-and-commit@v9
-#        with:
-#          add: 'manifest.json'
-#          committer_name: github actions
-#          committer_email: actions@github.com
-#          default_author: github_actions
-#          message: 'Create manifest file from configs by github action'
-#          push: true
       - name: update testing pre release
         uses: meeDamian/github-release@2.0
         with:
