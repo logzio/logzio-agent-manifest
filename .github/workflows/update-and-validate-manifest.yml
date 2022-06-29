@@ -18,6 +18,7 @@ jobs:
 
   print_output:
     name: condition
+    needs: changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
