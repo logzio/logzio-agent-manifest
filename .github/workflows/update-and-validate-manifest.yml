@@ -1,9 +1,5 @@
-
 name: build and verify manifest
-on:
-  pull_request:
-    branches:
-      - master
+on: [push]
 
 jobs:
   changes:
@@ -65,5 +61,3 @@ jobs:
           prerelease: true
           files: manifest.json
           gzip: false
-
-
