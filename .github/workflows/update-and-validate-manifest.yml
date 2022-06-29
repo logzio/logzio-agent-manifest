@@ -1,6 +1,6 @@
+
 name: build and verify manifest
 on: [push]
-
 jobs:
   changes:
     name: condition
