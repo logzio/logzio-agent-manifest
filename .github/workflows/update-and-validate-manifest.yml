@@ -42,7 +42,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: my-artifact
-          path: output/test/manifest.json
+          path: output/test
       - name: update testing pre release
         uses: meeDamian/github-release@2.0
         with:
@@ -63,7 +63,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: my-artifact
-          path: output/test/manifest.json
+          path: output/test
       - run: cat ./manifest.json
       - run: ls -R
       - run: pwd
