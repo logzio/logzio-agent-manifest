@@ -309,7 +309,7 @@ function run_helm_install () {
     write_log "INFO" "helm_sets = $log_helm_sets"
 
     retries=0
-    while [ $retires -lt 3 ]; do
+    while [ $retries -lt 3 ]; do
         let "retries++"
         helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >/dev/null 2>$task_error_file
         if [[ $? -eq 0 ]]; then
