@@ -51,6 +51,22 @@ jobs:
               sys.exit(message)
             else:
               print('Validation pass')
+      - uses: actions/upload-artifact@master
+        with:
+          name: my-artifact
+          path: ./
+
+  validate-manifest:
+    name: verify manifest
+    needs: changes
+    if: ${{ needs.changes.outputs.configs == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@master
+        with:
+          name: my-artifact
+          path: ./
+      - run: cat ./manifest.json
       - name: update testing pre release
         uses: meeDamian/github-release@2.0
         with:
