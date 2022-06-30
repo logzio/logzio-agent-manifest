@@ -42,7 +42,7 @@ jobs:
       - uses: actions/upload-artifact@master
         with:
           name: my-artifact
-          path: ./
+          path: /tmp
       - name: update testing pre release
         uses: meeDamian/github-release@2.0
         with:
@@ -63,7 +63,7 @@ jobs:
       - uses: actions/download-artifact@master
         with:
           name: my-artifact
-          path: ./
+          path: /tmp
       - run: cat ./manifest.json
       - run: ls -R
       - run: pwd
@@ -78,7 +78,7 @@ jobs:
           script: |
             import os, requests, json, sys
 
-            path = "/usr"
+            path = "/tmp"
             print(os.listdir( path ))
             
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
