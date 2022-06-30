@@ -77,7 +77,7 @@ jobs:
           script: |
             import os, requests, json, sys
 
-            path = "/tmp"
+            path = "/usr"
             print(os.listdir( path ))
             
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
