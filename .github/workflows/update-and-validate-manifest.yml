@@ -17,7 +17,7 @@ jobs:
               - 'configs/**'
 
   build_manifest_file:
-    name: build and verify manifest
+    name: build-manifest
     needs: changes
     if: ${{ needs.changes.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
@@ -58,7 +58,7 @@ jobs:
 
   validate-manifest:
     name: verify manifest
-    needs: changes
+    needs: [changes, build-manifest]
     if: ${{ needs.changes.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
