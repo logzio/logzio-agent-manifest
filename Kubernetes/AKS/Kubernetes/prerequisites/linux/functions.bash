@@ -25,7 +25,7 @@ function is_kubectl_installed () {
 function is_kubectl_connected_to_k8s_cluster () {
     write_log "INFO" "Checking if kubectl is connected to an active Kubernetes cluster ..."
 
-    local cluster_info=$(kubectl cluster-info 2> $task_error_file)
+    local cluster_info=$(kubectl cluster-info 2>$task_error_file)
     local err=$(cat $task_error_file)
     if [[ -z "$err" ]]; then
         write_log "INFO" "$cluster_info"
