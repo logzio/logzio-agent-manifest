@@ -23,14 +23,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/cache@v2
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
       - run: python -m pip install requests
       - name: Build and verify manifest
-        env:
-          cache-name: cache-manifest
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
@@ -42,8 +39,6 @@ jobs:
             with open("manifest.json", mode='w', encoding='utf-8') as f:
               f.truncate(0)
               json.dump(configs, f)
-            
-            print(configs)
             
             # Validate new manifest
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
