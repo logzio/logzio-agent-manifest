@@ -45,6 +45,9 @@ $script:runFile = "$logzioTempDir\run.ps1"                                      
 $script:taskErrorFile = "$logzioTempDir\task_error.txt"                                     # Task error file path
 $script:appJSON = "$logzioTempDir\app.json"                                                 # App JSON path
 
+# Move to Documents directory
+Set-Location -Path $env:UserProfile\Documents
+
 # Create temp directory with files
 if (-Not (Test-Path $logzioTempDir)) {
     New-Item -Path $logzioTempDir -ItemType Directory | Out-Null    
