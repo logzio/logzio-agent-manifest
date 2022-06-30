@@ -66,6 +66,7 @@ jobs:
           path: ./
       - run: cat ./manifest.json
       - run: ls -R
+      - run: pwd
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
