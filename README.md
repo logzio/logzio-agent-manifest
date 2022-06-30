@@ -76,7 +76,7 @@ The installer script will get logs, metrics, traces scripts depending on the app
 * Some tasks depends on the application JSON (for example: metrics parameters).
 * A success message will be shown at the end of a successful run.
 * All scripts downloaded from this repo and temp files will be saved in Logz.io temp directory, which will be deleted at the end of the running.
-* A log file will be created at the beginning of the running in the directory where the agent script was running from.
+* A log file will be created at the beginning of the running in the directory where the agent script was running from (except in Windows, which will be created under `Documents` directory).
 
 ## Agent Script Arguments
 
@@ -107,7 +107,7 @@ bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/downlo
 ### Windows
 
 * Must run from `Windows PowerShell` (NOT Windows PowerShell (x86) or Windows PowerShell ISE).
-* Must run from a directory with read/write permissions.
+* Temp directory and the log file will be created under `Documents` directory.
 
 ```PowerShell
 powershell { iex “& { $(irm https://github.com/logzio/logzio-agent-manifest/releases/download/latest/agent_windows.ps1) } --url=LOGZIO_APP_URL --id=AGENT_ID” }
@@ -142,7 +142,7 @@ bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/downlo
 ### Windows
 
 * Must run from `Windows PowerShell` (NOT Windows PowerShell (x86) or Windows PowerShell ISE).
-* Must run from a directory with read/write permissions.
+* Temp directory and the log file will be created under `Documents` directory.
 
 ```PowerShell
 powershell { iex “& { $(irm https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_windows.ps1) } --path=LOGZIO_REPO_DATASOURCE_PATH” }
