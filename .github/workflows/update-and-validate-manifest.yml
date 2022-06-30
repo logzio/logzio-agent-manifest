@@ -56,7 +56,7 @@ jobs:
 
   validate-manifest:
     name: validate manifest
-    needs: [filter_for_configs, build_manifest_file]
+    needs: [filter_for_configs, build_manifest]
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
