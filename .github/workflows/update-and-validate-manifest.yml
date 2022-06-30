@@ -24,8 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v2
-      - env:
-          cache-name: cache-manifest
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
