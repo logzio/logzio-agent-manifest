@@ -80,6 +80,7 @@ jobs:
 
             path = "/tmp/barak"
             print(os.listdir( path ))
+            print(os.getcwd())
             
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
             with open("manifest.json", mode='r', encoding='utf-8') as f:
