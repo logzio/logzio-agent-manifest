@@ -67,7 +67,7 @@ jobs:
           script: |
             import os, requests, json, sys
             
-            for path, currentDirectory, files in os.walk("/home"):
+            for path, currentDirectory, files in os.walk("/home/runner/work"):
               for file in files:
                 print(os.path.join(path, file))
         
