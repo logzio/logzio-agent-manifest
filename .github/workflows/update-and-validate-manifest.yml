@@ -83,8 +83,9 @@ jobs:
             
             # validation
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
-            with open("manifest.json", mode='r', encoding='utf-8') as f:
+            with open("/home/runner/work/manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
+              print(manifest)
               response = requests.post(url, json = manifest)
             isValid = response.json()['valid']
             if isValid != True:
