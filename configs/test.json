@@ -56,21 +56,19 @@
                   "label": "Using Windows nodes",
                   "description": "",
                   "hint": "Check this box if any of your Kubernetes pods are running on Windows nodes. As part of the installation process, you will need to provide the root user credentials to those Windows instances",
-                  "value": false,
-                  "params": [
-                    {
-                      "type": "path-list",
-                      "name": "optional log-sources",
-                      "label": "Optional path list",
-                      "value": []
-                    },
-                    {
-                      "type": "multiline-pattern",
-                      "name": "optional multiline",
-                      "label": "Optional multiline pattern",
-                      "value": []
-                    }
-                  ]
+                  "value": false
+                },
+                {
+                  "type": "path-list",
+                  "name": "optional log-sources",
+                  "label": "Optional path list",
+                  "value": []
+                },
+                {
+                  "type": "multiline-pattern",
+                  "name": "optional multiline",
+                  "label": "Optional multiline pattern",
+                  "value": []
                 }
               ],
               "dashboards": [
