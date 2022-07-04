@@ -100,9 +100,6 @@ jobs:
         with:
           script: |
             import os, requests, json, sys
-            def find(name, path):
-              for root, dirs, files in os.walk(path):
-                if name in files:
-                  return os.path.join(root, name)
-            
-            print(find('manifet.json', '/home'))
+            with open("./manifest.json", mode='r', encoding='utf-8') as f:
+              manifest = json.load(f)
+              print(manifest)
