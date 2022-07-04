@@ -84,11 +84,11 @@ jobs:
           python-version: '3.8'
       - run: python -m pip install requests
       - name: Cache Primes
-          id: cache-primes
-          uses: actions/cache@v3
-          with:
-            path: ./manifest.json
-            key: barak
+        id: cache-primes
+        uses: actions/cache@v3
+        with:
+          path: ./manifest.json
+          key: barak
       - name: test
         uses: jannekem/run-python-script-action@v1
         with:
