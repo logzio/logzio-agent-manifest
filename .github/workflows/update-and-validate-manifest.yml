@@ -17,7 +17,7 @@ jobs:
               - 'configs/**'
 
   build_manifest:
-    name: build manifest and push to testing release
+    name: build, release and verify manifest
     needs: filter_for_configs
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
@@ -41,11 +41,12 @@ jobs:
               json.dump(configs, f)
       - uses: actions/upload-artifact@master
         with:
-          name: my-artifact
-          path: ./
+          name: built-manifest
+          if-no-files-found: error
+          path: ./manifest.json
       - uses: actions/download-artifact@v3
         with:
-          name: my-artifact
+          name: built-manifest
           path: /home/runner/work
       - name: update testing pre-release
         uses: meeDamian/github-release@2.0
@@ -62,8 +63,7 @@ jobs:
         with:
           script: |
             import os, requests, json, sys
-                    
-            # validation
+
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
             with open("/home/runner/work/manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
