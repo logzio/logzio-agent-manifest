@@ -369,10 +369,16 @@ function Invoke-HelmInstall {
     Write-Log "INFO" "Running Helm install ..."
     Write-Log "INFO" "helmSets = $using:logHelmSets"
     
-    Invoke-Expression -Command "helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring" 2>$using:taskErrorFile | Out-Null
-    $local:err = Get-TaskError
-    if ([string]::IsNullOrEmpty($err) -or ($err -notmatch ".*Error.*")) {
-        return
+    $local:retries = 0
+    while ($retries -lt 3) {
+        $retries++
+        Invoke-Expression -Command "helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring" 2>$using:taskErrorFile | Out-Null
+        $local:err = Get-TaskError
+        if ([string]::IsNullOrEmpty($err) -or ($err -notmatch ".*Error.*")) {
+            return
+        }
+
+        sleep 5
     }
 
     Write-Run "Write-Error `"installer.ps1 (8): failed to run Helm install.`n  $err`""

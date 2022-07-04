@@ -95,7 +95,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
         return 3
     }
 
-    sleep 3
+    sleep 5
 
     $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
@@ -148,7 +148,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
         return 3
     }
 
-    sleep 3
+    sleep 5
 
     $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
