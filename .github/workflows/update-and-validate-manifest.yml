@@ -70,7 +70,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
-          key: barak-${{ secrets.CACHE_VERSION }}
+          key: baraks
       - name: Verify we have our cached file
         run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
 
@@ -92,7 +92,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ./manifest.json
-          key: barak-${{ secrets.CACHE_VERSION }}
+          key: baraks
       - name: Verify we have our cached file
         run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
       - name: Verify we have our cached file
