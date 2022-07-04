@@ -34,7 +34,7 @@
                   "type": "path-list",
                   "name": "req-log-sources",
                   "label": "Required path list",
-                  "value": ['a'],
+                  "value": [],
                   "required": true
                 },
                 {
