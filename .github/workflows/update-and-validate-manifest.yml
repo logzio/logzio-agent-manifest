@@ -3,13 +3,14 @@ name: build and verify manifest
 on: [push]
 jobs:
   filter_for_configs:
-    name: filter for configs folder changes
+    name: Filter for configs folder changes
     runs-on: ubuntu-latest
     outputs:
       configs: ${{ steps.filter.outputs.configs }}
     steps:
       - uses: actions/checkout@v3
-      - uses: dorny/paths-filter@v2
+      - name: Set filter
+        uses: dorny/paths-filter@v2
         id: filter
         with:
           filters: |
@@ -30,7 +31,7 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os, json, sys
+            import os, json
             configs = []
             for filename in os.scandir('configs'):
               with open(filename, mode='r', encoding='utf-8') as file:
@@ -38,7 +39,7 @@ jobs:
             with open("manifest.json", mode='w', encoding='utf-8') as f:
               f.truncate(0)
               json.dump(configs, f)
-      - name: Upload manifest
+      - name: Upload manifest to workflow artifacts
         uses: actions/upload-artifact@v3
         with:
           name: manifest
@@ -53,7 +54,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Download manifest file
+      - name: Download manifest from artifacts
         uses: actions/download-artifact@v3
         with:
           name: manifest
@@ -79,7 +80,7 @@ jobs:
         with:
           python-version: '3.8'
       - run: python -m pip install requests
-      - name: Download manifest file
+      - name: Download manifest from artifacts
         uses: actions/download-artifact@v3
         with:
           name: manifest
@@ -87,7 +88,7 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os, requests, json, sys
+            import os, requests, json
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
             with open("./manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
