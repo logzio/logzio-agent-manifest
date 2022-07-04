@@ -1,5 +1,5 @@
 {
-   "name":"Kubernetesheyyy",
+   "name":"Kubernetes",
    "logo":"https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
    "description":"",
    "manifest":true,
@@ -28,7 +28,7 @@
                ],
                "telemetries":[
                   {
-                     "type":"METRICS",
+                     "type":"LOG_ANALYTICS",
                      "hint":"Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
                      "params":[
                         
