@@ -112,7 +112,7 @@ function Install-Chocolatey {
         return
     }
     
-    Write-Run "Write-Error `"utils_functions.ps1 (1): failed to install Chocolatey.`n  run the following command 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))' and rerun Logz.io agent script`""
+    Write-Run "Write-Error `"utils_functions.ps1 (1): failed to install Chocolatey.`n  run the following command 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))', open a new PowerShell and rerun Logz.io agent script`""
     return 1
 }
 

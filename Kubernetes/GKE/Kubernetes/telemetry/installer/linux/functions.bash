@@ -304,10 +304,16 @@ function run_helm_install () {
     write_log "INFO" "Running Helm install ..."
     write_log "INFO" "helm_sets = $log_helm_sets"
 
-    helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >/dev/null 2>$task_error_file
-    if [[ $? -eq 0 ]]; then
-        return
-    fi
+    retries=0
+    while [ $retries -lt 3 ]; do
+        let "retries++"
+        helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >/dev/null 2>$task_error_file
+        if [[ $? -eq 0 ]]; then
+            return
+        fi
+
+        sleep 5
+    done
 
     local err=$(cat $task_error_file)
     write_run "print_error \"installer.bash (8): failed to run Helm install.\n  $err\""
