@@ -68,8 +68,8 @@ jobs:
             import os, requests, json, sys
             
             for path, currentDirectory, files in os.walk("/home"):
-            for file in files:
-              print(os.path.join(path, file))
+              for file in files:
+                print(os.path.join(path, file))
         
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
             with open("/home/runner/work/manifest.json", mode='r', encoding='utf-8') as f:
