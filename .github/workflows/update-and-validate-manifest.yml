@@ -39,11 +39,14 @@ jobs:
             with open("manifest.json", mode='w', encoding='utf-8') as f:
               f.truncate(0)
               json.dump(configs, f)
+      - name: Display structure of downloaded files
+        run: ls -R
       - uses: actions/upload-artifact@master
         with:
           name: built-manifest
-          if-no-files-found: error
           path: ./manifest.json
+          if-no-files-found: error
+          retention-days: 1
       - uses: actions/download-artifact@v3
         with:
           name: built-manifest
