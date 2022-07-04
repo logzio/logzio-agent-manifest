@@ -69,8 +69,10 @@ jobs:
         id: cache-primes
         uses: actions/cache@v3
         with:
-          path: ./manifest.json
+          path: /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
           key: barak
+      - name: Verify we have our cached file
+        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
 
   barak:
     name: hey
@@ -83,12 +85,16 @@ jobs:
         with:
           python-version: '3.8'
       - run: python -m pip install requests
+      - name: Verify we have our cached file
+        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
       - name: Cache Primes
         id: cache-primes
         uses: actions/cache@v3
         with:
           path: ./manifest.json
           key: barak
+      - name: Verify we have our cached file
+        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
       - name: test
         uses: jannekem/run-python-script-action@v1
         with:
