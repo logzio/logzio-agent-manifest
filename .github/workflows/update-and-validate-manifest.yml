@@ -39,18 +39,6 @@ jobs:
             with open("manifest.json", mode='w', encoding='utf-8') as f:
               f.truncate(0)
               json.dump(configs, f)
-            
-            # validation
-#            url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
-#            with open("manifest.json", mode='r', encoding='utf-8') as f:
-#              manifest = json.load(f)
-#              response = requests.post(url, json = manifest)
-#            isValid = response.json()['valid']
-#            if isValid != True:
-#              message = (response.json()['message'])
-#              sys.exit(message)
-#            else:
-#              print('Validation pass')
       - uses: actions/upload-artifact@master
         with:
           name: my-artifact
@@ -59,10 +47,7 @@ jobs:
         with:
           name: my-artifact
           path: /home/runner/work
-
-      - name: Display structure of downloaded files
-        run: ls -R
-      - name: update testing pre release
+      - name: update testing pre-release
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -78,14 +63,10 @@ jobs:
           script: |
             import os, requests, json, sys
                     
-            path = "/home/runner/work"
-            print(os.listdir( path ))
-            
             # validation
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
             with open("/home/runner/work/manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
-              print(manifest)
               response = requests.post(url, json = manifest)
             isValid = response.json()['valid']
             if isValid != True:
@@ -93,43 +74,3 @@ jobs:
               sys.exit(message)
             else:
               print('Validation pass')
-
-#  validate-manifest:
-#    name: validate manifest
-#    needs: [filter_for_configs, build_manifest]
-#    if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/download-artifact@master
-#        with:
-#          name: my-artifact
-#          path: ./
-#      - run: cat ./manifest.json
-#      - run: ls -R
-#      - run: pwd
-#      - uses: actions/checkout@v3
-#      - uses: actions/setup-python@v4
-#        with:
-#          python-version: '3.8'
-#      - run: python -m pip install requests
-#      - name: Build and verify manifest
-#        uses: jannekem/run-python-script-action@v1
-#        with:
-#          script: |
-#            import os, requests, json, sys
-#
-#            path = "/home"
-#            print(os.listdir( path ))
-#            print(os.getcwd())
-#
-#            url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
-#            with open("/home/runner/work/logzio-agent-manifest/logzio-agent-manifest/manifest.json", mode='r', encoding='utf-8') as f:
-#              manifest = json.load(f)
-#              print(manifest)
-#              response = requests.post(url, json = manifest)
-#            isValid = response.json()['valid']
-#            if isValid != True:
-#              message = (response.json()['message'])
-#              sys.exit(message)
-#            else:
-#              print('Validation pass')
