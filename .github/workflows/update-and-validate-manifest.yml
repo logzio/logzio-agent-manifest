@@ -58,6 +58,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: my-artifact
+          path: /home/runner/work
 
       - name: Display structure of downloaded files
         run: ls -R
@@ -76,6 +77,9 @@ jobs:
         with:
           script: |
             import os, requests, json, sys
+                    
+            path = "/home/runner/work"
+            print(os.listdir( path ))
             
             # validation
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
