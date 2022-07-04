@@ -67,10 +67,10 @@ jobs:
           script: |
             import os, requests, json, sys
             
-#            for path, currentDirectory, files in os.walk("/home/runner/work"):
-#              for file in files:
-#                print(os.path.join(path, file))
-
+            for path, currentDirectory, files in os.walk("/home/runner/work"):
+              for file in files:
+                print(os.path.join(path, file))
+        
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
             with open("/home/runner/work/logzio-agent-manifest/logzio-agent-manifest/manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
