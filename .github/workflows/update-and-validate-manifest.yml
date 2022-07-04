@@ -17,7 +17,7 @@ jobs:
               - 'configs/**'
 
   build_manifest:
-    name: build manifest and push to test release
+    name: Build manifest and update test release
     needs: filter_for_configs
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
@@ -30,7 +30,7 @@ jobs:
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
-            import os, requests, json, sys
+            import os, json, sys
             configs = []
             for filename in os.scandir('configs'):
               with open(filename, mode='r', encoding='utf-8') as file:
@@ -43,6 +43,8 @@ jobs:
         with:
           name: manifest
           path: manifest.json
+          if-no-files-found: error
+          retention-days: 1
       - name: Update testing pre-release
         uses: meeDamian/github-release@2.0
         with:
