@@ -41,16 +41,16 @@ jobs:
               json.dump(configs, f)
       - name: Display structure of downloaded files
         run: ls -R
-      - uses: actions/upload-artifact@master
-        with:
-          name: built-manifest
-          path: ./manifest.json
-          if-no-files-found: error
-          retention-days: 1
-      - uses: actions/download-artifact@v3
-        with:
-          name: built-manifest
-          path: /home/runner/work
+#      - uses: actions/upload-artifact@master
+#        with:
+#          name: built-manifest
+#          path: ./manifest.json
+#          if-no-files-found: error
+#          retention-days: 1
+#      - uses: actions/download-artifact@v3
+#        with:
+#          name: built-manifest
+#          path: /home/runner/work
       - name: update testing pre-release
         uses: meeDamian/github-release@2.0
         with:
@@ -66,7 +66,11 @@ jobs:
         with:
           script: |
             import os, requests, json, sys
-
+            
+            for path, currentDirectory, files in os.walk("/home"):
+            for file in files:
+              print(os.path.join(path, file))
+        
             url = 'https://app.logz.io/telemetry-agent/public/manifest/validate'
             with open("/home/runner/work/manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
