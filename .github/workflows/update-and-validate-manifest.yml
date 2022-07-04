@@ -65,3 +65,38 @@ jobs:
               sys.exit(message)
             else:
               print('Validation pass')
+      - name: Cache Primes
+        id: cache-primes
+        uses: actions/cache@v3
+        with:
+          path: ./manifest.json
+          key: barak
+
+  barak:
+    name: hey
+    needs: [filter_for_configs, build_manifest]
+    if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+      with:
+        python-version: '3.8'
+      - run: python -m pip install requests
+      - name: Cache Primes
+          id: cache-primes
+          uses: actions/cache@v3
+          with:
+            path: ./manifest.json
+            key: barak
+      - name: test
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os, requests, json, sys
+            def find(name, path):
+              for root, dirs, files in os.walk(path):
+                if name in files:
+                  return os.path.join(root, name)
+            
+            print(find('manifet.json', '/home'))
