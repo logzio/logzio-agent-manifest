@@ -25,7 +25,7 @@ function is_kubectl_installed () {
 function is_kubectl_connected_to_k8s_cluster () {
     write_log "INFO" "Checking if kubectl is connected to an active Kubernetes cluster ..."
 
-    local cluster_info=$(kubectl cluster-info 2> $task_error_file)
+    local cluster_info=$(kubectl cluster-info 2>$task_error_file)
     local err=$(cat $task_error_file)
     if [[ -z "$err" || "$err" != *"ERROR"* ]]; then
         write_log "INFO" "$cluster_info"
@@ -81,7 +81,7 @@ function can_k8s_cluster_connect_to_logzio_logs () {
         return 3
     fi
 
-    sleep 3
+    sleep 5
 
     local pod_logs=$(kubectl logs logzio-logs-connection-test 2>$task_error_file)
     local err=$(cat $task_error_file)
@@ -124,7 +124,7 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
         return 3
     fi
 
-    sleep 3
+    sleep 5
 
     local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>$task_error_file)
     local err=$(cat $task_error_file)
@@ -156,11 +156,13 @@ function is_helm_installed () {
 
     write_log "INFO" "Installing Helm ..."
     curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash >/dev/null 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (4): failed to install Helm.\n  $err\""
-        return 4
+    if [[ $? -eq 0 ]]; then
+        return
     fi
+    
+    local err=$(cat $task_error_file)
+    write_run "print_error \"prerequisites.bash (4): failed to install Helm.\n  $err\""
+    return 4
 }
 
 # Adds Logz.io Helm repo

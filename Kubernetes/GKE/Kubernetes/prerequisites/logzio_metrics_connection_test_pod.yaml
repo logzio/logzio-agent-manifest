@@ -7,3 +7,4 @@ spec:
   - name: logzio-metrics-connection-test
     image: busybox:latest
     command: [ "/bin/sh", "-c", "telnet listener.logz.io 8053" ]
+  restartPolicy: OnFailure
