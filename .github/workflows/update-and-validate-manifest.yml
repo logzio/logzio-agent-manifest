@@ -65,14 +65,14 @@ jobs:
               sys.exit(message)
             else:
               print('Validation pass')
-      - name: Cache Primes
-        id: cache-primes
-        uses: actions/cache@v3
-        with:
-          path: /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
-          key: somename
-      - name: Verify we have our cached file
-        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
+#      - name: Cache Primes
+#        id: cache-primes
+#        uses: actions/cache@v3
+#        with:
+#          path: /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
+#          key: somename
+#      - name: Verify we have our cached file
+#        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
 
   barak:
     name: hey
@@ -85,23 +85,25 @@ jobs:
         with:
           python-version: '3.8'
       - run: python -m pip install requests
-      - name: Verify we have our cached file
-        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
-      - name: Cache Primes
-        id: cache-primes
-        uses: actions/cache@v3
-        with:
-          path: ./manifest.json
-          key: somename
-      - name: Verify we have our cached folder
-        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
-      - name: Verify we have our cached file
-        run: cat /home/runner/work/logzio-agent-manifest/logzio-agent-manifest/manifest.json
+#      - name: Verify we have our cached file
+#        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
+#      - name: Cache Primes
+#        id: cache-primes
+#        uses: actions/cache@v3
+#        with:
+#          path: ./manifest.json
+#          key: somename
+#      - name: Verify we have our cached folder
+#        run: ls /home/runner/work/logzio-agent-manifest/logzio-agent-manifest
+#      - name: Verify we have our cached file
+#        run: cat /home/runner/work/logzio-agent-manifest/logzio-agent-manifest/manifest.json
       - name: test
         uses: jannekem/run-python-script-action@v1
         with:
           script: |
             import os, requests, json, sys
-            with open("./manifest.json", mode='r', encoding='utf-8') as f:
-              manifest = json.load(f)
-              print(manifest)
+            r = requests.get("https://github.com/logzio/logzio-agent-manifest/releases/download/testing/manifest.json", allow_redirects=True)
+            print(r.content)
+#            with open("./manifest.json", mode='r', encoding='utf-8') as f:
+#              manifest = json.load(f)
+#              print(manifest)
