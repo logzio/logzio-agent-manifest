@@ -55,6 +55,12 @@ jobs:
         with:
           name: my-artifact
           path: ./
+      - uses: actions/download-artifact@v3
+        with:
+          name: my-artifact
+
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: update testing pre release
         uses: meeDamian/github-release@2.0
         with:
