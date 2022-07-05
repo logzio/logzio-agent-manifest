@@ -1,0 +1,25 @@
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  update_latest:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download manifest from artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: manifest
+      - name: Update latest
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: latest
+          tag: latest
+          allow_override: true
+          prerelease: true
+          files: manifest.json
+          gzip: false
