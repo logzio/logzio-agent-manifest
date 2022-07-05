@@ -29,7 +29,18 @@
             {
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
-              "params": []
+              "params": [
+                {
+                  "type": "multiline-pattern",
+                  "name": "required-multiline",
+                  "label": "ALON AND MOSHE",
+                  "value": [{
+                    "pattern": "my",
+                    "source": "value"
+                  }],
+                  "required": true
+                }
+              ]
             },
             {
               "type": "METRICS",
@@ -48,6 +59,13 @@
                   "name": "optional log-sources",
                   "label": "Optional path list",
                   "value": []
+                },
+                {
+                  "type": "path-list",
+                  "name": "optional log-sources",
+                  "label": "Optional path list",
+                  "value": [],
+                  "required": true
                 }
               ],
               "dashboards": [
