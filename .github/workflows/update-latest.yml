@@ -9,11 +9,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Download manifest from artifacts
-        uses: actions/download-artifact@v3
+      - uses: actions/setup-python@v4
         with:
-          name: manifest
-      - name: Update latest
+          python-version: '3.8'
+      - name: Build manifest
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os, json
+            configs = []
+            for filename in os.scandir('configs'):
+              with open(filename, mode='r', encoding='utf-8') as file:
+                configs.append(json.load(file))
+            with open("manifest.json", mode='w', encoding='utf-8') as f:
+              f.truncate(0)
+              json.dump(configs, f)
+      - name: Update latest release
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
