@@ -56,13 +56,13 @@
                 },
                 {
                   "type": "path-list",
-                  "name": "optional log-sources",
+                  "name": "optional-log-sources",
                   "label": "Optional path list",
                   "value": []
                 },
                 {
                   "type": "path-list",
-                  "name": "optional log-sources",
+                  "name": "req-log-sources",
                   "label": "Optional path list",
                   "value": [],
                   "required": true
