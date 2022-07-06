@@ -1,11 +1,27 @@
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    branches:
+      - master
 
 jobs:
+  filter_for_configs:
+    name: Filter for configs folder changes
+    runs-on: ubuntu-latest
+    outputs:
+      configs: ${{ steps.filter.outputs.configs }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set filter
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            configs:
+              - 'configs/**'
+
   update_latest:
-    if: github.event.pull_request.merged == true
+    needs: filter_for_configs
+    if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
