@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  filter_for_configs:
+    name: Filter for configs folder changes
+    runs-on: ubuntu-latest
+    outputs:
+      configs: ${{ steps.filter.outputs.configs }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set filter
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            configs:
+              - 'configs/**'
+
+  update_latest:
+    needs: filter_for_configs
+    if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      - name: Build manifest
+        uses: jannekem/run-python-script-action@v1
+        with:
+          script: |
+            import os, json
+            configs = []
+            for filename in os.scandir('configs'):
+              with open(filename, mode='r', encoding='utf-8') as file:
+                configs.append(json.load(file))
+            with open("manifest.json", mode='w', encoding='utf-8') as f:
+              f.truncate(0)
+              json.dump(configs, f)
+      - name: Update latest release
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: latest
+          tag: latest
+          allow_override: true
+          prerelease: true
+          files: manifest.json
+          gzip: false
