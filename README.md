@@ -117,7 +117,7 @@ powershell { iex “& { $(irm https://github.com/logzio/logzio-agent-manifest/re
 
 under each OS in scripts directory, there is troubleshooting-tools directory which contains troubleshooting scripts (mainly for Support team).
 
-* A log file will be created at the beginning of the running in the directory where the script was running from.
+* A log file will be created at the beginning of the running in the directory where the script was running from (except in Windows, which will be created under `Documents` directory).
 
 ### Script Arguments
 
