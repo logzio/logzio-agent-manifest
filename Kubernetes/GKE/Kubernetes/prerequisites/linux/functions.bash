@@ -83,6 +83,23 @@ function can_k8s_cluster_connect_to_logzio_logs () {
 
     sleep 5
 
+    local pod_status=$(kubectl get pods | grep logzio-logs-connection-test | tr -s ' ' | cut -d ' ' -f3)
+    if [[ "$pod_status" != "Completed" ]]; then
+        local pod_logs=$(kubectl logs logzio-logs-connection-test 2>$task_error_file)
+        local err=$(cat $task_error_file)
+
+        delete_test_pod "logzio-logs-connection-test"
+
+        if [[ ! -z "$err" && "$err" == *"ERROR"* ]]; then
+            write_run "print_error \"prerequisites.bash (3): logzio-logs-connection-test pod status was $pod_status\""
+            write_run "print_error \"prerequisites.bash (3): failed to get logs of logzio-logs-connection-test pod.\n  $err\""
+            return 3
+        fi
+
+        write_run "print_error \"prerequisites.bash (3): logzio-logs-connection-test pod status was $pod_status.\n  $pod_logs\""
+        return 3
+    fi
+
     local pod_logs=$(kubectl logs logzio-logs-connection-test 2>$task_error_file)
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" && "$err" == *"ERROR"* ]]; then
@@ -125,6 +142,23 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
     fi
 
     sleep 5
+
+    local pod_status=$(kubectl get pods | grep logzio-metrics-connection-test | tr -s ' ' | cut -d ' ' -f3)
+    if [[ "$pod_status" != "Completed" ]]; then
+        local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>$task_error_file)
+        local err=$(cat $task_error_file)
+
+        delete_test_pod "logzio-metrics-connection-test"
+
+        if [[ ! -z "$err" && "$err" == *"ERROR"* ]]; then
+            write_run "print_error \"prerequisites.bash (3): logzio-metrics-connection-test pod status was $pod_status\""
+            write_run "print_error \"prerequisites.bash (3): failed to get logs of logzio-metrics-connection-test pod.\n  $err\""
+            return 3
+        fi
+
+        write_run "print_error \"prerequisites.bash (3): logzio-metrics-connection-test pod status was $pod_status.\n  $pod_logs\""
+        return 3
+    fi
 
     local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>$task_error_file)
     local err=$(cat $task_error_file)
