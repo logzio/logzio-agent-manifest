@@ -89,6 +89,24 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
 
     sleep 5
 
+    $local:pod = kubectl get pods | Select-String -Pattern logzio-logs-connection-test | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split " "}
+    $local:podStatus = $pod[2]
+    if (-Not $podStatus.Equals("Completed")) {
+        $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
+        $local:err = Get-TaskError
+
+        Remove-TestPod "logzio-logs-connection-test"
+
+        if (-Not [string]::IsNullOrEmpty($err)) {
+            Write-Run "Write-Error `"prerequisites.ps1 (3): logzio-logs-connection-test pod status was $podStatus`""
+            Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-logs-connection-test pod.`n  $err`""
+            return 3
+        }
+        
+        Write-Run "Write-Error `"prerequisites.ps1 (3): logzio-logs-connection-test pod status was $podStatus.`n  $podLogs`""
+        return 3
+    }
+
     $local:podLogs = kubectl logs logzio-logs-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
     if (-Not [string]::IsNullOrEmpty($err)) {
@@ -137,6 +155,24 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     }
 
     sleep 5
+
+    $local:pod = kubectl get pods | Select-String -Pattern logzio-metrics-connection-test | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split " "}
+    $local:podStatus = $pod[2]
+    if (-Not $podStatus.Equals("Completed")) {
+        $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
+        $local:err = Get-TaskError
+
+        Remove-TestPod "logzio-logs-connection-test"
+
+        if (-Not [string]::IsNullOrEmpty($err)) {
+            Write-Run "Write-Error `"prerequisites.ps1 (3): logzio-metrics-connection-test pod status was $podStatus`""
+            Write-Run "Write-Error `"prerequisites.ps1 (3): failed to get logs of logzio-metrics-connection-test pod.`n  $err`""
+            return 3
+        }
+        
+        Write-Run "Write-Error `"prerequisites.ps1 (3): logzio-metrics-connection-test pod status was $podStatus.`n  $podLogs`""
+        return 3
+    }
 
     $local:podLogs = kubectl logs logzio-metrics-connection-test 2>$using:taskErrorFile
     $local:err = Get-TaskError
