@@ -51,7 +51,7 @@
                 "type": "multiline-pattern",
                 "name": "required-nested-multiline-pattern",
                 "label": "Required NESTED Multiline Pattern",
-                "value": [],
+                "value": []
               },
               {
                 "type": "multiline-pattern",
