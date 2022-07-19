@@ -41,7 +41,7 @@
                   "type": "multiline-pattern",
                   "name": "optional-multiline-pattern",
                   "label": "Optional Multiline Pattern",
-                  "value": [],
+                  "value": []
                 },
                 {
                   "type": "multiline-pattern",
@@ -49,7 +49,7 @@
                   "label": "Optional Multiline Pattern with default values",
                   "value": [
                     {"pattern": "my<>pattern", "source": "/path/to/file" }
-                  ],
+                  ]
                 }
               ]
             },
