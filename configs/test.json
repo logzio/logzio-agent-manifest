@@ -29,7 +29,29 @@
             {
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
-              "params": []
+              "params": [
+                {
+                  "type": "multiline-pattern",
+                  "name": "required-multiline-pattern",
+                  "label": "Required Multiline Pattern",
+                  "value": [],
+                  "required": true
+                },
+                {
+                  "type": "multiline-pattern",
+                  "name": "optional-multiline-pattern",
+                  "label": "Optional Multiline Pattern",
+                  "value": [],
+                },
+                {
+                  "type": "multiline-pattern",
+                  "name": "optional-multiline-pattern-with-default-values",
+                  "label": "Optional Multiline Pattern with default values",
+                  "value": [
+                    {"pattern": "my<>pattern", "source": "/path/to/file" }
+                  ],
+                }
+              ]
             },
             {
               "type": "METRICS",
@@ -52,7 +74,7 @@
                 {
                   "type": "path-list",
                   "name": "req-log-sources",
-                  "label": "Optional path list",
+                  "label": "Required path list",
                   "value": [],
                   "required": true
                 }
