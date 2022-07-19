@@ -22,7 +22,22 @@
               "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
               "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
               "value": true,
-              "params": []
+              "params": [{
+                "type": "multiline-pattern",
+                "name": "required-nested-multiline-pattern",
+                "label": "Required NESTED Multiline Pattern",
+                "value": [],
+                "required": true
+              },
+              {
+                "type": "multiline-pattern",
+                "name": "optional-nested-multiline-pattern",
+                "label": "Optional NESTED Multiline Pattern",
+                "value": [{ 
+                  "source": "source/value", 
+                  "pattern": "pattern/value" 
+                }]
+              }]
             }
           ],
           "telemetries": [
