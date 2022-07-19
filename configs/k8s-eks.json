@@ -35,7 +35,14 @@
                      "description":"",
                      "hint":"Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
                      "params":[
-                        
+                        {
+                           "type":"boolean",
+                           "name":"isFargate",
+                           "label":"Using fargate nodes?",
+                           "description":"This is a description for fargate",
+                           "hint": "This is hint for fargate",
+                           "value":false
+                        }
                      ]
                   },
                   {
