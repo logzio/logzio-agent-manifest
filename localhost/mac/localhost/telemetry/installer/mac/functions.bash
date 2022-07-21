@@ -147,5 +147,9 @@ function get_metrics_scripts () {
 function run_otelcol_contrib_binary () {
     write_log "INFO" "Running otelcol-contrib binary ..."
     write_log "INFO" "OTEL config =\n$(cat $otel_config)"
-    xterm -e "./otelcol-contrib --config ./otel_config.yaml" --hold
+
+    local otel_binary_full_path=$(realpath ./otelcol-contrib)
+    local otel_config_full_path=$(realpath $otel_config)
+
+    osascript -e 'tell app "Terminal" to do script "$otel_binary_full_path --config $otel_config_full_path"'
 }
