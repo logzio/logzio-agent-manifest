@@ -89,6 +89,21 @@ function get_which_products_were_selected () {
     write_run "is_metrics_option_selected=$is_metrics_option_selected"
 }
 
+# Gets otelcol-contrib binary file
+# Error:
+#   Exit Code 3
+function get_otelcol_contrib_binary () {
+    write_log "INFO" "Getting otelcol-contrib binary ..."
+    curl -fsSL https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.55.0/otelcol-contrib_0.55.0_darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-contrib_0.55.0_darwin_amd64.tar.gz 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"instalelr.bash (3): failed to get otelcol-contrib binary file from open-telemetry repo.\n  $err\""
+        return 3
+    fi
+
+    tar -xf $logzio_temp_dir/otelcol-contrib.tar.gz otelcol-contrib -C .
+}
+
 # Gets OTEL config from logzio-agent-manifest repo
 # Output:
 #   otel_config - The OTEL config file path
@@ -150,8 +165,8 @@ function get_metrics_scripts () {
     fi
 }
 
-# Run otelconribcol with OTEL config
-function run_otelcontribcol_binary () {
-    write_log "INFO" "Running otelcontribcol binary ..."
-    xterm -e "./otelcontribcol --config ./otel_config.yaml" --hold
+# Run otelcol-contrib binary with OTEL config
+function run_otelcol_contrib_binary () {
+    write_log "INFO" "Running otelcol-contrib binary ..."
+    xterm -e "./otelcol-contrib --config ./otel_config.yaml" --hold
 }
