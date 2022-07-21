@@ -67,7 +67,7 @@ function add_logs_receivers_to_otel_config () {
         return 3
     fi
 
-    yq eval-all -i 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
+    yq eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (3): failed to add logs receivers to OTEL config file.\n  $err\""
@@ -109,7 +109,7 @@ function add_logs_exporter_to_otel_config () {
         return 4
     fi
 
-    yq eval-all -i 'select(fileIndex==0).exporters = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to add logs exporter to OTEL config file.\n  $err\""
