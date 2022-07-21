@@ -144,6 +144,8 @@ function get_metrics_scripts () {
 }
 
 # Run otelcol-contrib binary with OTEL config
+# Error:
+#   Exit Code 6
 function run_otelcol_contrib_binary () {
     write_log "INFO" "Running otelcol-contrib binary ..."
     write_log "INFO" "OTEL config =\n$(cat $otel_config)"
@@ -151,5 +153,12 @@ function run_otelcol_contrib_binary () {
     local otel_binary_full_path=$(realpath ./otelcol-contrib)
     local otel_config_full_path=$(realpath $otel_config)
 
-    osascript -e "tell app \"Terminal\" to do script \"$otel_binary_full_path --config $otel_config_full_path\""
+    osascript -e "tell app \"Terminal\" to do script \"$otel_binary_full_path --config $otel_config_full_path\"" >/dev/null 2>$task_error_file
+    if [[ $? -eq 0 ]]; then
+        return
+    fi
+
+    local err=$(cat $task_error_file)
+    write_run "print_error \"installer.bash (6): failed to run otelcol-contrib binary in another terminal.\n  $err\""
+    return 6
 }
