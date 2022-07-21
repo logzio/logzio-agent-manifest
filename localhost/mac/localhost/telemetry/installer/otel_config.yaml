@@ -7,7 +7,6 @@ exporters:
 service:
   pipelines:
     logs:
-      receivers:
-        - ${test}
+      receivers: []
       exporters: []
     metrics:
