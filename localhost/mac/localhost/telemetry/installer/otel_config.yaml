@@ -1,0 +1,13 @@
+receivers:
+processors:
+  batch:
+    send_batch_size: 10000
+    timeout: 1s
+exporters:
+service:
+  pipelines:
+    logs:
+      receivers:
+        - ${test}
+      exporters: []
+    metrics:

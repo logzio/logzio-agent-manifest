@@ -1,0 +1,4 @@
+prometheusremotewrite:
+    endpoint:
+    headers:
+      Authorization:
