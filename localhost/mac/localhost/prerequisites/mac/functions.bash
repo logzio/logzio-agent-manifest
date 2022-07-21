@@ -26,7 +26,7 @@ function can_localhost_connect_to_logzio_logs () {
     write_log "INFO" "Checking if localhost can connect to Logz.io logs (port 8071) ..."
 
     local result=$(sleep 1 | telnet listener.logz.io 8071 | grep Connected)
-    if [[ ! -z "$result"]]; then
+    if [[ ! -z "$result" ]]; then
         return
     fi
 
@@ -41,7 +41,7 @@ function can_localhost_connect_to_logzio_metrics () {
     write_log "INFO" "Checking if localhost can connect to Logz.io metrics (port 8053) ..."
 
     local result=$(sleep 1 | telnet listener.logz.io 8053 | grep Connected)
-    if [[ ! -z "$result"]]; then
+    if [[ ! -z "$result" ]]; then
         return
     fi
 
