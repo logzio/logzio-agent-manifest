@@ -67,12 +67,12 @@ function get_which_products_were_selected () {
     write_run "is_metrics_option_selected=$is_metrics_option_selected"
 }
 
-# Gets otelcol-contrib binary file
+# Gets otelcol-contrib binary
 # Error:
 #   Exit Code 2
 function get_otelcol_contrib_binary () {
     write_log "INFO" "Getting otelcol-contrib binary ..."
-    curl -fsSL https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.55.0/otelcol-contrib_0.55.0_darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-contrib_0.55.0_darwin_amd64.tar.gz 2>$task_error_file
+    curl -fsSL https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.55.0/otelcol-contrib_0.55.0_darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-contrib.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"instalelr.bash (2): failed to get otelcol-contrib binary file from open-telemetry repo.\n  $err\""
