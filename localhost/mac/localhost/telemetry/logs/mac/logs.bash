@@ -8,8 +8,8 @@
 write_log "INFO" "Loading logs functions ..."
 source $logzio_temp_dir/logs_functions.bash
 
-# Get Logz.io logs listener URL
-execute_task "get_logzio_logs_listener_url" "getting Logz.io logs listener URL"
+# Get Logz.io region
+execute_task "get_logzio_region" "getting Logz.io region"
 
 # Get Logz.io logs token
 execute_task "get_logzio_logs_token" "getting Logz.io logs token"
