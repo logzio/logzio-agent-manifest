@@ -91,10 +91,10 @@ function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
     otel_config="./otel_config"
-    curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config/logs.bash 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (3): failed to get OTEL config file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (3): failed to get OTEL config file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
@@ -109,7 +109,7 @@ function get_logs_scripts () {
     curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > $logzio_temp_dir/logs.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (4): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (4): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
         return 4
     fi
 
@@ -117,7 +117,7 @@ function get_logs_scripts () {
     curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > $logzio_temp_dir/logs_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (4): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (4): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
         return 4
     fi
 }
@@ -130,7 +130,7 @@ function get_metrics_scripts () {
     curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > $logzio_temp_dir/metrics.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (5): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (5): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
         return 5
     fi
 
@@ -138,7 +138,7 @@ function get_metrics_scripts () {
     curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > $logzio_temp_dir/metrics_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (5): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (5): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
         return 5
     fi
 }
