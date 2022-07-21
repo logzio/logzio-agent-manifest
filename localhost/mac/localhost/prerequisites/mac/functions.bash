@@ -25,7 +25,7 @@ function get_otelcontribcol_binary () {
 function can_localhost_connect_to_logzio_logs () {
     write_log "INFO" "Checking if localhost can connect to Logz.io logs (port 8071) ..."
 
-    local result=$(sleep 1 | telnet listener.logz.io 8071 | grep Connected)
+    local result=$(sleep 1 | telnet listener.logz.io 8071 2>/dev/null | grep Connected)
     if [[ ! -z "$result" ]]; then
         return
     fi
@@ -40,7 +40,7 @@ function can_localhost_connect_to_logzio_logs () {
 function can_localhost_connect_to_logzio_metrics () {
     write_log "INFO" "Checking if localhost can connect to Logz.io metrics (port 8053) ..."
 
-    local result=$(sleep 1 | telnet listener.logz.io 8053 | grep Connected)
+    local result=$(sleep 1 | telnet listener.logz.io 8053 2>/dev/null | grep Connected)
     if [[ ! -z "$result" ]]; then
         return
     fi
