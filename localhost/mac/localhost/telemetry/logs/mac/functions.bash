@@ -67,14 +67,14 @@ function add_logs_receivers_to_otel_config () {
         return 3
     fi
 
-    yq eval-all -ie 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
+    yq eval-all -i 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (3): failed to add logs receivers to OTEL config file.\n  $err\""
         return 3
     fi
 
-    local receivers=$(yq e -e 'keys' $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file)
+    local receivers=$(yq e 'keys' $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file)
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
         write_run "print_error \"logs.bash (3): failed to get receiver names from logs_otel_receivers yaml file.\n  $err\""
@@ -84,7 +84,7 @@ function add_logs_receivers_to_otel_config () {
     for receiver in $receivers; do
         receiver=$(echo $receiver | cut -d ' ' -f2)
 
-        yq e -ie ".service.pipelines.logs.receivers += \"$receiver\"" $otel_config 2>$task_error_file
+        yq e -i ".service.pipelines.logs.receivers += \"$receiver\"" $otel_config 2>$task_error_file
         if [[ $? -ne 0 ]]; then
             local err=$(cat $task_error_file)
             write_run "print_error \"logs.bash (3): failed to add service pipeline logs receiver to OTEL config file.\n  $err\""
@@ -106,28 +106,28 @@ function add_logs_exporter_to_otel_config () {
         return 4
     fi
 
-    yq e -ie "logzio/logs.account_token = \"$logs_token\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq e -i "logzio/logs.account_token = \"$logs_token\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to insert Logz.io logs token into logs_otel_exporter yaml file.\n  $err\""
         return 4
     fi
 
-    yq e -ie "logzio/logs.region = \"$logzio_region\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq e -i "logzio/logs.region = \"$logzio_region\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to insert Logz.io region into logs_otel_exporter yaml file.\n  $err\""
         return 4
     fi
 
-    yq eval-all -ie 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq eval-all -i 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to add logs exporter to OTEL config file.\n  $err\""
         return 4
     fi
 
-    yq e -ie '.service.pipelines.logs.exporters += "logzio/logs"' $otel_config 2>$task_error_file
+    yq e -i '.service.pipelines.logs.exporters += "logzio/logs"' $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to add service pipeline logs exporter to OTEL config file.\n  $err\""

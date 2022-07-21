@@ -4,28 +4,6 @@
 ################################################### Installer Mac Functions #####################################################
 #################################################################################################################################
 
-# Gets general params (params under datasource)
-# Output:
-#   general_params - The params under datasource
-# Error:
-#   Exit Code 1
-function get_general_params () {
-    write_log "INFO" "Getting general params ..."
-
-    local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' $app_json)
-    if [[ "$general_params" = null ]]; then
-        write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON\""
-        return 1
-    fi
-    if [[ -z "$general_params" ]]; then
-        write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].params[]' is empty in application JSON\""
-        return 1
-    fi
-
-    write_log "INFO" "general_params = $general_params"
-    write_run "general_params='$general_params'"
-}
-
 # Gets which products were selected (logs/metrics)
 # Output:
 #   is_logs_option_selected - Tells if logs option was selected (true/false)
@@ -33,18 +11,18 @@ function get_general_params () {
 #   is_metrics_option_selected - Tells if metrics option was selected (true/false)
 #   metrics_params - The metrics params if metrics option was selected
 # Error:
-#   Exit Code 2
+#   Exit Code 1
 function get_which_products_were_selected () {
     write_log "INFO" "Getting which products were selected ..."
 
     local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then
-        write_run "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\""
-        return 2
+        write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\""
+        return 1
     fi
     if [[ -z "$telemetries" ]]; then
-        write_run "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\""
-        return 2
+        write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\""
+        return 1
     fi
 
     local is_logs_option_selected=false
@@ -54,18 +32,18 @@ function get_which_products_were_selected () {
     while read -r telemetry; do
         local type=$(echo "$telemetry" | jq -r '.type')
         if [[ "$type" = null ]]; then
-            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\""
-            return 2
+            write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\""
+            return 1
         fi
         if [[ -z "$type" ]]; then
-            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\""
-            return 2
+            write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\""
+            return 1
         fi
 
         local params=$(echo -e "$telemetry" | jq -r '.params[]')
         if [[ "$params" = null ]]; then
-            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\""
-            return 2
+            write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\""
+            return 1
         fi
 
         if [[ "$type" = "LOG_ANALYTICS" ]]; then
@@ -91,14 +69,14 @@ function get_which_products_were_selected () {
 
 # Gets otelcol-contrib binary file
 # Error:
-#   Exit Code 3
+#   Exit Code 2
 function get_otelcol_contrib_binary () {
     write_log "INFO" "Getting otelcol-contrib binary ..."
     curl -fsSL https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.55.0/otelcol-contrib_0.55.0_darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-contrib_0.55.0_darwin_amd64.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"instalelr.bash (3): failed to get otelcol-contrib binary file from open-telemetry repo.\n  $err\""
-        return 3
+        write_run "print_error \"instalelr.bash (2): failed to get otelcol-contrib binary file from open-telemetry repo.\n  $err\""
+        return 2
     fi
 
     tar -xf $logzio_temp_dir/otelcol-contrib.tar.gz otelcol-contrib -C .
@@ -168,5 +146,6 @@ function get_metrics_scripts () {
 # Run otelcol-contrib binary with OTEL config
 function run_otelcol_contrib_binary () {
     write_log "INFO" "Running otelcol-contrib binary ..."
+    write_log "INFO" "OTEL config =\n$(cat $otel_config)"
     xterm -e "./otelcol-contrib --config ./otel_config.yaml" --hold
 }

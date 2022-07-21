@@ -62,14 +62,14 @@ function add_metrics_receivers_to_otel_config () {
         return 3
     fi
 
-    yq eval-all -ie 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_receivers.yaml 2>$task_error_file
+    yq eval-all -i 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_receivers.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (3): failed to add metrics receivers to OTEL config file.\n  $err\""
         return 3
     fi
 
-    local receivers=$(yq e -e 'keys' $logzio_temp_dir/metrics_otel_receivers.yaml 2>$task_error_file)
+    local receivers=$(yq e 'keys' $logzio_temp_dir/metrics_otel_receivers.yaml 2>$task_error_file)
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
         write_run "print_error \"metrics.bash (3): failed to get receiver names from metrics_otel_receivers yaml file.\n  $err\""
@@ -79,7 +79,7 @@ function add_metrics_receivers_to_otel_config () {
     for receiver in $receivers; do
         receiver=$(echo $receiver | cut -d ' ' -f2)
 
-        yq e -ie ".service.pipelines.metrics.receivers += \"$receiver\"" $otel_config 2>$task_error_file
+        yq e -i ".service.pipelines.metrics.receivers += \"$receiver\"" $otel_config 2>$task_error_file
         if [[ $? -ne 0 ]]; then
             local err=$(cat $task_error_file)
             write_run "print_error \"metrics.bash (3): failed to add service pipeline metrics receiver to OTEL config file.\n  $err\""
@@ -101,28 +101,28 @@ function add_metrics_exporter_to_otel_config () {
         return 4
     fi
 
-    yq e -ie "prometheusremotewrite.endpoint = \"$metrics_listener_url\"" $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
+    yq e -i "prometheusremotewrite.endpoint = \"$metrics_listener_url\"" $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (4): failed to insert Logz.io metrics listener URL into logs_otel_exporter yaml file.\n  $err\""
         return 4
     fi
 
-    yq e -ie "prometheusremotewrite.headers.Authorization = \"Bearer $metrics_token\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq e -i "prometheusremotewrite.headers.Authorization = \"Bearer $metrics_token\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to insert Logz.io metrics token into logs_otel_exporter yaml file.\n  $err\""
         return 4
     fi
 
-    yq eval-all -ie 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq eval-all -i 'select(fileIndex==0).receivers = select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to add logs exporter to OTEL config file.\n  $err\""
         return 4
     fi
 
-    yq e -ie '.service.pipelines.metrics.exporters += "prometheusremotewrite"' $otel_config 2>$task_error_file
+    yq e -i '.service.pipelines.metrics.exporters += "prometheusremotewrite"' $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to add service pipeline metrics exporter to OTEL config file.\n  $err\""
