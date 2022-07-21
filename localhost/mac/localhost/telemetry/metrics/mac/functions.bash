@@ -101,14 +101,14 @@ function add_metrics_exporter_to_otel_config () {
         return 4
     fi
 
-    yq e -i "prometheusremotewrite.endpoint = \"$metrics_listener_url\"" $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
+    yq e -i ".prometheusremotewrite.endpoint = \"$metrics_listener_url\"" $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (4): failed to insert Logz.io metrics listener URL into logs_otel_exporter yaml file.\n  $err\""
         return 4
     fi
 
-    yq e -i "prometheusremotewrite.headers.Authorization = \"Bearer $metrics_token\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq e -i ".prometheusremotewrite.headers.Authorization = \"Bearer $metrics_token\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to insert Logz.io metrics token into logs_otel_exporter yaml file.\n  $err\""
