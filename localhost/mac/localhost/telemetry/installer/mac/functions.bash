@@ -79,7 +79,7 @@ function get_otelcol_contrib_binary () {
         return 2
     fi
 
-    tar -xf $logzio_temp_dir/otelcol-contrib.tar.gz otelcol-contrib -C .
+    tar -zxf $logzio_temp_dir/otelcol-contrib.tar.gz otelcol-contrib
 }
 
 # Gets OTEL config from logzio-agent-manifest repo
