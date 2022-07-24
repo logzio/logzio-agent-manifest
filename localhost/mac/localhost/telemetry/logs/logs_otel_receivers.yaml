@@ -1,2 +1,2 @@
 filelog:
-  include: [/var/log/*.log]
+  include: []

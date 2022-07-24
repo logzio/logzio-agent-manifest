@@ -2,8 +2,13 @@ receivers:
 processors:
   batch:
     send_batch_size: 10000
-    timeout: 1s
+    timeout: 5s
+  resourcedetection/system:
+    detectors: ["system"]
+    system:
+      hostname_sources: ["os"]
 exporters:
+  logging:
 service:
   pipelines:
     logs:
