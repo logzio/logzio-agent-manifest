@@ -13,6 +13,7 @@
           "name": "System",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/windows.svg",
           "description": "Logz.io Uses OpenTelemetry to  monitor your computer ",
+          "params": [],
           "telemetries": [
             {
               "type": "LOG_ANALYTICS",
