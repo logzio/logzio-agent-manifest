@@ -93,28 +93,28 @@ function add_metrics_exporter_to_otel_config () {
     yq e -i ".prometheusremotewrite.endpoint = \"$metrics_listener_url\"" $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"metrics.bash (4): failed to insert Logz.io metrics listener URL into logs_otel_exporter yaml file.\n  $err\""
+        write_run "print_error \"metrics.bash (4): failed to insert Logz.io metrics listener URL into metrics_otel_exporter yaml file.\n  $err\""
         return 4
     fi
 
-    yq e -i ".prometheusremotewrite.headers.Authorization = \"Bearer $metrics_token\"" $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq e -i ".prometheusremotewrite.headers.Authorization = \"Bearer $metrics_token\"" $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (4): failed to insert Logz.io metrics token into logs_otel_exporter yaml file.\n  $err\""
+        write_run "print_error \"metrics.bash (4): failed to insert Logz.io metrics token into metrics_otel_exporter yaml file.\n  $err\""
         return 4
     fi
 
-    yq eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    yq eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (4): failed to add logs exporter to OTEL config file.\n  $err\""
+        write_run "print_error \"metrics.bash (4): failed to add metrics exporter to OTEL config file.\n  $err\""
         return 4
     fi
 
     yq e -i '.service.pipelines.metrics.exporters += "prometheusremotewrite"' $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (4): failed to add service pipeline metrics exporter to OTEL config file.\n  $err\""
+        write_run "print_error \"metrics.bash (4): failed to add service pipeline metrics exporter to OTEL config file.\n  $err\""
         return 4
     fi
 }
