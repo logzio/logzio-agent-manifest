@@ -47,3 +47,9 @@ execute_task "run_otelcol_contrib_binary" "running otelcol-contrib binary"
 # Print success message
 echo
 print_info "##### Logz.io agent was finished successfully #####"
+
+# Print information
+echo -e "\nInformation:"
+echo -e "OTEL collector is running from another terminal."
+echo -e "To terminate the OTEL collector - control+C"
+echo -e "To run the OTEL collector again - ./otelcol-contrib --config otel_config"
