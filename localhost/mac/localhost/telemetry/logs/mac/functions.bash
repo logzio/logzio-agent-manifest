@@ -110,6 +110,8 @@ function add_logs_receivers_to_otel_config () {
         return 4
     fi
 
+    cat $otel_config > test.txt
+
     yq e -i '.service.pipelines.logs.receivers += "filelog"' $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
