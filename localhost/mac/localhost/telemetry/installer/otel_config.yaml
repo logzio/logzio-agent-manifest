@@ -16,4 +16,5 @@ service:
       exporters: []
     metrics:
       receivers: []
+      processors: [batch, resourcedetection/system]
       exporters: []
