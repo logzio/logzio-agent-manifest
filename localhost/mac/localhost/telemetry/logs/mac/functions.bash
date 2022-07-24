@@ -96,10 +96,10 @@ function add_logs_receivers_to_otel_config () {
     fi
 
     for log_source in $log_sources; do
-        yq e -i ".filelog.include += $log_source" $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
+        yq e -i ".filelog.include += \"$log_source\"" $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
         if [[ $? -ne 0 ]]; then
             local err=$(cat $task_error_file)
-            write_run "print_error \"logs.bash (4): failed to add service pipeline logs exporter to OTEL config file.\n  $err\""
+            write_run "print_error \"logs.bash (4): failed to insert log sources into logs_otel_receivers yaml file.\n  $err\""
             return 4
         fi
     done
@@ -110,8 +110,6 @@ function add_logs_receivers_to_otel_config () {
         write_run "print_error \"logs.bash (4): failed to add logs receivers to OTEL config file.\n  $err\""
         return 4
     fi
-
-    cat $otel_config > test.txt
 
     yq e -i '.service.pipelines.logs.receivers += "filelog"' $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
