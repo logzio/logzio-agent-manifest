@@ -78,7 +78,7 @@ function get_log_sources () {
         return 3
     fi
     
-    write_run "$log_sources=\"$log_sources_value\""
+    write_run "log_sources=\"$log_sources_value\""
 }
 
 # Adds logs receivers to OTEL config
