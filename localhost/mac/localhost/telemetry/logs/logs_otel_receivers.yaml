@@ -1,4 +1,3 @@
 filelog:
   include: []
   include_file_path: true
-  start_at: beginning
