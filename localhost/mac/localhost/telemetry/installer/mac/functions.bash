@@ -90,7 +90,7 @@ function get_otelcol_contrib_binary () {
 function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
-    otel_config="./otel_config"
+    otel_config="./otel_config.yaml"
     curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
