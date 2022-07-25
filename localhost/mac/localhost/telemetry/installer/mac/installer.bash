@@ -56,3 +56,4 @@ echo -e "To \033[0;35mstop\033[0;37m the OTEL collector run `\033[0;35mlaunchctl
 echo -e "To \033[0;35mrestart\033[0;37m the OTEL collector run `\033[0;35mlaunchctl start com.logzio.OTELCollector\033[0;37m`"
 echo -e "To \033[0;35mremove\033[0;37m the OTEL collector service run `\033[0;35mlaunchctl unload ./com.logzio.OTELCollector.plist\033[0;37m`"
 echo -e "To \033[0;35mload and start\033[0;37m the OTEL collector service run `\033[0;35mlaunchctl load ./com.logzio.OTELCollector.plist\033[0;37m`"
+echo
