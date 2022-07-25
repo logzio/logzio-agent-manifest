@@ -143,22 +143,42 @@ function get_metrics_scripts () {
     fi
 }
 
-# Run otelcol-contrib binary with OTEL config
+# Run otelcol-contrib with OTEL config as a service
 # Error:
 #   Exit Code 6
-function run_otelcol_contrib_binary () {
-    write_log "INFO" "Running otelcol-contrib binary ..."
+function run_otelcol_contrib_as_a_service () {
+    write_log "INFO" "Running OTEL agent ..."
     write_log "INFO" "OTEL config =\n$(cat $otel_config)"
 
-    local otel_binary_full_path=$(realpath ./otelcol-contrib)
-    local otel_config_full_path=$(realpath $otel_config)
+    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $logzio_temp_dir/com.logzio.OTELCollector.plist 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (6): failed to get OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
+        return 6
+    fi
 
-    osascript -e "tell app \"Terminal\" to do script \"$otel_binary_full_path --config $otel_config_full_path\"" >/dev/null 2>$task_error_file
-    if [[ $? -eq 0 ]]; then
+    sed -i'' -e "s#DIR#$PWD#g" $logzio_temp_dir/com.logzio.OTELCollector.plist 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (6): failed to modify OTEL collector plist file.\n  $err\""
+        return 6
+    fi
+
+    cat $logzio_temp_dir/com.logzio.OTELCollector.plist-e > ./com.logzio.OTELCollector.plist
+
+    launchctl load ./com.logzio.OTELCollector.plist >/dev/null 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (6): failed to load OTEL collector plist file.\n  $err\""
+        return 6
+    fi
+
+    is_running=$(launchctl list | grep com.logzio.OTELCollector | grep -e '^[0-9]')
+    if [[ ! -z "$is_running" ]]; then
         return
     fi
 
-    local err=$(cat $task_error_file)
-    write_run "print_error \"installer.bash (6): failed to run otelcol-contrib binary in another terminal.\n  $err\""
+    status=$(launchctl list | grep com.logzio.OTELCollector | grep -oe '[0-9]\+')
+    write_run "print_error \"installer.bash (6): failed to run OTEL collector plist file (status $status).\n  $err\""
     return 6
 }
