@@ -49,7 +49,7 @@ echo
 print_info "##### Logz.io agent was finished successfully #####"
 
 # Print information
-echo -e "\nInformation:"
+echo -e "\nInformation:\n"
 echo -e "OTEL collector is running as a service."
 echo -e "To \033[0;35msee\033[0;37m OTEL collector service logs run \`\033[0;35mcat ./otelcol-contrib_stderr.log\033[0;37m\` or \`\033[0;35mcat ./otelcol-contrib_stdout.log\033[0;37m\`"
 echo -e "To \033[0;35mstop\033[0;37m the OTEL collector service run \`\033[0;35mlaunchctl stop com.logzio.OTELCollector\033[0;37m\`"
