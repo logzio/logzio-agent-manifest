@@ -96,7 +96,7 @@ function add_logs_receivers_to_otel_config () {
     fi
 
     for log_source in $log_sources; do
-        echo $log_source > test.txt
+        echo $log_source >> test.txt
         yq e -i ".filelog.include += \"$log_source\"" $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
         if [[ $? -ne 0 ]]; then
             local err=$(cat $task_error_file)
