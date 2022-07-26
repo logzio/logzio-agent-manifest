@@ -102,7 +102,7 @@ function add_logs_receivers_to_otel_config () {
             write_run "print_error \"logs.bash (4): failed to insert log sources into logs_otel_receivers yaml file.\n  $err\""
             return 4
         fi
-    < <(echo -e "$log_sources")
+    done < <(echo -e "$log_sources")
 
     yq eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
