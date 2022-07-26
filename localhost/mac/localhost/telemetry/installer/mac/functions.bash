@@ -167,8 +167,8 @@ function run_otelcol_contrib_as_a_service () {
     cat $logzio_temp_dir/com.logzio.OTELCollector.plist > ./com.logzio.OTELCollector.plist
 
     launchctl load ./com.logzio.OTELCollector.plist >/dev/null 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
+    local err=$(cat $task_error_file)
+    if [[ ! -z "$err" ]]; then
         write_run "print_error \"installer.bash (6): failed to load OTEL collector plist file.\n  $err\""
         return 6
     fi
