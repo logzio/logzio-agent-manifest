@@ -42,6 +42,7 @@ if $is_metrics_option_selected; then
 fi
 
 # Run otelcol-contrib with OTEL config as a service
+echo -e "\ninstaller:"
 execute_task "run_otelcol_contrib_as_a_service" "running otelcol-contrib as a service"
 
 # Print success message
