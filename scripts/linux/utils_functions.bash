@@ -127,7 +127,7 @@ function execute_task () {
         fi
     done
 
-    wait $pid
+    wait $pid 2>/dev/null
     local exit_code=$?
 
     if [[ $exit_code -ne 0 ]] || $is_timeout; then
