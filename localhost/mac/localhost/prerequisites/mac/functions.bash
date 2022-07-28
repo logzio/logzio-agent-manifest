@@ -9,7 +9,7 @@
 #   Exit Code 1
 function is_yq_installed () {
     write_log "INFO" "Checking if yq is installed ..."
-
+    sleep 120
     which yq >/dev/null 2>&1
     if [[ $? -eq 0 ]]; then
         return
