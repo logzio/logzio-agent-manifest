@@ -164,10 +164,11 @@ function run_otelcol_contrib_as_a_service () {
         return 6
     fi
 
-    #write_run "sudo cat $logzio_temp_dir/com.logzio.OTELCollector.plist > /Library/LaunchAgents/com.logzio.OTELCollector.plist"
+    cat $logzio_temp_dir/com.logzio.OTELCollector.plist > ./com.logzio.OTELCollector.plist
+    write_run "rm ./com.logzio.OTELCollector.plist"
     write_run "sudo cp $logzio_temp_dir/com.logzio.OTELCollector.plist /Library/LaunchAgents/com.logzio.OTELCollector.plist"
 
-    launchctl load $logzio_temp_dir/com.logzio.OTELCollector.plist >/dev/null 2>$task_error_file
+    launchctl load ./com.logzio.OTELCollector.plist >/dev/null 2>$task_error_file
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
         write_run "print_error \"installer.bash (6): failed to load OTEL collector plist file.\n  $err\""
@@ -180,7 +181,7 @@ function run_otelcol_contrib_as_a_service () {
     fi
 
     status=$(launchctl list | grep com.logzio.OTELCollector | grep -oe '[0-9]\+')
-    launchctl unload $logzio_temp_dir/com.logzio.OTELCollector.plist >/dev/null 2>&1
+    launchctl unload ./com.logzio.OTELCollector.plist >/dev/null 2>&1
     write_run "print_error \"installer.bash (6): failed to run OTEL collector plist file (status $status).\n  $err\""
     return 6
 }
