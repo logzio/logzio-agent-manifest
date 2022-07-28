@@ -165,6 +165,8 @@ function run_otelcol_contrib_as_a_service () {
     fi
 
     cat $logzio_temp_dir/com.logzio.OTELCollector.plist > ./com.logzio.OTELCollector.plist
+    write_run "rm ./com.logzio.OTELCollector.plist"
+    write_run "sudo cp $logzio_temp_dir/com.logzio.OTELCollector.plist /Library/LaunchAgents/com.logzio.OTELCollector.plist"
 
     launchctl load ./com.logzio.OTELCollector.plist >/dev/null 2>$task_error_file
     local err=$(cat $task_error_file)
