@@ -97,7 +97,7 @@ function execute_task () {
     local frame=("-" "\\" "|" "/")
     local frame_interval=0.25
     local is_timeout=false
-    local timeout=60
+    local timeout=300
     local counter=0
 
     tput civis -- invisible
