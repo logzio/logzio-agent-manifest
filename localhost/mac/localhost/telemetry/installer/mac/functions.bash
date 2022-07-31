@@ -4,7 +4,7 @@
 ################################################### Installer Mac Functions #####################################################
 #################################################################################################################################
 
-# Gets which products were selected (logs/metrics)
+# Gets the selected products (logs/metrics)
 # Output:
 #   is_logs_option_selected - Tells if logs option was selected (true/false)
 #   logs_params - The logs params if logs option was selected
@@ -12,8 +12,8 @@
 #   metrics_params - The metrics params if metrics option was selected
 # Error:
 #   Exit Code 1
-function get_which_products_were_selected () {
-    write_log "INFO" "Getting which products were selected ..."
+function get_selected_products () {
+    write_log "INFO" "Getting the selected products ..."
 
     local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then
