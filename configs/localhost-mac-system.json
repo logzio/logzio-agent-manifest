@@ -1,0 +1,51 @@
+{
+  "name": "Localhost",
+  "logo": "https://www.freepnglogos.com/uploads/server-png/server-icon-download-icons-17.png",
+  "description": "",
+  "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
+  "manifest": true,
+  "subtypes": [
+    {
+      "name": "Mac",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac.svg",
+      "description": "Mac machine",
+      "hint": "Select your localhost OS.",
+      "datasources": [
+        {
+          "name": "System",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac.svg",
+          "description": "Logz.io Uses OpenTelemetry to monitor your computer.",
+          "params": [],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your computer.",
+              "params": 
+              [
+                {
+                  "type": "path-list",
+                  "name": "logSources",
+                  "label": "Location of your logs",
+                  "description": "The paths of log files to collect.",
+                  "hint": "By adding paths, OpenTelemetry will receive logs from these log paths and will export them to Logz.io.",
+                  "value": ["/var/log/*.log"]
+                }
+              ]
+            },
+            {
+              "type": "METRICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your Kubernetes cluster, nodes and pods",
+              "params": [],
+              "dashboards": [
+                "5jMvBtrxQwMo0GuDO13kpb",
+                "5BjRR3NuNQb3XHVPhn3HQ0",
+                "2TRgFib4ICfKsrzS5oJwgC",
+                "1EcVjdr5c6heqbxpd6Zs8X"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
