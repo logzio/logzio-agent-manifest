@@ -26,7 +26,7 @@ function get_general_params () {
     write_run "general_params='$general_params'"
 }
 
-# Gets which products were selected (logs/metrics/tracing)
+# Gets the selected products (logs/metrics/tracing)
 # Output:
 #   is_logs_option_selected - Tells if logs option was selected (true/false)
 #   logs_params - The logs params if logs option was selected
@@ -36,8 +36,8 @@ function get_general_params () {
 #   traces_params - The traces params if traces option was selected
 # Error:
 #   Exit Code 2
-function get_which_products_were_selected () {
-    write_log "INFO" "Getting which products were selected ..."
+function get_selected_products () {
+    write_log "INFO" "Getting the selected products ..."
 
     local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then

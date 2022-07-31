@@ -8,7 +8,7 @@
 write_log "INFO" "Loading installer functions ..."
 source $logzio_temp_dir/installer_functions.bash
 
-# Get which products were selected
+# Get the selected products
 execute_task "get_selected_products" "getting the selected products"
 
 # Get otelcol-contrib binary
