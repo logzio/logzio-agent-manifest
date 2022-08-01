@@ -62,7 +62,7 @@ function get_logzio_logs_token () {
 function get_log_sources () {
     write_log "INFO" "Getting log_paths  ..."
 
-    local log_sources_param=$(find_param "$logs_params" "optional-log-sources")
+    local log_sources_param=$(find_param "$logs_params" "logSources")
     if [[ -z "$log_sources_param" ]]; then
         write_run "print_error \"logs.bash (3): log sources param was not found\""
         return 3
