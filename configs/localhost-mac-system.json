@@ -3,7 +3,6 @@
   "logo": "https://www.freepnglogos.com/uploads/server-png/server-icon-download-icons-17.png",
   "description": "",
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
-  "manifest": true,
   "subtypes": [
     {
       "name": "Mac",
@@ -26,6 +25,7 @@
                   "type": "path-list",
                   "name": "logSources",
                   "label": "Location of your logs",
+                  "required": true,
                   "description": "The paths of log files to collect.",
                   "hint": "By adding paths, OpenTelemetry will receive logs from these log paths and will export them to Logz.io.",
                   "value": ["/var/log/*.log"]
