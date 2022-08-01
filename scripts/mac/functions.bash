@@ -172,6 +172,7 @@ function get_app_json () {
 
     # Getting app JSON from agent
     write_log "INFO" "Getting application JSON from agent ..."
+    echo -e "$app_url/telemetry-agent/public/agents/configuration/$agent_id"
     curl -fsSL $app_url/telemetry-agent/public/agents/configuration/$agent_id > $app_json 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
