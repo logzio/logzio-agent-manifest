@@ -6,7 +6,7 @@
   "subtypes": [
     {
       "name": "Mac",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac.svg",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac_icon.png",
       "description": "Mac machine",
       "hint": "Select your localhost OS.",
       "datasources": [
