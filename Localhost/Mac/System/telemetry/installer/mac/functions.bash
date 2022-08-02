@@ -88,8 +88,10 @@ function get_otelcol_contrib_binary () {
         return 2
     fi
 
+    tar -zxf $logzio_temp_dir/otelcol-contrib.tar.gz
+
     otel_bin="$logzio_opt_dir/otelcol-contrib"
-    tar -zxf $logzio_temp_dir/otelcol-contrib.tar.gz $otel_bin
+    cp $logzio_temp_dir/otelcol-contrib $otel_bin
     write_run "otel_bin=\"$otel_bin\""
 }
 
