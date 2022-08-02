@@ -76,15 +76,17 @@ function create_logzio_opt_dir () {
     write_run "logzio_opt_dir=\"$logzio_opt_dir\""
 }
 
-# Gets otelcol-contrib binary
+# Gets OTEL collector binary
+# Output:
+#   otel_bin - The OTEL collector binary file path
 # Error:
 #   Exit Code 2
-function get_otelcol_contrib_binary () {
-    write_log "INFO" "Getting otelcol-contrib binary ..."
+function get_otel_collector_binary () {
+    write_log "INFO" "Getting OTEL collector binary ..."
     curl -fsSL https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.56.0/otelcol-contrib_0.56.0_darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-contrib.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"instalelr.bash (2): failed to get otelcol-contrib binary file from open-telemetry repo.\n  $err\""
+        write_run "print_error \"instalelr.bash (2): failed to get OTEL collector binary file from open-telemetry repo.\n  $err\""
         return 2
     fi
 
@@ -112,80 +114,91 @@ function get_otel_config () {
     write_run "otel_config=\"$otel_config\""
 }
 
-# Gets logs scripts from logzio-agent-manifest repo
+# Gets plist file from logzio-agent-manifest repo
+# Output:
+#   service_name - The Logz.io OTEL collector service name
+#   service_plist - The Logz.io OTEL collector plist file path
 # Error:
 #   Exit Code 4
+function get_logzio_otel_collector_plist () {
+    write_log "INFO" "Getting Logz.io OTEL collector plist file ..."
+
+    service_name="com.logzio.OTELCollector"
+    service_plist="/Library/LaunchDaemons/$service_name.plist"
+    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $service_plist 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (4): failed to get Logz.io OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
+        return 4
+    fi
+
+    write_run "service_name=\"$service_name\""
+    write_run "service_plist=\"$service_plist\""
+}
+
+# Gets logs scripts from logzio-agent-manifest repo
+# Error:
+#   Exit Code 5
 function get_logs_scripts () {
     write_log "INFO" "Getting logs script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > $logzio_temp_dir/logs.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (4): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
-        return 4
+        write_run "print_error \"installer.bash (5): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
+        return 5
     fi
 
     write_log "INFO" "Getting logs functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > $logzio_temp_dir/logs_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (4): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 4
+        write_run "print_error \"installer.bash (5): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 5
     fi
 }
 
 # Gets metrics scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 5
+#   Exit Code 6
 function get_metrics_scripts () {
     write_log "INFO" "Getting metrics script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > $logzio_temp_dir/metrics.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (5): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
-        return 5
+        write_run "print_error \"installer.bash (6): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
+        return 6
     fi
 
     write_log "INFO" "Getting metrics functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > $logzio_temp_dir/metrics_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (5): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 5
+        write_run "print_error \"installer.bash (6): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 6
     fi
 }
 
-# Run otelcol-contrib with OTEL config as a service
+# Run Logz.io OTEL collector service
 # Error:
-#   Exit Code 6
-function run_otelcol_contrib_as_a_service () {
-    write_log "INFO" "Running OTEL agent ..."
+#   Exit Code 7
+function run_logzio_otel_collector_service () {
+    write_log "INFO" "Running Logz.io OTEL collector service ..."
     write_log "INFO" "OTEL config =\n$(cat $otel_config)"
 
-    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $logzio_temp_dir/com.logzio.OTELCollector.plist 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to get OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
-        return 6
-    fi
-
-    #cat $logzio_temp_dir/com.logzio.OTELCollector.plist > ./com.logzio.OTELCollector.plist
-    #write_run "rm ./com.logzio.OTELCollector.plist"
-    write_run "sudo cp $logzio_temp_dir/com.logzio.OTELCollector.plist /Library/LaunchAgents/com.logzio.OTELCollector.plist"
-
-    launchctl load $logzio_temp_dir/com.logzio.OTELCollector.plist >/dev/null 2>$task_error_file
+    launchctl load $service_plist >/dev/null 2>$task_error_file
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
-        write_run "print_error \"installer.bash (6): failed to load OTEL collector plist file.\n  $err\""
-        return 6
+        write_run "print_error \"installer.bash (7): failed to load Logz.io OTEL collector plist file.\n  $err\""
+        return 7
     fi
 
-    is_running=$(launchctl list | grep com.logzio.OTELCollector | grep -e '^[0-9]')
+    is_running=$(launchctl list | grep $service_name | grep -e '^[0-9]')
     if [[ ! -z "$is_running" ]]; then
         return
     fi
 
-    status=$(launchctl list | grep com.logzio.OTELCollector | grep -oe '[0-9]\+')
-    launchctl unload $logzio_temp_dir/com.logzio.OTELCollector.plist >/dev/null 2>&1
-    write_run "print_error \"installer.bash (6): failed to run OTEL collector plist file (status $status).\n  $err\""
-    return 6
+    status=$(launchctl list | grep $service_name | grep -oe '[0-9]\+')
+    launchctl unload $service_plist >/dev/null 2>&1
+    write_run "print_error \"installer.bash (7): failed to run Logz.io OTEL collector plist file (status $status).\n  $err\""
+    return 7
 }
