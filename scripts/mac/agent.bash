@@ -31,7 +31,7 @@ function get_agent_functions_scripts () {
 
 
 # Consts
-repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/host"    # logzio-agent-manifest repo URL
+repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/master"    # logzio-agent-manifest repo URL
 logzio_temp_dir="./logzio-temp"                                                     # Logz.io temp directory
 log_file="./logzio_agent.log"                                                       # Log file path
 run_file="$logzio_temp_dir/run"                                                     # Run file path
