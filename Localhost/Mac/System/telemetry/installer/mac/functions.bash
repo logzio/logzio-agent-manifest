@@ -79,7 +79,10 @@ function get_otelcol_contrib_binary () {
         return 2
     fi
 
-    tar -zxf $logzio_temp_dir/otelcol-contrib.tar.gz otelcol-contrib
+    otel_bin="/opt/logzio-otel-collector/otelcol-contrib"
+
+    tar -zxf $logzio_temp_dir/otelcol-contrib.tar.gz $otel_bin
+    write_run "otel_bin=\"$otel_bin\""
 }
 
 # Gets OTEL config from logzio-agent-manifest repo
@@ -90,7 +93,7 @@ function get_otelcol_contrib_binary () {
 function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
-    otel_config="./otel_config.yaml"
+    otel_config="/opt/logzio-otel-collector/otel_config.yaml"
     curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
@@ -154,13 +157,6 @@ function run_otelcol_contrib_as_a_service () {
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (6): failed to get OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
-        return 6
-    fi
-
-    sed -i'' -e "s#DIR#$PWD#g" $logzio_temp_dir/com.logzio.OTELCollector.plist 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to modify OTEL collector plist file.\n  $err\""
         return 6
     fi
 

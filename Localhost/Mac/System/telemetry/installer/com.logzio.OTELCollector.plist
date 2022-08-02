@@ -10,10 +10,10 @@
     <true/>
 
     <key>StandardErrorPath</key>
-    <string>DIR/otelcol-contrib_stderr.log</string>
+    <string>/opt/logzio-otel-collector/otelcol-contrib_stderr.log</string>
 
     <key>StandardOutPath</key>
-    <string>DIR/otelcol-contrib_stdout.log</string>
+    <string>/opt/logzio-otel-collector/otelcol-contrib_stdout.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>
@@ -22,13 +22,13 @@
     </dict>
 
     <key>WorkingDirectory</key>
-    <string>DIR</string>
+    <string>/opt/logzio-otel-collector</string>
 
     <key>ProgramArguments</key>
     <array>
-      <string>DIR/otelcol-contrib</string>
+      <string>/opt/logzio-otel-collector/otelcol-contrib</string>
       <string>--config</string>
-      <string>DIR/otel_config.yaml</string>
+      <string>/opt/logzio-otel-collector/otel_config.yaml</string>
     </array>
 
   </dict>
