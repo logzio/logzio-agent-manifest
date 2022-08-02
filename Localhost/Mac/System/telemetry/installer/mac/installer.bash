@@ -57,9 +57,9 @@ print_info "##### Logz.io agent was finished successfully #####"
 
 # Print information
 echo -e "\nInformation:\n"
-echo -e "Collector Binary: $otel_bin"
-echo -e "Collector Config: $otel_config"
-echo -e "Start Service Command: sudo launchctl load $service_plist"
-echo -e "Stop Service Command: sudo launchctl unload $service_name"
-echo -e "Show Logs Command: tail -F $logzio_opt_dir/logzio_otel_collector.log"
+echo -e "\033[0;35mCollector Binary\033[0;37m: $otel_bin"
+echo -e "\033[0;35mCollector Config\033[0;37m: $otel_config"
+echo -e "\033[0;35mStart Service Command\033[0;37m: sudo launchctl load $service_plist"
+echo -e "\033[0;35mStop Service Command\033[0;37m: sudo launchctl unload $service_name"
+echo -e "\033[0;35mShow Logs Command\033[0;37m: tail -F $logzio_opt_dir/logzio_otel_collector.log"
 echo
