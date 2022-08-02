@@ -10,10 +10,7 @@
     <true/>
 
     <key>StandardErrorPath</key>
-    <string>/opt/logzio-otel-collector/otelcol-contrib_stderr.log</string>
-
-    <key>StandardOutPath</key>
-    <string>/opt/logzio-otel-collector/otelcol-contrib_stdout.log</string>
+    <string>/opt/logzio-otel-collector/logzio_otel_collector.log</string>
 
     <key>EnvironmentVariables</key>
     <dict>
