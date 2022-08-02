@@ -11,6 +11,9 @@ source $logzio_temp_dir/installer_functions.bash
 # Get the selected products
 execute_task "get_selected_products" "getting the selected products"
 
+# Create Logz.io opt directory
+execute_task "create_logzio_opt_dir" "creating Logz.io opt directory"
+
 # Get otelcol-contrib binary
 execute_task "get_otelcol_contrib_binary" "getting otelcol-contrib binary"
 

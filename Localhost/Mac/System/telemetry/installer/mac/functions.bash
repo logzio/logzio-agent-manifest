@@ -67,6 +67,15 @@ function get_selected_products () {
     write_run "is_metrics_option_selected=$is_metrics_option_selected"
 }
 
+# Creates Logz.io opt directory
+function create_logzio_opt_dir () {
+    write_log "INFO" "Creating Logz.io opt directory ..."
+
+    logzio_opt_dir="/opt/logzio-otel-collector"
+    mkdir -p $logzio_opt_dir
+    write_run "logzio_opt_dir=\"$logzio_opt_dir\""
+}
+
 # Gets otelcol-contrib binary
 # Error:
 #   Exit Code 2
@@ -79,8 +88,7 @@ function get_otelcol_contrib_binary () {
         return 2
     fi
 
-    otel_bin="/opt/logzio-otel-collector/otelcol-contrib"
-
+    otel_bin="$logzio_opt_dir/otelcol-contrib"
     tar -zxf $logzio_temp_dir/otelcol-contrib.tar.gz $otel_bin
     write_run "otel_bin=\"$otel_bin\""
 }
@@ -93,7 +101,7 @@ function get_otelcol_contrib_binary () {
 function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
-    otel_config="/opt/logzio-otel-collector/otel_config.yaml"
+    otel_config="$logzio_opt_dir/otel_config.yaml"
     curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
