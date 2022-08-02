@@ -1,5 +1,5 @@
 hostmetrics:
-  collection_interval: 1m
+  collection_interval: 30s
   scrapers:
     load:
     filesystem:
