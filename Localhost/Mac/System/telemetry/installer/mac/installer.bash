@@ -61,5 +61,6 @@ echo -e "\033[0;35mCollector Binary\033[0;37m: $otel_bin"
 echo -e "\033[0;35mCollector Config\033[0;37m: $otel_config"
 echo -e "\033[0;35mStart Service Command\033[0;37m: sudo launchctl load $service_plist"
 echo -e "\033[0;35mStop Service Command\033[0;37m: sudo launchctl unload $service_name"
+echo -e "\033[0;35mShow Service Command\033[0;37m: sudo launchctl list | grep $service_name"
 echo -e "\033[0;35mShow Logs Command\033[0;37m: tail -F $logzio_opt_dir/logzio_otel_collector.log"
 echo
