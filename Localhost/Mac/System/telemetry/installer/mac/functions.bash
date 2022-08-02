@@ -72,7 +72,7 @@ function create_logzio_opt_dir () {
     write_log "INFO" "Creating Logz.io opt directory ..."
 
     logzio_opt_dir="/opt/logzio-otel-collector"
-    mkdir -p $logzio_opt_dir
+    sudo mkdir -p $logzio_opt_dir
     write_run "logzio_opt_dir=\"$logzio_opt_dir\""
 }
 
