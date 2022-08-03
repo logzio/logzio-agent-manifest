@@ -220,7 +220,7 @@ function Test-IsHelmInstalled {
     }
 
     $local:err = Get-TaskError
-    Write-Run "Write-Error `"prerequisites.ps1 (4): failed to install Helm. Please run 'brew install helm' and rerun the agent script.`n  $err`""
+    Write-Run "Write-Error `"prerequisites.ps1 (4): failed to install Helm. Please run 'choco install kubernetes-helm' and rerun the agent script.`n  $err`""
     return 4
 }
 
