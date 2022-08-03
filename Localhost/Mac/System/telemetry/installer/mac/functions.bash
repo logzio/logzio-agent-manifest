@@ -68,6 +68,8 @@ function get_selected_products () {
 }
 
 # Creates Logz.io opt directory
+# Output:
+#   logzio_opt_dir - The Logz.io opt directory path
 function create_logzio_opt_dir () {
     write_log "INFO" "Creating Logz.io opt directory ..."
 
