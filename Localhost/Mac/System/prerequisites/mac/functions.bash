@@ -7,7 +7,7 @@
 # Installs yq
 # Error:
 #   Exit Code 1
-function is_yq_installed () {
+function install_yq () {
     write_log "INFO" "Checking if yq is installed ..."
 
     which yq >/dev/null 2>&1

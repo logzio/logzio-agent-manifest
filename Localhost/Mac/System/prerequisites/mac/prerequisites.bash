@@ -9,7 +9,7 @@ write_log "INFO" "Loading prerequisites functions ..."
 source ./logzio-temp/prerequisites_functions.bash
 
 # Install yq
-execute_task "is_yq_installed" "installing yq"
+execute_task "install_yq" "installing yq"
 
 # Check if localhost can connect to Logz.io logs (port 8071)
 execute_task "can_localhost_connect_to_logzio_logs" "checking if localhost can connect to Logz.io logs"
