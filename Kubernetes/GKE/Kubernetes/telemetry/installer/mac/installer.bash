@@ -11,8 +11,8 @@ source $logzio_temp_dir/installer_functions.bash
 # Get general params
 execute_task "get_general_params" "getting general params"
 
-# Get which products were selected
-execute_task "get_which_products_were_selected" "getting which products were selected"
+# Get the selected products
+execute_task "get_selected_products" "getting the selected products"
 
 # Build tolerations helm sets
 execute_task "build_tolerations_helm_sets" "building tolerations Helm sets"

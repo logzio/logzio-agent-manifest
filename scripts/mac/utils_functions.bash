@@ -97,7 +97,7 @@ function execute_task () {
     local frame=("-" "\\" "|" "/")
     local frame_interval=0.25
     local is_timeout=false
-    local timeout=60
+    local timeout=300
     local counter=0
 
     tput civis -- invisible
@@ -127,7 +127,7 @@ function execute_task () {
         fi
     done
 
-    wait $pid
+    wait $pid 2>/dev/null
     local exit_code=$?
 
     if [[ $exit_code -ne 0 ]] || $is_timeout; then

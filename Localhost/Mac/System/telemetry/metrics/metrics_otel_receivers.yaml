@@ -1,0 +1,8 @@
+hostmetrics:
+  collection_interval: 30s
+  scrapers:
+    load:
+    filesystem:
+    memory:
+    network:
+    paging:

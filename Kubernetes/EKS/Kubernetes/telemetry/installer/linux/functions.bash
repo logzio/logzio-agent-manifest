@@ -26,7 +26,7 @@ function get_general_params () {
     write_run "general_params='$general_params'"
 }
 
-# Gets which products were selected (logs/metrics/tracing)
+# Gets the selected products (logs/metrics/tracing)
 # Output:
 #   is_logs_option_selected - Tells if logs option was selected (true/false)
 #   logs_params - The logs params if logs option was selected
@@ -36,8 +36,8 @@ function get_general_params () {
 #   traces_params - The traces params if traces option was selected
 # Error:
 #   Exit Code 2
-function get_which_products_were_selected () {
-    write_log "INFO" "Getting which products were selected ..."
+function get_selected_products () {
+    write_log "INFO" "Getting the selected products ..."
 
     local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then
@@ -242,7 +242,7 @@ function get_logs_scripts () {
     curl -fsSL $repo_path/telemetry/logs/linux/logs.bash > $logzio_temp_dir/logs.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (5): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (5): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
         return 5
     fi
 
@@ -250,7 +250,7 @@ function get_logs_scripts () {
     curl -fsSL $repo_path/telemetry/logs/linux/functions.bash > $logzio_temp_dir/logs_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (5): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (5): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
         return 5
     fi
 }
@@ -263,7 +263,7 @@ function get_metrics_scripts () {
     curl -fsSL $repo_path/telemetry/metrics/linux/metrics.bash > $logzio_temp_dir/metrics.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (6): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (6): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
         return 6
     fi
 
@@ -271,7 +271,7 @@ function get_metrics_scripts () {
     curl -fsSL $repo_path/telemetry/metrics/linux/functions.bash > $logzio_temp_dir/metrics_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (6): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (6): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
         return 6
     fi
 }
@@ -284,7 +284,7 @@ function get_traces_scripts () {
     curl -fsSL $repo_path/telemetry/traces/linux/traces.bash > $logzio_temp_dir/traces.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (7): failed to get traces script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (7): failed to get traces script file from logzio-agent-manifest repo.\n  $err\""
         return 7
     fi
 
@@ -292,7 +292,7 @@ function get_traces_scripts () {
     curl -fsSL $repo_path/telemetry/traces/linux/functions.bash > $logzio_temp_dir/traces_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.script (7): failed to get traces functions script file from logzio-agent-manifest repo.\n  $err\""
+        write_run "print_error \"installer.bash (7): failed to get traces functions script file from logzio-agent-manifest repo.\n  $err\""
         return 7
     fi
 }

@@ -13,8 +13,8 @@ $script:logHelmSets = ""
 # Get general params
 Invoke-Task "Get-GeneralParams" "getting general params"
 
-# Get which products were selected
-Invoke-Task "Get-WhichProductsWereSelected" "getting which products were selected"
+# Get the selected products
+Invoke-Task "Get-SelectedProducts" "getting the selected products"
 
 # Build tolerations helm sets
 Invoke-Task "Build-TolerationsHelmSets" "building tolerations Helm sets"

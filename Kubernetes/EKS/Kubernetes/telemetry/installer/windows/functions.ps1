@@ -28,7 +28,7 @@ function Get-GeneralParams {
     Write-Run "`$script:generalParams = '$generalParams'"
 }
 
-# Gets which products were selected (logs/metrics/traces)
+# Gets the selected products (logs/metrics/traces)
 # Output:
 #   isLogsOptionSelected - Tells if logs option was selected (true/false)
 #   logsParams - The logs params if logs option was selected
@@ -38,12 +38,12 @@ function Get-GeneralParams {
 #   tracesParams - The traces params if traces option was selected
 # Error:
 #   Exit Code 2
-function Get-WhichProductsWereSelected {
+function Get-SelectedProducts {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
 
-    Write-Log "INFO" "Getting which products were selected ..."
+    Write-Log "INFO" "Getting the selected products ..."
 
     $local:telemetries = jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $using:appJSON
     if ([string]::IsNullOrEmpty($telemetries)) {

@@ -183,7 +183,7 @@ function is_helm_installed () {
     fi
         
     local err=$(cat $task_error_file)
-    write_run "print_error \"prerequisites.bash (4): failed to install Helm.\n  $err\""
+    write_run "print_error \"prerequisites.bash (4): failed to install Helm. Please run 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash' and rerun the agent script.\n  $err\""
     return 4
 }
 

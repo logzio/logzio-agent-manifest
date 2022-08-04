@@ -8,24 +8,20 @@
 write_log "INFO" "Loading installer functions ..."
 source $logzio_temp_dir/installer_functions.bash
 
-# Get general params
-execute_task "get_general_params" "getting general params"
-
 # Get the selected products
 execute_task "get_selected_products" "getting the selected products"
 
-# Build tolerations helm sets
-execute_task "build_tolerations_helm_sets" "building tolerations Helm sets"
+# Create Logz.io opt directory
+execute_task "create_logzio_opt_dir" "creating Logz.io opt directory"
 
-# Build enable metrics or traces helm set
-if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "build_enable_metrics_or_traces_helm_set" "building enable metrics or traces Helm set"
-fi
+# Get OTEL collector binary
+execute_task "get_otel_collector_binary" "getting OTEL collector binary"
 
-# Build metrics/traces environment tag helm set
-if $is_metrics_option_selected || $is_traces_option_selected; then
-    execute_task "build_environment_tag_helm_set" "building metrics/traces environment tag Helm set"
-fi
+# Get OTEL config
+execute_task "get_otel_config" "getting OTEL config"
+
+# Get Logz.io OTEL collector plist
+execute_task "get_logzio_otel_collector_plist" "getting Logz.io OTEL collector plist"
 
 # Get logs scripts
 if $is_logs_option_selected; then
@@ -35,11 +31,6 @@ fi
 # Get metrics scripts
 if $is_metrics_option_selected; then
     execute_task "get_metrics_scripts" "getting metrics scripts"
-fi
-
-# Get traces scripts
-if $is_traces_option_selected; then
-    execute_task "get_traces_scripts" "getting traces scripts"
 fi
 
 # Run logs script
@@ -56,17 +47,20 @@ if $is_metrics_option_selected; then
     source $logzio_temp_dir/metrics.bash
 fi
 
-# Run traces script
-if $is_traces_option_selected; then
-    write_log "INFO" "Running traces script ..."
-    echo -e "\ntraces:"
-    source $logzio_temp_dir/traces.bash
-fi
-
-# Run Helm install
+# Run Logz.io OTEL collector service
 echo -e "\ninstaller:"
-execute_task "run_helm_install" "running Helm install"
+execute_task "run_logzio_otel_collector_service" "running Logz.io OTEL collector service"
 
 # Print success message
 echo
 print_info "##### Logz.io agent was finished successfully #####"
+
+# Print information
+echo -e "\nInformation:\n"
+echo -e "\033[0;35mCollector Binary\033[0;37m: $otel_bin"
+echo -e "\033[0;35mCollector Config\033[0;37m: $otel_config"
+echo -e "\033[0;35mStart Service Command\033[0;37m: sudo launchctl load $service_plist"
+echo -e "\033[0;35mStop Service Command\033[0;37m: sudo launchctl unload $service_plist"
+echo -e "\033[0;35mShow Service Command\033[0;37m: sudo launchctl list | grep $service_name"
+echo -e "\033[0;35mShow Logs Command\033[0;37m: sudo tail -F $logzio_opt_dir/logzio_otel_collector.log"
+echo
