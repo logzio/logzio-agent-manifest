@@ -93,7 +93,7 @@ function get_otel_collector_binary () {
     fi
 
     otel_bin="$logzio_opt_dir/otelcol-logzio-darwin_amd64"
-    tar -zxf $logzio_temp_dir/otelcol-logzio.tar.gz --directory $logzio_opt_dir
+    tar -xf $logzio_temp_dir/otelcol-logzio.tar.gz --directory $logzio_opt_dir
     write_run "otel_bin=\"$otel_bin\""
 }
 
@@ -127,7 +127,7 @@ function get_logzio_otel_collector_plist () {
 
     service_name="com.logzio.OTELCollector"
     service_plist="/Library/LaunchDaemons/$service_name.plist"
-    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $service_plist 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $logzio_temp_dir/$service_plist 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (4): failed to get Logz.io OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
