@@ -85,15 +85,15 @@ function create_logzio_opt_dir () {
 #   Exit Code 2
 function get_otel_collector_binary () {
     write_log "INFO" "Getting OTEL collector binary ..."
-    curl -fsSL https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
+    curl -fsSL https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.55.0/otelcol-contrib_0.55.0_darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-contrib.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"instalelr.bash (2): failed to get OTEL collector binary file from open-telemetry repo.\n  $err\""
         return 2
     fi
 
-    otel_bin="$logzio_opt_dir/otelcol-logzio-darwin_amd64"
-    tar -xf $logzio_temp_dir/otelcol-logzio.tar.gz --directory $logzio_opt_dir
+    otel_bin="$logzio_opt_dir/otelcol-contrib"
+    tar -zxf $logzio_temp_dir/otelcol-contrib.tar.gz --directory $logzio_opt_dir otelcol-contrib
     write_run "otel_bin=\"$otel_bin\""
 }
 
@@ -127,7 +127,7 @@ function get_logzio_otel_collector_plist () {
 
     service_name="com.logzio.OTELCollector"
     service_plist="/Library/LaunchDaemons/$service_name.plist"
-    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $logzio_temp_dir/$service_plist 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $service_plist 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (4): failed to get Logz.io OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
