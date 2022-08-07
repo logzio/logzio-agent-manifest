@@ -139,14 +139,17 @@ function install_homebrew () {
 #   Exit Code 3
 function install_jq () {
     write_log "INFO" "Installing jq ..."
-    curl -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64 > $logzio_temp_dir/jq 2>$task_error_file
+
+    jq_bin="$logzio_temp_dir/jq"
+    curl -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64 > $jq_bin 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"agent.bash (3): failed to get jq binary file from Github.\n  $err\""
         return 3
     fi
 
-    write_run "jq_bin=\"$logzio_temp_dir/jq\""
+    chmod +x $jq_bin
+    write_run "jq_bin=\"$jq_bin\""
 }
 
 # Gets the application JSON from the agent/local file into logzio-temp directory
