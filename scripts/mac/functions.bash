@@ -116,6 +116,8 @@ function check_validation () {
 }
 
 # Installs jq
+#   Output:
+#   jq_bin - The jq binary file path 
 # Error:
 #   Exit Code 3
 function install_jq () {

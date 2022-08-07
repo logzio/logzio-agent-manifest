@@ -5,6 +5,8 @@
 #################################################################################################################################
 
 # Installs yq
+# Output:
+#   yq_bin - The yq binary file path
 # Error:
 #   Exit Code 1
 function install_yq () {
