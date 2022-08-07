@@ -115,25 +115,6 @@ function check_validation () {
     fi
 }
 
-# Installs Homebrew
-# Error:
-#   Exit Code 3
-function install_homebrew () {
-    write_log "INFO" "Checking if Homebrew is installed ..."
-    which brew >/dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
-        return
-    fi
-
-    write_log "INFO" "Installing Hombrew ..."
-    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash >/dev/null 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"agent.bash (3): failed to install Homebrew.\n  $err\""
-        return 3
-    fi
-}
-
 # Installs jq
 # Error:
 #   Exit Code 3
