@@ -180,7 +180,7 @@ function get_metrics_scripts () {
     fi
 }
 
-# Run Logz.io OTEL collector service
+# Runs Logz.io OTEL collector service
 # Error:
 #   Exit Code 7
 function run_logzio_otel_collector_service () {
