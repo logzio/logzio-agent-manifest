@@ -5,27 +5,22 @@
 #################################################################################################################################
 
 # Installs yq
+# Output:
+#   yq_bin - The yq binary file path
 # Error:
 #   Exit Code 1
 function install_yq () {
-    write_log "INFO" "Checking if yq is installed ..."
-
-    which yq >/dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
-        return
-    fi
-
-    install_homebrew
-
     write_log "INFO" "Installing yq ..."
-    brew install yq >/dev/null 2>$task_error_file
-    if [[ $? -eq 0 ]]; then
-        return
+    curl -fsSL https://github.com/mikefarah/yq/releases/download/v4.27.2/yq_darwin_amd64.tar.gz > $logzio_temp_dir/yq.tar.gz 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to get yq binary file from Github.\n  $err\""
+        return 1
     fi
 
-    local err=$(cat $task_error_file)
-    write_run "print_error \"prerequisites.bash (1): failed to install yq.\n  $err\""
-    return 1
+    yq_bin="$logzio_temp_dir/yq_darwin_amd64"
+    tar -zxf $logzio_temp_dir/yq.tar.gz --directory $logzio_temp_dir yq_darwin_amd64
+    write_run "yq_bin=\"$yq_bin\""
 }
 
 # Checks if localhost can connect to Logz.io logs (port 8071)

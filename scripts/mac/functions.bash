@@ -115,46 +115,24 @@ function check_validation () {
     fi
 }
 
-# Installs Homebrew
-# Error:
-#   Exit Code 3
-function install_homebrew () {
-    write_log "INFO" "Checking if Homebrew is installed ..."
-    which brew >/dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
-        return
-    fi
-
-    write_log "INFO" "Installing Hombrew ..."
-    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | bash >/dev/null 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"agent.bash (3): failed to install Homebrew.\n  $err\""
-        return 3
-    fi
-}
-
 # Installs jq
+#   Output:
+#   jq_bin - The jq binary file path 
 # Error:
 #   Exit Code 3
 function install_jq () {
-    write_log "INFO" "Checking if jq is installed ..."
-    which jq >/dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
-        return
-    fi
-
-    install_homebrew
-
     write_log "INFO" "Installing jq ..."
-    brew install jq >/dev/null 2>$task_error_file
-    if [[ $? -eq 0 ]]; then
-        return
+
+    jq_bin="$logzio_temp_dir/jq"
+    curl -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64 > $jq_bin 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"agent.bash (3): failed to get jq binary file from Github.\n  $err\""
+        return 3
     fi
 
-    local err=$(cat $task_error_file)
-    write_run "print_error \"agent.bash (3): failed to install jq.\n  $err\""
-    return 3
+    chmod +x $jq_bin
+    write_run "jq_bin=\"$jq_bin\""
 }
 
 # Gets the application JSON from the agent/local file into logzio-temp directory
@@ -179,7 +157,7 @@ function get_app_json () {
         return 4
     fi
 
-    local status_code=$(jq -r '.statusCode' $app_json)
+    local status_code=$($jq_bin -r '.statusCode' $app_json)
     if [[ "$status_code" = null ]]; then
         return
     fi
@@ -196,7 +174,7 @@ function get_app_json () {
 function build_repo_path () {
     write_log "INFO" "Building repo path ..."
     
-    local dir1=$(jq -r '.configuration.name' $app_json)
+    local dir1=$($jq_bin -r '.configuration.name' $app_json)
     if [[ "$dir1" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.name' was not found in application JSON\""
         return 5
@@ -206,7 +184,7 @@ function build_repo_path () {
         return 5
     fi
 
-    local dir2=$(jq -r '.configuration.subtypes[0].name' $app_json)
+    local dir2=$($jq_bin -r '.configuration.subtypes[0].name' $app_json)
     if [[ "$dir2" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].name' was not found in application JSON\""
         return 5
@@ -216,7 +194,7 @@ function build_repo_path () {
         return 5
     fi
 
-    local dir3=$(jq -r '.configuration.subtypes[0].datasources[0].name' $app_json)
+    local dir3=$($jq_bin -r '.configuration.subtypes[0].datasources[0].name' $app_json)
     if [[ "$dir3" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON\""
         return 5
