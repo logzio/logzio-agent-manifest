@@ -211,6 +211,7 @@ function Invoke-LogzioOTELCollectorService {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
+    $local:taskErrorFile = $using:taskErrorFile
 
     Write-Log "INFO" "Running Logz.io OTEL collector service ..."
     Write-Log "INFO" "OTEL config =`n$(Get-Content $using:otelConfig)"
