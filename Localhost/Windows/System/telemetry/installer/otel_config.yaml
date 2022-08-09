@@ -13,6 +13,7 @@ service:
   pipelines:
     logs:
       receivers: []
+      processors: [batch, resourcedetection/system]
       exporters: []
     metrics:
       receivers: []
