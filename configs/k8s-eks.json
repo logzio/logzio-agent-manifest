@@ -10,6 +10,7 @@
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-eks.svg",
       "description": "AWS Kubernetes Service",
       "hint": "Select your cloud Kubernetes service.",
+      "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
         {
           "name": "Kubernetes",
