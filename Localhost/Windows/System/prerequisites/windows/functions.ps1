@@ -44,7 +44,11 @@ function Test-CanLocalhostConnectToLogzioLogs {
 
     Write-Log "INFO" "Checking if localhost can connect to Logz.io logs (port 8071) ..."
 
-    $local:result = Test-Connection -TargetName listener.logz.io -TcpPort 8071
+    $ProgressPreference = "SilentlyContinue"
+    $WarningPreference = "SilentlyContinue"
+    $local:result = Test-NetConnection -ComputerName listener.logz.io -Port 8071 -InformationLevel Quiet
+    $ProgressPreference = "Continue"
+    $WarningPreference = "Continue"
     if ($result) {
         return
     }
@@ -63,7 +67,11 @@ function Test-CanLocalhostConnectToLogzioMetrics {
 
     Write-Log "INFO" "Checking if localhost can connect to Logz.io metrics (port 8053) ..."
 
-    $local:result = Test-Connection -TargetName listener.logz.io -TcpPort 8053
+    $ProgressPreference = "SilentlyContinue"
+    $WarningPreference = "SilentlyContinue"
+    $local:result = Test-NetConnection -ComputerName listener.logz.io -Port 8053 -InformationLevel Quiet
+    $ProgressPreference = "Continue"
+    $WarningPreference = "Continue"
     if ($result) {
         return
     }
