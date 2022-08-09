@@ -111,7 +111,7 @@ function Get-SelectedLogs {
         return 4
     }
 
-    $local:isApplicationLogValue = Write-Output "$isApplicationLogParam" | jq -c '.value[]'
+    $local:isApplicationLogValue = Write-Output "$isApplicationLogParam" | jq -r '.value'
     if ($isApplicationLogValue.Equals("null")) {
         Write-Run "Write-Error `"logs.ps1 (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=isApplicationLog}].value' was not found in application JSON`""
         return 4
@@ -123,7 +123,7 @@ function Get-SelectedLogs {
         return 4
     }
 
-    $local:isSecurityLogValue = Write-Output "$isSecurityLogParam" | jq -c '.value[]'
+    $local:isSecurityLogValue = Write-Output "$isSecurityLogParam" | jq -r '.value'
     if ($isSecurityLogValue.Equals("null")) {
         Write-Run "Write-Error `"logs.ps1 (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=isSecurityLog}].value' was not found in application JSON`""
         return 4
@@ -135,7 +135,7 @@ function Get-SelectedLogs {
         return 4
     }
 
-    $local:isSystemLogValue = Write-Output "$isSystemLogParam" | jq -c '.value[]'
+    $local:isSystemLogValue = Write-Output "$isSystemLogParam" | jq -r '.value'
     if ($isSystemLogValue.Equals("null")) {
         Write-Run "Write-Error `"logs.ps1 (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=isSystemLog}].value' was not found in application JSON`""
         return 4
