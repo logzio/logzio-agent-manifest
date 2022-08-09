@@ -79,6 +79,9 @@ function Get-LogSources {
     }
 
     $local:logSourcesValue = Write-Output "$logSourcesParam" | jq -c '.value[]'
+    if ([string]::IsNullOrEmpty($logSourcesValue)) {
+        $logSourcesValue = ""
+    }
     if ($logSourcesValue.Equals("null")) {
         Write-Run "Write-Error `"logs.ps1 (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=logSources}].value' was not found in application JSON`""
         return 3
