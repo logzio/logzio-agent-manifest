@@ -142,11 +142,11 @@ function Get-SelectedLogs {
     }
     
     Write-Log "INFO" "isApplicationLog = $isApplicationLogValue"
-    Write-Log "INFO" "isSecurityLog = $isSecurityLog"
-    Write-Log "INFO" "isSystemLog = $isSystemLog"
+    Write-Log "INFO" "isSecurityLog = $isSecurityLogValue"
+    Write-Log "INFO" "isSystemLog = $isSystemLogValue"
     Write-Run "`$script:isApplicationLog = '$isApplicationLogValue'"
-    Write-Run "`$script:isSecurityLog = '$isSecurityLog'"
-    Write-Run "`$script:isSystemLog = '$isSystemLog'"
+    Write-Run "`$script:isSecurityLog = '$isSecurityLogValue'"
+    Write-Run "`$script:isSystemLog = '$isSystemLogValue'"
 }
 
 # Adds logs receivers to OTEL config
