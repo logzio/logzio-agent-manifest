@@ -74,7 +74,7 @@ function Get-SelectedProducts {
 
 # Creates Logz.io AppData directory
 # Output:
-#   logzioOptDir - The Logz.io AppData directory path
+#   logzioAppDataDir - The Logz.io AppData directory path
 function New-LogzioAppDataDir {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -83,8 +83,8 @@ function New-LogzioAppDataDir {
     Write-Log "INFO" "Creating Logz.io AppData directory ..."
 
     $local:logzioAppDataDir = "$env:APPDATA\LogzioOTELCollector"
-    if (-Not (Test-Path $logzioOptDir)) {
-        New-Item -Path $logzioOptDir -ItemType Directory | Out-Null    
+    if (-Not (Test-Path $logzioAppDataDir)) {
+        New-Item -Path $logzioAppDataDir -ItemType Directory | Out-Null    
     }
 
     Write-Run "`$script:logzioAppDataDir = '$logzioAppDataDir'"
