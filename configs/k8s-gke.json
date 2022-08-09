@@ -10,6 +10,7 @@
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcpkubernetes.png",
       "description": "GCP Kubernetes Engine",
       "hint": "Select your cloud Kubernetes service.",
+      "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
         {
           "name": "Kubernetes",
