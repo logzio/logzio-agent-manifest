@@ -25,7 +25,6 @@
                   "type": "path-list",
                   "name": "logSources",
                   "label": "Location of your logs",
-                  "required": true,
                   "description": "The paths of log files to collect.",
                   "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
                   "value": ["/var/log/*.log"]
@@ -34,7 +33,6 @@
                   "type": "boolean",
                   "name": "isApplicationLog",
                   "label": "Collect logs from Windows event logs application channel",
-                  "required": true,
                   "description": "",
                   "hint": "By checking this option, OpenTelemetry will collect logs from Windows event logs application channel.",
                   "value": true
