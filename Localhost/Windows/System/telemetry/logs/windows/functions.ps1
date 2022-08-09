@@ -171,7 +171,7 @@ function Add-LogsReceiversToOTELConfig {
         yq e -i ".filelog.include += `"$using:logSource`"" $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
-            Write-Run "Write-Error `"logs.bash (5): failed to insert log sources into logs_otel_receivers yaml file.`n  $err`""
+            Write-Run "Write-Error `"logs.ps1 (5): failed to insert log sources into logs_otel_receivers yaml file.`n  $err`""
             return 5
         }
     }
@@ -179,7 +179,7 @@ function Add-LogsReceiversToOTELConfig {
     yq eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $using:otelConfig $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
-        Write-Run "Write-Error `"logs.bash (5): failed to add logs receivers to OTEL config file.`n  $err`""
+        Write-Run "Write-Error `"logs.ps1 (5): failed to add logs receivers to OTEL config file.`n  $err`""
         return 5
     }
 
@@ -187,7 +187,7 @@ function Add-LogsReceiversToOTELConfig {
         yq e -i '.service.pipelines.logs.receivers += "filelog"' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
-            Write-Run "Write-Error `"logs.bash (5): failed to add service pipeline logs receiver to OTEL config file (filelog).`n  $err`""
+            Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (filelog).`n  $err`""
             return 5
         }
     }
@@ -196,7 +196,7 @@ function Add-LogsReceiversToOTELConfig {
         yq e -i '.service.pipelines.logs.receivers += "windowseventlog/application"' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
-            Write-Run "Write-Error `"logs.bash (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/application).`n  $err`""
+            Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/application).`n  $err`""
             return 5
         }
     }
@@ -205,7 +205,7 @@ function Add-LogsReceiversToOTELConfig {
         yq e -i '.service.pipelines.logs.receivers += "windowseventlog/security"' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
-            Write-Run "Write-Error `"logs.bash (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/security).`n  $err`""
+            Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/security).`n  $err`""
             return 5
         }
     }
@@ -214,7 +214,7 @@ function Add-LogsReceiversToOTELConfig {
         yq e -i '.service.pipelines.logs.receivers += "windowseventlog/system"' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
-            Write-Run "Write-Error `"logs.bash (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/system).`n  $err`""
+            Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/system).`n  $err`""
             return 5
         }
     }
@@ -244,28 +244,28 @@ function Add-LogsExporterToOTELConfig {
     yq e -i ".logzio/logs.account_token = `"$using:logsToken`"" $using:logzioTempDir\logs_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
-        Write-Run "Write-Error `"logs.bash (6): failed to insert Logz.io logs token into logs_otel_exporter yaml file.`n  $err`""
+        Write-Run "Write-Error `"logs.ps1 (6): failed to insert Logz.io logs token into logs_otel_exporter yaml file.`n  $err`""
         return 6
     }
 
     yq e -i ".logzio/logs.region = `"$using:logzioRegion`"" $using:logzioTempDir\logs_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
-        Write-Run "Write-Error `"logs.bash (6): failed to insert Logz.io region into logs_otel_exporter yaml file.`n  $err`""
+        Write-Run "Write-Error `"logs.ps1 (6): failed to insert Logz.io region into logs_otel_exporter yaml file.`n  $err`""
         return 6
     }
 
     yq eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $using:otelConfig $using:logzioTempDir\logs_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
-        Write-Run "Write-Error `"logs.bash (6): failed to add logs exporter to OTEL config file.`n  $err`""
+        Write-Run "Write-Error `"logs.ps1 (6): failed to add logs exporter to OTEL config file.`n  $err`""
         return 6
     }
 
     yq e -i '.service.pipelines.logs.exporters += "logzio/logs"' $using:otelConfig 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
-        Write-Run "Write-Error `"logs.bash (6): failed to add service pipeline logs exporter to OTEL config file.`n  $err`""
+        Write-Run "Write-Error `"logs.ps1 (6): failed to add service pipeline logs exporter to OTEL config file.`n  $err`""
         return 6
     }
 }
