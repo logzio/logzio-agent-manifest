@@ -60,7 +60,7 @@ function get_logzio_logs_token () {
 # Error:
 #   Exit Code 3
 function get_log_sources () {
-    write_log "INFO" "Getting log_paths  ..."
+    write_log "INFO" "Getting log sources ..."
 
     local log_sources_param=$(find_param "$logs_params" "logSources")
     if [[ -z "$log_sources_param" ]]; then
