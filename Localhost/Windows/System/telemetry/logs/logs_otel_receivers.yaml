@@ -1,0 +1,24 @@
+filelog:
+  include: []
+  include_file_path: true
+  operators:
+    - type: move
+      from: attributes["log.file.name"]
+      to: attributes["log_file_name"]
+    - type: move
+      from: attributes["log.file.path"]
+      to: attributes["log_file_path"]
+  attributes:
+    type: agent-windows
+windowseventlog/application:
+  channel: Application
+  attributes:
+    type: agent-windows
+windowseventlog/security:
+  channel: Security
+  attributes:
+    type: agent-windows
+windowseventlog/system:
+  channel: System
+  attributes:
+    type: agent-windows
