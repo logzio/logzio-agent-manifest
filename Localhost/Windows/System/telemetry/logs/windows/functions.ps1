@@ -172,7 +172,7 @@ function Add-LogsReceiversToOTELConfig {
 
     if (-Not [string]::IsNullOrEmpty($using:logSources)) {
         foreach ($logSource in $using:logSources) {
-            yq e -i ".filelog.include += `"$using:logSource`"" $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
+            yq e -i ".filelog.include += `"$logSource`"" $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
             if (-Not $?) {
                 $local:err = Get-TaskError
                 Write-Run "Write-Error `"logs.ps1 (5): failed to insert log sources into logs_otel_receivers yaml file.`n  $err`""
