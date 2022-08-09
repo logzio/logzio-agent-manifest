@@ -88,7 +88,7 @@ function Get-LogSources {
     }
     
     Write-Log "INFO" "logSources = $logSourcesValue"
-    Write-Run "`$logSources = '$logSourcesValue'"
+    Write-Run "`$script:logSources = '$logSourcesValue'"
 }
 
 # Gets the selected logs
@@ -144,9 +144,9 @@ function Get-SelectedLogs {
     Write-Log "INFO" "isApplicationLog = $isApplicationLogValue"
     Write-Log "INFO" "isSecurityLog = $isSecurityLog"
     Write-Log "INFO" "isSystemLog = $isSystemLog"
-    Write-Run "`$isApplicationLog = '$isApplicationLogValue'"
-    Write-Run "`$isSecurityLog = '$isSecurityLog'"
-    Write-Run "`$isSystemLog = '$isSystemLog'"
+    Write-Run "`$script:isApplicationLog = '$isApplicationLogValue'"
+    Write-Run "`$script:isSecurityLog = '$isSecurityLog'"
+    Write-Run "`$script:isSystemLog = '$isSystemLog'"
 }
 
 # Adds logs receivers to OTEL config
