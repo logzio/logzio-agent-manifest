@@ -9,6 +9,7 @@
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac_machine.png",
       "description": "Mac machine",
       "hint": "Select your localhost OS.",
+      "supportedOs": ["Mac"],
       "datasources": [
         {
           "name": "System",
@@ -18,7 +19,7 @@
             {
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your computer.",
-              "params": 
+              "params":
               [
                 {
                   "type": "path-list",
