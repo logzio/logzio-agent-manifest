@@ -33,6 +33,7 @@
                   "type": "boolean",
                   "name": "isApplicationLog",
                   "label": "Collect logs from Windows event logs application channel",
+                  "required": true,
                   "description": "",
                   "hint": "By checking this option, OpenTelemetry will collect logs from Windows event logs application channel.",
                   "value": true
