@@ -246,14 +246,14 @@ function Add-LogsExporterToOTELConfig {
         return 6
     }
 
-    yq e -i ".logzio/logs.account_token = `"$using:logsToken`"" $using:logzioTempDir\logs_otel_exporter.yaml 2>$using:taskErrorFile
+    yq e -i ".logzio/logs.account_token = ""`"$using:logsToken`"""" $using:logzioTempDir\logs_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"logs.ps1 (6): failed to insert Logz.io logs token into logs_otel_exporter yaml file.`n  $err`""
         return 6
     }
 
-    yq e -i ".logzio/logs.region = `"$using:logzioRegion`"" $using:logzioTempDir\logs_otel_exporter.yaml 2>$using:taskErrorFile
+    yq e -i ".logzio/logs.region = ""`"$using:logzioRegion`"""" $using:logzioTempDir\logs_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"logs.ps1 (6): failed to insert Logz.io region into logs_otel_exporter yaml file.`n  $err`""
