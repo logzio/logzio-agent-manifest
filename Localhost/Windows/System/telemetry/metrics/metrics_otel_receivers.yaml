@@ -1,13 +1,12 @@
-receivers:
-  hostmetrics:
-    collection_interval: 30s
-    scrapers:
-      cpu:
-      memory:
-      disk:
-      load:
-      filesystem:
-      network:
-      paging:
-      process:
-        mute_process_name_error: true
+hostmetrics:
+  collection_interval: 15s
+  scrapers:
+    cpu:
+    disk:
+    load:
+    filesystem:
+    memory:
+    network:
+    paging:
+    process:
+      mute_process_name_error: true
