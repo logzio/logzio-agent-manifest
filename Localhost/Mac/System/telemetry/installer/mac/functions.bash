@@ -88,7 +88,7 @@ function get_otel_collector_binary () {
     curl -fsSL https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"instalelr.bash (2): failed to get OTEL collector binary file from open-telemetry repo.\n  $err\""
+        write_run "print_error \"instalelr.bash (2): failed to get OTEL collector binary file from Logz.io repo.\n  $err\""
         return 2
     fi
 
