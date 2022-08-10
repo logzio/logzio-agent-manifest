@@ -83,7 +83,7 @@ function Add-MetricsReceiversToOTELConfig {
         return 3
     }
 
-    yq e -i '.service.pipelines.metrics.receivers += "hostmetrics"' $using:otelConfig 2>$using:taskErrorFile
+    yq e -i '.service.pipelines.metrics.receivers += ""hostmetrics""' $using:otelConfig 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.ps1 (3): failed to add service pipeline metrics receiver to OTEL config file.`n  $err`""
@@ -112,14 +112,14 @@ function Add-MetricsExporterToOTELConfig {
         return 4
     }
 
-    yq e -i ".prometheusremotewrite.endpoint = `"$using:metricsListenerURL`"" $using:logzioTempDir\metrics_otel_exporter.yaml 2>$using:taskErrorFile
+    yq e -i ".prometheusremotewrite.endpoint = ""`"$using:metricsListenerURL`"""" $using:logzioTempDir\metrics_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.ps1 (4): failed to insert Logz.io metrics listener URL into metrics_otel_exporter yaml file.`n  $err`""
         return 4
     }
 
-    yq e -i ".prometheusremotewrite.headers.Authorization = `"Bearer $using:metricsToken`"" $using:logzioTempDir\metrics_otel_exporter.yaml 2>$using:taskErrorFile
+    yq e -i ".prometheusremotewrite.headers.Authorization = ""`"Bearer $using:metricsToken`"""" $using:logzioTempDir\metrics_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.ps1 (4): failed to insert Logz.io metrics token into metrics_otel_exporter yaml file.`n  $err`""
@@ -133,7 +133,7 @@ function Add-MetricsExporterToOTELConfig {
         return 4
     }
 
-    yq e -i '.service.pipelines.metrics.exporters += "prometheusremotewrite"' $using:otelConfig 2>$using:taskErrorFile
+    yq e -i '.service.pipelines.metrics.exporters += """prometheusremotewrite"""' $using:otelConfig 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.ps1 (4): failed to add service pipeline metrics exporter to OTEL config file.`n  $err`""
