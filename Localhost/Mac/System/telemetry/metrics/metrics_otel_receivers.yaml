@@ -1,6 +1,8 @@
 hostmetrics:
-  collection_interval: 30s
+  collection_interval: 15s
   scrapers:
+    cpu:
+    disk:
     load:
     filesystem:
     memory:
