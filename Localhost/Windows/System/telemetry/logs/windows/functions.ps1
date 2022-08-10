@@ -189,7 +189,7 @@ function Add-LogsReceiversToOTELConfig {
     }
 
     if (-Not [string]::IsNullOrEmpty($using:logSources)) {
-        yq e -i '.service.pipelines.logs.receivers += "filelog"' $using:otelConfig 2>$using:taskErrorFile
+        yq e -i '.service.pipelines.logs.receivers += ""filelog""' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (filelog).`n  $err`""
@@ -198,7 +198,7 @@ function Add-LogsReceiversToOTELConfig {
     }
 
     if ($using:isApplicationLog) {
-        yq e -i '.service.pipelines.logs.receivers += "windowseventlog/application"' $using:otelConfig 2>$using:taskErrorFile
+        yq e -i '.service.pipelines.logs.receivers += ""windowseventlog/application""' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/application).`n  $err`""
@@ -207,7 +207,7 @@ function Add-LogsReceiversToOTELConfig {
     }
 
     if ($using:isSecurityLog) {
-        yq e -i '.service.pipelines.logs.receivers += "windowseventlog/security"' $using:otelConfig 2>$using:taskErrorFile
+        yq e -i '.service.pipelines.logs.receivers += ""windowseventlog/security""' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/security).`n  $err`""
@@ -216,7 +216,7 @@ function Add-LogsReceiversToOTELConfig {
     }
 
     if ($using:isSystemLog) {
-        yq e -i '.service.pipelines.logs.receivers += "windowseventlog/system"' $using:otelConfig 2>$using:taskErrorFile
+        yq e -i '.service.pipelines.logs.receivers += ""windowseventlog/system""' $using:otelConfig 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (5): failed to add service pipeline logs receiver to OTEL config file (windowseventlog/system).`n  $err`""
@@ -267,7 +267,7 @@ function Add-LogsExporterToOTELConfig {
         return 6
     }
 
-    yq e -i '.service.pipelines.logs.exporters += "logzio/logs"' $using:otelConfig 2>$using:taskErrorFile
+    yq e -i '.service.pipelines.logs.exporters += ""logzio/logs""' $using:otelConfig 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"logs.ps1 (6): failed to add service pipeline logs exporter to OTEL config file.`n  $err`""
