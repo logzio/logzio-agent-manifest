@@ -119,7 +119,7 @@ function Add-MetricsExporterToOTELConfig {
         return 4
     }
 
-    $local:auth = "Bearer $using:metricsToken"
+    $local:auth = "`"Bearer $using:metricsToken`""
     yq e -i ".prometheusremotewrite.headers.Authorization = ""`"$auth`"""" $using:logzioTempDir\metrics_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
