@@ -120,7 +120,7 @@ function Add-MetricsExporterToOTELConfig {
     }
 
     $local:auth = "Bearer $using:metricsToken"
-    yq e -i ".prometheusremotewrite.headers.Authorization = ""`"$using:auth`"""" $using:logzioTempDir\metrics_otel_exporter.yaml 2>$using:taskErrorFile
+    yq e -i ".prometheusremotewrite.headers.Authorization = ""`"$auth`"""" $using:logzioTempDir\metrics_otel_exporter.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.ps1 (4): failed to insert Logz.io metrics token into metrics_otel_exporter yaml file.`n  $err`""
