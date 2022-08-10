@@ -23,7 +23,7 @@
 
     <key>ProgramArguments</key>
     <array>
-      <string>/opt/logzio-otel-collector/otelcol-contrib</string>
+      <string>/opt/logzio-otel-collector/otelcol-logzio-darwin_amd64</string>
       <string>--config</string>
       <string>/opt/logzio-otel-collector/otel_config.yaml</string>
     </array>
