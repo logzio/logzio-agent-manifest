@@ -56,5 +56,21 @@ Invoke-Task "Invoke-LogzioOTELCollectorService" "running Logz.io OTEL collector 
 Write-Host
 Write-Info "##### Logz.io agent was finished successfully #####"
 
+# Print information
+Write-Host "`nInformation:`n"
+Write-Host "Collector Binary" -ForegroundColor Magenta -NoNewLine
+Write-Host ": $otelBin"
+Write-Host "Collector Config" -ForegroundColor Magenta -NoNewLine
+Write-Host ": $otelConfig"
+Write-Host "Start Service Command" -ForegroundColor Magenta -NoNewLine
+Write-Host ": Start-Service -Name LogzioOTELCollector"
+Write-Host "Stop Service Command" -ForegroundColor Magenta -NoNewLine
+Write-Host ": Stop-Service -Name LogzioOTELCollector"
+Write-Host "Show Service Command" -ForegroundColor Magenta -NoNewLine
+Write-Host ": Get-Service -Name LogzioOTELCollector"
+Write-Host "Show Logs Command" -ForegroundColor Magenta -NoNewLine
+Write-Host ": Get-Content -Path $logzioAppDataDir/logzio_otel_collector.log -Tail 10 -Wait"
+Write-Host
+
 # Finished successfully
 Exit 0
