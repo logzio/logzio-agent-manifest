@@ -69,7 +69,7 @@ Write-Host ": Stop-Service -Name LogzioOTELCollector"
 Write-Host "Show Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Get-Service -Name LogzioOTELCollector"
 Write-Host "Show Logs Command" -ForegroundColor Magenta -NoNewLine
-Write-Host ": Get-Content -Path $logzioAppDataDir\logzio_otel_collector.log -Tail 10 -Wait"
+Write-Host ": eventvwr.msc ('Windows Logs'->'Application' all logs with source 'LogzioOTELCollector')"
 Write-Host
 
 # Finished successfully
