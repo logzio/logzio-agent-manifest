@@ -103,7 +103,7 @@ function Get-OTELCollectorBinary {
     Write-Log "INFO" "Getting OTEL collector binary ..."
     try {
         $ProgressPreference = "SilentlyContinue"
-        Invoke-WebRequest -Uri https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.55.0/otelcol-contrib_0.55.0_windows_amd64.tar.gz -OutFile $using:logzioTempDir\otelcol-contrib.tar.gz | Out-Null
+        Invoke-WebRequest -Uri https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-windows_amd64.tar.gz -OutFile $using:logzioTempDir\otelcol-logzio.tar.gz | Out-Null
         $ProgressPreference = "Continue"
     }
     catch {
@@ -111,8 +111,8 @@ function Get-OTELCollectorBinary {
         return 2
     }
 
-    $local:otelBin = "$using:logzioAppDataDir\otelcol-contrib.exe"
-    tar -zxf $using:logzioTempDir\otelcol-contrib.tar.gz --directory $using:logzioAppDataDir otelcol-contrib.exe
+    $local:otelBin = "$using:logzioAppDataDir\otelcol-logzio-windows_amd64.exe"
+    tar -zxf $using:logzioTempDir\otelcol-logzio.tar.gz --directory $using:logzioAppDataDir
     Write-Run "`$script:otelBin = '$otelBin'"
 }
 
