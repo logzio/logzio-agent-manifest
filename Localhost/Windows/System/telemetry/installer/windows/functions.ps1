@@ -221,7 +221,7 @@ function Invoke-LogzioOTELCollectorService {
     Write-Log "INFO" "Running Logz.io OTEL collector service ..."
     Write-Log "INFO" "OTEL config =`n$(Get-Content $using:otelConfig)"
 
-    New-Service -Name LogzioOTELCollector -BinaryPathName "$using:otelBin --config $using:otelConfig 2>logzio_otel_collector.log" -Description "Collects localhost logs/metrics and sends them to Logz.io." 2>$using:taskErrorFile | Out-Null
+    New-Service -Name LogzioOTELCollector -BinaryPathName "$using:otelBin --config $using:otelConfig 2>$using:logzioAppDataDir\logzio_otel_collector.log" -Description "Collects localhost logs/metrics and sends them to Logz.io." 2>$using:taskErrorFile | Out-Null
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"installer.ps1 (6): failed to run Logzio OTEL collector service.`n  $err`""
