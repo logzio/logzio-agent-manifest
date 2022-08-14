@@ -1,8 +1,5 @@
 receivers:
 processors:
-  batch:
-    send_batch_size: 10000
-    timeout: 5s
   resourcedetection/system:
     detectors: ["system"]
     system:
@@ -13,11 +10,11 @@ service:
   pipelines:
     logs:
       receivers: []
-      processors: [batch, resourcedetection/system]
+      processors: [resourcedetection/system]
       exporters: []
     metrics:
       receivers: []
-      processors: [batch, resourcedetection/system]
+      processors: [resourcedetection/system]
       exporters: []
   telemetry:
     logs:
