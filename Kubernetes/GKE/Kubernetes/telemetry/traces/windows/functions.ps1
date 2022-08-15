@@ -50,7 +50,7 @@ function Build-LogzioTracesTokenHelmSet {
 # Output:
 #   helmSets - Contains all the Helm sets
 # Error:
-#   Error Code 2
+#   Exit Code 2
 function Build-LogzioRegionHelmSet {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
