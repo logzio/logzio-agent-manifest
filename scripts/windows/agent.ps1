@@ -68,8 +68,8 @@ Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Loading agent f
 Get-Arguments $args
 
 # Append environment variable Path
-if ($env:Path -notcontains "C:\ProgramData\chocolatey\bin;") {
-    $env:Path += "C:\ProgramData\chocolatey\bin;"
+if ($env:Path -notcontains "C:\ProgramData\chocolatey\bin") {
+    $env:Path += ";C:\ProgramData\chocolatey\bin"
 }
 
 # Print title
