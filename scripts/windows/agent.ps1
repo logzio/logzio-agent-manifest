@@ -69,7 +69,7 @@ Get-Arguments $args
 
 # Append environment variable Path
 if ($env:Path -notcontains "C:\ProgramData\chocolatey\bin") {
-    $env:Path += ";C:\ProgramData\chocolatey\bin;"
+    $env:Path += ";C:\ProgramData\chocolatey\bin"
 }
 
 # Print title
