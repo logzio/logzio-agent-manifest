@@ -12,7 +12,7 @@
 function get_logzio_region () {
     write_log "INFO" "Getting Logz.io region ..."
 
-    local listener_url=$($jq_bin -r '.listenerUrl' $app_json)
+    local listener_url=$(jq -r '.listenerUrl' $app_json)
     if [[ "$listener_url" = null ]]; then
         write_run "print_error \"logs.bash (1): '.listenerUrl' was not found in application JSON\""
         return 1
@@ -40,7 +40,7 @@ function get_logzio_region () {
 function get_logzio_logs_token () {
     write_log "INFO" "Getting Logz.io logs token ..."
 
-    local shipping_token=$($jq_bin -r '.shippingTokens.LOG_ANALYTICS' $app_json)
+    local shipping_token=$(jq -r '.shippingTokens.LOG_ANALYTICS' $app_json)
     if [[ "$shipping_token" = null ]]; then
         write_run "print_error \"logs.bash (2): '.shippingTokens.LOG_ANALYTICS' was not found in application JSON\""
         return 2
@@ -68,7 +68,7 @@ function get_log_sources () {
         return 3
     fi
 
-    local log_sources_value=$(echo -e "$log_sources_param" | $jq_bin -c '.value[]')
+    local log_sources_value=$(echo -e "$log_sources_param" | jq -c '.value[]')
     if [[ "$log_sources_value" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=optional-log-sources}].value[]' was not found in application JSON\""
         return 3

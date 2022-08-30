@@ -15,7 +15,7 @@
 function get_selected_products () {
     write_log "INFO" "Getting the selected products ..."
 
-    local telemetries=$($jq_bin -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
+    local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then
         write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\""
         return 1
@@ -30,7 +30,7 @@ function get_selected_products () {
     local index=0
 
     while read -r telemetry; do
-        local type=$(echo "$telemetry" | $jq_bin -r '.type')
+        local type=$(echo "$telemetry" | jq -r '.type')
         if [[ "$type" = null ]]; then
             write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\""
             return 1
@@ -40,7 +40,7 @@ function get_selected_products () {
             return 1
         fi
 
-        local params=$(echo -e "$telemetry" | $jq_bin -r '.params[]')
+        local params=$(echo -e "$telemetry" | jq -r '.params[]')
         if [[ "$params" = null ]]; then
             write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\""
             return 1
