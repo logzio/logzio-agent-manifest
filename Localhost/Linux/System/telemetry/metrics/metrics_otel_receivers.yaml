@@ -8,6 +8,5 @@ hostmetrics:
     memory:
     network:
     paging:
-    processes:
     process:
       mute_process_name_error: true
