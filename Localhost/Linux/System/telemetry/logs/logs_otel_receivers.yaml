@@ -9,4 +9,4 @@ filelog:
       from: attributes["log.file.path"]
       to: attributes["log_file_path"]
   attributes:
-    type: agent-mac
+    type: agent-linux
