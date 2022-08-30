@@ -19,7 +19,7 @@ function install_yq () {
     fi
 
     yq_bin="$logzio_temp_dir/yq_linux_amd64"
-    tar -zxf $logzio_temp_dir/yq.tar.gz --directory $logzio_temp_dir *_amd64
+    tar -zxf $logzio_temp_dir/yq.tar.gz --directory $logzio_temp_dir
     write_run "yq_bin=\"$yq_bin\""
 }
 
