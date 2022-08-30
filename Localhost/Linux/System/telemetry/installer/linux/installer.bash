@@ -61,5 +61,5 @@ echo -e "\033[0;35mCollector Binary\033[0;37m: $otel_bin"
 echo -e "\033[0;35mCollector Config\033[0;37m: $otel_config"
 echo -e "\033[0;35mStart Service Command\033[0;37m: sudo systemctl start $service_name"
 echo -e "\033[0;35mStop Service Command\033[0;37m: sudo systemctl stop $service_name"
-echo -e "\033[0;35mShow Logs Command\033[0;37m: sudo systemctl status $service_name"
+echo -e "\033[0;35mShow Logs Command\033[0;37m: sudo systemctl status -l $service_name"
 echo
