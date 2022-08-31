@@ -12,13 +12,15 @@ source $logzio_temp_dir/installer_functions.bash
 execute_task "is_logzio_otel_collector_service_exist" "checking if Logz.io OTEL collector service exist"
 if $is_service_exist; then
     while true; do
-        read -s -p "\033[0;33mcom.logzio.OTELCollector service is already exist. If you continue the service will be removed. Are you sure? (y/n)\033[0;37m" answer
+        echo -ne "\033[0;33mcom.logzio.OTELCollector service is already exist. If you continue the service will be removed. Are you sure? (y/n)\033[0;37m " 
+        read answer
         if [[ "$answer" = "y" ]]; then
             launchctl unload $service_plist >/dev/null 2>&1
             break
         elif [[ "$answer" = "n" ]]; then
             break
         fi
+        echo
     done
     echo
 fi
