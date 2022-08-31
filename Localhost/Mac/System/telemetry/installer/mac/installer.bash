@@ -8,6 +8,21 @@
 write_log "INFO" "Loading installer functions ..."
 source $logzio_temp_dir/installer_functions.bash
 
+# Check if Logz.io OTEL collector service exist
+execute_task "is_logzio_otel_collector_service_exist" "checking if Logz.io OTEL collector service exist"
+if $is_service_exist; then
+    while true; do
+        read -p "\033[0;33m$service_name is already exist. If you continue the service will be removed. Are you sure? (y/n)\033[0;37m" answer
+        if [[ "$answer" = "y" ]]; then
+            launchctl unload $service_plist >/dev/null 2>&1
+            break
+        elif [[ "$answer" = "n" ]]; then
+            break
+        fi
+    done
+    echo
+fi
+
 # Get the selected products
 execute_task "get_selected_products" "getting the selected products"
 

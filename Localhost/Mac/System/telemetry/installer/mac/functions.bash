@@ -4,6 +4,24 @@
 ################################################### Installer Mac Functions #####################################################
 #################################################################################################################################
 
+# Checks if Logz.io OTEL collector service exist
+# Output:
+#   is_service_exist - Tells if Logz.io OTEL collector service exist
+# Error:
+#   Exit Code 1
+function is_logzio_otel_collector_service_exist () {
+    write_log "INFO" "Checking if Logz.io OTEL collector service exist ..."
+    local service=$(launchctl list | grep $service_name)
+    if [[ -z $service ]]; then
+        write_log "is_service_exist = false"
+        write_run "is_service_exist=false"
+        return
+    fi
+
+    write_log "is_service_exist = true"
+    write_run "is_service_exist=true"
+}
+
 # Gets the selected products (logs/metrics)
 # Output:
 #   is_logs_option_selected - Tells if logs option was selected (true/false)
@@ -11,18 +29,18 @@
 #   is_metrics_option_selected - Tells if metrics option was selected (true/false)
 #   metrics_params - The metrics params if metrics option was selected
 # Error:
-#   Exit Code 1
+#   Exit Code 2
 function get_selected_products () {
     write_log "INFO" "Getting the selected products ..."
 
     local telemetries=$($jq_bin -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then
-        write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\""
-        return 1
+        write_run "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\""
+        return 2
     fi
     if [[ -z "$telemetries" ]]; then
-        write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\""
-        return 1
+        write_run "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] is empty in application JSON\""
+        return 2
     fi
 
     local is_logs_option_selected=false
@@ -32,18 +50,18 @@ function get_selected_products () {
     while read -r telemetry; do
         local type=$(echo "$telemetry" | $jq_bin -r '.type')
         if [[ "$type" = null ]]; then
-            write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\""
-            return 1
+            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\""
+            return 2
         fi
         if [[ -z "$type" ]]; then
-            write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\""
-            return 1
+            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' is empty in application JSON\""
+            return 2
         fi
 
         local params=$(echo -e "$telemetry" | $jq_bin -r '.params[]')
         if [[ "$params" = null ]]; then
-            write_run "print_error \"installer.bash (1): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\""
-            return 1
+            write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\""
+            return 2
         fi
 
         if [[ "$type" = "LOG_ANALYTICS" ]]; then
@@ -82,14 +100,14 @@ function create_logzio_opt_dir () {
 # Output:
 #   otel_bin - The OTEL collector binary file path
 # Error:
-#   Exit Code 2
+#   Exit Code 3
 function get_otel_collector_binary () {
     write_log "INFO" "Getting OTEL collector binary ..."
     curl -fsSL https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-darwin_amd64.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"instalelr.bash (2): failed to get OTEL collector binary file from Logz.io repo.\n  $err\""
-        return 2
+        write_run "print_error \"instalelr.bash (3): failed to get OTEL collector binary file from Logz.io repo.\n  $err\""
+        return 3
     fi
 
     otel_bin="$logzio_opt_dir/otelcol-logzio-darwin_amd64"
@@ -101,7 +119,7 @@ function get_otel_collector_binary () {
 # Output:
 #   otel_config - The OTEL config file path
 # Error:
-#   Exit Code 3
+#   Exit Code 4
 function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
@@ -109,8 +127,8 @@ function get_otel_config () {
     curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (3): failed to get OTEL config file from logzio-agent-manifest repo.\n  $err\""
-        return 3
+        write_run "print_error \"installer.bash (4): failed to get OTEL config file from logzio-agent-manifest repo.\n  $err\""
+        return 4
     fi
 
     write_run "otel_config=\"$otel_config\""
@@ -121,7 +139,7 @@ function get_otel_config () {
 #   service_name - The Logz.io OTEL collector service name
 #   service_plist - The Logz.io OTEL collector plist file path
 # Error:
-#   Exit Code 4
+#   Exit Code 5
 function get_logzio_otel_collector_plist () {
     write_log "INFO" "Getting Logz.io OTEL collector plist file ..."
 
@@ -130,8 +148,8 @@ function get_logzio_otel_collector_plist () {
     curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $service_plist 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (4): failed to get Logz.io OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
-        return 4
+        write_run "print_error \"installer.bash (5): failed to get Logz.io OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
+        return 5
     fi
 
     write_run "service_name=\"$service_name\""
@@ -140,49 +158,49 @@ function get_logzio_otel_collector_plist () {
 
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 5
+#   Exit Code 6
 function get_logs_scripts () {
     write_log "INFO" "Getting logs script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/logs/mac/logs.bash > $logzio_temp_dir/logs.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (5): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
-        return 5
+        write_run "print_error \"installer.bash (6): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
+        return 6
     fi
 
     write_log "INFO" "Getting logs functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/logs/mac/functions.bash > $logzio_temp_dir/logs_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (5): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 5
+        write_run "print_error \"installer.bash (6): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 6
     fi
 }
 
 # Gets metrics scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 6
+#   Exit Code 7
 function get_metrics_scripts () {
     write_log "INFO" "Getting metrics script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/metrics/mac/metrics.bash > $logzio_temp_dir/metrics.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
-        return 6
+        write_run "print_error \"installer.bash (7): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
+        return 7
     fi
 
     write_log "INFO" "Getting metrics functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/metrics/mac/functions.bash > $logzio_temp_dir/metrics_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 6
+        write_run "print_error \"installer.bash (7): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 7
     fi
 }
 
 # Runs Logz.io OTEL collector service
 # Error:
-#   Exit Code 7
+#   Exit Code 8
 function run_logzio_otel_collector_service () {
     write_log "INFO" "Running Logz.io OTEL collector service ..."
     write_log "INFO" "OTEL config =\n$(cat $otel_config)"
@@ -190,8 +208,8 @@ function run_logzio_otel_collector_service () {
     launchctl load $service_plist >/dev/null 2>$task_error_file
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
-        write_run "print_error \"installer.bash (7): failed to load Logz.io OTEL collector plist file.\n  $err\""
-        return 7
+        write_run "print_error \"installer.bash (8): failed to load Logz.io OTEL collector plist file.\n  $err\""
+        return 8
     fi
 
     is_running=$(launchctl list | grep $service_name | grep -e '^[0-9]')
@@ -201,6 +219,6 @@ function run_logzio_otel_collector_service () {
 
     status=$(launchctl list | grep $service_name | grep -oe '[0-9]\+')
     launchctl unload $service_plist >/dev/null 2>&1
-    write_run "print_error \"installer.bash (7): failed to run Logz.io OTEL collector plist file (status $status).\n  $err\""
-    return 7
+    write_run "print_error \"installer.bash (8): failed to run Logz.io OTEL collector plist file (status $status).\n  $err\""
+    return 8
 }
