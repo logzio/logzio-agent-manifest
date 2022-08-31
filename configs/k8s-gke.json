@@ -31,6 +31,7 @@
           "telemetries": [
             {
               "type": "LOG_ANALYTICS",
+              "otel": {},
               "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
               "params": []

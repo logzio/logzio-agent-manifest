@@ -29,7 +29,11 @@
             {
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
-              "params": []
+              "params": [],
+              "otel": {
+                "processors": ["processor1", "processor2"],
+                "receivers": ["receiver1", "receiver2"]
+              }
             },
             {
               "type": "METRICS",
@@ -45,6 +49,10 @@
                   "params": []
                 }
               ],
+              "otel": {
+                "processors": ["processor1", "processor2"],
+                "receivers": ["receiver1", "receiver2"]
+              },
               "dashboards": [
                 "5jMvBtrxQwMo0GuDO13kpb",
                 "5BjRR3NuNQb3XHVPhn3HQ0",
@@ -55,7 +63,11 @@
             {
               "type": "TRACING",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
-              "params": []
+              "params": [],
+              "otel": {
+                "processors": ["processor1", "processor2"],
+                "receivers": ["receiver1", "receiver2"]
+              }
             }
           ]
         }

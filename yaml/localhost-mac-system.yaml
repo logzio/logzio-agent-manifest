@@ -1,0 +1,23 @@
+#log analytics:
+#  receivers: ["',',' ", " asdad,as'"]
+#  proccessors: ''1;2312'3,'
+#metrics:
+#  receivers: ["',',' ", " asdad,as'"]
+#  proccessors: ''1;2312'3,'
+#
+#
+#
+#1. on agent request config -> go to repo -> give as another paramter the correct ("matching") yaml
+#2. new endpoint on telemetry agent micro service that returns matching yaml
+#3. agent wrapper after receiving config -> goto github / new endpoint (2) -> get matching yaml
+#
+#
+#1. always updated
+#2. if we manage to write this as yaml -> beginning to future yaml
+#
+#response json
+#
+#
+#1. get config (json) (send id)
+#2. get yaml
+#
