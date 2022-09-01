@@ -19,3 +19,5 @@ service:
   telemetry:
     logs:
       level: "debug"
+    metrics:
+      address: "localhost:8888"

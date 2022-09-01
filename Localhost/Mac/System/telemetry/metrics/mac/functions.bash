@@ -118,3 +118,29 @@ function add_metrics_exporter_to_otel_config () {
         return 4
     fi
 }
+
+# Adds metrics exporter to OTEL config
+# Error:
+#   Exit Code 5
+function add_metrics_address_to_otel_config () {
+    write_log "INFO" "Adding metrics address to OTEL config ..."
+
+    local port=8888
+    local result=$(netstat -vanp tcp | grep $port)
+    if [[ ! -z "$result" ]]; then
+        while true; do
+            let "port++"
+            result=$(netstat -vanp tcp | grep $port)
+            if [[ -z "$result" ]]; then
+                break
+            fi
+        done
+    fi
+
+    $yq_bin -i ".service.telemetry.metrics.address = \"localhost:$port\"" $otel_config 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"metrics.bash (5): failed to add service telemetry metrics address to OTEL config file.\n  $err\""
+        return 5
+    fi
+}
