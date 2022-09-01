@@ -22,7 +22,6 @@ if $is_service_exist; then
             delete_temp_dir
             exit
         fi
-        echo
     done
     echo
 fi
