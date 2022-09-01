@@ -6,6 +6,9 @@
 Write-Log "INFO" "Loading installer functions ..."
 . $logzioTempDir\installer_functions.ps1
 
+# Check if Logz.io OTEL collector service exsit 
+Invoke-Task "Get-IsLogzioOTELCollectorServiceExist" "checking if Logz.io OTEL collector service exist"
+
 # Get the selected products
 Invoke-Task "Get-SelectedProducts" "getting the selected products"
 

@@ -2,6 +2,26 @@
 ################################################# Installer Windows Functions ###################################################
 #################################################################################################################################
 
+# Checks if Logz.io OTEL collector service exist
+# Output:
+#   isServiceExist - Tells if Logz.io OTEL collector service exist
+function Get-IsLogzioOTELCollectorServiceExist {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Checking if Logz.io OTEL collector service exist ..."
+    $local:service = Get-Service -Name LogzioOTELCollector
+    if (-z $service) {
+        Write-Log "isServiceExist = false"
+        Write-Run "`$isServiceExist = `$false"
+        return
+    }
+
+    Write-Log "isServiceExist = true"
+    Write-Run "`$isServiceExist = `$true"
+}
+
 # Gets the selected products (logs/metrics)
 # Output:
 #   isLogsOptionSelected - Tells if logs option was selected (true/false)
