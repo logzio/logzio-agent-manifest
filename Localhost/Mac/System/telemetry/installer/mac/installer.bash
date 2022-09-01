@@ -18,7 +18,9 @@ if $is_service_exist; then
             launchctl unload $service_plist >/dev/null 2>&1
             break
         elif [[ "$answer" = "n" ]]; then
-            break
+            tput cnorm -- normal
+            delete_temp_dir
+            exit
         fi
         echo
     done
