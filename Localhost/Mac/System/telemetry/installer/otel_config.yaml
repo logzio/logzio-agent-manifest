@@ -20,4 +20,4 @@ service:
     logs:
       level: "debug"
     metrics:
-      address: "localhost:8888"
+      address:
