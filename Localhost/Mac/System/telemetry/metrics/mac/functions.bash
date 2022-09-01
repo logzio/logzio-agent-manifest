@@ -119,18 +119,18 @@ function add_metrics_exporter_to_otel_config () {
     fi
 }
 
-# Adds metrics exporter to OTEL config
+# Adds metrics address to OTEL config
 # Error:
 #   Exit Code 5
 function add_metrics_address_to_otel_config () {
     write_log "INFO" "Adding metrics address to OTEL config ..."
 
     local port=8888
-    local result=$(netstat -vanp tcp | grep $port)
+    local result=$(lsof -i -n -P | grep TCP | grep LISTEN | grep 127.0.0.1:$port)
     if [[ ! -z "$result" ]]; then
         while true; do
             let "port++"
-            result=$(netstat -vanp tcp | grep $port)
+            result=$(lsof -i -n -P | grep TCP | grep LISTEN | grep 127.0.0.1:$port)
             if [[ -z "$result" ]]; then
                 break
             fi
