@@ -165,7 +165,7 @@ function Add-MetricsAddressToOTELConfig {
         }
     }
 
-    $local:address = "`"localhost:$port`""
+    $local:address = "localhost:$port"
     yq e -i ".service.telemetry.metrics.address = ""`"$address`"""" $using:otelConfig 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
