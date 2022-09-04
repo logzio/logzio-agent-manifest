@@ -146,6 +146,11 @@ function Add-MetricsExporterToOTELConfig {
 # Error:
 #   Exit Code 5
 function Add-MetricsAddressToOTELConfig {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+    $local:taskErrorFile = $using:taskErrorFile
+    
     Write-Log "INFO" "Adding metrics address to OTEL config ..."
 
     $local:port = 8888

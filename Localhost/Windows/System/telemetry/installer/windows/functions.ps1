@@ -12,7 +12,7 @@ function Get-IsLogzioOTELCollectorServiceExist {
 
     Write-Log "INFO" "Checking if Logz.io OTEL collector service exist ..."
     $local:service = Get-Service -Name LogzioOTELCollector
-    if (-z $service) {
+    if ([string]::IsNullOrEmpty($service)) {
         Write-Log "isServiceExist = false"
         Write-Run "`$script:isServiceExist = `$false"
         return
