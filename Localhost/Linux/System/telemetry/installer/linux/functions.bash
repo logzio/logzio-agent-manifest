@@ -4,6 +4,23 @@
 ################################################## Installer Linux Functions ####################################################
 #################################################################################################################################
 
+# Checks if Logz.io OTEL collector service exist
+# Output:
+#   is_service_exist - Tells if Logz.io OTEL collector service exist
+function is_logzio_otel_collector_service_exist () {
+    write_log "INFO" "Checking if Logz.io OTEL collector service exist ..."
+
+    local service=$(systemctl | grep logzioOTELCollector | )
+    if [[ -z $service ]]; then
+        write_log "is_service_exist = false"
+        write_run "is_service_exist=false"
+        return
+    fi
+
+    write_log "is_service_exist = true"
+    write_run "is_service_exist=true"
+}
+
 # Gets the selected products (logs/metrics)
 # Output:
 #   is_logs_option_selected - Tells if logs option was selected (true/false)
@@ -125,7 +142,6 @@ function get_logzio_otel_collector_service_file () {
     write_log "INFO" "Getting Logz.io OTEL collector service file ..."
 
     service_name="logzioOTELCollector"
-    service_path="/Library/LaunchDaemons/$service_name.plist"
     curl -fsSL $repo_path/telemetry/installer/logzioOTELCollector.service > /etc/systemd/system/$service_name.service 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
