@@ -159,6 +159,7 @@ function Add-MetricsAddressToOTELConfig {
         while ($true) {
             $port++
             result = netstat -vanp TCP | Select-String -Pattern LISTENING | Select-String -Pattern 127.0.0.1:$port
+            Write-Output $result >> test.txt
             if ([string]::IsNullOrEmpty($result)) {
                 break
             }
