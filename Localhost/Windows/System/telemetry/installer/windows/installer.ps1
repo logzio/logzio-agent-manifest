@@ -9,7 +9,7 @@ Write-Log "INFO" "Loading installer functions ..."
 # Check if Logz.io OTEL collector service exsit 
 Invoke-Task "Get-IsLogzioOTELCollectorServiceExist" "checking if Logz.io OTEL collector service exist"
 if ($isServiceExist) {
-    for ($true) {
+    while ($true) {
         Write-Host "LogzioOTELCollector service is already exist. If you continue the service will be removed. Are you sure? (y/n) " -ForegroundColor Yellow -NoNewline 
         $local:answer = Read-Host
         if ($answer.Equals("y")) {
