@@ -86,7 +86,7 @@ Write-Host ": Start-Service -Name LogzioOTELCollector"
 Write-Host "Stop Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Stop-Service -Name LogzioOTELCollector"
 Write-Host "Delete Service Command" -ForegroundColor Magenta -NoNewLine
-Write-Host ": sc.exe DELETE LogzioOTELCollector"
+Write-Host ": sc.exe DELETE LogzioOTELCollector (stop the service before deleting it)"
 Write-Host "Show Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Get-Service -Name LogzioOTELCollector"
 Write-Host "Show Logs Command" -ForegroundColor Magenta -NoNewLine
