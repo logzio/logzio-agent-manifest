@@ -10,7 +10,7 @@
 function is_logzio_otel_collector_service_exist () {
     write_log "INFO" "Checking if Logz.io OTEL collector service exist ..."
 
-    local service=$(systemctl | grep logzioOTELCollector | )
+    local service=$(systemctl | grep logzioOTELCollector)
     if [[ -z $service ]]; then
         write_log "is_service_exist = false"
         write_run "is_service_exist=false"
