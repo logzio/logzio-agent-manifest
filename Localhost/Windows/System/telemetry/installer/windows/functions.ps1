@@ -14,12 +14,12 @@ function Get-IsLogzioOTELCollectorServiceExist {
     $local:service = Get-Service -Name LogzioOTELCollector
     if (-z $service) {
         Write-Log "isServiceExist = false"
-        Write-Run "`$isServiceExist = `$false"
+        Write-Run "`$script:isServiceExist = `$false"
         return
     }
 
     Write-Log "isServiceExist = true"
-    Write-Run "`$isServiceExist = `$true"
+    Write-Run "`$script:isServiceExist = `$true"
 }
 
 # Gets the selected products (logs/metrics)
