@@ -150,7 +150,7 @@ function Add-MetricsAddressToOTELConfig {
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
     $local:taskErrorFile = $using:taskErrorFile
-    
+
     Write-Log "INFO" "Adding metrics address to OTEL config ..."
 
     $local:port = 8888
@@ -165,7 +165,8 @@ function Add-MetricsAddressToOTELConfig {
         }
     }
 
-    yq e -i ".service.telemetry.metrics.address = ""`"localhost:$port`"""" $otel_config 2>$task_error_file
+    $local:address = "localhost:$port"
+    yq e -i ".service.telemetry.metrics.address = ""`"$address`"""" $using:otelConfig 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.bash (5): failed to add service telemetry metrics address to OTEL config file.`n  $err`""
