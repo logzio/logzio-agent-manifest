@@ -13,6 +13,7 @@ if ($isServiceExist) {
         Write-Host "LogzioOTELCollector service is already exist. If you continue the service will be removed. Are you sure? (y/n) " -ForegroundColor Yellow -NoNewline 
         $local:answer = Read-Host
         if ($answer.Equals("y")) {
+            Stop-Service -Name LogzioOTELCollector 2>&1 | Out-Null
             sc.exe DELETE LogzioOTELCollector 2>&1 | Out-Null
             break
         } elseif ($answer.Equals("n")) {
@@ -84,6 +85,8 @@ Write-Host "Start Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Start-Service -Name LogzioOTELCollector"
 Write-Host "Stop Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Stop-Service -Name LogzioOTELCollector"
+Write-Host "Delete Service Command" -ForegroundColor Magenta -NoNewLine
+Write-Host ": sc.exe DELETE LogzioOTELCollector"
 Write-Host "Show Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Get-Service -Name LogzioOTELCollector"
 Write-Host "Show Logs Command" -ForegroundColor Magenta -NoNewLine
