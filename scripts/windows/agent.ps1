@@ -2,9 +2,25 @@
 ###################################################### Agent Windows Script #####################################################
 #################################################################################################################################
 
-# Gets agent functions scripts from logzio-agent-manifest repo to logzio-temp directory
+# Checks if PowerShell was run as Administrator
 # Error:
 #   Exit Code 1
+function Test-IsElevated {
+    Write-Output "[INFO]" "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Checking if PowerShell was run as Administrator ..." >> $logFile
+
+    $local:id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $local:principal = New-Object System.Security.Principal.WindowsPrincipal($id)
+
+    if (-Not $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)) {
+        Write-Output "[ERROR]" "[$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): PowerShell was not run as Administrator. Please run Powershell as Administrator and rerun the agent script." >> $logFile
+        Write-Host "agent.ps1 (1): PowerShell was not run as Administrator. Please run Powershell as Administrator and rerun the agent script." -ForegroundColor Red
+        Exit 1
+    }
+}
+
+# Gets agent functions scripts from logzio-agent-manifest repo to logzio-temp directory
+# Error:
+#   Exit Code 2
 function Get-AgentFunctionsScripts {
     Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Getting agent functions script file from logzio-agent-manifest repo ..." >> $logFile
     try {
@@ -15,9 +31,9 @@ function Get-AgentFunctionsScripts {
     catch {
         Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo.`n  $_" >> $logFile
 
-        Write-Host "agent.ps1 (1): failed to get agnet functions script file from logzio-agent-manifest repo.`n  $_" -ForegroundColor Red
+        Write-Host "agent.ps1 (2): failed to get agnet functions script file from logzio-agent-manifest repo.`n  $_" -ForegroundColor Red
         Remove-Item -Path $logzioTempDir -Recurse
-        Exit 1
+        Exit 2
     }
 
     Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] Getting utils functions script file from logzio-agent-manifest repo ..." >> $logFile
@@ -30,9 +46,9 @@ function Get-AgentFunctionsScripts {
         $_ >> $logFile
         Write-Output "[ERROR] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo.`n  $_" >> $logFile
 
-        Write-Host "agent.ps1 (1): failed to get utils functions script file from logzio-agent-manifest repo.`n  $_" -ForegroundColor Red
+        Write-Host "agent.ps1 (2): failed to get utils functions script file from logzio-agent-manifest repo.`n  $_" -ForegroundColor Red
         Remove-Item -Path $logzioTempDir -Recurse
-        Exit 1
+        Exit 2
     }
 }
 
@@ -44,6 +60,9 @@ $script:logFile = ".\logzio_agent.log"                                          
 $script:runFile = "$logzioTempDir\run.ps1"                                                  # Run file path
 $script:taskErrorFile = "$logzioTempDir\task_error.txt"                                     # Task error file path
 $script:appJSON = "$logzioTempDir\app.json"                                                 # App JSON path
+
+# Check if PowerShell was run as Administrator
+Test-IsElevated
 
 # Move to Documents directory
 Set-Location -Path $env:UserProfile\Documents

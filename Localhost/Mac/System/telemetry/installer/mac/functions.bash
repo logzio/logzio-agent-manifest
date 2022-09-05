@@ -4,6 +4,23 @@
 ################################################### Installer Mac Functions #####################################################
 #################################################################################################################################
 
+# Checks if Logz.io OTEL collector service exist
+# Output:
+#   is_service_exist - Tells if Logz.io OTEL collector service exist
+function is_logzio_otel_collector_service_exist () {
+    write_log "INFO" "Checking if Logz.io OTEL collector service exist ..."
+
+    local service=$(launchctl list | grep com.logzio.OTELCollector)
+    if [[ -z $service ]]; then
+        write_log "is_service_exist = false"
+        write_run "is_service_exist=false"
+        return
+    fi
+
+    write_log "is_service_exist = true"
+    write_run "is_service_exist=true"
+}
+
 # Gets the selected products (logs/metrics)
 # Output:
 #   is_logs_option_selected - Tells if logs option was selected (true/false)
