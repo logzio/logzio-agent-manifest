@@ -1,0 +1,6 @@
+prometheusremotewrite:
+  endpoint:
+  headers:
+    Authorization:
+  resource_to_telemetry_conversion:
+    enabled: true
