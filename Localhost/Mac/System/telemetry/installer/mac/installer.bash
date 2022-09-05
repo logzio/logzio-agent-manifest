@@ -8,6 +8,24 @@
 write_log "INFO" "Loading installer functions ..."
 source $logzio_temp_dir/installer_functions.bash
 
+# Check if Logz.io OTEL collector service exist
+execute_task "is_logzio_otel_collector_service_exist" "checking if Logz.io OTEL collector service exist"
+if $is_service_exist; then
+    while true; do
+        echo -ne "\033[0;33mcom.logzio.OTELCollector service is already exist. If you continue the service will be removed. Are you sure? (y/n)\033[0;37m " 
+        read answer
+        if [[ "$answer" = "y" ]]; then
+            launchctl unload /Library/LaunchDaemons/com.logzio.OTELCollector.plist >/dev/null 2>&1
+            break
+        elif [[ "$answer" = "n" ]]; then
+            tput cnorm -- normal
+            delete_temp_dir
+            exit
+        fi
+    done
+    echo
+fi
+
 # Get the selected products
 execute_task "get_selected_products" "getting the selected products"
 
@@ -60,7 +78,8 @@ echo -e "\nInformation:\n"
 echo -e "\033[0;35mCollector Binary\033[0;37m: $otel_bin"
 echo -e "\033[0;35mCollector Config\033[0;37m: $otel_config"
 echo -e "\033[0;35mStart Service Command\033[0;37m: sudo launchctl load $service_plist"
-echo -e "\033[0;35mStop Service Command\033[0;37m: sudo launchctl unload $service_plist"
+echo -e "\033[0;35mStop Service Command\033[0;37m: sudo launchctl stop $service_name"
+echo -e "\033[0;35mDelete Service Command\033[0;37m: sudo launchctl unload $service_plist"
 echo -e "\033[0;35mShow Service Command\033[0;37m: sudo launchctl list | grep $service_name"
 echo -e "\033[0;35mShow Logs Command\033[0;37m: sudo tail -F $logzio_opt_dir/logzio_otel_collector.log"
 echo

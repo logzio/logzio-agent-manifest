@@ -18,5 +18,8 @@ Invoke-Task "Add-MetricsReceiversToOTELConfig" "adding metrics receivers to OTEL
 # Add metrics exporter to OTEL config
 Invoke-Task "Add-MetricsExporterToOTELConfig" "adding metrics exporter to OTEL config"
 
+# Add metrics address to OTEL config
+Invoke-Task "Add-MetricsAddressToOTELConfig" "adding metrics address to OTEL config"
+
 # Finished successfully
 Exit 0

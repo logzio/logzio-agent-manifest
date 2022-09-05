@@ -6,6 +6,25 @@
 Write-Log "INFO" "Loading installer functions ..."
 . $logzioTempDir\installer_functions.ps1
 
+# Check if Logz.io OTEL collector service exsit 
+Invoke-Task "Get-IsLogzioOTELCollectorServiceExist" "checking if Logz.io OTEL collector service exist"
+if ($isServiceExist) {
+    while ($true) {
+        Write-Host "LogzioOTELCollector service is already exist. If you continue the service will be removed. Are you sure? (y/n) " -ForegroundColor Yellow -NoNewline 
+        $local:answer = Read-Host
+        if ($answer.Equals("y")) {
+            Stop-Service -Name LogzioOTELCollector 2>&1 | Out-Null
+            sc.exe DELETE LogzioOTELCollector 2>&1 | Out-Null
+            break
+        } elseif ($answer.Equals("n")) {
+            [Console]::CursorVisible = $true
+            Remove-TempDir
+            Exit 0
+        }
+    }
+    Write-Host
+}
+
 # Get the selected products
 Invoke-Task "Get-SelectedProducts" "getting the selected products"
 
@@ -66,6 +85,8 @@ Write-Host "Start Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Start-Service -Name LogzioOTELCollector"
 Write-Host "Stop Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Stop-Service -Name LogzioOTELCollector"
+Write-Host "Delete Service Command" -ForegroundColor Magenta -NoNewLine
+Write-Host ": sc.exe DELETE LogzioOTELCollector (stop the service before deleting it)"
 Write-Host "Show Service Command" -ForegroundColor Magenta -NoNewLine
 Write-Host ": Get-Service -Name LogzioOTELCollector"
 Write-Host "Show Logs Command" -ForegroundColor Magenta -NoNewLine
