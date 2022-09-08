@@ -160,14 +160,14 @@ function add_logs_service_pipeline_to_otel_config () {
         return 5
     fi
 
-    $yq_bin -i '.service.pipelines.logs.receivers += "filelog"' $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
+    $yq_bin -i '.logs.receivers += "filelog"' $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (6): failed to add service pipeline logs receiver into logs_otel_service_pipeline yaml file.\n  $err\""
         return 6
     fi
 
-    $yq_bin -i '.service.pipelines.logs.exporters += "logzio/logs"' $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
+    $yq_bin -i '.logs.exporters += "logzio/logs"' $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (6): failed to add service pipeline logs exporter into logs_otel_service_pipeline yaml file.\n  $err\""
