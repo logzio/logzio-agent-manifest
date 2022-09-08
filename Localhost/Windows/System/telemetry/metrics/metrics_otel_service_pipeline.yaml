@@ -1,0 +1,4 @@
+metrics:
+  receivers: []
+  processors: [resourcedetection/system]
+  exporters: []

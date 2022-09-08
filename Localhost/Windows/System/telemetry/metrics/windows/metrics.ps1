@@ -21,5 +21,8 @@ Invoke-Task "Add-MetricsExporterToOTELConfig" "adding metrics exporter to OTEL c
 # Add metrics address to OTEL config
 Invoke-Task "Add-MetricsAddressToOTELConfig" "adding metrics address to OTEL config"
 
+# Add metrics service pipeline to OTEL config
+Invoke-Task "Add-MetricsServicePipelineToOTELConfig" "adding metrics service pipeline to OTEL config"
+
 # Finished successfully
 Exit 0

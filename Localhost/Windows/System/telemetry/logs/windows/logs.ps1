@@ -24,5 +24,8 @@ Invoke-Task "Add-LogsReceiversToOTELConfig" "adding logs receivers to OTEL confi
 # Add logs exporter to OTEL config
 Invoke-Task "Add-LogsExporterToOTELConfig" "adding logs exporter to OTEL config"
 
+# Add logs service pipeline to OTEL config
+Invoke-Task "Add-LogsServicePipelineToOTELConfig" "adding logs service pipeline to OTEL config"
+
 # Finished successfully
 Exit 0
