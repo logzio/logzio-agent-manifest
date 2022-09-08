@@ -8,14 +8,6 @@ exporters:
   logging:
 service:
   pipelines:
-    logs:
-      receivers: []
-      processors: [resourcedetection/system]
-      exporters: []
-    metrics:
-      receivers: []
-      processors: [resourcedetection/system]
-      exporters: []
   telemetry:
     logs:
       level: "debug"
