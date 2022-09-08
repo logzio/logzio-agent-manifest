@@ -254,7 +254,7 @@ function Add-LogsServicePipelineToOTELConfig {
     }
 
     if (-Not [string]::IsNullOrEmpty($using:logSources)) {
-        yq e -i '.service.pipelines.logs.receivers += ""filelog""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
+        yq e -i '.logs.receivers += ""filelog""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (7): failed to add service pipeline logs receiver into logs_otel_service_pipeline yaml file (filelog).`n  $err`""
@@ -263,7 +263,7 @@ function Add-LogsServicePipelineToOTELConfig {
     }
 
     if ($using:isApplicationLog) {
-        yq e -i '.service.pipelines.logs.receivers += ""windowseventlog/application""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
+        yq e -i '.logs.receivers += ""windowseventlog/application""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (7): failed to add service pipeline logs receiver into logs_otel_service_pipeline yaml file (windowseventlog/application).`n  $err`""
@@ -272,7 +272,7 @@ function Add-LogsServicePipelineToOTELConfig {
     }
 
     if ($using:isSecurityLog) {
-        yq e -i '.service.pipelines.logs.receivers += ""windowseventlog/security""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
+        yq e -i '.logs.receivers += ""windowseventlog/security""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (7): failed to add service pipeline logs receiver into logs_otel_service_pipeline yaml file (windowseventlog/security).`n  $err`""
@@ -281,7 +281,7 @@ function Add-LogsServicePipelineToOTELConfig {
     }
 
     if ($using:isSystemLog) {
-        yq e -i '.service.pipelines.logs.receivers += ""windowseventlog/system""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
+        yq e -i '.logs.receivers += ""windowseventlog/system""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
         if (-Not $?) {
             $local:err = Get-TaskError
             Write-Run "Write-Error `"logs.ps1 (7): failed to add service pipeline logs receiver into logs_otel_service_pipeline yaml file (windowseventlog/system).`n  $err`""
@@ -289,7 +289,7 @@ function Add-LogsServicePipelineToOTELConfig {
         }
     }
 
-    yq e -i '.service.pipelines.logs.exporters += ""logzio/logs""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
+    yq e -i '.logs.exporters += ""logzio/logs""' $using:logzioTempDir\logs_otel_service_pipeline.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"logs.ps1 (7): failed to add service pipeline logs exporter into logs_otel_service_pipeline yaml file.`n  $err`""

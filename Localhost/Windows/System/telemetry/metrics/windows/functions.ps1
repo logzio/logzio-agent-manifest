@@ -181,14 +181,14 @@ function Add-MetricsServicePipelineToOTELConfig {
         return 6
     }
 
-    yq e -i '.service.pipelines.metrics.receivers += ""hostmetrics""' $using:logzioTempDir\metrics_otel_service_pipeline.yaml 2>$using:taskErrorFile
+    yq e -i '.metrics.receivers += ""hostmetrics""' $using:logzioTempDir\metrics_otel_service_pipeline.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.ps1 (6): failed to add service pipeline metrics receiver into metrics_otel_service_pipeline yaml file.`n  $err`""
         return 6
     }
 
-    yq e -i '.service.pipelines.metrics.exporters += """prometheusremotewrite"""' $using:logzioTempDir\metrics_otel_service_pipeline.yaml 2>$using:taskErrorFile
+    yq e -i '.metrics.exporters += """prometheusremotewrite"""' $using:logzioTempDir\metrics_otel_service_pipeline.yaml 2>$using:taskErrorFile
     if (-Not $?) {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.ps1 (6): failed to add service pipeline metrics exporter into metrics_otel_service_pipeline yaml file.`n  $err`""
