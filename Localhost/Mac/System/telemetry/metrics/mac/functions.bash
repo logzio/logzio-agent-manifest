@@ -68,13 +68,6 @@ function add_metrics_receivers_to_otel_config () {
         write_run "print_error \"metrics.bash (3): failed to add metrics receivers to OTEL config file.\n  $err\""
         return 3
     fi
-
-    $yq_bin -i '.service.pipelines.metrics.receivers += "hostmetrics"' $otel_config 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"metrics.bash (3): failed to add service pipeline metrics receiver to OTEL config file.\n  $err\""
-        return 3
-    fi
 }
 
 # Adds metrics exporter to OTEL config
@@ -110,13 +103,6 @@ function add_metrics_exporter_to_otel_config () {
         write_run "print_error \"metrics.bash (4): failed to add metrics exporter to OTEL config file.\n  $err\""
         return 4
     fi
-
-    $yq_bin -i '.service.pipelines.metrics.exporters += "prometheusremotewrite"' $otel_config 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"metrics.bash (4): failed to add service pipeline metrics exporter to OTEL config file.\n  $err\""
-        return 4
-    fi
 }
 
 # Adds metrics address to OTEL config
@@ -142,5 +128,40 @@ function add_metrics_address_to_otel_config () {
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (5): failed to add service telemetry metrics address to OTEL config file.\n  $err\""
         return 5
+    fi
+}
+
+# Adds metrics service pipeline to OTEL config
+# Error:
+#   Exit Code 6
+function add_metrics_service_pipeline_to_otel_config () {
+    write_log "INFO" "Adding metrics service pipeline to OTEL config ..."
+
+    curl -fsSL $repo_path/telemetry/metrics/metrics_otel_service_pipeline.yaml > $logzio_temp_dir/metrics_otel_service_pipeline.yaml 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"metrics.bash (6): failed to get metrics_otel_service_pipeline yaml file from logzio-agent-manifest repo.\n  $err\""
+        return 6
+    fi
+
+    $yq_bin -i '.metrics.receivers += "hostmetrics"' $logzio_temp_dir/metrics_otel_service_pipeline.yaml 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"metrics.bash (6): failed to add service pipeline metrics receiver into metrics_otel_service_pipeline yaml file.\n  $err\""
+        return 6
+    fi
+
+    $yq_bin -i '.metrics.exporters += "prometheusremotewrite"' $logzio_temp_dir/metrics_otel_service_pipeline.yaml 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"metrics.bash (6): failed to add service pipeline metrics exporter into metrics_otel_service_pipeline yaml file.\n  $err\""
+        return 6
+    fi
+
+    $yq_bin eval-all -i 'select(fileIndex==0).service.pipelines += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_service_pipeline.yaml 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"metrics.bash (6): failed to add metrics service pipeline to OTEL config file.\n  $err\""
+        return 6
     fi
 }

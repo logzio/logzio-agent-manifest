@@ -22,3 +22,6 @@ execute_task "add_metrics_exporter_to_otel_config" "adding metrics exporter to O
 
 # Add metrics address to OTEL config
 execute_task "add_metrics_address_to_otel_config" "addind metrics address to OTEL config"
+
+# Add metrics service pipeline to OTEL config
+execute_task "add_metrics_service_pipeline_to_otel_config" "adding metrics service pipeline to OTEL config"

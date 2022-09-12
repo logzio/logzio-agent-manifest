@@ -110,13 +110,6 @@ function add_logs_receivers_to_otel_config () {
         write_run "print_error \"logs.bash (4): failed to add logs receivers to OTEL config file.\n  $err\""
         return 4
     fi
-
-    $yq_bin -i '.service.pipelines.logs.receivers += "filelog"' $otel_config 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (4): failed to add service pipeline logs receiver to OTEL config file.\n  $err\""
-        return 4
-    fi
 }
 
 # Adds logs exporter to OTEL config
@@ -152,11 +145,39 @@ function add_logs_exporter_to_otel_config () {
         write_run "print_error \"logs.bash (5): failed to add logs exporter to OTEL config file.\n  $err\""
         return 5
     fi
+}
 
-    $yq_bin -i '.service.pipelines.logs.exporters += "logzio/logs"' $otel_config 2>$task_error_file
+# Adds logs service pipeline to OTEL config
+# Error:
+#   Exit Code 6
+function add_logs_service_pipeline_to_otel_config () {
+    write_log "INFO" "Adding logs service pipeline to OTEL config ..."
+
+    curl -fsSL $repo_path/telemetry/logs/logs_otel_service_pipeline.yaml > $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (5): failed to add service pipeline logs exporter to OTEL config file.\n  $err\""
+        write_run "print_error \"logs.bash (5): failed to get logs_otel_service_pipeline yaml file from logzio-agent-manifest repo.\n  $err\""
         return 5
+    fi
+
+    $yq_bin -i '.logs.receivers += "filelog"' $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"logs.bash (6): failed to add service pipeline logs receiver into logs_otel_service_pipeline yaml file.\n  $err\""
+        return 6
+    fi
+
+    $yq_bin -i '.logs.exporters += "logzio/logs"' $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"logs.bash (6): failed to add service pipeline logs exporter into logs_otel_service_pipeline yaml file.\n  $err\""
+        return 6
+    fi
+
+    $yq_bin eval-all -i 'select(fileIndex==0).service.pipelines += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"logs.bash (6): failed to add logs service pipeline to OTEL config file.\n  $err\""
+        return 6
     fi
 }

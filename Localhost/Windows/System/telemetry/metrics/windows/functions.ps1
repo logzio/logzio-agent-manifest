@@ -82,13 +82,6 @@ function Add-MetricsReceiversToOTELConfig {
         Write-Run "Write-Error `"metrics.ps1 (3): failed to add metrics receivers to OTEL config file.`n  $err`""
         return 3
     }
-
-    yq e -i '.service.pipelines.metrics.receivers += ""hostmetrics""' $using:otelConfig 2>$using:taskErrorFile
-    if (-Not $?) {
-        $local:err = Get-TaskError
-        Write-Run "Write-Error `"metrics.ps1 (3): failed to add service pipeline metrics receiver to OTEL config file.`n  $err`""
-        return 3
-    }
 }
 
 # Adds metrics exporter to OTEL config
@@ -133,13 +126,6 @@ function Add-MetricsExporterToOTELConfig {
         Write-Run "Write-Error `"metrics.ps1 (4): failed to add metrics exporter to OTEL config file.`n  $err`""
         return 4
     }
-
-    yq e -i '.service.pipelines.metrics.exporters += """prometheusremotewrite"""' $using:otelConfig 2>$using:taskErrorFile
-    if (-Not $?) {
-        $local:err = Get-TaskError
-        Write-Run "Write-Error `"metrics.ps1 (4): failed to add service pipeline metrics exporter to OTEL config file.`n  $err`""
-        return 4
-    }
 }
 
 # Adds metrics address to OTEL config
@@ -171,5 +157,48 @@ function Add-MetricsAddressToOTELConfig {
         $local:err = Get-TaskError
         Write-Run "Write-Error `"metrics.bash (5): failed to add service telemetry metrics address to OTEL config file.`n  $err`""
         return 5
+    }
+}
+
+# Adds metrics service pipeline to OTEL config
+# Error:
+#   Exit Code 6
+function Add-MetricsServicePipelineToOTELConfig {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+    $local:taskErrorFile = $using:taskErrorFile
+
+    Write-Log "INFO" "Adding metrics service pipeline to OTEL config ..."
+
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/telemetry/metrics/metrics_otel_service_pipeline.yaml -OutFile $using:logzioTempDir\metrics_otel_service_pipeline.yaml | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"metrics.ps1 (6): failed to get metrics_otel_service_pipeline yaml file from logzio-agent-manifest repo.`n  $_`""
+        return 6
+    }
+
+    yq e -i '.metrics.receivers += ""hostmetrics""' $using:logzioTempDir\metrics_otel_service_pipeline.yaml 2>$using:taskErrorFile
+    if (-Not $?) {
+        $local:err = Get-TaskError
+        Write-Run "Write-Error `"metrics.ps1 (6): failed to add service pipeline metrics receiver into metrics_otel_service_pipeline yaml file.`n  $err`""
+        return 6
+    }
+
+    yq e -i '.metrics.exporters += """prometheusremotewrite"""' $using:logzioTempDir\metrics_otel_service_pipeline.yaml 2>$using:taskErrorFile
+    if (-Not $?) {
+        $local:err = Get-TaskError
+        Write-Run "Write-Error `"metrics.ps1 (6): failed to add service pipeline metrics exporter into metrics_otel_service_pipeline yaml file.`n  $err`""
+        return 6
+    }
+
+    yq eval-all -i 'select(fileIndex==0).service.pipelines += select(fileIndex==1) | select(fileIndex==0)' $using:otelConfig $using:logzioTempDir\metrics_otel_service_pipeline.yaml 2>$using:taskErrorFile
+    if (-Not $?) {
+        $local:err = Get-TaskError
+        Write-Run "Write-Error `"metrics.ps1 (6): failed to add metrics service pipeline to OTEL config file.`n  $err`""
+        return 6
     }
 }
