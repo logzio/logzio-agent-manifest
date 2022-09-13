@@ -5,10 +5,10 @@
    "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
    "subtypes": [
      {
-       "name": "EC2",
-       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/linux_machine.png",
-       "description": "Linux machine",
-       "hint": "Select your EC2 OS.",
+       "name": "EC2-Linux",
+       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
+       "description": "EC2 Linux",
+       "hint": "EC2 with Linux.",
        "supportedOs": ["Linux"],
        "datasources": [
          {
