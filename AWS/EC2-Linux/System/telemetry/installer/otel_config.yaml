@@ -4,6 +4,7 @@ processors:
     detectors: ["ec2"]
     ec2:
       tags:
+        - *
 exporters:
   logging:
 service:
