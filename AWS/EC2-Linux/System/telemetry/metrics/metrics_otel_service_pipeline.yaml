@@ -1,4 +1,4 @@
 metrics:
   receivers: []
-  processors: [resourcedetection/system]
+  processors: [resourcedetection/ec2]
   exporters: []
