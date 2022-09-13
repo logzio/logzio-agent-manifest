@@ -7,7 +7,7 @@
      {
        "name": "EC2-Linux",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
-       "description": "EC2 Linux",
+       "description": "EC2 Linux server",
        "hint": "EC2 with Linux.",
        "supportedOs": ["Linux"],
        "datasources": [
