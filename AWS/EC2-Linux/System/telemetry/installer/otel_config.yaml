@@ -1,5 +1,9 @@
 receivers:
 processors:
+  resourcedetection/system:
+    detectors: ["system"]
+    system:
+      hostname_sources: ["os"]
   resourcedetection/ec2:
     detectors: ["ec2"]
     ec2:

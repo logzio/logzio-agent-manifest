@@ -23,32 +23,32 @@ function install_yq () {
     write_run "yq_bin=\"$yq_bin\""
 }
 
-# Checks if localhost can connect to Logz.io logs (port 8071)
+# Checks if EC2 server can connect to Logz.io logs (port 8071)
 # Error:
 #   Exit Code 2
-function can_localhost_connect_to_logzio_logs () {
-    write_log "INFO" "Checking if localhost can connect to Logz.io logs (port 8071) ..."
+function can_ec2_server_connect_to_logzio_logs () {
+    write_log "INFO" "Checking if EC2 server can connect to Logz.io logs (port 8071) ..."
 
     wget -q -t 3 --timeout=5 listener.logz.io:8071
     if [[ $? -eq 8 ]]; then
         return
     fi
 
-    write_run "print_error \"prerequisites.bash (2): localhost cannot connect to Logz.io logs. please check your network for port 8071\""
+    write_run "print_error \"prerequisites.bash (2): EC2 server cannot connect to Logz.io logs. please check your network for port 8071\""
     return 2
 }
 
-# Checks if localhost can connect to Logz.io metrics (port 8053)
+# Checks if EC2 server can connect to Logz.io metrics (port 8053)
 # Error:
 #   Exit Code 2
-function can_localhost_connect_to_logzio_metrics () {
-    write_log "INFO" "Checking if localhost can connect to Logz.io metrics (port 8053) ..."
+function can_ec2_server_connect_to_logzio_metrics () {
+    write_log "INFO" "Checking if EC2 server can connect to Logz.io metrics (port 8053) ..."
 
     wget -q -t 3 --timeout=5 listener.logz.io:8053
     if [[ $? -eq 8 ]]; then
         return
     fi
 
-    write_run "print_error \"prerequisites.bash (2): localhost cannot connect to Logz.io logs. please check your network for port 8053\""
+    write_run "print_error \"prerequisites.bash (2): EC2 server cannot connect to Logz.io logs. please check your network for port 8053\""
     return 2
 }

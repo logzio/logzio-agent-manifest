@@ -11,8 +11,8 @@ source ./logzio-temp/prerequisites_functions.bash
 # Install yq
 execute_task "install_yq" "installing yq"
 
-# Check if localhost can connect to Logz.io logs (port 8071)
-execute_task "can_localhost_connect_to_logzio_logs" "checking if localhost can connect to Logz.io logs"
+# Check if EC2 server can connect to Logz.io logs (port 8071)
+execute_task "can_ec2_server_connect_to_logzio_logs" "checking if EC2 server can connect to Logz.io logs"
 
-# Check if localhost can connect to Logz.io metrics (port 8053)
-execute_task "can_localhost_connect_to_logzio_metrics" "checking if localhost can connect to Logz.io metrics"
+# Check if EC2 server can connect to Logz.io metrics (port 8053)
+execute_task "can_ec2_server_connect_to_logzio_metrics" "checking if EC2 server can connect to Logz.io metrics"
