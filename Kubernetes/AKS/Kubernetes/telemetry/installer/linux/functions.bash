@@ -308,6 +308,8 @@ function run_helm_install () {
     write_log "INFO" "Running Helm install ..."
     write_log "INFO" "helm_sets = $log_helm_sets"
 
+    echo -e "helm install -n monitoring $helm_sets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring" > ./logzio.helm
+
     retries=0
     while [ $retries -lt 3 ]; do
         let "retries++"

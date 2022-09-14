@@ -82,5 +82,10 @@ Invoke-Task "Invoke-HelmInstall" "running Helm install"
 Write-Host
 Write-Info "##### Logz.io agent was finished successfully #####"
 
+# Print information
+Write-Host "`nInformation:`n"
+Write-Host "Show Helm Install Command" -ForegroundColor Magenta -NoNewLine
+Write-Host ": Get-Content -Path `"$(Get-Location)\logzio.helm`""
+
 # Finished successfully
 Exit 0

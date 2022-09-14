@@ -70,3 +70,7 @@ execute_task "run_helm_install" "running Helm install"
 # Print success message
 echo
 print_info "##### Logz.io agent was finished successfully #####"
+
+# Print information
+echo -e "\nInformation:\n"
+echo -e "\033[0;35mShow Helm Install Command\033[0;37m: sudo cat $PWD/logzio.helm"
