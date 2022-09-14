@@ -364,7 +364,9 @@ function Invoke-HelmInstall {
 
     Write-Log "INFO" "Running Helm install ..."
     Write-Log "INFO" "helmSets = $using:logHelmSets"
-    
+
+    Write-Output "helm install -n monitoring $using:helmSets --create-namespace logzio-monitoring logzio-helm/logzio-monitoring" > .\logzio.helm
+
     $local:retries = 0
     while ($retries -lt 3) {
         $retries++
