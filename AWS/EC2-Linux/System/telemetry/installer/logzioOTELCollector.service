@@ -1,0 +1,8 @@
+[Unit]
+Description=OTEL collector for collecting logs/metrics and exporting them to Logz.io.
+
+[Service]
+ExecStart=/opt/logzio-otel-collector/otelcol-logzio-linux_amd64 --config /opt/logzio-otel-collector/otel_config.yaml
+
+[Install]
+WantedBy=multi-user.target

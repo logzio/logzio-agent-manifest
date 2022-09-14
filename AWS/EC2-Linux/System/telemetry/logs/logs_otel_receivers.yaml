@@ -1,0 +1,12 @@
+filelog:
+  include: []
+  include_file_path: true
+  operators:
+    - type: move
+      from: attributes["log.file.name"]
+      to: attributes["log_file_name"]
+    - type: move
+      from: attributes["log.file.path"]
+      to: attributes["log_file_path"]
+  attributes:
+    type: agent-ec2-linux
