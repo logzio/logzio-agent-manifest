@@ -326,75 +326,23 @@ function run_helm_install () {
     return 8
 }
 
-# Checks if all pods are running or completed 
-# Output:
-#   are_all_pods_running_or_completed - Tells if all pods are running or completed (true/false)
-function are_all_pods_running_or_completed () {
-    retries=0
-    while [ $retries -lt 3 ]; do
-        let "retries++"
-        local pod_statuses=$(kubectl -n monitoring get pods | tr -s ' ' | cut -d ' ' -f3 | tail -n +2)
-        local is_any_pod_with_bad_status=$(echo -e $pod_statuses | grep -v -e Running -e Completed)
-        if [[ -z "$is_any_pod_with_bad_status" ]]; then
-            write_log "INFO" "are_all_pods_running_or_completed = true"
-            write_run "are_all_pods_running_or_completed=true"
-            return
-        fi
-
-        sleep 5
-    done
-
-    write_log "INFO" "are_all_pods_running_or_completed = false"
-    write_run "are_all_pods_running_or_completed=false"
-}
-
-# Checks if any pod is pending
-# Output:
-#   post_err - The post err after Helm install
-function is_any_pod_pending () {
-    local err=""
-    local pods=$(kubectl -n monitoring get pods | tr -s ' ' | cut -d ' ' -f1 -f3 | tail -n +2)
-    while read -r pod; do
-        local pod_name=$(echo -e "$pod" | cut -d ' ' -f1)
-        local pod_status=$(echo -e "$pod" | cut -d ' ' -f2)
-
-        if [[ "$pod_status" != "Pending" ]]; then
-            continue
-        fi
-
-        local event=$(kubectl get event -n monitoring --field-selector involvedObject.name=$pod_name | tail -1 | tr -s ' ' | cut -d ' ' -f3 -f5-)
-        local reason=$(echo -e "$event" | cut -d ' ' -f1)
-        local msg=$(echo -e "$event" | cut -d ' ' -f2-)
-        err+="\n  pod $pod_name status is Pending. reason: $reason, message: $msg"
-    done < <(echo -e "$pods")
-
-    if [[ -z "$err" ]]; then
-        return
+# Gets postrequisites scripts from logzio-agent-manifest repo
+# Error:
+#   Exit Code 9
+function get_postrequisites_scripts () {
+    write_log "INFO" "Getting postrequisites script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/postrequisites/mac/postrequisites.bash > $logzio_temp_dir/postrequisites.bash 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (9): failed to get postrequisites script file from logzio-agent-manifest repo.\n  $err\""
+        return 9
     fi
 
-    write_run "post_err+=\"found pods with status Pending:$err\""
-}
-
-# Checks if any pod failed
-# Output:
-#   post_err - The post err after Helm install
-function is_any_pod_failed () {
-    local err=""
-    local pods=$(kubectl -n monitoring get pods | tr -s ' ' | cut -d ' ' -f1 -f3 | tail -n +2)
-    while read -r pod; do
-        local pod_name=$(echo -e "$pod" | cut -d ' ' -f1)
-        local pod_status=$(echo -e "$pod" | cut -d ' ' -f2)
-
-        if [[ "$pod_status" != "Running" || "$pod_status" != "Completed" || "$pod_status" != "Pending" ]]; then
-            continue
-        fi
-
-        err+="\n  pod $pod_name status is $pod_status"
-    done < <(echo -e "$pods")
-
-    if [[ -z "$err" ]]; then
-        return
+    write_log "INFO" "Getting postrequisites functions script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/postrequisites/mac/functions.bash > $logzio_temp_dir/postrequisites_functions.bash 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (9): failed to get postrequisites functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 9
     fi
-
-    write_run "post_err+=\"\nfound failed pods (run kubectl -n monitorin logs <<POD_NAME>> to see why):$err\""
 }
