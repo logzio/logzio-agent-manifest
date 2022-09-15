@@ -67,9 +67,25 @@ fi
 echo -e "\ninstaller:"
 execute_task "run_helm_install" "running Helm install"
 
-# Print success message
-echo
-print_info "##### Logz.io agent was finished successfully #####"
+# Postrequisites
+execute_task "are_all_pods_running_or_completed" "checking if all pods are running or completed"
+
+if $are_all_pods_running_or_completed; then
+    execute_task "is_any_pod_pending" "checking if any pod is pending"
+    execute_task "is_any_pod_failed" "checking if any pod is failed"
+
+    if [[ ! -z "$post_err" ]]; then
+        print_error "$post_err"
+    fi
+
+    # Print success message
+    echo
+    print_error "##### Logz.io agent failed #####"
+else
+    # Print success message
+    echo
+    print_info "##### Logz.io agent was finished successfully #####"
+fi
 
 # Print information
 echo -e "\nInformation:\n"
