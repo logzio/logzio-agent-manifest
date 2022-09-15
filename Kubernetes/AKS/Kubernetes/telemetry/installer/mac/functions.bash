@@ -362,9 +362,9 @@ function is_any_pod_pending () {
             continue
         fi
 
-        local event=$(kubectl get event -n monitoring --field-selector involvedObject.name=$pod_name | tail -1 | tr -s ' ' | cut -d -f3 -f5-)
-        local reason=$(echo -e "$event" | cut -d -f1)
-        local msg=$(echo -e "$event" | cut -d -f2-)
+        local event=$(kubectl get event -n monitoring --field-selector involvedObject.name=$pod_name | tail -1 | tr -s ' ' | cut -d ' ' -f3 -f5-)
+        local reason=$(echo -e "$event" | cut -d ' ' -f1)
+        local msg=$(echo -e "$event" | cut -d ' ' -f2-)
         err+="\n  pod $pod_name status is Pending. reason: $reason, message: $msg"
     done < <(echo -e "$pods")
 
@@ -385,7 +385,7 @@ function is_any_pod_failed () {
         local pod_name=$(echo -e "$pod" | cut -d ' ' -f1)
         local pod_status=$(echo -e "$pod" | cut -d ' ' -f2)
 
-        if [[ "$pod_status" != "Running" && "$pod_status" != "Completed" && "$pod_status" != "Pending" ]]; then
+        if [[ "$pod_status" != "Running" || "$pod_status" != "Completed" || "$pod_status" != "Pending" ]]; then
             continue
         fi
 
