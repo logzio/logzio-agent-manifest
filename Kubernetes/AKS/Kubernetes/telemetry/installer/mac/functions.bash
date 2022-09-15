@@ -385,7 +385,7 @@ function is_any_pod_failed () {
         local pod_name=$(echo -e "$pod" | cut -d ' ' -f1)
         local pod_status=$(echo -e "$pod" | cut -d ' ' -f2)
 
-        if [[ "$pod_status" != "Running" && "$pod_status" != "Completed" && != "Pending" ]]; then
+        if [[ "$pod_status" != "Running" && "$pod_status" != "Completed" && "$pod_status" != "Pending" ]]; then
             continue
         fi
 
