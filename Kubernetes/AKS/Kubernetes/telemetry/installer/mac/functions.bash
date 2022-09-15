@@ -368,7 +368,7 @@ function is_any_pod_pending () {
         err+="\n  pod $pod_name status is Pending. reason: $reason, message: $msg"
     done < <(echo -e "$pods")
 
-    if [[ -z "$err"]]; then
+    if [[ -z "$err" ]]; then
         return
     fi
 
@@ -392,7 +392,7 @@ function is_any_pod_failed () {
         err+="\n  pod $pod_name status is $pod_status"
     done < <(echo -e "$pods")
 
-    if [[ -z "$err"]]; then
+    if [[ -z "$err" ]]; then
         return
     fi
 
