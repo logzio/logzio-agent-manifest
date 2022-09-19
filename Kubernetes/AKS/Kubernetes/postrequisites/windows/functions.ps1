@@ -13,10 +13,9 @@ function Test-AreAllPodsRunningOrCompleted {
     $local:retries = 0
     while ($retries -lt 3) {
         $retries++
-        $local:isAnyPodWithBadStatus = $false
         $local:podStatuses = kubectl -n monitoring get pods --no-headers -o custom-columns=":.status.phase"
-        $local:isAnyPodWithBadStatus = $podStatuses | Select-String -Pattern "Running|Completed|Succeeded" -NotMatch
-        if ([string]::IsNullOrEmpty($isAnyPodWithBadStatus)) {
+        $local:badStatuses = $podStatuses | Select-String -Pattern "Running|Completed|Succeeded" -NotMatch
+        if ([string]::IsNullOrEmpty($badStatuses)) {
             Write-Log "INFO" "areAllPodsRunningOrCompleted = true"
             Write-Run "`$script:areAllPodsRunningOrCompleted = `$true"
             return
