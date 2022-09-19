@@ -9,7 +9,7 @@ Write-Log "INFO" "Loading postrequisites functions ..."
 # Check if all pods are running or completed
 Invoke-Task "Test-AreAllPodsRunningOrCompleted" "checking if all pods are running or completed"
 
-if ($areAllPodsRunningOrCompleted) {
+if (-Not $areAllPodsRunningOrCompleted) {
     # Check if any pod is pending
     Invoke-Task "Test-IsAnyPodPending" "checking if any pod is pending"
     # Check if any pod is failed
