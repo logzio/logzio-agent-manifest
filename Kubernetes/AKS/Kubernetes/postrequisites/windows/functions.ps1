@@ -67,7 +67,7 @@ function Test-IsAnyPodFailed () {
         $local:podName = $podSplitted[0]
         $local:podStatus = $podSplitted[1]
 
-        if (-Not $podStatus.Equals("Running") || -Not $podStatus.Equals("Completed") || -Not $podStatus.Equals("Succeeded") || -Not $podStatus.Equals("Pending")) {
+        if (-Not $podStatus.Equals("Running") -or -Not $podStatus.Equals("Completed") -or -Not $podStatus.Equals("Succeeded") -or -Not $podStatus.Equals("Pending")) {
             continue
         }
 
