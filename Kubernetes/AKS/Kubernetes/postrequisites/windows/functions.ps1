@@ -22,7 +22,7 @@ function Test-AreAllPodsRunningOrCompleted {
             return
         }
 
-        sleep 5
+        sleep 10
     }
 
     Write-Log "INFO" "areAllPodsRunningOrCompleted = false"
