@@ -6,6 +6,10 @@
 # Output:
 #   areAllPodsRunningOrCompleted - Tells if all pods are running or completed (true/false)
 function Test-AreAllPodsRunningOrCompleted {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
     $local:retries = 0
     while ($retries -lt 3) {
         $retries++
@@ -13,7 +17,7 @@ function Test-AreAllPodsRunningOrCompleted {
         $local:podStatuses = kubectl -n monitoring get pods --no-headers -o custom-columns=":.status.phase"
         $local:isAnyPodWithBadStatus = $podStatuses | Select-String -Pattern "Running|Completed|Succeeded" -NotMatch
         if ([string]::IsNullOrEmpty($isAnyPodWithBadStatus)) {
-            Write-Log "INFO" "are_all_pods_running_or_completed = true"
+            Write-Log "INFO" "areAllPodsRunningOrCompleted = true"
             Write-Run "`$script:areAllPodsRunningOrCompleted = `$true"
             return
         }
@@ -21,7 +25,7 @@ function Test-AreAllPodsRunningOrCompleted {
         sleep 5
     }
 
-    Write-Log "INFO" "are_all_pods_running_or_completed = false"
+    Write-Log "INFO" "areAllPodsRunningOrCompleted = false"
     Write-Run "`$script:areAllPodsRunningOrCompleted = `$false"
 }
 
@@ -29,6 +33,10 @@ function Test-AreAllPodsRunningOrCompleted {
 # Output:
 #   isAnyPodPending - Tells if any pod is pending (true/false)
 function Test-IsAnyPodPending {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
     $local:err = ""
     $local:pods = kubectl -n monitoring get pods --no-headers -o custom-columns=":.metadata.name,:.status.phase" | ForEach-Object {$_ -replace '\s+', ' '}
     foreach ($pod in $pods) {
@@ -60,6 +68,10 @@ function Test-IsAnyPodPending {
 # Output:
 #   isAnyPodFailed - Tells if any pod is failed (true/false)
 function Test-IsAnyPodFailed () {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+    
     $local:err = ""
     $local:pods = kubectl -n monitoring get pods --no-headers -o custom-columns=":.metadata.name,:.status.phase" | ForEach-Object {$_ -replace '\s+', ' '}
     foreach ($pod in $pods) {
