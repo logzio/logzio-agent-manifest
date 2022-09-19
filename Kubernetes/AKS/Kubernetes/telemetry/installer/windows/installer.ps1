@@ -90,11 +90,11 @@ if (-Not $areAllPodsRunningOrCompleted || $isAnyPodPending || $isAnyPodFailed) {
     # Print fail message
     Write-Host
     Write-Error "##### Logz.io agent failed #####"
-}
+} else {
     # Print success message
     Write-Host
     Write-Info "##### Logz.io agent was finished successfully #####"
-fi
+}
 
 # Print information
 Write-Host "`nInformation:`n"
