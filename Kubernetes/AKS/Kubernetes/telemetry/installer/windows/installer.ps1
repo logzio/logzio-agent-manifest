@@ -78,9 +78,23 @@ if ($isTracesOptionSelected) {
 Write-Host "`ninstaller:"
 Invoke-Task "Invoke-HelmInstall" "running Helm install"
 
-# Print success message
-Write-Host
-Write-Info "##### Logz.io agent was finished successfully #####"
+# Get postrequisites scripts
+Invoke-Task "Get-PostrequisitesScripts" "getting postrequisites scripts"
+
+# Run postrequisites script
+Write-Log "INFO" "Running postrequisites script ..."
+Write-Host "`npostrequisites:"
+. $logzioTempDir\postrequisites.ps1
+
+if (-Not $areAllPodsRunningOrCompleted || $isAnyPodPending || $isAnyPodFailed) {
+    # Print fail message
+    Write-Host
+    Write-Error "##### Logz.io agent failed #####"
+}
+    # Print success message
+    Write-Host
+    Write-Info "##### Logz.io agent was finished successfully #####"
+fi
 
 # Print information
 Write-Host "`nInformation:`n"
