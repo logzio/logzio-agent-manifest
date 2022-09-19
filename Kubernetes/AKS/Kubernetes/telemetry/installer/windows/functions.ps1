@@ -398,7 +398,7 @@ function Get-PostrequisitesScripts {
     Write-Log "INFO" "Getting traces script file from logzio-agent-manifest repo ..."
     try {
         $ProgressPreference = "SilentlyContinue"
-        Invoke-WebRequest -Uri $using:repoPath/postrequisites/windows/traces.ps1 -OutFile $using:logzioTempDir\postrequisites.ps1 | Out-Null
+        Invoke-WebRequest -Uri $using:repoPath/postrequisites/windows/postrequisites.ps1 -OutFile $using:logzioTempDir\postrequisites.ps1 | Out-Null
         $ProgressPreference = "Continue"
     }
     catch {
