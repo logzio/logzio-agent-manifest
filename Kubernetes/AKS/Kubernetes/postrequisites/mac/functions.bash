@@ -12,14 +12,14 @@ function are_all_pods_running_or_completed () {
     while [ $retries -lt 3 ]; do
         let "retries++"
         local pod_statuses=$(kubectl -n monitoring get pods --no-headers -o custom-columns=":.status.phase")
-        local is_any_pod_with_bad_status=$(echo -e $pod_statuses | grep -v -e Running -e Completed)
+        local is_any_pod_with_bad_status=$(echo -e $pod_statuses | grep -v -e Running -e Completed -e Succeeded)
         if [[ -z "$is_any_pod_with_bad_status" ]]; then
             write_log "INFO" "are_all_pods_running_or_completed = true"
             write_run "are_all_pods_running_or_completed=true"
             return
         fi
 
-        sleep 5
+        sleep 10
     done
 
     write_log "INFO" "are_all_pods_running_or_completed = false"
