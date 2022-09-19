@@ -48,8 +48,8 @@ function Test-IsAnyPodPending {
             continue
         }
 
-        $local:eventReason = kubectl get event -n monitoring --field-selector involvedObject.name=$pod_name --no-headers -o custom-columns=":.reason" | Select-Object -last 1 
-        $local:eventMessage = kubectl get event -n monitoring --field-selector involvedObject.name=$pod_name --no-headers -o custom-columns=":.message" | Select-Object -last 1 
+        $local:eventReason = kubectl get event -n monitoring --field-selector involvedObject.name=$podName --no-headers -o custom-columns=":.reason" | Select-Object -last 1 
+        $local:eventMessage = kubectl get event -n monitoring --field-selector involvedObject.name=$podName --no-headers -o custom-columns=":.message" | Select-Object -last 1 
         $err += "`n  pod $podName status is Pending. reason: $eventReason, message: $eventMessage"
     }
 
@@ -71,7 +71,7 @@ function Test-IsAnyPodFailed () {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
-    
+
     $local:err = ""
     $local:pods = kubectl -n monitoring get pods --no-headers -o custom-columns=":.metadata.name,:.status.phase" | ForEach-Object {$_ -replace '\s+', ' '}
     foreach ($pod in $pods) {
