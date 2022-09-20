@@ -253,14 +253,14 @@ Write-Host "Agent:`n`n" -NoNewline
 
 # Run prerequisite installations
 Write-Host "prerequisite installations:"
-Invoke-Task "Install-JQ" "installing jq"                                                    # Install jq
+Invoke-Task "Install-JQ" "installing jq"                                                                # Install jq
 
 # Run last preparations
 Write-Host "`nlast preparations:"
-Invoke-Task "Get-AppJSON" "getting application JSON"                                        # Get app JSON
-Invoke-Task "Build-RepoPath" "building path to logzio-agent-manifest repo"                  # Build repo path to logzio-agent-manifest rep
-Invoke-Task "Get-PrerequisitesScripts" "getting prerequisites scripts"                      # Get prerequisites scripts
-Invoke-Task "Get-InstallerScripts" "getting installer scripts"                              # Get installer scripts
+Invoke-Task "Get-AppJSON" "getting application JSON"                                                    # Get app JSON
+Invoke-Task "Build-RepoPath" "building path to logzio-agent-manifest repo"                              # Build repo path to logzio-agent-manifest rep
+Invoke-Task "Get-PrerequisitesScripts" "getting prerequisites scripts"                                  # Get prerequisites scripts
+Invoke-Task "Get-InstallerScripts" "getting installer scripts"                                          # Get installer scripts
 
 # Run prerequisites script
 Write-Log "INFO" "Running prerequisites script ..."
