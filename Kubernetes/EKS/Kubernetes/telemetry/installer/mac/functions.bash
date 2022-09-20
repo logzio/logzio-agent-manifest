@@ -321,3 +321,24 @@ function run_helm_install () {
     write_run "print_error \"installer.bash (8): failed to run Helm install.\n  $err\""
     return 8
 }
+
+# Gets postrequisites scripts from logzio-agent-manifest repo
+# Error:
+#   Exit Code 9
+function get_postrequisites_scripts () {
+    write_log "INFO" "Getting postrequisites script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/postrequisites/mac/postrequisites.bash > $logzio_temp_dir/postrequisites.bash 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (9): failed to get postrequisites script file from logzio-agent-manifest repo.\n  $err\""
+        return 9
+    fi
+
+    write_log "INFO" "Getting postrequisites functions script file from logzio-agent-manifest repo ..."
+    curl -fsSL $repo_path/postrequisites/mac/functions.bash > $logzio_temp_dir/postrequisites_functions.bash 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"installer.bash (9): failed to get postrequisites functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 9
+    fi
+}

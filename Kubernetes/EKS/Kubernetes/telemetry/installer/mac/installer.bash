@@ -67,9 +67,23 @@ fi
 echo -e "\ninstaller:"
 execute_task "run_helm_install" "running Helm install"
 
-# Print success message
-echo
-print_info "##### Logz.io agent was finished successfully #####"
+# Get postrequisites scripts
+execute_task "get_postrequisites_scripts" "getting postrequisites scripts"
+
+# Run postrequisites script
+write_log "INFO" "Running postrequisites script ..."
+echo -e "\npostrequisites:"
+source $logzio_temp_dir/postrequisites.bash
+
+if ! $are_all_pods_running_or_completed || $is_any_pod_pending || $is_any_pod_failed; then
+    # Print fail message
+    echo
+    print_error "##### Logz.io agent failed #####"
+else
+    # Print success message
+    echo
+    print_info "##### Logz.io agent was finished successfully #####"
+fi
 
 # Print information
 echo -e "\nInformation:\n"
