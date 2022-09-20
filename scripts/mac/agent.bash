@@ -63,12 +63,10 @@ function get_arguments () {
                 fi
 
                 echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] debug = $app_json_file" >> $log_file
-                break
                 ;;
             --branch=*)
                 repo_branch=$(echo "$1" | cut -d "=" -f2)
                 echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] branch = $repo_branch" >> $log_file
-                break
                 ;;
             "")
                 break
