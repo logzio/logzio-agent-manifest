@@ -161,6 +161,7 @@ get_arguments "$@"
 # Set default repo branch
 if [[ -z "$repo_branch" ]]; then
     repo_branch="master"
+    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] branch = master (default)" >> $log_file
 fi
 
 # Consts

@@ -195,6 +195,7 @@ Get-Arguments $args
 # Set default repo branch
 if ([string]::IsNullOrEmpty($repoBranch)) {
     $repoBranch = "master"
+    Write-Output "[INFO] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] branch = master (default)" >> $logFile
 }
 
 # Consts
