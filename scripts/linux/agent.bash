@@ -23,6 +23,7 @@ function show_help () {
 #   app_url - Logz.io app URL
 #   agent_id - Logz.io agent ID
 #   app_json_file - App JSON (only in debug)
+#   repo_branch - Repo branch (for tests)
 # Error:
 #   Exit Code 1
 function get_arguments () {
