@@ -386,3 +386,34 @@ function Invoke-HelmInstall {
     Write-Run "Write-Error `"installer.ps1 (8): failed to run Helm install.`n  $err`""
     return 8
 }
+
+# Gets postrequisites scripts from logzio-agent-manifest repo
+# Error:
+#   Exit Code 9
+function Get-PostrequisitesScripts {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Getting traces script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/postrequisites/windows/postrequisites.ps1 -OutFile $using:logzioTempDir\postrequisites.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (9): failed to get postrequisites script file from logzio-agent-manifest repo.`n  $_`""
+        return 9
+    }
+
+    Write-Log "INFO" "Getting traces functions script file from logzio-agent-manifest repo ..."
+    try {
+        $ProgressPreference = "SilentlyContinue"
+        Invoke-WebRequest -Uri $using:repoPath/postrequisites/windows/functions.ps1 -OutFile $using:logzioTempDir\postrequisites_functions.ps1 | Out-Null
+        $ProgressPreference = "Continue"
+    }
+    catch {
+        Write-Run "Write-Error `"installer.ps1 (9): failed to get postrequisites functions script file from logzio-agent-manifest repo.`n  $_`""
+        return 9
+    }
+}
