@@ -149,6 +149,13 @@ function get_agent_functions_scripts () {
 }
 
 
+# Consts
+logzio_temp_dir="./logzio-temp"                                                                 # Logz.io temp directory
+log_file="./logzio_agent.log"                                                                   # Log file path
+run_file="$logzio_temp_dir/run"                                                                 # Run file path
+task_error_file="$logzio_temp_dir/task_error"                                                   # Task error file path
+app_json="$logzio_temp_dir/app.json"                                                            # App JSON path
+
 # Get arguments and check validation
 get_arguments "$@"
 
@@ -159,11 +166,6 @@ fi
 
 # Consts
 repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/$repo_branch"          # logzio-agent-manifest repo URL
-logzio_temp_dir="./logzio-temp"                                                                 # Logz.io temp directory
-log_file="./logzio_agent.log"                                                                   # Log file path
-run_file="$logzio_temp_dir/run"                                                                 # Run file path
-task_error_file="$logzio_temp_dir/task_error"                                                   # Task error file path
-app_json="$logzio_temp_dir/app.json"                                                            # App JSON path
 
 # Create temp directory with files
 mkdir -p $logzio_temp_dir
