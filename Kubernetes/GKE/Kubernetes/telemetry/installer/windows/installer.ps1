@@ -86,10 +86,16 @@ Write-Log "INFO" "Running postrequisites script ..."
 Write-Host "`npostrequisites:"
 . $logzioTempDir\postrequisites.ps1
 
-if (-Not $areAllPodsRunningOrCompleted -or $isAnyPodPending -or $isAnyPodFailed) {
-    # Print fail message
-    Write-Host
-    Write-Error "##### Logz.io agent failed #####"
+if (-Not $areAllPodsRunningOrCompleted) {
+    if ($isAnyPodPending -or $isAnyPodFailed) {
+        # Print fail message
+        Write-Host
+        Write-Error "##### Logz.io agent failed #####"
+    } else {
+        # Print success message
+        Write-Host
+        Write-Info "##### Logz.io agent was finished successfully #####"
+    }
 } else {
     # Print success message
     Write-Host
