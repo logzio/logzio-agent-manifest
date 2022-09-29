@@ -30,8 +30,7 @@
                    "value": "eu-central-1",
                    "label": "eu-central-1"
                  }
-               ],
-               "value": "us-east-1"
+               ]
              }
            ],
            "telemetries": [
