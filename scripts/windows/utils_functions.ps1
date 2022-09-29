@@ -1,73 +1,145 @@
-   #!/bin/bash
+#################################################################################################################################
+#################################################### WINDOWS Utils Functions ####################################################
+#################################################################################################################################
 
-#################################################################################################################################
-#################################################### Utils Windows Functions ####################################################
-#################################################################################################################################
 
 # Prints info message in green
 # Input:
-#   message - Message text
+#   Message - Message text
 # Output:
 #   The message
-function Write-Info ([string]$message) {
-    Write-Log "INFO" "$message"
-    Write-Host "$message" -ForegroundColor Green
+function Write-Info {
+    param (
+        [string]$Message
+    )
+
+    Write-Log 'INFO' $Message
+    Write-Host $Message -ForegroundColor Green
 }
 
 # Prints error message in red
 # Input:
-#   message - Message text
+#   Message - Message text
 # Output:
 #   The message
-function Write-Error ([string]$message) {
-    Write-Log "ERROR" "$message"
-    Write-Host "$message" -ForegroundColor Red
+function Write-Error {
+    param (
+        [string]$Message
+    )
+
+    Write-Log 'ERROR' $Message
+    Write-Host $Message -ForegroundColor Red
 }
 
 # Prints warning message in yellow
 # Input:
-#   message - Message text
+#   Message - Message text
 # Output:
 #   The message
-function Write-Warning ([string]$message) {
-    Write-Log "WARN" "$message"
-    Write-Host "$message" -ForegroundColor Yellow
+function Write-Warning {
+    param (
+        [string]$Message
+    )
+
+    Write-Log 'WARN' $Message
+    Write-Host $Message -ForegroundColor Yellow
 }
 
-# Writes log into Logz.io agent log file
+# Writes log into log file
 # Input:
-#   logLevel - The level of the log (INFO/ERROR/WARN)
-#   log - Log text
-function Write-Log ([string]$logLevel, [string]$log) {
-    Write-Output "[$logLevel] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $log" >> $logFile
+#   LogLevel - Level of the log (INFO/ERROR/WARN)
+#   Message - Message text
+# Output:
+#   ---
+function Write-Log {
+    param (
+        [string]$LogLevel,
+        [string]$Message
+    )
+    
+    Write-Output "[$LogLevel] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $Message" >> $LogFile
 }
 
-# Writes command into run file in Logz.io temp directory
+function Get-LogMetadata {
+    
+}
+
+# Sends log to Logz.io
+# Input:
+#   LogFields - Log fields to send as one log to Logz.io
+# Output:
+#   ---
+function Send-LogToLogzio {
+    param (
+        [hashtable]$LogFields
+    )
+
+    $local:Log = '{'
+
+    foreach ($LogField in $LogFields.GetEnumerator()) {
+        $local:FieldKey = $LogField.Key
+        $local:FieldValue = $LogField.Value
+        $Log += "`"$FieldKey`":`"$FieldValue`","
+    }
+
+    $Log = $Log.Substring(1)
+    $Log += '}'
+
+    $local:Parameters = @{
+        Action = 'SendMessage'
+        MessageBody = $Log
+    }
+
+    try {
+        Invoke-WebRequest -Uri 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -Body $Parameters -Method Get -UseBasicParsing | Out-Null
+    }
+    catch {
+        #Write-TaskPostRun "Write-Host `"failed to send a request with log message to Logz.io agent SQS.`n`t$_`" -ForegroundColor Yellow"
+        Write-TaskPostRun "Write-Warning `"failed to send a request with log message to Logz.io agent SQS.`n`t$_`""
+    }
+}
+
+# Writes command into task post run script file
 # Input:
 #   command - The command to write into the file
-function Write-Run ([string]$command) {
-    Write-Output "$command" >> $runFile
-}
-
-# Deletes the temp directory
-function Remove-TempDir {
-    if (Test-Path $logzioTempDir) {
-        Remove-Item -Path $logzioTempDir -Recurse
-    }
-}
-
-# Gets task error file error message
 # Output:
-#   The task error message
-function Get-TaskError {
-    $local:err = Get-Content $taskErrorFile -First 1
-    if ([string]::IsNullOrEmpty($err)) {
-        return
-    }
+#   ---
+function Write-TaskPostRun {
+        param (
+            [string]$Command
+        )
 
-    $err = $err.Replace("`"", "'")
-    Write-Output "$err"
+    Write-Output $Command >> $TaskPostRunFile
 }
+
+# Deletes Logz.io temp directory
+# Input:
+#   ---
+# Output:
+#   ---
+function Remove-TempDir {
+    try {
+        Remove-Item -Path $LogzioTempDir -Recurse -ErrorAction Stop
+    } 
+    catch {
+        Write-TaskPostRun "Write-Warning `"failed to delete Logz.io temp directory.`n`t$_`""
+    }
+}
+
+# Gets task error file's content
+# Intput:
+#   ---
+# Output:
+#   The task error file's content
+#function Get-TaskErrorContent {
+#    $local:Err = Get-Content -Path $taskErrorFile -First 1
+#    if ([string]::IsNullOrEmpty($err)) {
+#        return
+#    }
+
+#    $err = $err.Replace("`"", "'")
+#    Write-Output "$err"
+#}
 
 # Finds the requested parameter in params 
 # Inputs: 
@@ -97,13 +169,13 @@ function Find-Param ([string]$params, [string]$requestedName) {
 # Error:
 #   Exit Code 1
 function Install-Chocolatey {
-    Write-Log "INFO" "Checking if Chocolatey is installed ..."
-    Get-Command choco 2>&1 | Out-Null
+    Write-Log 'INFO' 'Checking if Chocolatey is installed ...'
+    Get-Command -Name choco 2>&1 | Out-Null
     if ($?) {
         return
     }
 
-    Write-Log "INFO" "Installing Chocolatey ..."
+    Write-Log 'INFO' 'Installing Chocolatey ...'
     $local:job = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')}
     Wait-Job -Job $job | Out-Null
 
@@ -132,7 +204,7 @@ function Invoke-Task([string]$command, [string]$desc) {
 
     [Console]::CursorVisible = $false
     
-    $local:job = Start-Job -ScriptBlock $scriptBlock
+    $local:job = Start-Job -InitializationScript {} -ScriptBlock $scriptBlock
     $local:jobState = ""
 
     while ($true) {
