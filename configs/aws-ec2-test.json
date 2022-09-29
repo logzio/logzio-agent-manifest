@@ -22,6 +22,7 @@
                "label": "Select AWS Region label",
                "description": "AWS Region description",
                "hint": "AWS Region hint",
+               "required": true,
                "options": [
                  {
                    "value": "us-east-1",
