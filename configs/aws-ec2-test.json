@@ -19,9 +19,9 @@
              {
                "type": "single-select",
                "name": "aws-region",
-               "label": "Select AWS Region",
-               "description": "AWS Region",
-               "hint": "Region hint",
+               "label": "Select AWS Region label",
+               "description": "AWS Region description",
+               "hint": "AWS Region hint",
                "options": [
                  {
                    "value": "us-east-1",
