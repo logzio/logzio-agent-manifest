@@ -21,7 +21,7 @@
             {
               "type": "boolean",
               "name": "isTaint",
-              "label": "Taints and Tolerations",
+              "label": "Taints and Toleration",
               "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
               "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
               "value": true,
