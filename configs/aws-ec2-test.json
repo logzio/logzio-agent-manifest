@@ -35,7 +35,7 @@
              },
              {
                "type": "text",
-               "name": "aws-cluster",
+               "name": "aws-cluster-req-no-default",
                "label": "AWS Cluster name - Required - NoDefault",
                "description": "AWS Cluster description",
                "hint": "AWS Cluster hint",
@@ -43,7 +43,7 @@
              },
              {
                "type": "text",
-               "name": "aws-cluster",
+               "name": "aws-cluster-req",
                "label": "AWS Cluster name - Required - Default",
                "description": "AWS Cluster description",
                "hint": "AWS Cluster hint",
@@ -59,7 +59,7 @@
              },
              {
                "type": "text",
-               "name": "aws-cluster",
+               "name": "aws-cluster-default",
                "label": "AWS Cluster name - NonRequired - Default",
                "description": "AWS Cluster description",
                "hint": "AWS Cluster hint",
