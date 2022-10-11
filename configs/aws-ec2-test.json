@@ -64,6 +64,16 @@
                "description": "AWS Cluster description",
                "hint": "AWS Cluster hint",
                "value": "default cluster name"
+             },
+             {
+               "type": "text",
+               "name": "aws-cluster-req-pattern",
+               "label": "AWS Cluster name - Required - Only letters",
+               "description": "AWS Cluster description",
+               "hint": "AWS Cluster hint",
+               "required": true,
+               "pattern": "^[a-zA-Z]+$",
+               "patternError": "Only letters please"
              }
            ],
            "telemetries": [
