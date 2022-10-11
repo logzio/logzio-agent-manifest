@@ -2,7 +2,6 @@
 #################################################### WINDOWS Utils Functions ####################################################
 #################################################################################################################################
 
-
 # Prints info message in green
 # Input:
 #   Message - Message text
@@ -57,7 +56,7 @@ function Write-Log {
         [string]$Message
     )
     
-    Write-Output "[$LogLevel] [$(Get-Date -Format "yyyy-MM-dd HH:mm:ss")] $Message" >> $LogFile
+    Write-Output "[$LogLevel] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" >> $LogFile
 }
 
 function Get-LogMetadata {
@@ -71,18 +70,39 @@ function Get-LogMetadata {
 #   ---
 function Send-LogToLogzio {
     param (
-        [hashtable]$LogFields
+        [string]$Level,
+        [string]$Message,
+        [string]$Step,
+        [string]$ScriptName,
+        [string]$FuncName,
+        [string]$AgentId = '',
+        [string]$Platform = '',
+        [string]$SubType = '',
+        [string]$DataSource = ''
     )
 
-    $local:Log = '{'
+    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`""
 
-    foreach ($LogField in $LogFields.GetEnumerator()) {
-        $local:FieldKey = $LogField.Key
-        $local:FieldValue = $LogField.Value
-        $Log += "`"$FieldKey`":`"$FieldValue`","
+    if ($Level.Equals($LogLevelError)) {
+        $local:ErrorIdPartMatch = $Message | Select-String -Pattern '\([0-9]+\)'
+        $local:ErrorIdMatch = $ErrorIdPartMatch.Matches.Value | Select-String -Pattern '[0-9]+'
+        $local:ErrorId = $ErrorIdMatch.Matches.Value
+        
+        $Log += ",`"error_id`":`"$ErrorId`""
+    }
+    if (-Not [string]::IsNullOrEmpty($AgentId)) {
+        $Log += ",`"agent_id`":`"$AgentId`""
+    }
+    if (-Not [string]::IsNullOrEmpty($Platform)) {
+        $Log += ",`"platform`":`"$Platform`""
+    }
+    if (-Not [string]::IsNullOrEmpty($SubType)) {
+        $Log += ",`"subtype`":`"$SubType`""
+    }
+    if (-Not [string]::IsNullOrEmpty($DataSource)) {
+        $Log += ",`"datasource`":`"$DataSource`""
     }
 
-    $Log = $Log.Substring(1)
     $Log += '}'
 
     $local:Parameters = @{
@@ -94,14 +114,13 @@ function Send-LogToLogzio {
         Invoke-WebRequest -Uri 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -Body $Parameters -Method Get -UseBasicParsing | Out-Null
     }
     catch {
-        #Write-TaskPostRun "Write-Host `"failed to send a request with log message to Logz.io agent SQS.`n`t$_`" -ForegroundColor Yellow"
-        Write-TaskPostRun "Write-Warning `"failed to send a request with log message to Logz.io agent SQS.`n`t$_`""
+        Write-TaskPostRun "Write-Warning `"failed to send a request with log message to Logz.io agent SQS: $_`""
     }
 }
 
 # Writes command into task post run script file
 # Input:
-#   command - The command to write into the file
+#   Command - The command to write into the file
 # Output:
 #   ---
 function Write-TaskPostRun {
@@ -122,24 +141,9 @@ function Remove-TempDir {
         Remove-Item -Path $LogzioTempDir -Recurse -ErrorAction Stop
     } 
     catch {
-        Write-TaskPostRun "Write-Warning `"failed to delete Logz.io temp directory.`n`t$_`""
+        Write-TaskPostRun "Write-Warning `"failed to delete Logz.io temp directory: $_`""
     }
 }
-
-# Gets task error file's content
-# Intput:
-#   ---
-# Output:
-#   The task error file's content
-#function Get-TaskErrorContent {
-#    $local:Err = Get-Content -Path $taskErrorFile -First 1
-#    if ([string]::IsNullOrEmpty($err)) {
-#        return
-#    }
-
-#    $err = $err.Replace("`"", "'")
-#    Write-Output "$err"
-#}
 
 # Finds the requested parameter in params 
 # Inputs: 
@@ -194,75 +198,98 @@ function Install-Chocolatey {
 #   desc - Task description
 # Error:
 #   Exit Code 2 if got timeout error, otherwise Exit Code according the executed command
-function Invoke-Task([string]$command, [string]$desc) {
-    $local:funcCode = Get-Command $command | Select-Object -ExpandProperty ScriptBlock
-    $local:scriptBlock = [ScriptBlock]::Create($funcCode)
-    $local:frame = "-", "\", "|", "/"
-    $local:frameInterval = 250
-    $local:timeout = 300
-    $local:counter = 0
+function Invoke-Task {
+    param (
+        [string]$FuncName,
+        [hashtable]$FuncArgs,
+        [string]$Description,
+        [string[]]$ScriptsToLoad
+    )
+
+    $local:Frame = '-', '\', '|', '/'
+    $local:FrameInterval = 250
+    $local:Timeout = 300
+    $local:Counter = 0
 
     [Console]::CursorVisible = $false
     
-    $local:job = Start-Job -InitializationScript {} -ScriptBlock $scriptBlock
-    $local:jobState = ""
+    $local:Job = Start-Job -ScriptBlock { 
+        $ProgressPreference = "SilentlyContinue"
+        . $using:LogzioTempDir\consts.ps1;
+        . $using:LogzioTempDir\utils_functions.ps1;
+        foreach ($ScriptToLoad in $using:ScriptsToLoad) {
+            . $ScriptToLoad 
+        };
+        if ($using:FuncArgs.Count -eq 0) {
+            &$using:FuncName
+        } 
+        else {
+            &$using:FuncName $using:FuncArgs
+        }
+    }
+    $local:JobState = ''
 
     while ($true) {
-        Write-Host "`r[   ] $desc ..." -NoNewline
+        Write-Host "`r[   ] $Description ..." -NoNewline
 
         for ($i=0; $i -lt $frame.Count; $i++) {
             Write-Host "`r[ $($frame[$i]) ]" -NoNewline
             Start-Sleep -Milliseconds $frameInterval
         }
 
-        $counter++
+        $Counter++
 
-        $jobState = $job.State | Write-Output
-        if ($jobState.Equals("Completed")) {
+        $JobState = $Job.State | Write-Output
+        if ($JobState.Equals("Completed")) {
             break
         }
-        if ($jobState.Equals("Failed")) {
+        if ($JobState.Equals("Failed")) {
             break
         }
 
-        if ($counter -eq $timeout) {
-            Remove-Job -Job $job -Force >$null
-            $jobState = "Timeout"
-            Write-Run "Write-Error `"utils_functions.ps1 (2): timeout error: the task was not completed in time`""
+        if ($Counter -eq $Timeout) {
+            Remove-Job -Job $Job -Force >$null
+            $JobState = "Timeout"
+            Write-TaskPostRun "Write-Error `"utils_functions.ps1 (2): timeout error: the task was not completed in time`""
             break
         }
     }
 
-    Wait-Job -Job $job | Out-Null
-    $local:exitCode = 2
+    Wait-Job -Job $Job | Out-Null
+    $local:ExitCode = 2
     
-    if (-Not $jobState.Equals("Timeout")) {
-        $exitCode = Receive-Job -Job $job
-        if ([string]::IsNullOrEmpty($exitCode) -or $exitCode -isnot [int]) {
+    if (-Not $JobState.Equals("Timeout")) {
+        $ExitCode = Receive-Job -Job $Job
+        if ([string]::IsNullOrEmpty($ExitCode) -or $ExitCode -isnot [int]) {
             $exitCode = 0
         }
     }
     
-    if (-Not $jobState.Equals("Completed") -or $exitCode -gt 0) {
+    if (-Not $JobState.Equals("Completed") -or $ExitCode -gt 0) {
         Write-Host "`r[ " -NoNewline
-        Write-Host "X" -ForegroundColor red -NoNewline
+        Write-Host "X" -ForegroundColor Red -NoNewline
         Write-Host " ]" -NoNewline
-        Write-Host " $desc ...`n" -ForegroundColor red -NoNewline
+        Write-Host " $Description ...`n" -ForegroundColor Red -NoNewline
 
         [Console]::CursorVisible = $true
         
-        . $runFile
-        Remove-TempDir
-        Exit $exitCode
+        if (Test-Path -Path $TaskPostRunFile) {
+            . $TaskPostRunFile
+        }
+        #Remove-TempDir
+        $IsAgentFailed = $true
+        Exit $ExitCode
     }
 
     Write-Host "`r[ " -NoNewline
-    Write-Host "$([char]8730)" -ForegroundColor green -NoNewline
+    Write-Host "$([char]8730)" -ForegroundColor Green -NoNewline
     Write-Host " ]" -NoNewline
-    Write-Host " $desc ...`n" -ForegroundColor green -NoNewline
+    Write-Host " $Description ...`n" -ForegroundColor Green -NoNewline
 
     [Console]::CursorVisible = $true
 
-    . $runFile
-    Clear-Content $runFile
+    if (Test-Path -Path $TaskPostRunFile) {
+        . $TaskPostRunFile
+        Clear-Content $TaskPostRunFile
+    }
 }
