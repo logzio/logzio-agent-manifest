@@ -17,55 +17,6 @@
            "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
            "params": [
              {
-               "type": "single-select",
-               "name": "aws-region",
-               "label": "Select AWS Region label",
-               "description": "AWS Region description",
-               "hint": "AWS Region hint",
-               "required": true,
-               "options": [
-                 {
-                   "value": "us-east-1",
-                   "label": "us-east-1"
-                 },    {
-                   "value": "eu-central-1",
-                   "label": "eu-central-1"
-                 }
-               ]
-             },
-             {
-               "type": "text",
-               "name": "aws-cluster-req-no-default",
-               "label": "AWS Cluster name - Required - NoDefault",
-               "description": "AWS Cluster description",
-               "hint": "AWS Cluster hint",
-               "required": true
-             },
-             {
-               "type": "text",
-               "name": "aws-cluster-req",
-               "label": "AWS Cluster name - Required - Default",
-               "description": "AWS Cluster description",
-               "hint": "AWS Cluster hint",
-               "required": true,
-               "value": "default cluster name"
-             },
-             {
-               "type": "text",
-               "name": "aws-cluster",
-               "label": "AWS Cluster name - NonRequired - NoDefault",
-               "description": "AWS Cluster description",
-               "hint": "AWS Cluster hint"
-             },
-             {
-               "type": "text",
-               "name": "aws-cluster-default",
-               "label": "AWS Cluster name - NonRequired - Default",
-               "description": "AWS Cluster description",
-               "hint": "AWS Cluster hint",
-               "value": "default cluster name"
-             },
-             {
                "type": "text",
                "name": "aws-cluster-req-pattern",
                "label": "AWS Cluster name - Required - Only letters",
