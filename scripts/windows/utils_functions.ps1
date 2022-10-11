@@ -214,7 +214,8 @@ function Invoke-Task {
     [Console]::CursorVisible = $false
     
     $local:Job = Start-Job -ScriptBlock { 
-        $ProgressPreference = "SilentlyContinue"
+        $ProgressPreference = 'SilentlyContinue'
+        $WarningPreference = 'SilentlyContinue'
         . $using:LogzioTempDir\consts.ps1;
         . $using:LogzioTempDir\utils_functions.ps1;
         foreach ($ScriptToLoad in $using:ScriptsToLoad) {

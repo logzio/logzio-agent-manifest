@@ -20,7 +20,9 @@ $script:LogLevelWarn = 'WARN'
 $script:LogStepPreInit = 'Pre-Init'
 $script:LogStepDownloads = 'Downloads'
 $script:LogStepInit = 'Init'
+$script:LogStepPrerequisites = 'Prerequisites'
 
 $script:LogScriptAgent = 'agent.ps1'
+$script:LogScriptPrerequisites = 'prerequisites.ps1'
 
 # Dynamic Consts

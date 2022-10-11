@@ -85,9 +85,21 @@ try {
     # Download subtype files
     Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $RepoRelease} 'Donwloading subtype files' @("$LogzioTempDir\functions.ps1")
 
-    Write-Host "`n######################"
-    Write-Host '### Pre-Requisites ###'
-    Write-Host '######################'
+    # Load consts script with new consts
+    try {
+        . $LogzioTempDir\consts.ps1 -ErrorAction Stop
+    }
+    catch {
+        $local:ExitCode = 10
+        Write-Host "agent.ps1 ($ExitCode): error loading consts script: $_" -ForegroundColor Red
+        Exit $ExitCode
+    }
+
+    Write-Host "`n#####################"
+    Write-Host '### Prerequisites ###'
+    Write-Host '#####################'
+    # Run prerequisites script
+    . $LogzioTempDir\$Platform\$SubType\prerequisites\prerequisites.ps1
 
     $IsAgentCompleted = $true
 }
