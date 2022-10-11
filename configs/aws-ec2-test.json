@@ -16,16 +16,6 @@
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
            "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
            "params": [
-             {
-               "type": "text",
-               "name": "aws-cluster-req-pattern",
-               "label": "AWS Cluster name - Required - Only letters",
-               "description": "AWS Cluster description",
-               "hint": "AWS Cluster hint",
-               "required": true,
-               "pattern": "^[a-zA-Z]+$",
-               "patternError": "Only letters please"
-             }
            ],
            "telemetries": [
              {
@@ -33,6 +23,16 @@
                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your AWS Cloudwatch.",
                "params":
                [
+                 {
+                   "type": "text",
+                   "name": "aws-cluster-req-pattern",
+                   "label": "AWS Cluster name - Required - Only letters",
+                   "description": "AWS Cluster description",
+                   "hint": "AWS Cluster hint",
+                   "required": true,
+                   "pattern": "^[a-zA-Z]+$",
+                   "patternError": "Only letters please"
+                 },
                  {
                    "type": "boolean",
                    "name": "isWindows",
