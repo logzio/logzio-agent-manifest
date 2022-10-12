@@ -15,22 +15,7 @@
            "name": "AWS Cloudwatch",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
            "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
-           "params": [
-             {
-               "type": "single-select",
-               "value": "us-east-1",
-               "options": [
-                 { "label": "us-east-1", "value": "us-east-1" },
-                 { "label": "eu-central-1", "value": "eu-central-1" },
-                 { "label": "eu-UU-1", "value": "eu-UU-1" }
-               ],
-               "name": "aws-region",
-               "label": "AWS Region",
-               "description": "Select AWS Region",
-               "hint": "Select AWS Region",
-               "required": true
-             }
-           ],
+           "params": [],
            "telemetries": [
              {
                "type": "LOG_ANALYTICS",
