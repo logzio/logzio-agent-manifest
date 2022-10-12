@@ -43,12 +43,20 @@
                      {
                        "type": "text",
                        "name": "windows_username",
-                       "label": "Windows username - only letters and numbers",
+                       "label": "Windows username - only letters and numbers - with patternError",
                        "description": "Windows username description",
                        "hint": "Windows username hint",
                        "required": false,
                        "pattern": "^[a-zA-Z0-9]+$",
                        "patternError": "Only letters please"
+                     },{
+                       "type": "text",
+                       "name": "windows_username_2",
+                       "label": "Windows username - only letters and numbers - with patternError",
+                       "description": "Windows username description",
+                       "hint": "Windows username hint",
+                       "required": false,
+                       "pattern": "^[a-zA-Z0-9]+$"
                      }
                    ]
                  }
