@@ -33,7 +33,7 @@
           "telemetries": [
             {
               "type": "LOG_ANALYTICS",
-              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your AWS Cloudwatch.",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your AWS Cloudwatch!.",
               "params":
               [
                 {
