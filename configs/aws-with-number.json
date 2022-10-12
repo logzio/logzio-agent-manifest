@@ -51,7 +51,7 @@
                   "label": "AWS Cluster name - Required - Only letters",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
-                  "required": true,
+                  "required": true
                 },
                 {
                   "type": "number",
