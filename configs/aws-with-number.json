@@ -1,0 +1,55 @@
+{
+  "name": "AWS",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
+  "description": "",
+  "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
+  "subtypes": [
+    {
+      "name": "EC2-Cloudwatch",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
+      "description": "EC2 Cloudwatch",
+      "hint": "EC2 Cloudwatch",
+      "supportedOs": ["Linux"],
+      "datasources": [
+        {
+          "name": "AWS Cloudwatch",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
+          "params": [
+            {
+              "type": "single-select",
+              "value": "us-east-1",
+              "options": [
+                { "label": "us-east-1", "value": "us-east-1" },
+                { "label": "eu-central-1", "value": "eu-central-1" }
+              ],
+              "name": "aws-region",
+              "label": "AWS Region",
+              "description": "Select AWS Region",
+              "hint": "Select AWS Region",
+              "required": true
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your AWS Cloudwatch.",
+              "params":
+              [
+                {
+                  "type": "number",
+                  "name": "aws-cluster-req-pattern",
+                  "label": "AWS Cluster name - Required - Only letters",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": true,
+                  "value": 2
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
