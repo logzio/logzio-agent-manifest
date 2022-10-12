@@ -1,62 +1,70 @@
 {
-   "name": "AWS",
-   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-   "description": "",
-   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
-   "subtypes": [
-     {
-       "name": "EC2-Cloudwatch",
-       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
-       "description": "EC2 Cloudwatch",
-       "hint": "EC2 Cloudwatch",
-       "supportedOs": ["Linux"],
-       "datasources": [
-         {
-           "name": "AWS Cloudwatch",
-           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
-           "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
-           "params": [],
-           "telemetries": [
-             {
-               "type": "LOG_ANALYTICS",
-               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your AWS Cloudwatch.",
-               "params":
-               [
-                 {
-                   "type": "text",
-                   "name": "aws-cluster-req-pattern",
-                   "label": "AWS Cluster name - Required - Only letters",
-                   "description": "AWS Cluster description",
-                   "hint": "AWS Cluster hint",
-                   "required": true,
-                   "pattern": "^[a-zA-Z]+$",
-                   "patternError": "Only letters please"
-                 },
-                 {
-                   "type": "boolean",
-                   "name": "isWindows",
-                   "label": "Windows?",
-                   "description": "Windows something description",
-                   "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
-                   "value": false,
-                   "params": [
-                     {
-                       "type": "text",
-                       "name": "windows_username",
-                       "label": "Windows username - only letters and numbers",
-                       "description": "Windows username description",
-                       "hint": "Windows username hint",
-                       "required": false,
-                       "pattern": "^[a-zA-Z0-9]+$",
-                       "patternError": "Only letters please"
-                     }
-                   ]
-                 }
-               ]
-             }
-           ]
-         }
-       ]
-     }
-   ]
- }
+  "name": "AWS",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
+  "description": "",
+  "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
+  "subtypes": [
+    {
+      "name": "EC2-Cloudwatch",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
+      "description": "EC2 Cloudwatch",
+      "hint": "EC2 Cloudwatch",
+      "supportedOs": ["Linux"],
+      "datasources": [
+        {
+          "name": "AWS Cloudwatch",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
+          "params": [],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your AWS Cloudwatch.",
+              "params":
+              [
+                {
+                  "type": "text",
+                  "name": "aws-cluster-req-pattern",
+                  "label": "AWS Cluster name - Required - Only letters",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": true,
+                  "pattern": "^[a-zA-Z]+$",
+                  "patternError": "Only letters please"
+                },
+                {
+                  "type": "boolean",
+                  "name": "isWindows",
+                  "label": "Windows?",
+                  "description": "Windows something description",
+                  "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
+                  "value": false,
+                  "params": [
+                    {
+                      "type": "text",
+                      "name": "windows_username",
+                      "label": "Windows username - only letters and numbers - with patternError",
+                      "description": "Windows username description",
+                      "hint": "Windows username hint",
+                      "required": false,
+                      "pattern": "^[a-zA-Z0-9]+$",
+                      "patternError": "Only letters please"
+                    },{
+                      "type": "text",
+                      "name": "windows_username_2",
+                      "label": "Windows username - only letters and numbers - with patternError",
+                      "description": "Windows username description",
+                      "hint": "Windows username hint",
+                      "required": false,
+                      "pattern": "^[a-zA-Z0-9]+$"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
