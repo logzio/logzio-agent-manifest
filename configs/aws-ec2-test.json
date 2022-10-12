@@ -37,7 +37,7 @@
                    "type": "boolean",
                    "name": "isWindows",
                    "label": "Windows?",
-                   "description": "Windows someting description",
+                   "description": "Windows something description",
                    "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
                    "value": false,
                    "params": [
