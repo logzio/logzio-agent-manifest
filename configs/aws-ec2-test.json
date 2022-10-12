@@ -21,7 +21,8 @@
                "value": "us-east-1",
                "options": [
                  { "label": "us-east-1", "value": "us-east-1" },
-                 { "label": "eu-central-1", "value": "eu-central-1" }
+                 { "label": "eu-central-1", "value": "eu-central-1" },
+                 { "label": "eu-UU-1", "value": "eu-UU-1" }
                ],
                "name": "aws-region",
                "label": "AWS Region",
