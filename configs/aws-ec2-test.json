@@ -61,7 +61,7 @@
                        "label": "Windows username - only letters and numbers",
                        "description": "Windows username description",
                        "hint": "Windows username hint",
-                       "required": true,
+                       "required": false,
                        "pattern": "^[a-zA-Z0-9]+$",
                        "patternError": "Only letters please"
                      }
