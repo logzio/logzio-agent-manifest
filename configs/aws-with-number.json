@@ -38,12 +38,46 @@
               [
                 {
                   "type": "number",
-                  "name": "aws-cluster-req-pattern",
+                  "name": "aws-cluster-req-pattern1",
                   "label": "AWS Cluster name - Required - Only letters",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
                   "required": true,
                   "value": 2
+                },
+                {
+                  "type": "number",
+                  "name": "aws-cluster-req-patter2n",
+                  "label": "AWS Cluster name - Required - Only letters",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": true,
+                },
+                {
+                  "type": "number",
+                  "name": "aws-cluster-req-patter3n",
+                  "label": "AWS Cluster name - Required - Only letters",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": true,
+                  "value": 0
+                },
+                {
+                  "type": "number",
+                  "name": "aws-cluster-req-p4attern",
+                  "label": "AWS Cluster name - Required - Only letters",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": false,
+                  "value": 2
+                },
+                {
+                  "type": "number",
+                  "name": "aws-cluster-req-pat5tern",
+                  "label": "AWS Cluster name - Required - Only letters",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": false,
                 }
               ]
             }
