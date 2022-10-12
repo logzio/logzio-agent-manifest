@@ -64,7 +64,7 @@
                 },
                 {
                   "type": "number",
-                  "name": "aws-cluster-req-p4attern",
+                  "name": "aws-cluster-req-p4atern",
                   "label": "AWS Cluster name - Required - Only letters",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
