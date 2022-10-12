@@ -77,7 +77,7 @@
                   "label": "AWS Cluster name - Required - Only letters",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
-                  "required": false,
+                  "required": false
                 }
               ]
             }
