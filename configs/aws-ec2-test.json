@@ -51,7 +51,7 @@
                    "hint": "AWS Cluster hint",
                    "required": true,
                    "value": "Im a default value",
-                   "pattern": "^[a-zA-Z]+$",
+                   "pattern": "^[a-zA-Z]+$"
                  },
                  {
                    "type": "boolean",
