@@ -49,8 +49,6 @@
                    "label": "AWS Cluster name - Only letters - no patternError",
                    "description": "AWS Cluster description",
                    "hint": "AWS Cluster hint",
-                   "required": true,
-                   "value": "Im a default value",
                    "pattern": "^[a-zA-Z]+$"
                  },
                  {
