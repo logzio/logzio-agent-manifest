@@ -24,27 +24,6 @@
                [
                  {
                    "type": "text",
-                   "name": "aws-cluster-req-pattern",
-                   "label": "AWS Cluster name - Required - Only letters",
-                   "description": "AWS Cluster description",
-                   "hint": "AWS Cluster hint",
-                   "required": true,
-                   "pattern": "^[a-zA-Z]+$",
-                   "patternError": "Only letters please"
-                 },
-                 {
-                   "type": "text",
-                   "name": "aws-cluster-req-pattern1",
-                   "label": "AWS Cluster name - Required - Only letters - default value",
-                   "description": "AWS Cluster description",
-                   "hint": "AWS Cluster hint",
-                   "required": true,
-                   "value": "Im a default value",
-                   "pattern": "^[a-zA-Z]+$",
-                   "patternError": "Only letters please"
-                 },
-                 {
-                   "type": "text",
                    "name": "aws-cluster-req-pattern2",
                    "label": "AWS Cluster name - Only letters - no patternError",
                    "description": "AWS Cluster description",
@@ -67,7 +46,17 @@
                        "hint": "Windows username hint",
                        "required": false,
                        "pattern": "^[a-zA-Z0-9]+$",
-                       "patternError": "Only letters please"
+                       "patternError": "windows_username error"
+                     },
+                     {
+                       "type": "text",
+                       "name": "windows_password",
+                       "label": "Windows password - only letters and numbers",
+                       "description": "Windows password description",
+                       "hint": "Windows password hint",
+                       "required": false,
+                       "pattern": "^[a-zA-Z0-9]+$",
+                       "patternError": "windows_password error"
                      }
                    ]
                  }
