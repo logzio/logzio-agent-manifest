@@ -29,7 +29,7 @@
               },
              {
                "type": "text",
-               "name": "param_generalParam",
+               "name": "generalParam",
                "label": "generalParam",
                "required": true
              }
