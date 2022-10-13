@@ -9,7 +9,7 @@
        "label": "AWS Cloudformation (SUPER)",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
        "supportedOs": ["AWS_Cloudformation"],
-       "integrationTemplate": "mashu-mashu/yam-pam-po/maspik-nehmad/ten-li/latest&stackName=superduper-bertet&<<LOGZIO_MANIFEST_PARAM_VALUE_generalParam>>",
+       "integrationTemplate": "mashu-mashu/yam-pam-po/maspik-nehmad/ten-li/latest&stackName=superduper-bertet&generalParam=<<LOGZIO_MANIFEST_PARAM_VALUE_generalParam>>",
        "datasources": [
          {
            "name": "System",
