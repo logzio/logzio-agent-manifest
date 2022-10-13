@@ -6,7 +6,7 @@
    "subtypes": [
      {
        "name": "aws-cloudformation-s3",
-       "label": "AWS Cloudformation s3",
+       "label": "AWS Cloudformation (s3)",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
        "description": "S3 Linux server",
        "hint": "S3 with Linux.",
