@@ -45,7 +45,7 @@
                  },
                  {
                    "type": "text",
-                   "name": "aws-cluster-req-pattern1",
+                   "name": "aws-cluster-req-pattern2",
                    "label": "AWS Cluster name - Only letters - no patternError",
                    "description": "AWS Cluster description",
                    "hint": "AWS Cluster hint",
