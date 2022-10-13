@@ -11,7 +11,6 @@
        "description": "S3 Linux server",
        "hint": "S3 with Linux.",
        "supportedOs": ["AWS_Cloudformation"],
-       "integrationTemplate": "s3-hook/0.0.2/sam-template.yaml&stackName=logzio-s3-hook",
        "datasources": [
          {
            "name": "System",
