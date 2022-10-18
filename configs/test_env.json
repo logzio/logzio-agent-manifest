@@ -1,0 +1,37 @@
+{
+  "name": "TEST TEXT",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "description": "",
+  "manifest": true,
+  "subtypes": [
+    {
+      "name": "Text test",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
+      "description": "Azure Kubernetes Service",
+      "supportedOs": ["Mac", "Windows", "Linux"],
+      "datasources": [
+        {
+          "name": "Kubernetes",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
+              "params": [
+                {
+                  "type": "text",
+                  "name": "env",
+                  "label": "Env id text",
+                  "description": "",
+                  "hint": "Check this box if any of your Kubernetes pods are running on Windows nodes. As part of the installation process, you will need to provide the root user credentials to those Windows instances"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
