@@ -20,6 +20,12 @@
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
               "params": [
                 {
+                  "type": "text",
+                  "name": "required-text-param",
+                  "label": "Required text param",
+                  "required": true
+                },
+                {
                   "type": "key-value",
                   "name": "key-value-test1",
                   "required": true,
