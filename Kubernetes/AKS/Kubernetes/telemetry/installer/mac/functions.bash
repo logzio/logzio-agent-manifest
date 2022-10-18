@@ -204,7 +204,7 @@ function build_tolerations_helm_sets () {
 
 # Gets environment id
 # Output:
-#   environment_id - The environment id
+#   env_id - The environment id
 # Error:
 #   Exit Code 4
 function get_environment_id () {
