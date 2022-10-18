@@ -33,7 +33,7 @@ if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
 }
 
 # Build metrics/traces environment ID helm set
-if $isMetricsOptionSelected -or $isTracesOptionSelected {
+if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
     Invoke-Task "Build-EnvironmentIdHelmSet" "building metrics/traces environment ID Helm set"
 }
 
