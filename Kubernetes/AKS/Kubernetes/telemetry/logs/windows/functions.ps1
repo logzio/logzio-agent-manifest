@@ -77,7 +77,7 @@ function Build-LogzioLogsTokenHelmSet {
 # Builds environment id helm set
 # Output:
 #   helmSets - Contains all the Helm sets
-function build_environment_id_helm_set () {
+function Build-EnvironmentIdHelmSet () {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
