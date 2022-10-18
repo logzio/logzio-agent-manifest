@@ -202,6 +202,18 @@ function build_tolerations_helm_sets () {
     write_run "helm_sets+='$tolerations_sets'"
 }
 
+# Gets environment id
+# Output:
+#   environment_id - The environment id
+function get_environment_id () {
+    write_log "INFO" "Getting environment id ..."
+
+    local env_id=$(find_param "$general_params" "envID")
+
+    write_log "INFO" "env_id = $env_id"
+    write_run "env_id='$env_id'"
+}
+
 # Builds enable metrics or traces Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
