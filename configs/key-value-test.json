@@ -1,0 +1,54 @@
+{
+  "name": "Key-Value test",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "description": "",
+  "subtypes": [
+    {
+      "name": "Text test",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
+      "description": "Azure Kubernetes Service",
+      "supportedOs": ["Mac", "Windows", "Linux"],
+      "datasources": [
+        {
+          "name": "Kubernetes",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
+              "params": [
+                {
+                  "type": "key-value",
+                  "name": "key-value-test1",
+                  "required": true,
+                  "label": "Key value param (required & with default)",
+                  "description": "Key value param description",
+                  "value": [
+                    { "key": "first_key", "value":  "first_value"},
+                    { "key": "second_key", "value":  "second_value"}
+                  ]
+                },
+                {
+                  "type": "key-value",
+                  "name": "key-value-test2",
+                  "required": true,
+                  "label": "Key value param (required & without default)",
+                  "description": "Key value param description"
+                },
+                {
+                  "type": "key-value",
+                  "name": "key-value-test3",
+                  "required": false,
+                  "label": "Key value param (not required & without default)",
+                  "description": "Key value param description"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
