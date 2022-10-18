@@ -15,7 +15,7 @@ function Test-CanLocalhostConnectToLogzioLogs {
     Send-LogToLogzio $LogLevelDebug $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
     Write-Log $LogLevelDebug $Message
 
-    $local:LogzioListenerUrl = &$JqExe -r .listenerUrl $AppJson 2>$TaskErrorFile
+    $local:LogzioListenerUrl = &$JqExe -r .listenerUrl $AgentJson 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         $Message = "prerequisites.ps1 ($ExitCode): error getting listener url from application json: $(Get-Content -Path $TaskErrorFile)"
         Send-LogToLogzio $LogLevelError $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
@@ -57,7 +57,7 @@ function Test-CanLocalhostConnectToLogzioMetrics {
     Send-LogToLogzio $LogLevelDebug $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
     Write-Log $LogLevelDebug $Message
 
-    $local:LogzioListenerUrl = &$JqExe -r .listenerUrl $AppJson 2>$TaskErrorFile
+    $local:LogzioListenerUrl = &$JqExe -r .listenerUrl $AgentJson 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         $Message = "prerequisites.ps1 ($ExitCode): error getting listener url from application json: $(Get-Content -Path $TaskErrorFile)"
         Send-LogToLogzio $LogLevelError $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
