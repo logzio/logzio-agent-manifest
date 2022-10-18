@@ -27,7 +27,8 @@
               "label": "AWS Region",
               "description": "Select AWS Region",
               "hint": "Select AWS Region",
-              "required": true
+              "required": true,
+              "allowCustom": true
             }
           ],
           "telemetries": [
