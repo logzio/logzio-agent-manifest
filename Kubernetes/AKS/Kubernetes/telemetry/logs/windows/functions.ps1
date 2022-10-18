@@ -74,6 +74,27 @@ function Build-LogzioLogsTokenHelmSet {
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
+# Builds environment id helm set
+# Output:
+#   helmSets - Contains all the Helm sets
+function build_environment_id_helm_set () {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Building environment id Helm set ..."
+
+    if ([string]::IsNullOrEmpty($using:envID)) {
+        write_log "INFO" "env_id is empty. Default value will be used."
+        return
+    }
+
+    $local:helmSet = " --set logzio-fluentd.env_id=$using:envID"
+    Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
+}
+
 # Builds multiline Helm sets
 # Output:
 #   helmSets - Contains all the Helm sets

@@ -19,6 +19,9 @@ Invoke-Task "Get-SelectedProducts" "getting the selected products"
 # Build tolerations helm sets
 Invoke-Task "Build-TolerationsHelmSets" "building tolerations Helm sets"
 
+# Get environment ID
+Invoke-Task "Get-EnvironmentID" "getting environment ID"
+
 # Build enable metrics or traces helm set
 if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
     Invoke-Task "Build-EnableMetricsOrTracesHelmSet" "building enable metrics or traces Helm set"
@@ -27,6 +30,11 @@ if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
 # Build metrics/traces environment tag helm set
 if ($isMetricsOptionSelected -or $isTracesOptionSelected) {
     Invoke-Task "Build-EnvironmentTagHelmSet" "building metrics/traces environment tag Helm set"
+}
+
+# Build metrics/traces environment ID helm set
+if $isMetricsOptionSelected -or $isTracesOptionSelected {
+    Invoke-Task "Build-EnvironmentIdHelmSet" "building metrics/traces environment ID Helm set"
 }
 
 # Get logs scripts
