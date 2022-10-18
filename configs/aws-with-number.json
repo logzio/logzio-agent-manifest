@@ -53,7 +53,7 @@
                   "hint": "multi select hint",
                   "allowCustom": true,
                   "options": [
-                    { "label": 5, "value":5 },
+                    { "label": "five", "value":5 },
                     { "label": "three", "value":3 },
                     { "label": "hey", "value":"hey" }],
                   "value": ["hey"]
