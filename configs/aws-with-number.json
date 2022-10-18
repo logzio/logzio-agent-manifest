@@ -72,12 +72,23 @@
                   "value": 2
                 },
                 {
-                  "type": "number",
-                  "name": "no-required-no-value",
-                  "label": "AWS Cluster name - Required - Only letters",
-                  "description": "AWS Cluster description",
-                  "hint": "AWS Cluster hint",
-                  "required": false
+                  "type": "multi-select",
+                  "name": "multiselect",
+                  "value": [5,3,"hey"],
+                  "label": "multiselect-example",
+                  "description": "multiselect",
+                  "hint": "multi select hint",
+                  "allowCustom": true,
+                  "options": [
+                    {
+                      "label": "five", "value":5
+                    },
+                    {
+                      "label": "three", "value":3
+                    },
+                    {
+                      "label": "name", "value":"hey"
+                    }]
                 }
               ]
             }
