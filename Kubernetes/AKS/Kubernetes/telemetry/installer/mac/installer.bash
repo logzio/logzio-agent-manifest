@@ -30,6 +30,11 @@ if $is_metrics_option_selected || $is_traces_option_selected; then
     execute_task "build_environment_tag_helm_set" "building metrics/traces environment tag Helm set"
 fi
 
+# Build metrics/traces environment ID helm set
+if $is_metrics_option_selected || $is_traces_option_selected; then
+    execute_task "build_environment_id_helm_set" "building metrics/traces environment ID Helm set"
+fi
+
 # Get logs scripts
 if $is_logs_option_selected; then
     execute_task "get_logs_scripts" "getting logs scripts"

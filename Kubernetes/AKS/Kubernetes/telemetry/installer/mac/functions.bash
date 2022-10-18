@@ -250,6 +250,23 @@ function build_environment_tag_helm_set () {
     write_run "helm_sets+='$helm_set'"
 }
 
+# Builds metrics/traces environment id helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+function build_environment_id_helm_set () {
+    write_log "INFO" "Building environment id Helm set ..."
+
+    if [[ -z "$env_id" ]]; then
+        write_log "INFO" "env_id is empty. Default value will be used."
+        return
+    fi
+
+    local helm_set=" --set logzio-k8s-telemetry.secrets.env_id=$env_id"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
+
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
 #   Exit Code 5
