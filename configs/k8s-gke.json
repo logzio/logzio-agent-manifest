@@ -19,6 +19,14 @@
           "hint": "Select the type of data you'd like to ship: logs, metrics, and traces.",
           "params": [
             {
+              "type": "text",
+              "name": "envID",
+              "label": "Environment Name",
+              "description": "The name for your environment's identifier, to easily identify the telemetry data for each environment.",
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment. Default value will be used if empty.",
+              "value": ""
+            },
+            {
               "type": "boolean",
               "name": "isTaint",
               "label": "Taints and Tolerations",
