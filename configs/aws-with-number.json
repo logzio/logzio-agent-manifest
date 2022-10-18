@@ -46,17 +46,17 @@
                   "value": 2
                 },
                 {
-                  "type": "single-select",
-                  "value": "us-east-1",
+                  "type": "multi-select",
+                  "name": "multiselect",
+                  "label": "multiselect-example",
+                  "description": "multiselect",
+                  "hint": "multi select hint",
+                  "allowCustom": true,
                   "options": [
-                    { "label": "us-east-1", "value": "us-east-1" },
-                    { "label": "eu-central-1", "value": "eu-central-1" }
-                  ],
-                  "name": "single-name",
-                  "label": "single-label",
-                  "description": "single-desc",
-                  "hint": "single-hint",
-                  "required": true
+                    { "label": 5, "value":5 },
+                    { "label": "three", "value":3 },
+                    { "label": "hey", "value":"hey" }],
+                  "value": ["hey"]
                 },
                 {
                   "type": "number",
