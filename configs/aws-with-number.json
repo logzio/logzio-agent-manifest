@@ -39,11 +39,24 @@
                 {
                   "type": "number",
                   "name": "required-with-value",
-                  "label": "AWS Cluster name - Required - Only letters",
+                  "label": "AWS Cluster name - Required - Only is updates",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
                   "required": true,
                   "value": 2
+                },
+                {
+                  "type": "multi-select",
+                  "name": "multiselect",
+                  "label": "multiselect-example",
+                  "description": "multiselect",
+                  "hint": "multi select hint",
+                  "allowCustom": true,
+                  "options": [
+                    { "label": 5, "value":5 },
+                    { "label": "three", "value":3 },
+                    { "label": "name", "value":"hey" }],
+                  "value": [5]
                 },
                 {
                   "type": "number",
@@ -70,25 +83,6 @@
                   "hint": "AWS Cluster hint",
                   "required": false,
                   "value": 2
-                },
-                {
-                  "type": "multi-select",
-                  "name": "multiselect",
-                  "value": [5,3,"hey"],
-                  "label": "multiselect-example",
-                  "description": "multiselect",
-                  "hint": "multi select hint",
-                  "allowCustom": true,
-                  "options": [
-                    {
-                      "label": "five", "value":5
-                    },
-                    {
-                      "label": "three", "value":3
-                    },
-                    {
-                      "label": "name", "value":"hey"
-                    }]
                 }
               ]
             }
