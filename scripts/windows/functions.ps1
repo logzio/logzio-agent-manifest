@@ -2,13 +2,58 @@
 ##################################################### WINDOWS Agent Functions ###################################################
 #################################################################################################################################
 
+# Sets Windows info consts
+# Input:
+#   ---
+# Output:
+#   WindowsName - Windows name
+#   WindowsVersion - Windows version
+function Set-WindowsInfoConsts {
+    $local:ExitCode = 2
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Setting Windows consts ...'
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
+    Write-Log $LogLevelDebug $Message
+
+    $local:WindowsName = ''
+    $local:WindowsVersion = ''
+
+    try {
+        $local:WindowsInfo = Get-ComputerInfo -Property WindowsProductName,OsVersion
+        $WindowsName = $WindowsInfo.WindowsProductName
+        $WindowsVersion = $WindowsInfo.OsVersion
+    }
+    catch {
+        $Message = "agent.ps1 ($ExitCode): error getting computer info: $_"
+        Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
+        Write-Log $LogLevelError $Message
+
+        return $ExitCode
+    }
+
+    $Message = "Windows name is $WindowsName"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:WindowsName = '$WindowsName'"
+    "`$script:WindowsName = '$WindowsName'" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
+
+    $Message = "Windows version is $WindowsVersion"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:WindowsVersion = '$WindowsVersion'"
+    "`$script:WindowsVersion = '$WindowsVersion'" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
+}
+
 # Creates Logz.io AppData directory
 # Input:
 #   ---
 # Output:
 #   ---
 function New-LogzioAppDataDir {
-    $local:ExitCode = 2
+    $local:ExitCode = 3
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     if (Test-Path -Path $LogzioAppDataDir) {
@@ -41,7 +86,7 @@ function New-LogzioAppDataDir {
 # Output:
 #   ---
 function Test-IsElevated {
-    $local:ExitCode = 3
+    $local:ExitCode = 4
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if PowerShell was run as Administrator ...'
@@ -49,12 +94,22 @@ function Test-IsElevated {
     Write-Log $LogLevelDebug $Message
 
     $local:Id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-    $local:Principal = New-Object System.Security.Principal.WindowsPrincipal($Id)
-    if ($Principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)) {
-        return
+
+    try {
+        $local:Principal = New-Object System.Security.Principal.WindowsPrincipal($Id) -ErrorAction Stop
+        if ($Principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)) {
+            return
+        }
+    }
+    catch {
+        $Message = "agent.ps1 ($ExitCode): error checking if PowerShell was run as Administrator"
+        Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    $Message = "agent.ps1 ($ExitCode): PowerShell was not run as Administrator. Please run Powershell as Administrator and rerun the agent script."
+    $Message = "agent.ps1 ($ExitCode): PowerShell was not run as Administrator. please run Powershell as Administrator and rerun the agent script"
     Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
     Write-TaskPostRun "Write-Error '$Message'"
 
@@ -67,11 +122,11 @@ function Test-IsElevated {
 # Output:
 #   Help usage
 function Show-Help {
-    Write-TaskPostRun "Write-Host `"Usage: .\agent.ps1 --url=<logzio_app_url> --id=<agent_id> [--debug=<app_json>] [--branch<repo_release>]`""
+    Write-TaskPostRun "Write-Host `"Usage: .\agent.ps1 --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release<repo_release>]`""
     Write-TaskPostRun "Write-Host ' --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)'"
     Write-TaskPostRun "Write-Host ' --id=<agent_id>              Logz.io agent ID'"
-    Write-TaskPostRun "Write-Host ' --debug=<app_json>           Debug run using a local application JSON'"
-    Write-TaskPostRun "Write-Host ' --release=<repo_release>     The branch of Logz.io repo. Default is master'"
+    Write-TaskPostRun "Write-Host ' --debug=<agent_json>         Debug run using a local agent json file'"
+    Write-TaskPostRun "Write-Host ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
     Write-TaskPostRun "Write-Host ' --help                       Show usage'"
 }
 
@@ -81,14 +136,14 @@ function Show-Help {
 # Output:
 #   AppUrl - Logz.io app url
 #   AgentId - Logz.io agent id
-#   AppJsonFile - App json (for debug)
+#   AgentJsonFile - Agent json file path (for debug)
 #   RepoRelease - Repo release (for debug)
 function Get-Arguments {
     param (
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 4
+    $local:ExitCode = 5
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting arguments ...'
@@ -133,8 +188,8 @@ function Get-Arguments {
                 $Message = "Agent argument 'url' is $AppUrl"
                 Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
                 Write-Log $LogLevelDebug $Message
+
                 Write-TaskPostRun "`$script:AppUrl = '$AppUrl'"
-                
                 continue
             }
             --id=* {
@@ -150,13 +205,13 @@ function Get-Arguments {
                 $Message = "Agent argument 'id' is $AgentId"
                 Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
                 Write-Log $LogLevelDebug $Message
-                Write-TaskPostRun "`$script:AgentId = '$AgentId'"
 
+                Write-TaskPostRun "`$script:AgentId = '$AgentId'"
                 continue
             }
             --debug=* {
-                $local:AppJsonFile = $Arg.Split('=', 2)[1]
-                if ([string]::IsNullOrEmpty($AppJsonFile)) {
+                $local:AgentJsonFile = $Arg.Split('=', 2)[1]
+                if ([string]::IsNullOrEmpty($AgentJsonFile)) {
                     $Message = "agent.ps1 ($ExitCode): no json file specified!"
                     Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
                     Write-TaskPostRun "Write-Error '$Message'"
@@ -164,11 +219,11 @@ function Get-Arguments {
                     return $ExitCode
                 }
 
-                $Message = "Agent argument 'debug' is $AppJsonFile"
+                $Message = "Agent argument 'debug' is $AgentJsonFile"
                 Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
                 Write-Log $LogLevelDebug $Message
-                Write-TaskPostRun "`$script:AppJsonFile = '$AppJsonFile'"
 
+                Write-TaskPostRun "`$script:AgentJsonFile = '$AgentJsonFile'"
                 continue
             }
             --release=* {
@@ -177,8 +232,8 @@ function Get-Arguments {
                 $Message = "Agent argument 'release' is $RepoRelease"
                 Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
                 Write-Log $LogLevelDebug $Message
-                Write-TaskPostRun "`$script:RepoRelease = '$RepoRelease'"
 
+                Write-TaskPostRun "`$script:RepoRelease = '$RepoRelease'"
                 continue
             }
             default {
@@ -197,7 +252,7 @@ function Get-Arguments {
 
 # Checks validation of the arguments
 # Input:
-#   FuncArgs - Hashtable {AppUrl = $AppUrl; AgentId = $AgentId; AppJsonFile = $AppJsonFile}
+#   FuncArgs - Hashtable {AppUrl = $AppUrl; AgentId = $AgentId; AgentJsonFile = $AgentJsonFile}
 # Output:
 #   ---
 function Test-ArgumentsValidation {
@@ -205,7 +260,7 @@ function Test-ArgumentsValidation {
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 5
+    $local:ExitCode = 6
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking validation ...'
@@ -233,8 +288,8 @@ function Test-ArgumentsValidation {
 
         return $ExitCode
     }
-    if (-Not $FuncArgs.ContainsKey('AppJsonFile')) {
-        $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'AppJsonFile' key"
+    if (-Not $FuncArgs.ContainsKey('AgentJsonFile')) {
+        $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'AgentJsonFile' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error '$Message'"
 
@@ -243,14 +298,14 @@ function Test-ArgumentsValidation {
 
     $local:AppUrl = $FuncArgs.AppUrl
     $local:AgentId = $FuncArgs.AgentId
-    $local:AppJsonFile = $FuncArgs.AppJsonFile
+    $local:AgentJsonFile = $FuncArgs.AgentJsonFile
 
-    if (-Not [string]::IsNullOrEmpty($AppJsonFile)) {
-        if (Test-Path -Path $AppJsonFile -PathType Leaf) {
+    if (-Not [string]::IsNullOrEmpty($AgentJsonFile)) {
+        if (Test-Path -Path $AgentJsonFile -PathType Leaf) {
             return
         }
 
-        $Message = "agent.ps1 ($ExitCode): the json file '$AppJsonFile' does not exist"
+        $Message = "agent.ps1 ($ExitCode): the json file '$AgentJsonFile' does not exist"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error '$Message'"
 
@@ -283,20 +338,20 @@ function Test-ArgumentsValidation {
     return $ExitCode
 }
 
-# Sets log agent id const
+# Sets agent id const
 # Input:
 #   FuncArgs - Hashtable {AgentId = $AgentId}
 # Output:
-#   AgentId const - Agent id
-function Set-LogAgentIdConst {
+#   AgentId - Agent id
+function Set-AgentIdConst {
     param (
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 6
+    $local:ExitCode = 7
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Setting log agent id const ...'
+    $local:Message = 'Setting agent id const ...'
     Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
     Write-Log $LogLevelDebug $Message
 
@@ -321,6 +376,11 @@ function Set-LogAgentIdConst {
         $AgentId = 'Debug'
     }
 
+    $local:Message = "Agent id is $AgentId"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepPreInit $LogScriptAgent $FuncName
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:AgentId = '$AgentId'"
     "`$script:AgentId = '$AgentId'" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
 }
 
@@ -330,7 +390,7 @@ function Set-LogAgentIdConst {
 # Output:
 #   Jq exe file in Logz.io temp directory
 function Get-JQ {
-    $local:ExitCode = 7
+    $local:ExitCode = 8
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Downloading jq ...'
@@ -355,7 +415,7 @@ function Get-JQ {
 # Output:
 #   Yq exe file in Logz.io temp directory
 function Get-Yq {
-    $local:ExitCode = 8
+    $local:ExitCode = 9
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Downloading yq ...'
@@ -374,20 +434,20 @@ function Get-Yq {
     }
 }
 
-# Gets the app json from the agent or local file
+# Gets the agent json from the agent or local file
 # Input:
-#   FuncArgs - Hashtable {AppUrl = $AppUrl; AppJsonFile = $AppJsonFile}
+#   FuncArgs - Hashtable {AppUrl = $AppUrl; AgentJsonFile = $AgentJsonFile}
 # Output:
-#   App json file in Logz.io temp directory
-function Get-AppJson {
+#   Agent json file in Logz.io temp directory
+function Get-AgentJson {
     param (
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 9
+    $local:ExitCode = 10
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Getting application json ...'
+    $local:Message = 'Getting agent json ...'
     Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
     Write-Log $LogLevelDebug $Message
 
@@ -405,8 +465,8 @@ function Get-AppJson {
 
         return $ExitCode
     }
-    if (-Not $FuncArgs.ContainsKey('AppJsonFile')) {
-        $Message = "Get-AppJson FuncArgs does not contain 'AppJsonFile' key"
+    if (-Not $FuncArgs.ContainsKey('AgentJsonFile')) {
+        $Message = "Get-AppJson FuncArgs does not contain 'AgentJsonFile' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
@@ -414,19 +474,19 @@ function Get-AppJson {
     }
 
     $local:AppUrl = $FuncArgs.AppUrl
-    $local:AppJsonFile = $FuncArgs.AppJsonFile
+    $local:AgentJsonFile = $FuncArgs.AgentJsonFile
 
-    if (-Not [string]::IsNullOrEmpty($AppJsonFile)) {
+    if (-Not [string]::IsNullOrEmpty($AgentJsonFile)) {
         # Using local app json file
-        $local:Message = 'Using local application json file ...'
+        $local:Message = 'Using local agent json file ...'
         Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-Log $LogLevelDebug $Message
 
         try {
-            Copy-Item -Path $AppJsonFile -Destination $AppJson -ErrorAction Stop
+            Copy-Item -Path $AgentJsonFile -Destination $AgentJson -ErrorAction Stop
         }
         catch {
-            $Message = "agent.ps1 ($ExitCode): error copying '$AppJsonFile' to '$AppJson': $_"
+            $Message = "agent.ps1 ($ExitCode): error copying '$AgentJsonFile' to '$AgentJson': $_"
             Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
             Write-TaskPostRun "Write-Error '$Message'"
 
@@ -436,25 +496,25 @@ function Get-AppJson {
         return
     }
 
-    # Getting app json from agent
-    $Message = 'Getting application json from agent ...'
+    # Getting agent json from agent
+    $Message = 'Getting agent json from agent ...'
     Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
     Write-Log $LogLevelDebug $Message
 
     try {
-        Invoke-WebRequest -Uri $AppUrl/telemetry-agent/public/agents/configuration/$AgentID -OutFile $AppJson | Out-Null
+        Invoke-WebRequest -Uri $AppUrl/telemetry-agent/public/agents/configuration/$AgentID -OutFile $AgentJson | Out-Null
     }
     catch {
-        $Message = "agent.ps1 ($ExitCode): error getting Logz.io application json from agent. make sure your url is valid: $_"
+        $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent. make sure your url is valid: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
         return $ExitCode
     }
 
-    $local:StatusCode = &$JqExe -r '.statusCode' $AppJson
+    $local:StatusCode = &$JqExe -r '.statusCode' $AgentJson 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): error getting status code from application json: $_"
+        $Message = "agent.ps1 ($ExitCode): error getting status code from agent json: $(Get-Content -Path $TaskErrorFile)"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
@@ -467,39 +527,38 @@ function Get-AppJson {
         return
     }
 
-    $Message = "agent.ps1 ($ExitCode): error getting Logz.io application json from agent (statusCode $statusCode). make sure your id is valid."
+    $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent (statusCode $statusCode). make sure your id is valid."
     Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
     Write-TaskPostRun "Write-Error '$Message'"
 
     return $ExitCode
 }
 
-# Sets log data consts
+# Sets agent json consts
 # input:
 #   ---
 # Output:
-#   Platform const - Platfrom name
-#   Subtype const - Subtype name
-#   DatasourcesNum const - Number of datasources
-#   Datasource{#num} const - Each datasource name
-function Set-LogDataConsts {
-    $local:ExitCode = 8
+#   Platform - Platfrom name
+#   SubType - Subtype name
+#   DataSourceNames - List of datasource names
+function Set-AgentJsonConsts {
+    $local:ExitCode = 11
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Setting log data consts ...'
+    $local:Message = 'Setting agent json consts ...'
     Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
     Write-Log $LogLevelDebug $Message
     
-    $local:Platform = &$JqExe -r '.configuration.name' $AppJson
+    $local:Platform = &$JqExe -r '.configuration.name' $AgentJson 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): error getting platform from application json: $_"
+        $Message = "agent.ps1 ($ExitCode): error getting platform from agent json: $(Get-Content -Path $TaskErrorFile)"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
         return $ExitCode
     }
     if ([string]::IsNullOrEmpty($Platform) -or $Platform.Equals('null')) {
-        $Message = "agent.ps1 ($ExitCode): '.configuration.name' in application json does not exist or is empty"
+        $Message = "agent.ps1 ($ExitCode): '.configuration.name' in agent json does not exist or is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
@@ -507,18 +566,24 @@ function Set-LogDataConsts {
     }
 
     $Platform = $Platform.ToLower()
+
+    $Message = "Platform is $Platform"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:Platform = '$Platform'"
     "`$script:Platform = '$Platform'" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
 
-    $local:SubType = &$JqExe -r '.configuration.subtypes[0].name' $AppJson
+    $local:SubType = &$JqExe -r '.configuration.subtypes[0].name' $AgentJson 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): error getting subtype from application json: $_"
+        $Message = "agent.ps1 ($ExitCode): error getting subtype from agent json: $(Get-Content -Path $TaskErrorFile)"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
         return $ExitCode
     }
     if ([string]::IsNullOrEmpty($SubType) -or $SubType.Equals('null')) {
-        $Message = "agent.ps1 ($ExitCode): '.configuration.subtypes[0].name' in application json does not exist or is empty"
+        $Message = "agent.ps1 ($ExitCode): '.configuration.subtypes[0].name' in agent json does not exist or is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
@@ -526,50 +591,62 @@ function Set-LogDataConsts {
     }
     
     $SubType = $SubType.ToLower()
+
+    $Message = "Subtype is $SubType"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:SubType = '$SubType'"
     "`$script:SubType = '$SubType'" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
     
-    $local:DataSources = &$JqExe -c '.configuration.subtypes[0].datasources[]' $AppJson
+    $local:DataSources = &$JqExe -c '.configuration.subtypes[0].datasources[]' $AgentJson 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): error getting datasources from application json: $_"
+        $Message = "agent.ps1 ($ExitCode): error getting datasources from agent json: $(Get-Content -Path $TaskErrorFile)"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
         return $ExitCode
     }
-
-    $local:DataSourcesNum = $DataSources.Count
-    if ($DataSourcesNum -eq 0) {
-        $Message = "agent.ps1 ($ExitCode): '.configuration.subtypes[0].datasources[]' in application json is empty"
+    if ($DataSources.Count -eq 0) {
+        $Message = "agent.ps1 ($ExitCode): '.configuration.subtypes[0].datasources[]' in agent json is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-TaskPostRun "Write-Error '$Message'"
 
         return $ExitCode
     }
-
-    "`$script:DataSourcesNum = '$DataSourcesNum'" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
 
     $local:Index = 0
+    $local:DataSourceNames = '@('
     foreach ($DataSource in $DataSources) {
-        $local:DataSourceName = $Datasource | &$JqExe -r '.name'
+        $local:DataSourceName = $Datasource | &$JqExe -r '.name' 2>$TaskErrorFile
         if ($LASTEXITCODE -ne 0) {
-            $Message = "agent.ps1 ($ExitCode): error getting datasources[$Index] from application json: $_"
+            $Message = "agent.ps1 ($ExitCode): error getting datasources[$Index] from agent json: $(Get-Content -Path $TaskErrorFile)"
             Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
             Write-TaskPostRun "Write-Error '$Message'"
 
             return $ExitCode
         }
         if ([string]::IsNullOrEmpty($DataSourceName) -or $DataSourceName.Equals('null')) {
-            $Message = "agent.ps1 ($ExitCode): '.configuration.subtypes[0].datasources[$Index].name' in application json does not exist or is empty"
+            $Message = "agent.ps1 ($ExitCode): '.configuration.subtypes[0].datasources[$Index].name' in agent json does not exist or is empty"
             Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
             Write-TaskPostRun "Write-Error '$Message'"
     
             return $ExitCode
         }
 
-        $DataSourceName = $DataSourceName.ToLower()
-        "`$script:DataSource$Index = '$DataSourceName'" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
+        $Message = "DataSource #$($Index+1) is '$DataSourceName'"
+        Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
+        Write-Log $LogLevelDebug $Message
+
+        $DataSourceNames += "'$($DataSourceName.ToLower())',"
         $Index++
     }
+
+    $DataSourceNames += $DataSourceNames.Substring(0, $DataSourceNames.Length-1)
+    $DataSourceNames += ')'
+
+    Write-TaskPostRun "`$script:DataSources = $DataSourceNames"
+    "`$script:DataSources = $DataSourceNames" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
 }
 
 # Downloads subtype files
@@ -582,7 +659,7 @@ function Get-SubTypeFiles {
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 9
+    $local:ExitCode = 12
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Donwloading subtype files ...'
@@ -622,14 +699,70 @@ function Get-SubTypeFiles {
         return $ExitCode
     }
     
-    tar -zxf $LogzioTempDir\windows_$Platform`_$SubType.tar.gz --directory $LogzioTempDir
+    tar -zxf $LogzioTempDir\windows_$Platform`_$SubType.tar.gz --directory $LogzioTempDir 2>$TaskErrorFile | Out-Null
     if ($LASTEXITCODE -eq 0) {
         return
     }
 
-    $Message = "agent.ps1 ($ExitCode): error extracting files from tar.gz: $_"
+    $Message = "agent.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-Content -Path $TaskErrorFile)"
     Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
     Write-TaskPostRun "Write-Error '$Message'"
 
     return $ExitCode
+}
+
+# Runs subtype prerequisites
+# Input:
+#   ---
+# Output:
+#   ---
+function Invoke-SubTypePrerequisites {
+    $local:ExitCode = 13
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Running subtype prerequisites ...'
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
+    Write-Log $LogLevelDebug $Message
+
+    try {
+        . $LogzioTempDir\$Platform\$SubType\$PrerequisitesFile -ErrorAction Stop
+        if ($LASTEXITCODE -ne 0) {
+            Exit $LASTEXITCODE
+        }
+    }
+    catch {
+        $Message = "agent.ps1 ($ExitCode): error running subtype prerequisites: $_"
+        Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
+        Write-Error $Message
+
+        Exit $ExitCode
+    }
+}
+
+# Runs subtype installer
+# Input:
+#   ---
+# Output:
+#   ---
+function Invoke-SubTypeInstaller {
+    $local:ExitCode = 14
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Running subtype installer ...'
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
+    Write-Log $LogLevelDebug $Message
+
+    try {
+        . $LogzioTempDir\$Platform\$SubType\$InstallerFile -ErrorAction Stop
+        if ($LASTEXITCODE -ne 0) {
+            Exit $LASTEXITCODE
+        }
+    }
+    catch {
+        $local:Message = "agent.ps1 ($ExitCode): error running subtype installer: $_"
+        Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
+        Write-Error $Message
+
+        Exit $ExitCode
+    }
 }

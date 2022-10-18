@@ -56,7 +56,7 @@ function Write-Log {
         [string]$Message
     )
     
-    Write-Output "[$LogLevel] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" >> $LogFile
+    Write-Output "[$LogLevel] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" >> $AgentLogFile
 }
 
 function Get-LogMetadata {
@@ -81,7 +81,7 @@ function Send-LogToLogzio {
         [string]$DataSource = ''
     )
 
-    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`""
+    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"windows_name`":`"$WindowsName`",`"windows_version`":`"$WindowsVersion`""
 
     if ($Level.Equals($LogLevelError)) {
         $local:ErrorIdPartMatch = $Message | Select-String -Pattern '\([0-9]+\)'
@@ -231,10 +231,10 @@ function Invoke-Task {
     $local:JobState = ''
 
     while ($true) {
-        Write-Host "`r[   ] $Description ..." -NoNewline
+        Write-Host "`r  [   ] $Description ..." -NoNewline
 
-        for ($i=0; $i -lt $frame.Count; $i++) {
-            Write-Host "`r[ $($frame[$i]) ]" -NoNewline
+        for ($i=0; $i -lt $Frame.Count; $i++) {
+            Write-Host "`r  [ $($Frame[$i]) ]" -NoNewline
             Start-Sleep -Milliseconds $frameInterval
         }
 
@@ -267,7 +267,7 @@ function Invoke-Task {
     }
     
     if (-Not $JobState.Equals("Completed") -or $ExitCode -gt 0) {
-        Write-Host "`r[ " -NoNewline
+        Write-Host "`r  [ " -NoNewline
         Write-Host "X" -ForegroundColor Red -NoNewline
         Write-Host " ]" -NoNewline
         Write-Host " $Description ...`n" -ForegroundColor Red -NoNewline
@@ -282,7 +282,7 @@ function Invoke-Task {
         Exit $ExitCode
     }
 
-    Write-Host "`r[ " -NoNewline
+    Write-Host "`r  [ " -NoNewline
     Write-Host "$([char]8730)" -ForegroundColor Green -NoNewline
     Write-Host " ]" -NoNewline
     Write-Host " $Description ...`n" -ForegroundColor Green -NoNewline

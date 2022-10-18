@@ -7,9 +7,8 @@ $script:IsAgentCompleted = $false
 $script:IsAgentFailed = $false
 $script:IsShowHelp = $false
 
-try {
-    # Print title
-    Write-Host "
+# Print main title
+Write-Host '
     LLLLLLLLLLL                                                                             iiii                   
     L:::::::::L                                                                            i::::i                  
     L:::::::::L                                                                             iiii                   
@@ -33,8 +32,10 @@ try {
                                                gg:::::::::::::g                                                    
                                                  ggg::::::ggg                                                      
                                                     gggggg                                                          
-    `n" -ForegroundColor Cyan
+' -ForegroundColor Cyan
+Write-Host
 
+try {
     # Load agent scripts
     try {
         # Load consts
@@ -50,60 +51,74 @@ try {
         Exit $ExitCode
     }
 
+    # Print title
     Write-Host '##########################'
-    Write-Host '### Pre-Initialization ###'
+    Write-Host '### ' -NoNewline
+    Write-Host 'Pre-Initialization' -ForegroundColor Magenta -NoNewline
+    Write-Host ' ###'
     Write-Host '##########################'
+
+    # Set Windows info consts
+    Invoke-Task 'Set-WindowsInfoConsts' @{} 'Setting Windows info consts' @($AgentFunctionsFile)
     # Create Logz.io AppData directory
-    Invoke-Task 'New-LogzioAppDataDir' @{} 'Creating Logz.io AppData directory' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'New-LogzioAppDataDir' @{} 'Creating Logz.io AppData directory' @($AgentFunctionsFile)
     # Check if PowerShell was run as Administrator
-    Invoke-Task 'Test-IsElevated' @{} 'Checking if PowerShell was run as Administrator' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'Test-IsElevated' @{} 'Checking if PowerShell was run as Administrator' @($AgentFunctionsFile)
     # Get arguments
-    Invoke-Task 'Get-Arguments' @{AgentArgs = $args} 'Getting arguments' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'Get-Arguments' @{AgentArgs = $args} 'Getting arguments' @($AgentFunctionsFile)
     if ($IsShowHelp) {
-        Exit
+        Exit 0
     }
     # Check arguments validation
-    Invoke-Task 'Test-ArgumentsValidation' @{AppUrl = $AppUrl; AgentId = $AgentId; AppJsonFile = $AppJsonFile} 'Checking arguments validation' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'Test-ArgumentsValidation' @{AppUrl = $AppUrl; AgentId = $AgentId; AgentJsonFile = $AgentJsonFile} 'Checking arguments validation' @($AgentFunctionsFile)
     # Set agent id const
-    Invoke-Task 'Set-LogAgentIdConst' @{AgentId = $AgentId} 'Setting log agent id const' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'Set-AgentIdConst' @{AgentId = $AgentId} 'Setting agent id const' @($AgentFunctionsFile)
 
-    Write-Host "`n#################"
-    Write-Host '### Downloads ###'
+    # Print title
+    Write-Host
     Write-Host '#################'
+    Write-Host '### ' -NoNewline
+    Write-Host 'Downloads' -ForegroundColor Magenta -NoNewline
+    Write-Host ' ###'
+    Write-Host '#################'
+
     # Download jq
-    Invoke-Task 'Get-Jq' @{} 'Downloading jq' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'Get-Jq' @{} 'Downloading jq' @($AgentFunctionsFile)
     # Download yq
-    Invoke-Task 'Get-Yq' @{} 'Downloading yq' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'Get-Yq' @{} 'Downloading yq' @($AgentFunctionsFile)
 
-    Write-Host "`n######################"
-    Write-Host '### Initialization ###'
+    # Print title
+    Write-Host
     Write-Host '######################'
-    # Get app json
-    Invoke-Task 'Get-AppJson' @{AppUrl = $AppUrl; AppJsonFile = $AppJsonFile} 'Getting application json' @("$LogzioTempDir\functions.ps1")
-    # Set consts
-    Invoke-Task 'Set-LogDataConsts' @{} 'Setting log data consts' @("$LogzioTempDir\functions.ps1")
+    Write-Host '### ' -NoNewline
+    Write-Host 'Initialization' -ForegroundColor Magenta -NoNewline
+    Write-Host ' ###'
+    Write-Host '######################'
+
+    # Get agent json
+    Invoke-Task 'Get-AgentJson' @{AppUrl = $AppUrl; AgentJsonFile = $AgentJsonFile} 'Getting agent json' @($AgentFunctionsFile)
+    # Set agent json consts
+    Invoke-Task 'Set-AgentJsonConsts' @{} 'Setting agent json consts' @($AgentFunctionsFile)
     # Download subtype files
-    Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $RepoRelease} 'Donwloading subtype files' @("$LogzioTempDir\functions.ps1")
+    Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $RepoRelease} 'Donwloading subtype files' @($AgentFunctionsFile)
 
-    # Load consts script with new consts
-    try {
-        . $LogzioTempDir\consts.ps1 -ErrorAction Stop
-    }
-    catch {
-        $local:ExitCode = 10
-        Write-Host "agent.ps1 ($ExitCode): error loading consts script: $_" -ForegroundColor Red
-        Exit $ExitCode
+    # Run subtype prerequisites
+    Invoke-SubTypePrerequisites
+    if ($LASTEXITCODE -ne 0) {
+        Exit $LASTEXITCODE
     }
 
-    Write-Host "`n#####################"
-    Write-Host '### Prerequisites ###'
-    Write-Host '#####################'
-    # Run prerequisites script
-    . $LogzioTempDir\$Platform\$SubType\prerequisites\prerequisites.ps1
+    #Run subtype installer
+    Invoke-SubTypeInstaller
+    if ($LASTEXITCODE -ne 0) {
+        Exit $LASTEXITCODE
+    }
 
     $IsAgentCompleted = $true
 }
 finally {
+    #Remove-TempDir
+
     if ($IsShowHelp) {
         Exit
     }
@@ -134,8 +149,6 @@ finally {
 
         Write-Host `n
     }
-
-    #Remove-TempDir
 }
 
 
