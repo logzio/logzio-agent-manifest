@@ -17,6 +17,9 @@ execute_task "get_selected_products" "getting the selected products"
 # Build tolerations helm sets
 execute_task "build_tolerations_helm_sets" "building tolerations Helm sets"
 
+# Get environment ID
+execute_task "get_environment_id" "getting environment ID"
+
 # Build enable metrics or traces helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
     execute_task "build_enable_metrics_or_traces_helm_set" "building enable metrics or traces Helm set"
@@ -25,6 +28,11 @@ fi
 # Build metrics/traces environment tag helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
     execute_task "build_environment_tag_helm_set" "building metrics/traces environment tag Helm set"
+fi
+
+# Build metrics/traces environment ID helm set
+if $is_metrics_option_selected || $is_traces_option_selected; then
+    execute_task "build_environment_id_helm_set" "building metrics/traces environment ID Helm set"
 fi
 
 # Get logs scripts
