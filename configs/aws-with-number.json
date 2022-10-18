@@ -39,7 +39,7 @@
                 {
                   "type": "number",
                   "name": "required-with-value",
-                  "label": "AWS Cluster name - Required - Only is updates",
+                  "label": "updated",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
                   "required": true,
