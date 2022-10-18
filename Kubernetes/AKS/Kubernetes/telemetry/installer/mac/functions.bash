@@ -221,11 +221,7 @@ function get_environment_id () {
         write_run "print_error \"installer.bash (4): '.configuration.subtypes[0].datasources[0].params[{name=envID}].value' was not found in application JSON\""
         return 4
     fi
-    if [[ -z "$env_id_value" ]]; then
-        write_log "INFO" "env_id is empty. Default value will be used."
-        return
-    fi
-
+    
     write_log "INFO" "env_id = $env_id_value"
     write_run "env_id='$env_id_value'"
 }
