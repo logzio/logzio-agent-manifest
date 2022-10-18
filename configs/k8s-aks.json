@@ -30,8 +30,7 @@
               "label": "Environment ID",
               "description": "The name for your environment's identifier, to easily identify the telemetry data for each environment.",
               "hint": "By typing an environment id, the id will be added as label to the telemetry data of your environment. Default value will be used if empty.",
-              "value": "",
-              "params": []
+              "value": ""
             }
           ],
           "telemetries": [
