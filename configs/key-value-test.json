@@ -26,28 +26,28 @@
                   "required": true
                 },
                 {
-                  "type": "key-value",
-                  "name": "key-value-test1",
-                  "required": true,
-                  "label": "Key value param (required & with default)",
-                  "description": "Key value param description",
-                  "value": [
-                    { "key": "first_key", "value":  "first_value"},
-                    { "key": "second_key", "value":  "second_value"}
+                  "type": "boolean",
+                  "name": "enrichLogs",
+                  "label": "Enrich logs with static labels?",
+                  "params": [
+                    {
+                      "type": "key-value",
+                      "name": "key-value-test1",
+                      "required": true,
+                      "label": "Key value param (required & with default)",
+                      "description": "Key value param description",
+                      "value": [
+                        { "key": "first_key", "value":  "first_value"},
+                        { "key": "second_key", "value":  "second_value"}
+                      ]
+                    }
                   ]
                 },
                 {
                   "type": "key-value",
-                  "name": "key-value-test2",
+                  "name": "key-value-param",
                   "required": true,
                   "label": "Key value param (required & without default)",
-                  "description": "Key value param description"
-                },
-                {
-                  "type": "key-value",
-                  "name": "key-value-test3",
-                  "required": false,
-                  "label": "Key value param (not required & without default)",
                   "description": "Key value param description"
                 }
               ]
