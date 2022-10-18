@@ -38,10 +38,10 @@
               [
                 {
                   "type": "number",
-                  "name": "required-with-value",
+                  "name": "updated",
                   "label": "updated",
-                  "description": "AWS Cluster description",
-                  "hint": "AWS Cluster hint",
+                  "description": "updated",
+                  "hint": "updated",
                   "required": true,
                   "value": 2
                 },
