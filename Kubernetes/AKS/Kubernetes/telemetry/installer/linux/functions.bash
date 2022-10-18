@@ -202,6 +202,30 @@ function build_tolerations_helm_sets () {
     write_run "helm_sets+='$tolerations_sets'"
 }
 
+# Gets environment id
+# Output:
+#   environment_id - The environment id
+# Error:
+#   Exit Code 4
+function get_environment_id () {
+    write_log "INFO" "Getting environment id ..."
+
+    local env_id_param=$(find_param "$general_params" "envID")
+    if [[ -z "$env_id_param" ]]; then
+        write_run "print_error \"installer.bash (4): envID param was not found\""
+        return 4
+    fi
+
+    local env_id_value=$(echo -e "$env_id_param" | $jq_bin -r '.value')
+    if [[ "$env_id_value" = null ]]; then
+        write_run "print_error \"installer.bash (4): '.configuration.subtypes[0].datasources[0].params[{name=envID}].value' was not found in application JSON\""
+        return 4
+    fi
+    
+    write_log "INFO" "env_id = $env_id_value"
+    write_run "env_id='$env_id_value'"
+}
+
 # Builds enable metrics or traces Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
@@ -218,18 +242,18 @@ function build_enable_metrics_or_traces_helm_set () {
 # Output:
 #   helm_sets - Contains all the Helm sets
 # Error:
-#   Exit Code 4
+#   Exit Code 5
 function build_environment_tag_helm_set () {
     write_log "INFO" "Building environment tag Helm set ..."
 
     local env_tag=$(jq -r '.id' $app_json)
     if [[ "$env_tag" = null ]]; then
-        write_run "print_error \"installer.bash (4): '.id' was not found in application JSON\""
-        return 4
+        write_run "print_error \"installer.bash (5): '.id' was not found in application JSON\""
+        return 5
     fi
     if [[ -z "$env_tag" ]]; then
-        write_run "print_error \"installer.bash (4): '.id' is empty in application JSON\""
-        return 4
+        write_run "print_error \"installer.bash (5): '.id' is empty in application JSON\""
+        return 5
     fi
 
     local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
@@ -238,72 +262,89 @@ function build_environment_tag_helm_set () {
     write_run "helm_sets+='$helm_set'"
 }
 
+# Builds metrics/traces environment id helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+function build_environment_id_helm_set () {
+    write_log "INFO" "Building environment id Helm set ..."
+
+    if [[ -z "$env_id" ]]; then
+        write_log "INFO" "env_id is empty. Default value will be used."
+        return
+    fi
+
+    local helm_set=" --set logzio-k8s-telemetry.secrets.env_id=$env_id"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
+
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 5
+#   Exit Code 6
 function get_logs_scripts () {
     write_log "INFO" "Getting logs script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/logs/linux/logs.bash > $logzio_temp_dir/logs.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (5): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
-        return 5
+        write_run "print_error \"installer.bash (6): failed to get logs script file from logzio-agent-manifest repo.\n  $err\""
+        return 6
     fi
 
     write_log "INFO" "Getting logs functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/logs/linux/functions.bash > $logzio_temp_dir/logs_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (5): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 5
+        write_run "print_error \"installer.bash (6): failed to get logs functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 6
     fi
 }
 
 # Gets metrics scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 6
+#   Exit Code 7
 function get_metrics_scripts () {
     write_log "INFO" "Getting metrics script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/metrics/linux/metrics.bash > $logzio_temp_dir/metrics.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
-        return 6
+        write_run "print_error \"installer.bash (7): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
+        return 7
     fi
 
     write_log "INFO" "Getting metrics functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/metrics/linux/functions.bash > $logzio_temp_dir/metrics_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 6
+        write_run "print_error \"installer.bash (7): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 7
     fi
 }
 
 # Gets traces scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 7
+#   Exit Code 8
 function get_traces_scripts () {
     write_log "INFO" "Getting traces script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/traces/linux/traces.bash > $logzio_temp_dir/traces.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (7): failed to get traces script file from logzio-agent-manifest repo.\n  $err\""
-        return 7
+        write_run "print_error \"installer.bash (8): failed to get traces script file from logzio-agent-manifest repo.\n  $err\""
+        return 8
     fi
 
     write_log "INFO" "Getting traces functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/telemetry/traces/linux/functions.bash > $logzio_temp_dir/traces_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (7): failed to get traces functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 7
+        write_run "print_error \"installer.bash (8): failed to get traces functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 8
     fi
 }
 
 # Runs Helm install
 # Error:
-#   Exit Code 8
+#   Exit Code 9
 function run_helm_install () {
     write_log "INFO" "Running Helm install ..."
     write_log "INFO" "helm_sets = $log_helm_sets"
@@ -322,8 +363,8 @@ function run_helm_install () {
     done
 
     local err=$(cat $task_error_file)
-    write_run "print_error \"installer.bash (8): failed to run Helm install.\n  $err\""
-    return 8
+    write_run "print_error \"installer.bash (9): failed to run Helm install.\n  $err\""
+    return 9
 }
 
 # Gets postrequisites scripts from logzio-agent-manifest repo
@@ -334,15 +375,15 @@ function get_postrequisites_scripts () {
     curl -fsSL $repo_path/postrequisites/linux/postrequisites.bash > $logzio_temp_dir/postrequisites.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (9): failed to get postrequisites script file from logzio-agent-manifest repo.\n  $err\""
-        return 9
+        write_run "print_error \"installer.bash (10): failed to get postrequisites script file from logzio-agent-manifest repo.\n  $err\""
+        return 10
     fi
 
     write_log "INFO" "Getting postrequisites functions script file from logzio-agent-manifest repo ..."
     curl -fsSL $repo_path/postrequisites/linux/functions.bash > $logzio_temp_dir/postrequisites_functions.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (9): failed to get postrequisites functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 9
+        write_run "print_error \"installer.bash (10): failed to get postrequisites functions script file from logzio-agent-manifest repo.\n  $err\""
+        return 10
     fi
 }
