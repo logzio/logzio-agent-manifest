@@ -50,7 +50,7 @@
                  {
                    "type": "text",
                    "name": "param_logAnalytics1",
-                   "label": "logAnalytics1",
+                   "label": "logAnalytics1 (text value)",
                    "required": true
                  }
                ]
@@ -62,13 +62,13 @@
                  {
                    "type": "path-list",
                    "name": "param_pathList",
-                   "label": "Path list",
+                   "label": "Path list (array value)",
                    "required": true
                  },
                  {
-                   "type": "text",
-                   "name": "param_metrics1",
-                   "label": "metrics1",
+                   "type": "multiline-pattern",
+                   "name": "param_multilinePattern",
+                   "label": "Multiline Pattern (object value)",
                    "required": true
                  }
                ],
