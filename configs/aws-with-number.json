@@ -28,7 +28,7 @@
               "description": "Select AWS Region",
               "hint": "Select AWS Region",
               "required": true,
-              "allowCustom": true
+              "allowCustom": true,
             }
           ],
           "telemetries": [
@@ -48,11 +48,50 @@
                 },
                 {
                   "type": "multi-select",
-                  "name": "multiselect",
+                  "name": "multiselectallow",
                   "label": "multiselect-example",
                   "description": "multiselect",
                   "hint": "multi select hint",
                   "allowCustom": true,
+                  "options": [
+                    { "label": "five", "value":5 },
+                    { "label": "three", "value":3 },
+                    { "label": "hey", "value":"hey" }],
+                  "value": ["hey"]
+                },
+                {
+                  "type": "multi-select",
+                  "name": "multiselectnotallow",
+                  "label": "multiselect-example",
+                  "description": "multiselect",
+                  "hint": "multi select hint",
+                  "allowCustom": false,
+                  "options": [
+                    { "label": "five", "value":5 },
+                    { "label": "three", "value":3 },
+                    { "label": "hey", "value":"hey" }],
+                  "value": ["hey"]
+                },
+                {
+                  "type": "single-select",
+                  "name": "singleSelectallow",
+                  "label": "singleSelect-example",
+                  "description": "singleSelect",
+                  "hint": "singleSelect hint",
+                  "allowCustom": true,
+                  "options": [
+                    { "label": "five", "value":5 },
+                    { "label": "three", "value":3 },
+                    { "label": "hey", "value":"hey" }],
+                  "value": ["hey"]
+                },
+                {
+                  "type": "single-select",
+                  "name": "singleSelectnotallow",
+                  "label": "singleSelect-example",
+                  "description": "singleSelect",
+                  "hint": "singleSelect hint",
+                  "allowCustom": false,
                   "options": [
                     { "label": "five", "value":5 },
                     { "label": "three", "value":3 },
