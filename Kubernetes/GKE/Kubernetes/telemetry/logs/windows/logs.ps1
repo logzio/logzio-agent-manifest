@@ -15,6 +15,9 @@ Invoke-Task "Build-LogzioLogsListenerUrlHelmSet" "building Logz.io logs listener
 # Build Logz.io logs token Helm set
 Invoke-Task "Build-LogzioLogsTokenHelmSet" "building Logz.io logs token Helm set"
 
+# Build environment ID Helm set
+Invoke-Task "Build-EnvironmentIdHelmSet" "building environment ID Helm set"
+
 # Build multiline Helm sets
 #Invoke-Task "Build-MultilineHelmSets" "building multiline Helm sets"
 
