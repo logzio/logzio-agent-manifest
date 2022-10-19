@@ -62,14 +62,25 @@
                  {
                    "type": "path-list",
                    "name": "param_pathList",
-                   "label": "Path list (array value)",
+                   "label": "Path list (string[] value)",
                    "required": true
                  },
                  {
                    "type": "multiline-pattern",
                    "name": "param_multilinePattern",
-                   "label": "Multiline Pattern (object value)",
+                   "label": "Multiline Pattern (object[] value)",
                    "required": true
+                 },
+                 {
+                   "type": "key-value",
+                   "name": "key-value-test1",
+                   "required": true,
+                   "label": "Key value param (object[] value)",
+                   "description": "Key value param description",
+                   "value": [
+                     { "key": "first_key", "value":  "first_value"},
+                     { "key": "second_key", "value":  "second_value"}
+                   ]
                  }
                ],
                "dashboards": [
