@@ -15,25 +15,42 @@
            "name": "System",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
            "description": "Logz.io Uses OpenTelemetry to monitor your EC2.",
-           "params": [
-             {
-               "type": "single-select",
-               "name": "awsRegion",
-               "label": "AWS Region",
-               "description": "AWS Region",
-               "required": true,
-               "options": [
-                 { "label": "us-east-1", "value": "us-east-1" },
-                 { "label": "eu-central-1", "value": "eu-central-1" }
-               ]
+            "params": [
+              {
+                "type": "single-select",
+                "name": "awsRegion",
+                "label": "AWS Region",
+                "description": "AWS Region",
+                "required": true,
+                "options": [
+                  { "label": "us-east-1", "value": "us-east-1" },
+                  { "label": "eu-central-1", "value": "eu-central-1" }
+                ]
               },
-             {
-               "type": "text",
-               "name": "generalParam",
-               "label": "generalParam",
-               "required": true
-             }
-           ],
+              {
+                "type": "text",
+                "name": "envID",
+                "label": "Environment Name",
+                "description": "The name for your environment's identifier, to easily identify the telemetry data for each environment.",
+                "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment. Default value will be used if empty.",
+                "value": ""
+              },
+              {
+                "type": "boolean",
+                "name": "isTaint",
+                "label": "Taints and Tolerations",
+                "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
+                "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
+                "value": true,
+                "params": []
+              },
+              {
+                "type": "text",
+                "name": "generalParam",
+                "label": "generalParam",
+                "required": true
+              }
+            ],
            "telemetries": [
              {
                "type": "LOG_ANALYTICS",
