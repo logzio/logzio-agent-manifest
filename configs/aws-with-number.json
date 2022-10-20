@@ -56,7 +56,8 @@
                   "options": [
                     { "label": "five", "value":5 },
                     { "label": "three", "value":3 },
-                    { "label": "hey", "value":"hey" }]
+                    { "label": "hey", "value":"hey" }],
+                  "value": ["hey"]
                 },
                 {
                   "type": "number",
