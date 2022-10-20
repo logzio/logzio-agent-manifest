@@ -38,44 +38,26 @@
               "params":
               [
                 {
+                  "type": "text",
+                  "name": "text-required",
+                  "label": "text-required",
+                  "description": "text-required",
+                  "hint": "text-required",
+                  "required": true
+                },
+                {
                   "type": "number",
                   "name": "updated",
-                  "label": "updated",
+                  "label": "number- required with default value",
                   "description": "updated",
                   "hint": "updated",
                   "required": true,
                   "value": 2
                 },
                 {
-                  "type": "single-select",
-                  "name": "singleSelectallow",
-                  "label": "singleSelect-example",
-                  "description": "singleSelect",
-                  "hint": "singleSelect hint",
-                  "allowCustom": true,
-                  "options": [
-                    { "label": "five", "value":5 },
-                    { "label": "three", "value":3 },
-                    { "label": "hey", "value":"hey" }],
-                  "value": ["hey"]
-                },
-                {
-                  "type": "single-select",
-                  "name": "singleSelectnotallow",
-                  "label": "singleSelect-example",
-                  "description": "singleSelect",
-                  "hint": "singleSelect hint",
-                  "allowCustom": false,
-                  "options": [
-                    { "label": "five", "value":5 },
-                    { "label": "three", "value":3 },
-                    { "label": "hey", "value":"hey" }],
-                  "value": ["hey"]
-                },
-                {
                   "type": "number",
                   "name": "required-n0-value",
-                  "label": "AWS Cluster name - Required - Only letters",
+                  "label": "number- required without default value",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
                   "required": true
@@ -83,20 +65,19 @@
                 {
                   "type": "number",
                   "name": "required-default-value",
-                  "label": "AWS Cluster name - Required - Only letters",
+                  "label": "number- not required with value",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
-                  "required": true,
+                  "required": false,
                   "value": 0
                 },
                 {
                   "type": "number",
                   "name": "no-required-default-value",
-                  "label": "AWS Cluster name - Required - Only letters",
+                  "label": "number- required without default value",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
-                  "required": false,
-                  "value": 2
+                  "required": false
                 }
               ]
             }
