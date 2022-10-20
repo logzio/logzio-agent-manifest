@@ -2,10 +2,101 @@
 ###################################################### WINDOWS Agent Script #####################################################
 #################################################################################################################################
 
+function Invoke-AgentFinallizer {
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    if ($IsShowHelp) {
+        Exit 0
+    }
+    if ($IsLoadingAgentScriptsFailed) {
+        $local:Message = 'Agent Failed'
+        Write-MessageRepeater $Message 'Red'
+        Exit $LASTEXITCODE
+    }
+    if ($IsRemoveServiceAnswerNo) {
+        Exit 0
+    }
+    if ($IsAgentFailed) {
+        $local:Message = 'Agent Failed'
+
+        if ([string]::IsNullOrEmpty($AgentId)) {
+            Send-LogToLogzio $LogLevelInfo $Message $LogStepFinal $LogScriptAgent $FuncName
+        }
+        else {
+            Send-LogToLogzio $LogLevelInfo $Message $LogStepFinal $LogScriptAgent $FuncName $AgentId
+        }
+
+        Write-Log 'INFO' $Message
+        Write-MessageRepeater $Message 'Red'
+        Exit $LASTEXITCODE
+    }
+    if ($IsAgentCompleted) {
+        $local:Message = 'Agent Completed Successfully'
+        Send-LogToLogzio $LogLevelInfo $Message $LogStepFinal $LogScriptAgent $FuncName $AgentId
+        Write-Log 'INFO' $Message
+
+        Write-MessageRepeater $Message 'Green'
+        Exit 0
+    }
+
+    # Agent interruption
+    $local:Message = 'Agent Stopped By User'
+    $local:Command = Get-Command -Name Send-LogToLogzio
+    if (-Not [string]::IsNullOrEmpty($Command)) {
+        if ([string]::IsNullOrEmpty($AgentId)) {
+            Send-LogToLogzio $LogLevelInfo $Message 'Final' 'agent.ps1' $FuncName
+        }
+        else {
+            Send-LogToLogzio $LogLevelInfo $Message 'Final' 'agent.ps1' $FuncName $AgentId
+        }
+    }
+
+    if (-Not [string]::IsNullOrEmpty($LogFile)) {
+        if (Test-Path -Path $LogFile -PathType Leaf) {
+            Write-Log 'INFO' $Message
+        }
+    }
+    
+    Write-MessageRepeater $Message 'Yellow'
+    Exit 0
+}
+
+function Write-MessageRepeater {
+    param (
+        [string]$Message,
+        [string]$Color
+    )
+
+    Write-Host
+
+    $local:Repeat = 5
+    while ($Repeat -ne 0) {
+        if ($Repeat % 2 -eq 0) {
+            Write-Host "`r##### $Message #####" -ForegroundColor White -NoNewline
+        } 
+        else {
+            Write-Host "`r##### $Message #####" -ForegroundColor $Color -NoNewline
+        }
+
+        Start-Sleep -Milliseconds 250
+        $Repeat--
+    }
+
+    Write-Host
+}
+
+
+# Settings
+$ProgressPreference = 'SilentlyContinue'
+$WarningPreference = 'SilentlyContinue'
+[Console]::CursorVisible = $false
+
 # Flags
-$script:IsAgentCompleted = $false
-$script:IsAgentFailed = $false
 $script:IsShowHelp = $false
+$script:IsLoadingAgentScriptsFailed = $false
+$script:IsRemoveServiceAnswerNo = $false
+$script:IsAgentFailed = $false
+$script:IsAgentCompleted = $false
 
 # Print main title
 Write-Host '
@@ -47,7 +138,9 @@ try {
     }
     catch {
         $local:ExitCode = 1
+        $IsLoadingAgentScriptsFailed = $true
         Write-Host "agent.ps1 ($ExitCode): error loading agent scripts: $_" -ForegroundColor Red
+
         Exit $ExitCode
     }
 
@@ -58,6 +151,8 @@ try {
     Write-Host ' ###'
     Write-Host '##########################'
 
+    # Start running agent log
+    Write-Log 'INFO' 'Start running Logz.io agent ...'
     # Set Windows info consts
     Invoke-Task 'Set-WindowsInfoConsts' @{} 'Setting Windows info consts' @($AgentFunctionsFile)
     # Create Logz.io AppData directory
@@ -99,56 +194,26 @@ try {
     Invoke-Task 'Get-AgentJson' @{AppUrl = $AppUrl; AgentJsonFile = $AgentJsonFile} 'Getting agent json' @($AgentFunctionsFile)
     # Set agent json consts
     Invoke-Task 'Set-AgentJsonConsts' @{} 'Setting agent json consts' @($AgentFunctionsFile)
+    # Get Logz.io listener url
+    Invoke-Task 'Get-LogzioListenerUrl' @{} 'Getting Logz.io listener url' @($AgentFunctionsFile)
+    # Get Logz.io region
+    Invoke-Task 'Get-LogzioRegion' @{ListenerUrl = $ListenerUrl} 'Getting Logz.io region' @($AgentFunctionsFile)
     # Download subtype files
     Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $RepoRelease} 'Donwloading subtype files' @($AgentFunctionsFile)
 
     # Run subtype prerequisites
     Invoke-SubTypePrerequisites
-    if ($LASTEXITCODE -ne 0) {
-        Exit $LASTEXITCODE
-    }
 
     #Run subtype installer
     Invoke-SubTypeInstaller
-    if ($LASTEXITCODE -ne 0) {
-        Exit $LASTEXITCODE
-    }
 
     $IsAgentCompleted = $true
 }
 finally {
     #Remove-TempDir
+    Invoke-AgentFinallizer
 
-    if ($IsShowHelp) {
-        Exit
-    }
-    elseif ($IsAgentFailed) {
-        $local:Message = 'Agent failed'
-        Send-LogToLogzio @{level = 'DEBUG'; message = $Message; step = 'Final'}
-        Write-Log 'DEBUG' $Message
-        Write-Host `n
-        Exit
-    }
-    elseif (-Not $IsAgentCompleted) {
-        $local:Message = 'Agent was stopped by the user'
-        Send-LogToLogzio @{level = 'DEBUG'; message = $Message; step = 'Final'}
-        Write-Log 'DEBUG' $Message
-        Write-Host `n
-
-        $local:Repeat = 5
-        while ($Repeat -ne 0) {
-            if ($Repeat % 2 -eq 0) {
-                Write-Host "`r##### $Message #####" -ForegroundColor White -NoNewline
-            } else {
-                Write-Host "`r##### $Message #####" -ForegroundColor Yellow -NoNewline
-            }
-
-            Start-Sleep -Milliseconds 250
-            $Repeat--
-        }
-
-        Write-Host `n
-    }
+    [Console]::CursorVisible = $true
 }
 
 
@@ -156,28 +221,6 @@ finally {
 # Append environment variable Path
 if ($env:Path -notcontains "C:\ProgramData\chocolatey\bin") {
     $env:Path += ";C:\ProgramData\chocolatey\bin"
-}
-
-
-# Run last preparations
-Write-Host "`nlast preparations:"
-Invoke-Task "Get-PrerequisitesScripts" "getting prerequisites scripts"                                  # Get prerequisites scripts
-Invoke-Task "Get-InstallerScripts" "getting installer scripts"                                          # Get installer scripts
-
-# Run prerequisites script
-Write-Log "INFO" "Running prerequisites script ..."
-Write-Host "`nprerequisites:"
-. $logzioTempDir\prerequisites.ps1
-if ($LASTEXITCODE -gt 0) {
-    Exit $LASTEXITCODE
-}
-
-# Run installer script
-Write-Log "INFO" "Running installer script ..."
-Write-Host "`ninstaller:"
-. $logzioTempDir\installer.ps1
-if ($LASTEXITCODE -gt 0) {
-    Exit $LASTEXITCODE
 }
 
 # Delete temp directory

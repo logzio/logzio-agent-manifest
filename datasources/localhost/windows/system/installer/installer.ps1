@@ -12,7 +12,7 @@ function Invoke-Logs {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = "Running System datasource logs script ..."
-    Send-LogToLogzio $LogLevelDebug $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSource
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
     Write-Log $LogLevelDebug $Message
 
     try {
@@ -23,9 +23,10 @@ function Invoke-Logs {
     }
     catch {
         $local:Message = "installer.ps1 ($ExitCode): error running System datasource logs script: $_"
-        Send-LogToLogzio $LogLevelError $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Send-LogToLogzio $LogLevelError $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
         Write-Error $Message
 
+        $IsAgentFailed = $true
         Exit $ExitCode
     }
 }
@@ -40,7 +41,7 @@ function Invoke-Metrics {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = "Running System datasource metrics script ..."
-    Send-LogToLogzio $LogLevelDebug $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
     Write-Log $LogLevelDebug $Message
 
     try {
@@ -51,32 +52,27 @@ function Invoke-Metrics {
     }
     catch {
         $local:Message = "installer.ps1 ($ExitCode): error running System datasource metrics script: $_"
-        Send-LogToLogzio $LogLevelError $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Send-LogToLogzio $LogLevelError $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
         Write-Error $Message
 
+        $IsAgentFailed = $true
         Exit $ExitCode
     }
 }
 
 
-# Print datasource headline
-Write-Host
-Write-Host '  #########################'
-Write-Host '  ### ' -NoNewline
-Write-Host 'System Datasource' -ForegroundColor Magenta -NoNewline
-Write-Host ' ###'
-Write-Host '  #########################'
+$local:InstallerFunctionsScript = "$LogzioTempDir\$Platform\$SubType\$DataSourceSystem\$InstallerFunctionsFile"
 
-# Print headline
+# Print title
 Write-Host
-Write-Host '    ####################'
-Write-Host '    ### ' -NoNewline
-Write-Host 'Installation' -ForegroundColor Magenta -NoNewline
+Write-Host '######################################'
+Write-Host '### ' -NoNewline
+Write-Host 'System Datasource Installation' -ForegroundColor Magenta -NoNewline
 Write-Host ' ###'
-Write-Host '    ####################'
+Write-Host '######################################'
 
 # Get the selected products
-Invoke-Task 'Get-SelectedProducts' @{DataSourceIndex = $DataSourceIndex} 'Getting the selected products' @("$LogzioTempDir\$Platform\$SubType\$DataSourceSystem\$InstallerFile")
+Invoke-Task 'Get-SelectedProducts' @{} 'Getting the selected products' @($InstallerFunctionsScript)
 # Run logs script
 if ($IsLogsOptionSelected) {
     Invoke-Logs

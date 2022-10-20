@@ -2,100 +2,87 @@
 ################################################### WINDOWS Logs Functions ######################################################
 #################################################################################################################################
 
-# Gets Logz.io region
+# Gets Logz.io logs token
 # Input:
 #   ---
 # Output:
-#   logzioRegion - Logz.io region
-function Get-LogzioRegion {
+#   LogsToken - Logz.io logs token
+function Get-LogzioLogsToken {
     $local:ExitCode = 1
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = "Getting Logz.io region ..."
-    Send-LogToLogzio $LogLevelDebug $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSource
+    $local:Message = "Getting Logz.io logs token ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
     Write-Log $LogLevelDebug $Message
 
-    $local:ListenerUrl = &$JqExe -r '.listenerUrl' $AgentJson 2>$TaskErrorFile
-    if ($LASTEXITCODE -ne 0) {
-        $Message = "logs.ps1 ($ExitCode): error getting listener url from application json: $(Get-Content -Path $TaskErrorFile)"
-        Send-LogToLogzio $LogLevelError $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSource
+    $local:Err = Get-JsonFileFieldValue $AgentJson '.shippingTokens.LOG_ANALYTICS'
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
         Write-TaskPostRun "Write-Error '$Message'"
 
         return $ExitCode
-    }
-    if ([string]::IsNullOrEmpty($ListenerUrl) -or $ListenerUrl.Equals('null')) {
-        $Message = "logs.ps1 ($ExitCode): '.listenerUrl' in application json does not exist or is empty"
-        Send-LogToLogzio $LogLevelError $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSource
-        Write-TaskPostRun "Write-Error '$Message'"
-
-        return $ExitCode
-    }
-
-    $local:Region = 'us'
-    if ($ListenerURL -match ".*-.*") {
-        $local:ListenerPart = $ListenerURL.Split(".", 2)[0]
-        $Region = $ListenerPart.Split("-", 2)[1]
     }
     
-    $Message = "logz.io region is $Region"
-    Send-LogToLogzio $LogLevelDebug $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSource
+    $local:ShippingToken = $JsonValue
+
+    $Message = "Logz.io logs token is '$ShippingToken'"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
     Write-Log $LogLevelDebug $Message
 
-    Write-TaskPostRun "`$script:LogzioRegion = '$Region'"
-}
-
-# Gets Logz.io logs token
-# Output:
-#   logsToken - Logz.io logs token
-# Error:
-#   Exit Code 2
-function Get-LogzioLogsToken {
-    $local:ExitCode = 2
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = "Getting Logz.io logs token ..."
-    Send-LogToLogzio $LogLevelDebug $Message $LogStepSubTypeInstaller $LogScriptSubTypeInstaller $FuncName $AgentId $Platfrom $Subtype $DataSource
-    Write-Log $LogLevelDebug $Message
-
-    $local:shippingToken = jq -r '.shippingTokens.LOG_ANALYTICS' $using:appJSON
-    if ([string]::IsNullOrEmpty($shippingToken)) {
-        Write-Run "Write-Error `"logs.ps1 (2): '.shippingTokens.LOG_ANALYTICS' is empty in application JSON`""
-        return 2
-    }
-    if ($shippingToken.Equals("null")) {
-        Write-Run "Write-Error `"logs.ps1 (2): '.shippingTokens.LOG_ANALYTICS' was not found in application JSON`""
-        return 2
-    }
-
-    Write-Log "INFO" "logsToken = $shippingToken"
-    Write-Run "`$script:logsToken = '$shippingToken'"
+    Write-TaskPostRun "`$script:LogsToken = '$ShippingToken'"
 }
 
 # Gets log sources
+# Input:
+#   ---
 # Output:
-#   logSources - list of log sources
-# Error:
-#   Exit Code 3
+#   LogSources - List of log sources
 function Get-LogSources {
-    Write-Log "INFO" "Getting log sources ..."
+    param (
+        [hashtable]$FuncArgs
+    )
 
-    $local:logSourcesParam = Find-Param "$using:logsParams" "logSources"
-    if ([string]::IsNullOrEmpty($logSourcesParam)) {
-        Write-Run "Write-Error `"logs.ps1 (3): logSources param was not found`""
-        return 3
+    $local:ExitCode = 2
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = "Getting log sources ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    if ($FuncArgs.Count -eq 0) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('LogsParams')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsParams' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    $local:logSourcesValue = Write-Output "$logSourcesParam" | jq -c '.value[]'
-    if ([string]::IsNullOrEmpty($logSourcesValue)) {
-        $logSourcesValue = ""
+    $local:LogsParams = $FuncArgs.LogsParams
+
+    $local:Err = Get-ParamValue $LogsParams 'logSources' $true
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
-    if ($logSourcesValue.Equals("null")) {
-        Write-Run "Write-Error `"logs.ps1 (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=logSources}].value' was not found in application JSON`""
-        return 3
-    }
+
+    $local:LogSources = $ParamValue
     
-    Write-Log "INFO" "logSources = $logSourcesValue"
-    Write-Run "`$script:logSources = '$logSourcesValue'"
+    $local:Message = "log sources are '$LogSources'"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:LogSources = '$LogSources'"
 }
 
 # Gets the selected logs

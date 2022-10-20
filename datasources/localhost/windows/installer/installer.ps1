@@ -33,6 +33,7 @@ function Invoke-RemoveServiceOrExit {
     Write-Log $LogLevelDebug $Message
 
     if ($Answer.Equals('n')) {
+        $IsRemoveServiceAnswerNo = $true
         Exit 0
     }
 
@@ -69,6 +70,7 @@ function Invoke-AllDataSources {
             Send-LogToLogzio $LogLevelError $Message $LogStepPreInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype
             Write-Error $Message
 
+            $IsAgentFailed = $true
             Exit $ExitCode
         }
 
@@ -87,6 +89,7 @@ function Invoke-AllDataSources {
             Send-LogToLogzio $LogLevelError $Message $LogStepPreInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype
             Write-Error $Message
 
+            $IsAgentFailed = $true
             Exit $ExitCode
         }
     }

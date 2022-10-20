@@ -81,6 +81,9 @@ function Send-LogToLogzio {
         [string]$DataSource = ''
     )
 
+    $Message = $Message.Replace('\', '\\')
+    $Message = $Message.Replace('"', '\"')
+
     $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"windows_name`":`"$WindowsName`",`"windows_version`":`"$WindowsVersion`""
 
     if ($Level.Equals($LogLevelError)) {
@@ -145,28 +148,188 @@ function Remove-TempDir {
     }
 }
 
-# Finds the requested parameter in params 
-# Inputs: 
-#   params - The parameters in the application json
-#   requestedName - The parameter name to find
+# Gets json string field value
+# input:
+#   JsonStr - Json string
+#   JsonPath - Json path
 # Output:
-#   The requested parameter if requestedName was found, empty otherwise.
-function Find-Param ([string]$params, [string]$requestedName) {
-    $local:paramsList = Write-Output $params | jq -c '.'
-    $local:requestedParam = ""
+#   JsonValue - The value of the field. Only if got no error.
+#   If got error will output message with exit code.
+function Get-JsonStrFieldValue {
+    param (
+        [string]$JsonStr,
+        [string]$JsonPath
+    )
 
-    foreach ($param in $paramsList) {
-        $local:name = Write-Output "$param" | jq -r '.name'
-        if ([string]::IsNullOrEmpty($name) -or $name.Equals("null")) {
+    $local:Result = $JsonStr | &$JqExe -r $JsonPath 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+    if ([string]::IsNullOrEmpty($Result)) {
+        Write-Output "'$JsonPath' is empty in '$JsonStr'"
+        return 2
+    }
+    if ($Result.Equals('null')) {
+        Write-Output "'$JsonPath' does not exist in '$JsonStr'"
+        return 3
+    }
+
+    $script:JsonValue = $Result
+}
+
+# Gets json string field value list
+# input:
+#   JsonStr - Json string
+#   JsonPath - Json path
+# Output:
+#   JsonValue - The value (list) of the field. Only if got no error.
+#   If got error will output message with exit code.
+function Get-JsonStrFieldValueList {
+    param (
+        [string]$JsonStr,
+        [string]$JsonPath
+    )
+
+    $local:Result = $JsonStr | &$JqExe -c $JsonPath 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+    if ($Result.Count -eq 0) {
+        Write-Output "'$JsonPath' is empty in '$JsonStr'"
+        return 2
+    }
+
+    $script:JsonValue = $Result
+}
+
+# Gets json file field value
+# input:
+#   JsonStr - Json string
+#   JsonPath - Json path
+# Output:
+#   JsonValue - The value of the field. Only if got no error.
+#   If got error will output message with exit code.
+function Get-JsonFileFieldValue {
+    param (
+        [string]$JsonFile,
+        [string]$JsonPath
+    )
+
+    $local:Result = &$JqExe -r $JsonPath $JsonFile 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+    if ([string]::IsNullOrEmpty($Result)) {
+        Write-Output "'$JsonPath' is empty in '$JsonFile'"
+        return 2
+    }
+    if ($Result.Equals('null')) {
+        Write-Output "'$JsonPath' does not exist in '$JsonFile'"
+        return 3
+    }
+
+    $script:JsonValue = $Result
+}
+
+# Gets json file field value list
+# input:
+#   JsonStr - Json string
+#   JsonPath - Json path
+# Output:
+#   JsonValue - The value (list) of the field. Only if got no error.
+#   If got error will output message with exit code.
+function Get-JsonFileFieldValueList {
+    param (
+        [string]$JsonFile,
+        [string]$JsonPath
+    )
+
+    $local:Result = &$JqExe -c $JsonPath $JsonFile 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+    if ($Result.Count -eq 0) {
+        Write-Output "'$JsonPath' is empty in '$JsonFile'"
+        return 2
+    }
+
+    $script:JsonValue = $Result
+}
+
+# Gets param value
+# Inputs: 
+#   Params - Parameters from the agent json
+#   ParamName - Parameter name to get value of
+# Output:
+#   ParamValue - The value of the target param. Only if got no error.
+#   If got error will output message with exit code.
+function Get-ParamValue {
+    param (
+        [string[]]$Params,
+        [string]$ParamName,
+        [bool]$IsValueList
+    )
+
+    $local:TargetParam = ''
+    Write-Output "0 - $Params" >> $LogzioTempDir\test.txt
+    foreach ($Param in $Params) {
+        $local:Err = Get-JsonStrFieldValue $Param '.name'
+        if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
+            Write-Output $Err[0]
+            return 1
+        }
+        if ($Err.Count -ne 0) {
             continue
         }
         
-        if ($name.Equals($requestedName)) {
-            $requestedParam = "$param"
+        $local:Name = $JsonValue
+        if (-Not $Name.Equals($ParamName)) {
+            continue
         }
+
+        $TargetParam = $Param
+        Write-Output "1 - $TargetParam" >> $LogzioTempDir\test.txt
+        break
     }
 
-    Write-Output "$requestedParam"
+    Write-Output "2 - $TargetParam" >> $LogzioTempDir\test.txt
+    if ([string]::IsNullOrEmpty($TargetParam)) {
+        Write-Output "$ParamName param was not found"
+        return 2
+    }
+
+    if ($IsValueList) {
+        $local:Err = Get-JsonStrFieldValueList $RequestedParam '.value'
+        if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
+            Write-Output $Err[0]
+            return 3
+        }
+        if ($Err.Count -ne 0) {
+            $script:ParamValue = @()
+            return
+        }
+        
+        $script:ParamValue = $JsonValue
+        return
+    }
+    else {
+        $local:Err = Get-JsonStrFieldValue $RequestedParam '.value'
+        if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
+            Write-Output $Err[0]
+            return 4
+        }
+        if ($Err.Count -ne 0) {
+            $script:ParamValue = ''
+            return
+        }
+        
+        $script:ParamValue = $JsonValue
+        return
+    }
 }
 
 # Installs Chocolatey
@@ -211,7 +374,7 @@ function Invoke-Task {
     $local:Timeout = 300
     $local:Counter = 0
 
-    [Console]::CursorVisible = $false
+    #[Console]::CursorVisible = $false
     
     $local:Job = Start-Job -ScriptBlock { 
         $ProgressPreference = 'SilentlyContinue'
@@ -271,14 +434,12 @@ function Invoke-Task {
         Write-Host "X" -ForegroundColor Red -NoNewline
         Write-Host " ]" -NoNewline
         Write-Host " $Description ...`n" -ForegroundColor Red -NoNewline
-
-        [Console]::CursorVisible = $true
         
         if (Test-Path -Path $TaskPostRunFile) {
             . $TaskPostRunFile
         }
         #Remove-TempDir
-        $IsAgentFailed = $true
+        $script:IsAgentFailed = $true
         Exit $ExitCode
     }
 
@@ -286,8 +447,6 @@ function Invoke-Task {
     Write-Host "$([char]8730)" -ForegroundColor Green -NoNewline
     Write-Host " ]" -NoNewline
     Write-Host " $Description ...`n" -ForegroundColor Green -NoNewline
-
-    [Console]::CursorVisible = $true
 
     if (Test-Path -Path $TaskPostRunFile) {
         . $TaskPostRunFile

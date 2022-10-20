@@ -2,20 +2,20 @@
 ##################################################### WINDOWS Logs Script #######################################################
 #################################################################################################################################
 
+$local:LogsFunctionsScript = "$LogzioTempDir\$Platform\$SubType\$DataSourceSystem\$LogsFunctionsFile"
+
 # Print headline
 Write-Host
-Write-Host '      ############'
-Write-Host '      ### ' -NoNewline
+Write-Host '############'
+Write-Host '### ' -NoNewline
 Write-Host 'Logs' -ForegroundColor Magenta -NoNewline
 Write-Host ' ###'
-Write-Host '      ############'
+Write-Host '############'
 
-# Get Logz.io region
-Invoke-Task 'Get-LogzioRegion' @{} 'Getting Logz.io region' @("$LogzioTempDir\$Platform\$SubType\$DataSource\telemetry\logs\functions.ps1") 6
 # Get Logz.io logs token
-#Invoke-Task "Get-LogzioLogsToken" "getting Logz.io logs token"
+Invoke-Task 'Get-LogzioLogsToken' @{} 'Getting Logz.io logs token' @($LogsFunctionsScript)
 # Get log sources
-#Invoke-Task "Get-LogSources" "getting log sources"
+Invoke-Task 'Get-LogSources' @{LogsParams = $LogsParams} 'Getting log sources' @($LogsFunctionsScript)
 # Get selected logs
 #Invoke-Task "Get-SelectedLogs" "getting selected logs"
 # Add logs receivers to OTEL config
