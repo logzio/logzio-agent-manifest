@@ -47,32 +47,6 @@
                   "value": 2
                 },
                 {
-                  "type": "multi-select",
-                  "name": "multiselectallow",
-                  "label": "multiselect-example",
-                  "description": "multiselect",
-                  "hint": "multi select hint",
-                  "allowCustom": true,
-                  "options": [
-                    { "label": "five", "value":5 },
-                    { "label": "three", "value":3 },
-                    { "label": "hey", "value":"hey" }],
-                  "value": ["hey"]
-                },
-                {
-                  "type": "multi-select",
-                  "name": "multiselectnotallow",
-                  "label": "multiselect-example",
-                  "description": "multiselect",
-                  "hint": "multi select hint",
-                  "allowCustom": false,
-                  "options": [
-                    { "label": "five", "value":5 },
-                    { "label": "three", "value":3 },
-                    { "label": "hey", "value":"hey" }],
-                  "value": ["hey"]
-                },
-                {
                   "type": "single-select",
                   "name": "singleSelectallow",
                   "label": "singleSelect-example",
