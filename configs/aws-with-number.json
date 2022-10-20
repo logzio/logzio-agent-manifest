@@ -52,7 +52,6 @@
                   "description": "multiselect",
                   "hint": "multi select hint",
                   "allowCustom": true,
-                  "required": true,
                   "options": [
                     { "label": "five", "value":5 },
                     { "label": "three", "value":3 },
