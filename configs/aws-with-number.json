@@ -73,6 +73,24 @@
                 },
                 {
                   "type": "number",
+                  "name": "required-default-min",
+                  "label": "number- with min",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": true,
+                  "min": 30
+                },
+                {
+                  "type": "number",
+                  "name": "required-default-max",
+                  "label": "number- with max",
+                  "description": "AWS Cluster description",
+                  "hint": "AWS Cluster hint",
+                  "required": true,
+                  "max": 50
+                },
+                {
+                  "type": "number",
                   "name": "no-required-default-value",
                   "label": "number- required without default value",
                   "description": "AWS Cluster description",
