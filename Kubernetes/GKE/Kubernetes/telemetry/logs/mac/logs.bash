@@ -17,5 +17,8 @@ execute_task "build_logzio_logs_listener_url_helm_set" "building Logz.io logs li
 # Build Logz.io logs token Helm set
 execute_task "build_logzio_logs_token_helm_set" "building Logz.io logs token Helm set"
 
+# Build environment ID Helm set
+execute_task "build_environment_id_helm_set" "building environment ID Helm set"
+
 # Build multiline Helm sets
 #execute_task "build_multiline_helm_sets" "building multiline Helm sets"

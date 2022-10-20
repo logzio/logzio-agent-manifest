@@ -8,7 +8,7 @@ jobs:
     outputs:
       configs: ${{ steps.filter.outputs.configs }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.0.2
       - name: Set filter
         uses: dorny/paths-filter@v2
         id: filter

@@ -220,6 +220,37 @@ function Build-TolerationsHelmSets {
     Write-Run "`$script:helmSets += '$tolerationsSets'"
 }
 
+# Gets environment id
+# Output:
+#   envID - The environment id
+# Error:
+#   Exit Code 4
+function Get-EnvironmentID () {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Getting environment id ..."
+
+    $local:envIdParam = Find-Param "$using:generalParams" "envID"
+    if ([string]::IsNullOrEmpty($envIdParam)) {
+        Write-Run "Write-Error `"installer.ps1 (4): envID param was not found`""
+        return 4
+    }
+
+    $local:envIdValue = Write-Output "$envIdParam" | jq -r '.value'
+    if ([string]::IsNullOrEmpty($envIdValue)) {
+        $envIdValue = ''
+    }
+    if ($envIdValue.Equals("null")) {
+        Write-Run "Write-Error `"installer.ps1 (3): '.configuration.subtypes[0].datasources[0].params[{name=envID}].value' was not found in application JSON`""
+        return 4
+    }
+    
+    Write-Log "INFO" "envID = $envIdValue"
+    Write-Run "`$script:envID += '$envIdValue'"
+}
+
 # Builds enable metrics or traces Helm set
 # Output:
 #   helmSets - Contains all the Helm sets
@@ -238,9 +269,9 @@ function Build-EnableMetricsOrTracesHelmSet {
 
 # Builds metrics/traces environment tag helm set
 # Output:
-#   helm_sets - Contains all the Helm sets
+#   helmSets - Contains all the Helm sets
 # Error:
-#   Exit Code 4
+#   Exit Code 5
 function Build-EnvironmentTagHelmSet {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -250,12 +281,12 @@ function Build-EnvironmentTagHelmSet {
 
     $local:envTag = jq -r '.id' $using:appJSON
     if ([string]::IsNullOrEmpty($envTag)) {
-        Write-Run "Write-Error `"installer.ps1 (4): '.id' is empty in application JSON`""
-        return 4
+        Write-Run "Write-Error `"installer.ps1 (5): '.id' is empty in application JSON`""
+        return 5
     }
     if ($envTag.Equals("null")) {
-        Write-Run "Write-Error `"installer.ps1 (4): '.id' was not found in application JSON`""
-        return 4
+        Write-Run "Write-Error `"installer.ps1 (5): '.id' was not found in application JSON`""
+        return 5
     }
 
     $local:helmSet = " --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$envTag"
@@ -264,9 +295,30 @@ function Build-EnvironmentTagHelmSet {
     Write-Run "`$script:helmSets += '$helmSet'"
 }
 
+# Builds metrics/traces environment id helm set
+# Output:
+#   helmSets - Contains all the Helm sets
+function Build-EnvironmentIdHelmSet () {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Building environment id Helm set ..."
+
+    if ([string]::IsNullOrEmpty($using:envID)) {
+        write_log "INFO" "env_id is empty. Default value will be used."
+        return
+    }
+
+    $local:helmSet = " --set logzio-k8s-telemetry.secrets.env_id=$using:envID"
+    Write-Log "INFO" "helmSet = $helmSet"
+    Write-Run "`$script:logHelmSets += '$helmSet'"
+    Write-Run "`$script:helmSets += '$helmSet'"
+}
+
 # Gets logs scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 5
+#   Exit Code 6
 function Get-LogsScripts {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -279,8 +331,8 @@ function Get-LogsScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (5): failed to get logs script file from logzio-agent-manifest repo.`n  $_`""
-        return 5
+        Write-Run "Write-Error `"installer.ps1 (6): failed to get logs script file from logzio-agent-manifest repo.`n  $_`""
+        return 6
     }
 
     Write-Log "INFO" "Getting logs functions script file from logzio-agent-manifest repo ..."
@@ -290,14 +342,14 @@ function Get-LogsScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (5): failed to get logs functions script file from logzio-agent-manifest repo.`n  $_`""
-        return 5
+        Write-Run "Write-Error `"installer.ps1 (6): failed to get logs functions script file from logzio-agent-manifest repo.`n  $_`""
+        return 6
     }
 }
 
 # Gets metrics scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 6
+#   Exit Code 7
 function Get-MetricsScripts {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -310,8 +362,8 @@ function Get-MetricsScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (6): failed to get metrics script file from logzio-agent-manifest repo.`n  $_`""
-        return 6
+        Write-Run "Write-Error `"installer.ps1 (7): failed to get metrics script file from logzio-agent-manifest repo.`n  $_`""
+        return 7
     }
 
     Write-Log "INFO" "Getting metrics functions script file from logzio-agent-manifest repo ..."
@@ -321,14 +373,14 @@ function Get-MetricsScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (6): failed to get metrics functions script file from logzio-agent-manifest repo.`n  $_`""
-        return 6
+        Write-Run "Write-Error `"installer.ps1 (7): failed to get metrics functions script file from logzio-agent-manifest repo.`n  $_`""
+        return 7
     }
 }
 
 # Gets traces scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 7
+#   Exit Code 8
 function Get-TracesScripts {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -341,8 +393,8 @@ function Get-TracesScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (7): failed to get traces script file from logzio-agent-manifest repo.`n  $_`""
-        return 7
+        Write-Run "Write-Error `"installer.ps1 (8): failed to get traces script file from logzio-agent-manifest repo.`n  $_`""
+        return 8
     }
 
     Write-Log "INFO" "Getting traces functions script file from logzio-agent-manifest repo ..."
@@ -352,14 +404,14 @@ function Get-TracesScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (7): failed to get traces functions script file from logzio-agent-manifest repo.`n  $_`""
-        return 7
+        Write-Run "Write-Error `"installer.ps1 (8): failed to get traces functions script file from logzio-agent-manifest repo.`n  $_`""
+        return 8
     }
 }
 
 # Runs Helm install
 # Error:
-#   Exit Code 8
+#   Exit Code 9
 function Invoke-HelmInstall {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -383,13 +435,13 @@ function Invoke-HelmInstall {
         sleep 5
     }
 
-    Write-Run "Write-Error `"installer.ps1 (8): failed to run Helm install.`n  $err`""
-    return 8
+    Write-Run "Write-Error `"installer.ps1 (9): failed to run Helm install.`n  $err`""
+    return 9
 }
 
 # Gets postrequisites scripts from logzio-agent-manifest repo
 # Error:
-#   Exit Code 9
+#   Exit Code 10
 function Get-PostrequisitesScripts {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
@@ -402,8 +454,8 @@ function Get-PostrequisitesScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (9): failed to get postrequisites script file from logzio-agent-manifest repo.`n  $_`""
-        return 9
+        Write-Run "Write-Error `"installer.ps1 (10): failed to get postrequisites script file from logzio-agent-manifest repo.`n  $_`""
+        return 10
     }
 
     Write-Log "INFO" "Getting traces functions script file from logzio-agent-manifest repo ..."
@@ -413,7 +465,7 @@ function Get-PostrequisitesScripts {
         $ProgressPreference = "Continue"
     }
     catch {
-        Write-Run "Write-Error `"installer.ps1 (9): failed to get postrequisites functions script file from logzio-agent-manifest repo.`n  $_`""
-        return 9
+        Write-Run "Write-Error `"installer.ps1 (10): failed to get postrequisites functions script file from logzio-agent-manifest repo.`n  $_`""
+        return 10
     }
 }
