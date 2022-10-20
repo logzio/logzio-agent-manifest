@@ -19,7 +19,7 @@
               "type": "text",
               "name": "envID",
               "label": "Environment Name",
-              "description": "The name for your environment's identifier, to easily identify the telemetry data for each environment.",
+              "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
               "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment. Default value will be used if empty.",
               "value": ""
             },
@@ -48,8 +48,7 @@
                   "label": "Using Windows nodes",
                   "description": "",
                   "hint": "Check this box if any of your Kubernetes pods are running on Windows nodes. As part of the installation process, you will need to provide the root user credentials to those Windows instances",
-                  "value": false,
-                  "params": []
+                  "value": false
                 }
               ],
               "dashboards": [
