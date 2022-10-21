@@ -46,19 +46,6 @@
                   "required": true
                 },
                 {
-                  "type": "multi-select",
-                  "name": "multiselectnotallow",
-                  "label": "multiselect-example",
-                  "description": "multiselect",
-                  "hint": "multi select hint",
-                  "allowCustom": true,
-                  "required": true,
-                  "options": [
-                    { "label": "five", "value":5 },
-                    { "label": "three", "value":3 },
-                    { "label": "hey", "value":"hey" }]
-                },
-                {
                   "type": "number",
                   "name": "updated",
                   "label": "number- required with default value",
