@@ -47,15 +47,6 @@
                 },
                 {
                   "type": "number",
-                  "name": "updated",
-                  "label": "number- required with default value",
-                  "description": "updated",
-                  "hint": "updated",
-                  "required": true,
-                  "value": 2
-                },
-                {
-                  "type": "number",
                   "name": "required-n0-value",
                   "label": "number- required without default value",
                   "description": "AWS Cluster description",
