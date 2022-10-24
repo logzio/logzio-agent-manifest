@@ -84,7 +84,7 @@
                  },
                  {
                    "type": "multiline-pattern",
-                   "name": "param_multilinePatternn",
+                   "name": "param_multilinePattern",
                    "label": "Multiline Pattern (object[] value)",
                    "required": true
                  },
