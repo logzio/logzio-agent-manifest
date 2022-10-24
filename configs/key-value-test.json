@@ -31,15 +31,18 @@
                   "label": "Enrich logs with static labels?",
                   "params": [
                     {
+                      "type": "text",
+                      "name": "required-text-param",
+                      "label": "Required text param",
+                      "required": true
+                    },
+                    {
                       "type": "key-value",
                       "name": "key-value-test1",
                       "required": true,
                       "label": "Key value param (required & with default)",
-                      "description": "Key value param description",
-                      "value": [
-                        { "key": "first_key", "value":  "first_value"},
-                        { "key": "second_key", "value":  "second_value"}
-                      ]
+                      "description": "Key value param description"
+
                     }
                   ]
                 },
