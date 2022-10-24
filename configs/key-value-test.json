@@ -34,7 +34,9 @@
                       "type": "text",
                       "name": "required-text-param",
                       "label": "Required text param",
-                      "required": true
+                      "required": true,
+                      "pattern": "^[a-zA-Z0-9]+$",
+                      "patternError": "Only letters please"
                     },
                     {
                       "type": "key-value",
