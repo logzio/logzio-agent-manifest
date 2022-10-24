@@ -63,6 +63,20 @@
                   "required": false
                 },
                 {
+                  "type": "multi-select",
+                  "name": "multiselectallow",
+                  "label": "multiselect-example",
+                  "description": "multiselect",
+                  "hint": "multi select hint",
+                  "allowCustom": true,
+                  "required": true,
+                  "options": [
+                    { "label": "five", "value":5 },
+                    { "label": "three", "value":3 },
+                    { "label": "hey", "value":"hey" }],
+                  "value": []
+                },
+                {
                   "type": "number",
                   "name": "required-default-value",
                   "label": "number- not required with value",
