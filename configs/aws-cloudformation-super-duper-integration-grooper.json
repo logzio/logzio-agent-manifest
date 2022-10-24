@@ -92,7 +92,7 @@
                    "type": "key-value",
                    "name": "key-value-test1",
                    "required": true,
-                   "label": "Key value param (object[] value)",
+                   "label": "Key value paraam (object[] value)",
                    "description": "Key value param description",
                    "value": [
                      { "key": "first_key", "value":  "first_value"},
