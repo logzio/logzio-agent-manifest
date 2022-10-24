@@ -60,7 +60,7 @@
                   "label": "number- required without default value",
                   "description": "AWS Cluster description",
                   "hint": "AWS Cluster hint",
-                  "required": true
+                  "required": false
                 },
                 {
                   "type": "number",
