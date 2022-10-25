@@ -78,7 +78,7 @@
                "params": [
                  {
                    "type": "path-list",
-                   "name": "param_pathList",
+                   "name": "param_pathListt",
                    "label": "Path list (string[] value)",
                    "required": true
                  },
