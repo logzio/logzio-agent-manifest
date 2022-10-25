@@ -81,11 +81,10 @@ function Test-CanLocalhostConnectToLogzioMetrics {
 }
 
 # Checks if tar is installed
-function Install-Tar {
+function Test-IsTarInstalled {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
     $local:runFile = $using:runFile
-    $local:taskErrorFile = $using:taskErrorFile
 
     Write-Log "INFO" "Checking if tar is installed ..."
 
