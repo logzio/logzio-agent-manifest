@@ -81,6 +81,8 @@ function Test-CanLocalhostConnectToLogzioMetrics {
 }
 
 # Checks if tar is installed
+# Error:
+#   Exit Code 3
 function Test-IsTarInstalled {
     . $using:logzioTempDir\utils_functions.ps1
     $local:logFile = $using:logFile
