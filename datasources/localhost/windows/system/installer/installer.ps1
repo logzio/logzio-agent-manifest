@@ -26,7 +26,7 @@ function Invoke-Logs {
         Send-LogToLogzio $LogLevelError $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
         Write-Error $Message
 
-        $IsAgentFailed = $true
+        $script:IsAgentFailed = $true
         Exit $ExitCode
     }
 }

@@ -596,8 +596,7 @@ function Set-AgentJsonConsts {
     $local:DataSources = $JsonValue
 
     $local:Index = 0
-    $local:DataSourcesList = '@('
-    $local:DataSourceNames = ''
+    $local:DataSourceNames = @()
     foreach ($DataSource in $DataSources) {
         $Err = Get-JsonStrFieldValue $Datasource '.name'
         if ($Err.Count -ne 0) {
@@ -614,15 +613,14 @@ function Set-AgentJsonConsts {
         Send-LogToLogzio $LogLevelDebug $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
         Write-Log $LogLevelDebug $Message
 
-        $DataSourceNames += "'$($DataSourceName.ToLower())',"
+        $DataSourceNames += $DataSourceName.ToLower()
         $Index++
     }
 
-    $DataSourceNames = $DataSourceNames.Substring(0, $DataSourceNames.Length-1)
-    $DataSourcesList += "$DataSourceNames)"
+    $local:DataSourcesStr = Convert-ListToStr $DataSourceNames
 
-    Write-TaskPostRun "`$script:DataSources = $DataSourcesList"
-    "`$script:DataSources = $DataSourcesList" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
+    Write-TaskPostRun "`$script:DataSources = $DataSourcesStr"
+    "`$script:DataSources = $DataSourcesStr" | Out-File -FilePath $LogzioTempDir\consts.ps1 -Append -Encoding utf8
 }
 
 # Gets Logz.io listener url

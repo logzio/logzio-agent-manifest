@@ -260,6 +260,68 @@ function Get-JsonFileFieldValueList {
     $script:JsonValue = $Result
 }
 
+# Converts list to string
+# Input:
+#   List - List of items
+# Output:
+#   StrList - List of items as string
+function Convert-ListToStr {
+    param (
+        [string[]]$List
+    )
+
+    if ($List.Count -eq 0) {
+        Write-Output '@()'
+        return
+    }
+
+    $local:StrList = ''
+    foreach ($Item in $List) {
+        if ($Item -match "^'.*'$" -or $Item -match '^".*"$') {
+            $StrList += "$Item,"
+        }
+        else {
+            $StrList += "'$Item',"
+        }
+    }
+
+    $StrList = $StrList.Substring(0, $StrList.Length-1)
+    Write-Output "@($StrList)"
+}
+
+# Gets param by name
+# Input:
+#   Params - Parameters from the agent json
+#   ParamName - Parameter name
+# Output:
+#   TargetParam - The param json object. Only if got no error.
+#   If got error will output message with exit code.
+function Get-Param {
+    param (
+        [string[]]$Params,
+        [string]$ParamName
+    )
+
+    foreach ($Param in $Params) {
+        $Err = Get-JsonStrFieldValue $Param '.name'
+        if ($Err.Count -ne 0) {
+            Write-Output $Err[0]
+            return 1
+        }
+        
+        $local:Name = $JsonValue
+        if (-Not $Name.Equals($ParamName)) {
+            continue
+        }
+
+        $script:TargetParam = $Param
+        return
+    }
+
+    Write-Output "$ParamName param was not found"
+    return 2
+}
+
 # Gets param value
 # Inputs: 
 #   Params - Parameters from the agent json
@@ -270,66 +332,60 @@ function Get-JsonFileFieldValueList {
 function Get-ParamValue {
     param (
         [string[]]$Params,
-        [string]$ParamName,
-        [bool]$IsValueList
+        [string]$ParamName
     )
 
-    $local:TargetParam = ''
-    Write-Output "0 - $Params" >> $LogzioTempDir\test.txt
-    foreach ($Param in $Params) {
-        $local:Err = Get-JsonStrFieldValue $Param '.name'
-        if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
-            Write-Output $Err[0]
-            return 1
-        }
-        if ($Err.Count -ne 0) {
-            continue
-        }
-        
-        $local:Name = $JsonValue
-        if (-Not $Name.Equals($ParamName)) {
-            continue
-        }
-
-        $TargetParam = $Param
-        Write-Output "1 - $TargetParam" >> $LogzioTempDir\test.txt
-        break
+    $local:Err = Get-Param $Params $ParamName
+    if ($Err.Count -ne 0) {
+        Write-Output $Err[0]
     }
 
-    Write-Output "2 - $TargetParam" >> $LogzioTempDir\test.txt
-    if ([string]::IsNullOrEmpty($TargetParam)) {
-        Write-Output "$ParamName param was not found"
-        return 2
-    }
+    $local:Param = $TargetParam
 
-    if ($IsValueList) {
-        $local:Err = Get-JsonStrFieldValueList $RequestedParam '.value'
-        if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
-            Write-Output $Err[0]
-            return 3
-        }
-        if ($Err.Count -ne 0) {
-            $script:ParamValue = @()
-            return
-        }
-        
-        $script:ParamValue = $JsonValue
+    $Err = Get-JsonStrFieldValue $TargetParam '.value'
+    if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
+        Write-Output $Err[0]
+        return 1
+    }
+    if ($Err.Count -ne 0) {
+        $script:ParamValue = ''
         return
     }
-    else {
-        $local:Err = Get-JsonStrFieldValue $RequestedParam '.value'
-        if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
-            Write-Output $Err[0]
-            return 4
-        }
-        if ($Err.Count -ne 0) {
-            $script:ParamValue = ''
-            return
-        }
-        
-        $script:ParamValue = $JsonValue
+    
+    $script:ParamValue = $JsonValue
+}
+
+# Gets param value list
+# Inputs: 
+#   Params - Parameters from the agent json
+#   ParamName - Parameter name to get value of
+# Output:
+#   ParamValue - The value (list) of the target param. Only if got no error.
+#   If got error will output message with exit code.
+function Get-ParamValueList {
+    param (
+        [string[]]$Params,
+        [string]$ParamName
+    )
+
+    $local:Err = Get-Param $Params $ParamName
+    if ($Err.Count -ne 0) {
+        Write-Output $Err[0]
+    }
+
+    $local:Param = $TargetParam
+
+    $Err = Get-JsonStrFieldValueList $TargetParam '.value[]'
+    if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
+        Write-Output $Err[0]
+        return 1
+    }
+    if ($Err.Count -ne 0) {
+        $script:ParamValue = @()
         return
     }
+    
+    $script:ParamValue = $JsonValue
 }
 
 # Installs Chocolatey

@@ -67,7 +67,7 @@ function Get-LogSources {
 
     $local:LogsParams = $FuncArgs.LogsParams
 
-    $local:Err = Get-ParamValue $LogsParams 'logSources' $true
+    $local:Err = Get-ParamValueList $LogsParams 'logSources'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
@@ -78,109 +78,332 @@ function Get-LogSources {
 
     $local:LogSources = $ParamValue
     
-    $local:Message = "log sources are '$LogSources'"
+    $local:Message = "Log sources are '$LogSources'"
     Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
     Write-Log $LogLevelDebug $Message
 
-    Write-TaskPostRun "`$script:LogSources = '$LogSources'"
+    $LogSourcesStr = Convert-ListToStr $LogSources
+    Write-TaskPostRun "`$script:LogSources = $LogSourcesStr"
 }
 
-# Gets the selected logs
+# Gets if application log option was selected
+# Input:
+#   ---
 # Output:
-#   isApplicationLog - Tells if application logs option was selected (true/false)
-#   isSecurityLog - Tells if security logs option was selected (true/false)
-#   isSystemLog - Tells if system logs option was selected (true/false)
-# Error:
-#   Exit Code 4
-function Get-SelectedLogs {
-    . $using:logzioTempDir\utils_functions.ps1
-    $local:logFile = $using:logFile
-    $local:runFile = $using:runFile
+#   IsApplicationLog - Tells if application log option was selected (true/false)
+function Get-IsApplicationLogSelected {
+    param (
+        [hashtable]$FuncArgs
+    )
 
-    Write-Log "INFO" "Getting selected logs ..."
+    $local:ExitCode = 3
+    $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:isApplicationLogParam = Find-Param "$using:logsParams" "isApplicationLog"
-    if ([string]::IsNullOrEmpty($isApplicationLogParam)) {
-        Write-Run "Write-Error `"logs.ps1 (4): isApplicationLog param was not found`""
-        return 4
+    $local:Message = "Getting is application log selected ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    if ($FuncArgs.Count -eq 0) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('LogsParams')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsParams' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    $local:isApplicationLogValue = Write-Output "$isApplicationLogParam" | jq -r '.value'
-    if ($isApplicationLogValue.Equals("null")) {
-        Write-Run "Write-Error `"logs.ps1 (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=isApplicationLog}].value' was not found in application JSON`""
-        return 4
+    $local:LogsParams = $FuncArgs.LogsParams
+
+    $local:Err = Get-ParamValue $LogsParams 'isApplicationLog'
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    $local:isSecurityLogParam = Find-Param "$using:logsParams" "isSecurityLog"
-    if ([string]::IsNullOrEmpty($isSecurityLogParam)) {
-        Write-Run "Write-Error `"logs.ps1 (4): isSecurityLog param was not found`""
-        return 4
+    $local:IsApplicationLog = $ParamValue
+    if ($IsApplicationLog.Equals('true')) {
+        $Message = "Application log option was selected"
+    }
+    else {
+        $Message = "Application log option was not selected"
+    }
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:IsApplicationLog = `$$IsApplicationLog"
+}
+
+# Gets if security log option was selected
+# Input:
+#   ---
+# Output:
+#   IsSecurityLog - Tells if security logs option was selected (true/false)
+function Get-IsSecurityLogSelected {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:ExitCode = 4
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = "Getting is security log selected ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    if ($FuncArgs.Count -eq 0) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('LogsParams')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsParams' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    $local:isSecurityLogValue = Write-Output "$isSecurityLogParam" | jq -r '.value'
-    if ($isSecurityLogValue.Equals("null")) {
-        Write-Run "Write-Error `"logs.ps1 (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=isSecurityLog}].value' was not found in application JSON`""
-        return 4
+    $local:LogsParams = $FuncArgs.LogsParams
+
+    $local:Err = Get-ParamValue $LogsParams 'isSecurityLog'
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    $local:isSystemLogParam = Find-Param "$using:logsParams" "isSystemLog"
-    if ([string]::IsNullOrEmpty($isSystemLogParam)) {
-        Write-Run "Write-Error `"logs.ps1 (4): isSystemLog param was not found`""
-        return 4
+    $local:IsSecurityLog = $ParamValue
+    if ($IsSecurityLog.Equals('true')) {
+        $Message = "Security log option was selected"
+    }
+    else {
+        $Message = "Security log option was not selected"
+    }
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:IsSecurityLog = `$$IsSecurityLog"
+}
+
+# Gets if system log option was selected
+# Input:
+#   ---
+# Output:
+#   IsSystemLog - Tells if security logs option was selected (true/false)
+function Get-IsSystemLogSelected {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:ExitCode = 5
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = "Getting is system log selected ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    if ($FuncArgs.Count -eq 0) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('LogsParams')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsParams' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    $local:isSystemLogValue = Write-Output "$isSystemLogParam" | jq -r '.value'
-    if ($isSystemLogValue.Equals("null")) {
-        Write-Run "Write-Error `"logs.ps1 (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=isSystemLog}].value' was not found in application JSON`""
-        return 4
+    $local:LogsParams = $FuncArgs.LogsParams
+
+    $local:Err = Get-ParamValue $LogsParams 'isSystemLog'
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
-    
-    Write-Log "INFO" "isApplicationLog = $isApplicationLogValue"
-    Write-Log "INFO" "isSecurityLog = $isSecurityLogValue"
-    Write-Log "INFO" "isSystemLog = $isSystemLogValue"
-    Write-Run "`$script:isApplicationLog = '$isApplicationLogValue'"
-    Write-Run "`$script:isSecurityLog = '$isSecurityLogValue'"
-    Write-Run "`$script:isSystemLog = '$isSystemLogValue'"
+
+    $local:IsSystemLog = $ParamValue
+    if ($IsSystemLog.Equals('true')) {
+        $Message = "System log option was selected"
+    }
+    else {
+        $Message = "System log option was not selected"
+    }
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:IsSystemLog = `$$IsSystemLog"
+}
+
+# Gets logs OTEL receivers
+# Input:
+#   FuncArgs - Hashtable {LogsTelemetry = $LogsTelemetry}
+# Ouput:
+#   LogsOtelReceivers - List of Logs OTEL receiver names
+function Get-LogsOtelReceivers {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:ExitCode = 6
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = "Getting is system log selected ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    if ($FuncArgs.Count -eq 0) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('LogsTelemetry')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsTelemetry' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+
+    $local:LogsTelemetry = $FuncArgs.LogsTelemetry
+
+    $local:Err = Get-JsonStrFieldValueList $LogsTelemetry '.otel.receivers[]'
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+
+    $local:LogsOtelReceivers = $JsonValue
+
+    $Message = "OTEL receivers are '$LogsOtelReceivers'"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    $local:LogsOtelReceiversStr = Convert-ListToStr $LogsOtelReceivers
+    Write-TaskPostRun "`$script:LogsOtelReceivers = $LogsOtelReceiversStr"
 }
 
 # Adds logs receivers to OTEL config
-# Error:
-#   Exit Code 5
-function Add-LogsReceiversToOTELConfig {
-    . $using:logzioTempDir\utils_functions.ps1
-    $local:logFile = $using:logFile
-    $local:runFile = $using:runFile
-    $local:taskErrorFile = $using:taskErrorFile
+function Add-LogsReceiversToOtelConfig {
+    param (
+        [hashtable]$FuncArgs
+    )
 
-    Write-Log "INFO" "Adding logs receivers to OTEL config ..."
+    $local:ExitCode = 7
+    $local:FuncName = $MyInvocation.MyCommand.Name
 
-    try {
-        $ProgressPreference = "SilentlyContinue"
-        Invoke-WebRequest -Uri $using:repoPath/telemetry/logs/logs_otel_receivers.yaml -OutFile $using:logzioTempDir\logs_otel_receivers.yaml | Out-Null
-        $ProgressPreference = "Continue"
+    $local:Message = "Adding logs receivers to OTEL config ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    if ($FuncArgs.Count -eq 0) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
-    catch {
-        Write-Run "Write-Error `"logs.ps1 (5): failed to get logs_otel_receivers yaml file from logzio-agent-manifest repo.`n  $_`""
-        return 5
+    if (-Not $FuncArgs.ContainsKey('LogsOtelReceivers')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsOtelReceivers' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('LogSources')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogSources' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('IsApplicationLog')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'IsApplicationLog' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('IsSecurityLog')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'IsSecurityLog' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('IsSystemLog')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'IsSystemLog' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error '$Message'"
+
+        return $ExitCode
     }
 
-    if (-Not [string]::IsNullOrEmpty($using:logSources)) {
-        foreach ($logSource in $using:logSources) {
-            yq e -i ".filelog.include += `"$logSource`"" $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
-            if (-Not $?) {
-                $local:err = Get-TaskError
-                Write-Run "Write-Error `"logs.ps1 (5): failed to insert log sources into logs_otel_receivers yaml file.`n  $err`""
-                return 5
-            }
+    $local:LogsOtelReceivers = $FuncArgs.LogsOtelReceivers
+    $local:LogSources = $FuncArgs.LogSources
+    $local:IsApplicationLog = $FuncArgs.IsApplicationLog
+    $local:IsSecurityLog = $FuncArgs.IsSecurityLog
+    $local:IsSystemLog = $FuncArgs.IsSystemLog
+
+    foreach ($LogsOtelReceiver in $LogsOtelReceivers) {
+        Write-Output $LogsOtelReceiver >> $LogzioTempDir\test.txt
+        $local:ScriptBlock = &$YqExe '.windows_run' $LogzioTempDir\resources\otel\receivers\$LogsOtelReceiver.yaml 2>$TaskErrorFile
+        if ($LASTEXITCODE -ne 0) {
+            $Message = "logs.ps1 ($ExitCode): error getting .windows_run from yaml file"
+            Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+            Write-TaskPostRun "Write-Error '$Message'"
+    
+            return $ExitCode
+        }
+
+        $ScriptBlock | Out-File -FilePath $LogzioTempDir\run.ps1 -Append -Encoding utf8
+        . $LogzioTempDir\run.ps1
+        if ($LASTEXITCODE -ne 0) {
+            return $ExitCode
         }
     }
 
-    yq eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $using:otelConfig $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
-    if (-Not $?) {
-        $local:err = Get-TaskError
-        Write-Run "Write-Error `"logs.ps1 (5): failed to add logs receivers to OTEL config file.`n  $err`""
-        return 5
-    }
+    # if (-Not [string]::IsNullOrEmpty($using:logSources)) {
+    #     foreach ($logSource in $using:logSources) {
+    #         yq e -i ".filelog.include += `"$logSource`"" $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
+    #         if (-Not $?) {
+    #             $local:err = Get-TaskError
+    #             Write-Run "Write-Error `"logs.ps1 (5): failed to insert log sources into logs_otel_receivers yaml file.`n  $err`""
+    #             return 5
+    #         }
+    #     }
+    # }
+
+    # yq eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $using:otelConfig $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
+    # if (-Not $?) {
+    #     $local:err = Get-TaskError
+    #     Write-Run "Write-Error `"logs.ps1 (5): failed to add logs receivers to OTEL config file.`n  $err`""
+    #     return 5
+    # }
 }
 
 # Adds logs exporter to OTEL config

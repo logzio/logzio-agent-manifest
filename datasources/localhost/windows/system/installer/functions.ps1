@@ -7,8 +7,10 @@
 #   ---
 # Output:
 #   IsLogsOptionSelected - Tells if logs option was selected (true/false)
+#   LogsTelemetry - The logs telemetry if logs option was selected
 #   LogsParams - The logs params if logs option was selected
 #   IsMetricsOptionSelected - Tells if metrics option was selected (true/false)
+#   MetricsTelemetry - The metrics telemetry if metrics option was selected
 #   MetricsParams - The metrics params if metrics option was selected
 function Get-SelectedProducts {
     $local:ExitCode = 1
@@ -69,8 +71,13 @@ function Get-SelectedProducts {
             $Params = $JsonValue
         }
 
+        $local:ParamsStr = Convert-ListToStr $Params
+
         if ($type.Equals('LOG_ANALYTICS')) {
             $Message = 'Logs option was selected'
+            Send-LogToLogzio $LogLevelDebug $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+            Write-Log $LogLevelDebug $Message
+            $Message = "Logs telemetry is '$Telemetry'"
             Send-LogToLogzio $LogLevelDebug $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
             Write-Log $LogLevelDebug $Message
             $Message = "Logs params are '$Params'"
@@ -78,9 +85,13 @@ function Get-SelectedProducts {
             Write-Log $LogLevelDebug $Message
 
             $IsLogsOptionSelected = $true
-            Write-TaskPostRun "`$script:LogsParams = '$Params'"
+            Write-TaskPostRun "`$script:LogsTelemetry = '$Telemetry'"
+            Write-TaskPostRun "`$script:LogsParams = $ParamsStr"
         } elseif ($Type.Equals('METRICS')) {
             $Message = 'Metrics option was selected'
+            Send-LogToLogzio $LogLevelDebug $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+            Write-Log $LogLevelDebug $Message
+            $Message = "Metrics telemetry is '$Telemetry'"
             Send-LogToLogzio $LogLevelDebug $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
             Write-Log $LogLevelDebug $Message
             $Message = "Metrics params are '$Params'"
@@ -88,7 +99,8 @@ function Get-SelectedProducts {
             Write-Log $LogLevelDebug $Message
 
             $IsMetricsOptionSelected = $true
-            Write-TaskPostRun "`$script:MetricsParams = '$Params'"
+            Write-TaskPostRun "`$script:MetricsTelemetry = '$Telemetry'"
+            Write-TaskPostRun "`$script:MetricsParams = $ParamsStr"
         }
 
         $TelemetryIndex++
