@@ -34,7 +34,7 @@
               "name": "stackName",
               "label": "Enter your stack name",
               "required": true,
-              "description": "The name of the bucket",
+              "description": "The name of your stack",
               "value": "logzio-s3-hook",
               "pattern": "^[a-zA-Z0-9-]+$",
               "patternError": "Only letters, numbers and dash"
@@ -62,7 +62,7 @@
                   "name": "param_logType",
                   "label": "Log Type",
                   "required": true,
-                  "description": "The name of the bucket",
+                  "description": "Log type",
                   "value": "s3-hook",
                   "pattern": "^[a-zA-Z0-9-]+$",
                   "patternError": "Only letters, numbers and dash"
@@ -71,13 +71,13 @@
                   "type": "path-list",
                   "name": "param_pathsRegexes",
                   "label": "Paths Regexes",
-                  "description": "The name of the bucket"
+                  "description": "List of paths regexes"
                 },
                 {
                   "type": "text",
                   "name": "param_pathToFields",
                   "label": "Path to Fields",
-                  "description": "The name of the bucket"
+                  "description": "Miri says dont use this"
                 }
                ]
              }
