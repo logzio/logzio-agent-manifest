@@ -22,6 +22,8 @@ Invoke-Task 'Get-IsApplicationLogSelected' @{LogsParams = $LogsParams} 'Getting 
 Invoke-Task 'Get-IsSecurityLogSelected' @{LogsParams = $LogsParams} 'Getting if security log option was selected' @($LogsFunctionsScript)
 # Get if system log option was selected
 Invoke-Task 'Get-IsSystemLogSelected' @{LogsParams = $LogsParams} 'Getting if system log option was selected' @($LogsFunctionsScript)
+# Add logs pipeline to OTEL config
+Invoke-Task 'Add-LogsPiplineToOtelConfig' @{} 'Adding logs pipeline to OTEL config' @($LogsFunctionsScript)
 # Get logs OTEL receivers
 Invoke-Task 'Get-LogsOtelReceivers' @{LogsTelemetry = $LogsTelemetry} 'Getting logs OTEL receivers' @($LogsFunctionsScript)
 # Add logs receivers to OTEL config

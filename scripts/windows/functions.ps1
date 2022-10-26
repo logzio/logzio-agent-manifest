@@ -70,7 +70,7 @@ function New-LogzioAppDataDir {
     catch {
         $local:Message = "agent.ps1 ($ExitCode): error creating Logz.io AppData directory: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -104,14 +104,14 @@ function Test-IsElevated {
     catch {
         $Message = "agent.ps1 ($ExitCode): error checking if PowerShell was run as Administrator"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
     $Message = "agent.ps1 ($ExitCode): PowerShell was not run as Administrator. please run Powershell as Administrator and rerun the agent script"
     Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-    Write-TaskPostRun "Write-Error '$Message'"
+    Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
 }
@@ -153,14 +153,14 @@ function Get-Arguments {
     if ($FuncArgs.Count -eq 0) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('AgentArgs')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not have 'AgentArgs' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -180,7 +180,7 @@ function Get-Arguments {
                 if ([string]::IsNullOrEmpty($AppUrl)) {
                     $Message = "agent.ps1 ($ExitCode): no Logz.io app URL specified!"
                     Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-                    Write-TaskPostRun "Write-Error '$Message'"
+                    Write-TaskPostRun "Write-Error `"$Message`""
 
                     return $ExitCode
                 }
@@ -197,7 +197,7 @@ function Get-Arguments {
                 if ([string]::IsNullOrEmpty($AgentId)) {
                     $Message = "agent.ps1 ($ExitCode): no agent ID specified!"
                     Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-                    Write-TaskPostRun "Write-Error '$Message'"
+                    Write-TaskPostRun "Write-Error `"$Message`""
 
                     return $ExitCode
                 }
@@ -214,7 +214,7 @@ function Get-Arguments {
                 if ([string]::IsNullOrEmpty($AgentJsonFile)) {
                     $Message = "agent.ps1 ($ExitCode): no json file specified!"
                     Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-                    Write-TaskPostRun "Write-Error '$Message'"
+                    Write-TaskPostRun "Write-Error `"$Message`""
 
                     return $ExitCode
                 }
@@ -239,10 +239,10 @@ function Get-Arguments {
             default {
                 $Message = "agent.ps1 ($ExitCode): unrecognized flag"
                 Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-                Write-TaskPostRun "Write-Error '$Message'"
+                Write-TaskPostRun "Write-Error `"$Message`""
                 $Message = "agent.ps1 ($ExitCode): try '.\agent.ps1 --help' for more information"
                 Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-                Write-TaskPostRun "Write-Error '$Message'"
+                Write-TaskPostRun "Write-Error `"$Message`""
 
                 return $ExitCode
             }
@@ -270,28 +270,28 @@ function Test-ArgumentsValidation {
     if ($FuncArgs.Count -eq 0) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('AppUrl')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'AppUrl' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('AgentId')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'AgentId' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('AgentJsonFile')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'AgentJsonFile' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -307,7 +307,7 @@ function Test-ArgumentsValidation {
 
         $Message = "agent.ps1 ($ExitCode): the json file '$AgentJsonFile' does not exist"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -318,13 +318,13 @@ function Test-ArgumentsValidation {
         $IsError = $true
         $Message = "agent.ps1 ($ExitCode): Logz.io app url must be specified"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
     }
     if ([string]::IsNullOrEmpty($AgentId)) {
         $IsError = $true
         $Message = "agent.ps1 ($ExitCode): agent id must be specified"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
     }
 
     if (-Not $IsError) {
@@ -333,7 +333,7 @@ function Test-ArgumentsValidation {
 
     $Message = "agent.ps1 ($ExitCode): try '.\agent.ps1 --help' for more information"
     Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-    Write-TaskPostRun "Write-Error '$Message'"
+    Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
 }
@@ -358,14 +358,14 @@ function Set-AgentIdConst {
     if ($FuncArgs.Count -eq 0) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('AgentId')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'AgentId' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInit $LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -403,7 +403,7 @@ function Get-JQ {
     catch {
         $Message = "error downloading jq exe: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepDownloads $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -428,7 +428,7 @@ function Get-Yq {
     catch {
         $Message = "error downloading yq exe: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepDownloads $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -454,21 +454,21 @@ function Get-AgentJson {
     if ($FuncArgs.Count -eq 0) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('AppUrl')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'AppUrl' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('AgentJsonFile')) {
         $Message = "Get-AppJson FuncArgs does not contain 'AgentJsonFile' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -488,7 +488,7 @@ function Get-AgentJson {
         catch {
             $Message = "agent.ps1 ($ExitCode): error copying '$AgentJsonFile' to '$AgentJson': $_"
             Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-            Write-TaskPostRun "Write-Error '$Message'"
+            Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
         }
@@ -507,7 +507,7 @@ function Get-AgentJson {
     catch {
         $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent. make sure your url is valid: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -516,7 +516,7 @@ function Get-AgentJson {
     if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -528,7 +528,7 @@ function Get-AgentJson {
 
     $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent (statusCode '$StatusCode'). make sure your id is valid."
     Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-    Write-TaskPostRun "Write-Error '$Message'"
+    Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
 }
@@ -552,7 +552,7 @@ function Set-AgentJsonConsts {
     if ($Err.Count -ne 0) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -570,7 +570,7 @@ function Set-AgentJsonConsts {
     if ($Err.Count -ne 0) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -588,7 +588,7 @@ function Set-AgentJsonConsts {
     if ($Err.Count -ne 0) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -602,7 +602,7 @@ function Set-AgentJsonConsts {
         if ($Err.Count -ne 0) {
             $Message = "agent.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId
-            Write-TaskPostRun "Write-Error '$Message'"
+            Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
         }
@@ -640,7 +640,7 @@ function Get-LogzioListenerUrl {
     if ($Err.Count -ne 0) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -674,14 +674,14 @@ function Get-LogzioRegion {
     if ($FuncArgs.Count -eq 0) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platfrom $Subtype
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('ListenerUrl')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'ListenerUrl' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platfrom $Subtype
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -721,14 +721,14 @@ function Get-SubTypeFiles {
     if ($FuncArgs.Count -eq 0) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('RepoRelease')) {
         $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'RepoRelease' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -746,7 +746,7 @@ function Get-SubTypeFiles {
     catch {
         $Message = "agent.ps1 ($ExitCode): error downloading subtype tar.gz file from Logz.io repo: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -758,7 +758,7 @@ function Get-SubTypeFiles {
 
     $Message = "agent.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-Content -Path $TaskErrorFile)"
     Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
-    Write-TaskPostRun "Write-Error '$Message'"
+    Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
 }

@@ -50,7 +50,7 @@ function Remove-LogzioOtelCollectorService {
     catch {
         $Message = "installer.ps1 ($ExitCode): error stopping '$LogzioOtelCollectorServiceName' service: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
     }
 
     sc.exe DELETE $LogzioOtelCollectorServiceName 2>$TaskErrorFile | Out-Null
@@ -60,7 +60,7 @@ function Remove-LogzioOtelCollectorService {
 
     $Message = "installer.ps1 ($ExitCode): error deleting '$LogzioOtelCollectorServiceName' service: $(Get-Content -Path $TaskErrorFile)"
     Send-LogToLogzio $LogLevelError $Message $LogStepPreInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype
-    Write-TaskPostRun "Write-Error '$Message'"
+    Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
 }
@@ -84,7 +84,7 @@ function New-LogzioAppDataSubDir {
     catch {
         $Message = "installer.ps1 ($ExitCode): error creating Logz.io OTEL collector directory: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -109,7 +109,7 @@ function Get-OtelCollectorExe {
     catch {
         $Message = "installer.ps1 ($ExitCode): error downloading OTEL collector tar.gz: $_"
         Send-LogToLogzio $LogLevelError $Message $LogStepPreInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -121,7 +121,7 @@ function Get-OtelCollectorExe {
 
     $Message = "installer.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-Content -Path $TaskErrorFile)"
     Send-LogToLogzio $LogLevelError $Message $LogStepPreInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype
-    Write-TaskPostRun "Write-Error '$Message'"
+    Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
 }

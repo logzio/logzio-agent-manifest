@@ -254,6 +254,24 @@ function Get-IsSystemLogSelected {
     Write-TaskPostRun "`$script:IsSystemLog = `$$IsSystemLog"
 }
 
+function Add-LogsPiplineToOtelConfig {
+    $local:ExitCode = 6
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Adding logs pipeline to OTEL config ...'
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    $local:Err = Add-YamlFileFieldObject "$LogzioTempDir\resources\otel\logs_pipeline.yaml" "$LogzioTempDir\resources\otel\otel_config.yaml" '' '.service.pipelines'
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+}
+
 # Gets logs OTEL receivers
 # Input:
 #   FuncArgs - Hashtable {LogsTelemetry = $LogsTelemetry}
@@ -264,7 +282,7 @@ function Get-LogsOtelReceivers {
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 6
+    $local:ExitCode = 7
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = "Getting is system log selected ..."
@@ -274,14 +292,14 @@ function Get-LogsOtelReceivers {
     if ($FuncArgs.Count -eq 0) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('LogsTelemetry')) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsTelemetry' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -292,7 +310,7 @@ function Get-LogsOtelReceivers {
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -313,7 +331,7 @@ function Add-LogsReceiversToOtelConfig {
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 7
+    $local:ExitCode = 8
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = "Adding logs receivers to OTEL config ..."
@@ -323,42 +341,42 @@ function Add-LogsReceiversToOtelConfig {
     if ($FuncArgs.Count -eq 0) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('LogsOtelReceivers')) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsOtelReceivers' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('LogSources')) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogSources' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('IsApplicationLog')) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'IsApplicationLog' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('IsSecurityLog')) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'IsSecurityLog' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if (-Not $FuncArgs.ContainsKey('IsSystemLog')) {
         $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'IsSystemLog' key"
         Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -370,41 +388,123 @@ function Add-LogsReceiversToOtelConfig {
     $local:IsSystemLog = $FuncArgs.IsSystemLog
 
     foreach ($LogsOtelReceiver in $LogsOtelReceivers) {
-        Write-Output $LogsOtelReceiver >> $LogzioTempDir\test.txt
-        $local:ScriptBlock = &$YqExe '.windows_run' $LogzioTempDir\resources\otel\receivers\$LogsOtelReceiver.yaml 2>$TaskErrorFile
-        if ($LASTEXITCODE -ne 0) {
-            $Message = "logs.ps1 ($ExitCode): error getting .windows_run from yaml file"
+        $local:Err = Get-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\$LogsOtelReceiver.yaml" '.windows_run'
+        if ($Err.Count -ne 0) {
+            $Message = "logs.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
-            Write-TaskPostRun "Write-Error '$Message'"
+            Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
         }
 
-        $ScriptBlock | Out-File -FilePath $LogzioTempDir\run.ps1 -Append -Encoding utf8
-        . $LogzioTempDir\run.ps1
+        $local:ScriptBlock = $YamlValue
+
+        $ScriptBlock | Out-File -FilePath $LogzioTempDir\otel_function.ps1 -Encoding utf8
+        . $LogzioTempDir\otel_function.ps1
         if ($LASTEXITCODE -ne 0) {
+            return $ExitCode
+        }
+
+        $Err = New-OtelReceiver $LogSources 'agent-windows'
+        if ($Err.Count -ne 0 -and $Err[1] -ne 1) {
+            $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+        if ($Err.Count -ne 0) {
+            $Message = $Err[0]
+            Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+            Write-Log $LogLevelDebug $Message
+
+            continue
+        }
+
+        $Err = Add-YamlFileFieldObject "$LogzioTempDir\resources\otel\receivers\$LogsOtelReceiver.yaml" "$LogzioTempDir\resources\otel\otel_config.yaml" '.receiver' '.receivers'
+        if ($Err.Count -ne 0) {
+            $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+
+        $Err = Add-YamlFileFieldValue "$LogzioTempDir\resources\otel\otel_config.yaml" '.service.pipelines.logs.receivers' "$LogsOtelReceiver\NAME"
+        if ($Err.Count -ne 0) {
+            $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+            Write-TaskPostRun "Write-Error `"$Message`""
+
             return $ExitCode
         }
     }
 
-    # if (-Not [string]::IsNullOrEmpty($using:logSources)) {
-    #     foreach ($logSource in $using:logSources) {
-    #         yq e -i ".filelog.include += `"$logSource`"" $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
-    #         if (-Not $?) {
-    #             $local:err = Get-TaskError
-    #             Write-Run "Write-Error `"logs.ps1 (5): failed to insert log sources into logs_otel_receivers yaml file.`n  $err`""
-    #             return 5
-    #         }
-    #     }
-    # }
-
-    # yq eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $using:otelConfig $using:logzioTempDir\logs_otel_receivers.yaml 2>$using:taskErrorFile
-    # if (-Not $?) {
-    #     $local:err = Get-TaskError
-    #     Write-Run "Write-Error `"logs.ps1 (5): failed to add logs receivers to OTEL config file.`n  $err`""
-    #     return 5
-    # }
+    (Get-Content -Path "$LogzioTempDir\resources\otel\otel_config.yaml").Replace('NAME', "$Platform`_$SubType`_system") | Set-Content -Path "$LogzioTempDir\resources\otel\otel_config.yaml"
 }
+
+# Gets logs OTEL processors
+# Input:
+#   FuncArgs - Hashtable {LogsTelemetry = $LogsTelemetry}
+# Ouput:
+#   LogsOtelProcessors - List of Logs OTEL processor names
+function Get-LogsOtelProcessors {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:ExitCode = 9
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = "Getting is system log selected ..."
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    if ($FuncArgs.Count -eq 0) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument is empty"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+    if (-Not $FuncArgs.ContainsKey('LogsTelemetry')) {
+        $Message = "logs.ps1 ($ExitCode): function hashtable argument does not contain 'LogsTelemetry' key"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platform $SubType $DataSourceSystem
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:LogsTelemetry = $FuncArgs.LogsTelemetry
+
+    $local:Err = Get-JsonStrFieldValueList $LogsTelemetry '.otel.processors[]'
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $LogLevelError $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:LogsOtelProcessors = $JsonValue
+
+    $Message = "OTEL processors are '$LogsOtelProcessors'"
+    Send-LogToLogzio $LogLevelDebug $Message $LogStepLogs $LogScriptLogs $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
+    Write-Log $LogLevelDebug $Message
+
+    $local:LogsOtelProcessorssStr = Convert-ListToStr $LogsOtelProcessors
+    Write-TaskPostRun "`$script:LogsOtelReceivers = $LogsOtelProcessorssStr"
+}
+
+
+function Add-LogsProcessorsToOtelConfig {
+    $local:ExitCode = 9
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+
+}
+
+
 
 # Adds logs exporter to OTEL config
 # Error:

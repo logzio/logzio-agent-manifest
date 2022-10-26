@@ -33,7 +33,7 @@ function Get-SelectedProducts {
     if ($Err.Count -ne 0) {
         $Message = "installer.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $LogLevelError $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
-        Write-TaskPostRun "Write-Error '$Message'"
+        Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
@@ -48,7 +48,7 @@ function Get-SelectedProducts {
         if ($Err.Count -ne 0) {
             $Message = "installer.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $LogLevelError $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
-            Write-TaskPostRun "Write-Error '$Message'"
+            Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
         }
@@ -60,7 +60,7 @@ function Get-SelectedProducts {
         if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
             $Message = "installer.ps1 ($ExitCode): $($Result[0])"
             Send-LogToLogzio $LogLevelError $Message $LogStepInstallation $LogScriptInstaller $FuncName $AgentId $Platfrom $Subtype $DataSourceSystem
-            Write-TaskPostRun "Write-Error '$Message'"
+            Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
         }

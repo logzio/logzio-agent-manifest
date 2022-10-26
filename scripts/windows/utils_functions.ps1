@@ -163,6 +163,7 @@ function Get-JsonStrFieldValue {
 
     $local:Result = $JsonStr | &$JqExe -r $JsonPath 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
+        $JsonStr = $JsonStr.Replace('"', '`"')
         Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $TaskErrorFile)"
         return 1
     }
@@ -193,6 +194,7 @@ function Get-JsonStrFieldValueList {
 
     $local:Result = $JsonStr | &$JqExe -c $JsonPath 2>$TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
+        $JsonStr = $JsonStr.Replace('"', '`"')
         Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $TaskErrorFile)"
         return 1
     }
