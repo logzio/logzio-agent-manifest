@@ -262,6 +262,72 @@ function Get-JsonFileFieldValueList {
     $script:JsonValue = $Result
 }
 
+function Add-YamlFileFieldValue {
+    param (
+        [string]$YamlFile,
+        [string]$YamlPath,
+        [string]$Value
+    )
+
+    &$YqExe -i "$YamlPath += ""`"$Value`"""" $YamlFile 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error adding '$Value' to '$YamlPath in '$YamlPath': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+}
+
+function Set-YamlFileFieldValue {
+    param (
+        [string]$YamlFile,
+        [string]$YamlPath,
+        [string]$Value
+    )
+
+    &$YqExe -i "$YamlPath = ""`"$Value`"""" $YamlFile 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error adding '$Value' to '$YamlPath in '$YamlFile': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+}
+
+function Get-YamlFileFieldValue {
+    param (
+        [string]$YamlFile,
+        [string]$YamlPath
+    )
+
+    $local:Result = &$YqExe $YamlPath $YamlFile 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error getting '$YamlPath' from '$YamlFile': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+    if ([string]::IsNullOrEmpty($Result)) {
+        Write-Output "'$YamlPath' is empty in '$YamlFile'"
+        return 2
+    }
+    if ($Result.Equals('null')) {
+        Write-Output "'$YamlPath' does not exist in '$YamlFile'"
+        return 3
+    }
+
+    $script:YamlValue = $Result
+}
+
+function Add-YamlFileFieldObject {
+    param (
+        [string]$YamlFileSource,
+        [string]$YamlFileDest,
+        [string]$YamlPathSource,
+        [string]$YamlPathDest
+    )
+
+    &$YqExe eval-all -i "select(fileIndex==0)$YamlPathDest += select(fileIndex==1)$YamlPathSource | select(fileIndex==0)" $YamlFileDest $YamlFileSource 2>$TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        Write-Output "error adding '$YamlPathSource' in '$YamlFileSource' to '$YamlPathDest' in '$YamlFileDest': $(Get-Content -Path $TaskErrorFile)"
+        return 1
+    }
+}
+
 # Converts list to string
 # Input:
 #   List - List of items
