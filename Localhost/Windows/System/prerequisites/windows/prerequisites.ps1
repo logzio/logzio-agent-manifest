@@ -15,5 +15,8 @@ Invoke-Task "Test-CanLocalhostConnectToLogzioLogs" "checking if localhost can co
 # Check if localhost can connect to Logz.io metrics (port 8053)
 Invoke-Task "Test-CanLocalhostConnectToLogzioMetrics" "checking if localhost can connect to Logz.io metrics"
 
+# Check if tar is installed
+Invoke-Task "Test-IsTarInstalled" "checking if tar is installed"
+
 # Finished successfully
 Exit 0

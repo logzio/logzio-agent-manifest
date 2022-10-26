@@ -79,3 +79,22 @@ function Test-CanLocalhostConnectToLogzioMetrics {
     Write-Run "Write-Error `"prerequisites.ps1 (2): localhost cannot connect to Logz.io logs. please check your network for port 8053`""
     return 2
 }
+
+# Checks if tar is installed
+# Error:
+#   Exit Code 3
+function Test-IsTarInstalled {
+    . $using:logzioTempDir\utils_functions.ps1
+    $local:logFile = $using:logFile
+    $local:runFile = $using:runFile
+
+    Write-Log "INFO" "Checking if tar is installed ..."
+
+    Get-Command tar 2>&1 | Out-Null
+    if ($?) {
+        return
+    }
+
+    Write-Run "Write-Error `"prerequisites.ps1 (3): tar is not installed. please install it and rerun the agent script`""
+    return 3
+}
