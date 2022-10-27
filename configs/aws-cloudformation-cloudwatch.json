@@ -5,8 +5,8 @@
    "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
    "subtypes": [
      {
-       "name": "aws-cloudformation-s3",
-       "label": "AWS Cloudformation (s3)",
+       "name": "aws-cloudformation-cloudwatch",
+       "label": "AWS Cloudformation (cloudwatch)",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
        "description": "S3 Linux server",
        "hint": "S3 with Linux.",
