@@ -56,16 +56,45 @@ function Write-Log {
         [string]$Message
     )
     
-    Write-Output "[$LogLevel] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" >> $AgentLogFile
+    "[$LogLevel] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" | Out-File -Path $script:AgentLogFile -Append -Encoding utf8
 }
 
-function Get-LogMetadata {
-    
+# Writes command into task post run script file
+# Input:
+#   Command - The command to write into the file
+# Output:
+#   ---
+function Write-TaskPostRun {
+    param (
+        [string]$Command
+    )
+
+    $Command | Out-File -Path $script:TaskPostRunFile -Append -Encoding utf8
+}
+
+# Gets task error file content
+# Input:
+#   ---
+# Output:
+#   Task error file content
+function Get-TaskErrorMessage {
+    $local:Err = Get-Content -Path $script:TaskErrorFile
+    $Err = $Err.Replace('"', '')
+
+    Write-Output $Err
 }
 
 # Sends log to Logz.io
 # Input:
-#   LogFields - Log fields to send as one log to Logz.io
+#   Level - Log level
+#   Message - Log message
+#   Step - Log step
+#   ScriptName - Log script name
+#   FuncName - Log function name
+#   AgentId - Agent id
+#   Platform - Platform name
+#   SubType - Subtype name
+#   DataSource - Datasource name
 # Output:
 #   ---
 function Send-LogToLogzio {
@@ -84,7 +113,7 @@ function Send-LogToLogzio {
     $Message = $Message.Replace('\', '\\')
     $Message = $Message.Replace('"', '\"')
 
-    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"windows_name`":`"$WindowsName`",`"windows_version`":`"$WindowsVersion`""
+    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"os_name`":`"$WindowsName`",`"os_version`":`"$WindowsVersion`",`"shell_version`":`"$PowerShellVersion`""
 
     if ($Level.Equals($LogLevelError)) {
         $local:ErrorIdPartMatch = $Message | Select-String -Pattern '\([0-9]+\)'
@@ -121,17 +150,30 @@ function Send-LogToLogzio {
     }
 }
 
-# Writes command into task post run script file
+# Checks if function arguments exist
 # Input:
-#   Command - The command to write into the file
+#   FuncArgs - Hashtable of function arguments
+#   ArgName - Argument names
 # Output:
-#   ---
-function Write-TaskPostRun {
-        param (
-            [string]$Command
-        )
+#   Retunrs nothing if everything ok.
+#   If got error will output message with exit code.
+function Test-AreFuncArgsExist {
+    param (
+        [hashtable]$FuncArgs,
+        [string[]]$ArgNames
+    )
 
-    Write-Output $Command >> $TaskPostRunFile
+    if ($FuncArgs.Count -eq 0) {
+        Write-Output "function hashtable argument is empty"
+        return 1
+    }
+
+    foreach ($ArgName in $ArgNames) {
+        if (-Not $FuncArgs.ContainsKey($ArgName)) {
+            Write-Output "function hashtable argument does not have '$ArgName' key"
+            return 2
+        }
+    }
 }
 
 # Deletes Logz.io temp directory
@@ -208,7 +250,7 @@ function Get-JsonStrFieldValueList {
 
 # Gets json file field value
 # input:
-#   JsonStr - Json string
+#   JsonFile - Json file path
 #   JsonPath - Json path
 # Output:
 #   JsonValue - The value of the field. Only if got no error.
@@ -238,7 +280,7 @@ function Get-JsonFileFieldValue {
 
 # Gets json file field value list
 # input:
-#   JsonStr - Json string
+#   JsonFile - Json file path
 #   JsonPath - Json path
 # Output:
 #   JsonValue - The value (list) of the field. Only if got no error.
@@ -262,6 +304,14 @@ function Get-JsonFileFieldValueList {
     $script:JsonValue = $Result
 }
 
+# Adds yaml file field value
+# input:
+#   YamlFile - Yaml file path
+#   YamlPath - Yaml path
+#   Value - Value to add
+# Output:
+#   Returns nothing if everything ok.
+#   If got error will output message with exit code.
 function Add-YamlFileFieldValue {
     param (
         [string]$YamlFile,
@@ -276,6 +326,14 @@ function Add-YamlFileFieldValue {
     }
 }
 
+# Sets yaml file field value
+# input:
+#   YamlFile - Yaml file path
+#   YamlPath - Yaml path
+#   Value - Value to set
+# Output:
+#   Returns nothing if everything ok.
+#   If got error will output message with exit code.
 function Set-YamlFileFieldValue {
     param (
         [string]$YamlFile,
@@ -290,6 +348,13 @@ function Set-YamlFileFieldValue {
     }
 }
 
+# Gets yaml file field value
+# input:
+#   YamlFile - Yaml file path
+#   YamlPath - Yaml path
+# Output:
+#   YamlValue - The value of the field. Only if got no error.
+#   If got error will output message with exit code.
 function Get-YamlFileFieldValue {
     param (
         [string]$YamlFile,
@@ -313,7 +378,16 @@ function Get-YamlFileFieldValue {
     $script:YamlValue = $Result
 }
 
-function Add-YamlFileFieldObject {
+# Adds yaml file field value to another yaml file field
+# input:
+#   YamlFileSource - Source yaml file path
+#   YamlFileDest - Destination yaml file path
+#   YamlPathSource - Yaml path of the source yaml
+#   YamlPathDest - Yaml path of the destination yaml
+# Output:
+#   Retunrs nothing if everything is ok.
+#   If got error will output message with exit code.
+function Add-YamlFileFieldValueToAnotherYamlFileField {
     param (
         [string]$YamlFileSource,
         [string]$YamlFileDest,
@@ -456,6 +530,25 @@ function Get-ParamValueList {
     $script:ParamValue = $JsonValue
 }
 
+# Gets Logz.io region
+# Input:
+#   ListenerUrl - Logz.io listener url
+# Output:
+#   LogzioRegion - Logz.io region
+function Get-LogzioRegion {
+    param (
+        [string]$ListenerUrl
+    )
+
+    $local:Region = 'us'
+    if ($ListenerUrl -match ".*-.*") {
+        $local:ListenerPart = $ListenerUrl.Split(".", 2)[0]
+        $Region = $ListenerPart.Split("-", 2)[1]
+    }
+
+    $script:LogzioRegion = $Region
+}
+
 # Installs Chocolatey
 # Error:
 #   Exit Code 1
@@ -497,8 +590,6 @@ function Invoke-Task {
     $local:FrameInterval = 250
     $local:Timeout = 300
     $local:Counter = 0
-
-    #[Console]::CursorVisible = $false
     
     $local:Job = Start-Job -ScriptBlock { 
         $ProgressPreference = 'SilentlyContinue'
@@ -562,7 +653,7 @@ function Invoke-Task {
         if (Test-Path -Path $TaskPostRunFile) {
             . $TaskPostRunFile
         }
-        #Remove-TempDir
+        
         $script:IsAgentFailed = $true
         Exit $ExitCode
     }

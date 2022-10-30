@@ -91,7 +91,7 @@ $ProgressPreference = 'SilentlyContinue'
 $WarningPreference = 'SilentlyContinue'
 [Console]::CursorVisible = $false
 
-# Flags
+# Agent status flags
 $script:IsShowHelp = $false
 $script:IsLoadingAgentScriptsFailed = $false
 $script:IsRemoveServiceAnswerNo = $false
@@ -118,7 +118,7 @@ Write-Host '
     LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzzzzzzzzzzzzzzzz ...... iiiiiiii   ooooooooooo   
                                                          g:::::g                                                   
                                              gggggg      g:::::g                                                   
-                Agent v1.0.15                g:::::gg   gg:::::g                                                   
+                Agent v1.0.18                g:::::gg   gg:::::g                                                   
                                               g::::::ggg:::::::g                                                   
                                                gg:::::::::::::g                                                    
                                                  ggg::::::ggg                                                      
@@ -138,11 +138,14 @@ try {
     }
     catch {
         $local:ExitCode = 1
-        $IsLoadingAgentScriptsFailed = $true
+        $script:IsLoadingAgentScriptsFailed = $true
         Write-Host "agent.ps1 ($ExitCode): error loading agent scripts: $_" -ForegroundColor Red
 
         Exit $ExitCode
     }
+
+    # Write agent running log
+    Write-Log $script:LogLevelInfo 'Start running Logz.io agent ...' $false
 
     # Print title
     Write-Host '##########################'
@@ -151,23 +154,19 @@ try {
     Write-Host ' ###'
     Write-Host '##########################'
 
-    # Start running agent log
-    Write-Log 'INFO' 'Start running Logz.io agent ...'
     # Set Windows info consts
-    Invoke-Task 'Set-WindowsInfoConsts' @{} 'Setting Windows info consts' @($AgentFunctionsFile)
-    # Create Logz.io AppData directory
-    Invoke-Task 'New-LogzioAppDataDir' @{} 'Creating Logz.io AppData directory' @($AgentFunctionsFile)
+    Invoke-Task 'Set-WindowsInfoConsts' @{} 'Setting Windows info consts' @($script:AgentFunctionsFile)
     # Check if PowerShell was run as Administrator
-    Invoke-Task 'Test-IsElevated' @{} 'Checking if PowerShell was run as Administrator' @($AgentFunctionsFile)
+    Invoke-Task 'Test-IsElevated' @{} 'Checking if PowerShell was run as Administrator' @($script:AgentFunctionsFile)
     # Get arguments
-    Invoke-Task 'Get-Arguments' @{AgentArgs = $args} 'Getting arguments' @($AgentFunctionsFile)
-    if ($IsShowHelp) {
+    Invoke-Task 'Get-Arguments' @{AgentArgs = $args} 'Getting arguments' @($script:AgentFunctionsFile)
+    if ($script:IsShowHelp) {
         Exit 0
     }
     # Check arguments validation
-    Invoke-Task 'Test-ArgumentsValidation' @{AppUrl = $AppUrl; AgentId = $AgentId; AgentJsonFile = $AgentJsonFile} 'Checking arguments validation' @($AgentFunctionsFile)
+    Invoke-Task 'Test-ArgumentsValidation' @{AppUrl = $script:AppUrl; AgentId = $script:AgentId; AgentJsonFile = $script:AgentJsonFile} 'Checking arguments validation' @($script:AgentFunctionsFile)
     # Set agent id const
-    Invoke-Task 'Set-AgentIdConst' @{AgentId = $AgentId} 'Setting agent id const' @($AgentFunctionsFile)
+    Invoke-Task 'Set-AgentIdConst' @{AgentId = $script:AgentId} 'Setting agent id const' @($script:AgentFunctionsFile)
 
     # Print title
     Write-Host
@@ -178,9 +177,9 @@ try {
     Write-Host '#################'
 
     # Download jq
-    Invoke-Task 'Get-Jq' @{} 'Downloading jq' @($AgentFunctionsFile)
+    Invoke-Task 'Get-Jq' @{} 'Downloading jq' @($script:AgentFunctionsFile)
     # Download yq
-    Invoke-Task 'Get-Yq' @{} 'Downloading yq' @($AgentFunctionsFile)
+    Invoke-Task 'Get-Yq' @{} 'Downloading yq' @($script:AgentFunctionsFile)
 
     # Print title
     Write-Host
@@ -191,15 +190,15 @@ try {
     Write-Host '######################'
 
     # Get agent json
-    Invoke-Task 'Get-AgentJson' @{AppUrl = $AppUrl; AgentJsonFile = $AgentJsonFile} 'Getting agent json' @($AgentFunctionsFile)
+    Invoke-Task 'Get-AgentJson' @{AppUrl = $script:AppUrl; AgentJsonFile = $script:AgentJsonFile} 'Getting agent json' @($script:AgentFunctionsFile)
     # Set agent json consts
-    Invoke-Task 'Set-AgentJsonConsts' @{} 'Setting agent json consts' @($AgentFunctionsFile)
+    Invoke-Task 'Set-AgentJsonConsts' @{} 'Setting agent json consts' @($script:AgentFunctionsFile)
     # Get Logz.io listener url
-    Invoke-Task 'Get-LogzioListenerUrl' @{} 'Getting Logz.io listener url' @($AgentFunctionsFile)
+    Invoke-Task 'Get-LogzioListenerUrl' @{} 'Getting Logz.io listener url' @($script:AgentFunctionsFile)
     # Get Logz.io region
-    Invoke-Task 'Get-LogzioRegion' @{ListenerUrl = $ListenerUrl} 'Getting Logz.io region' @($AgentFunctionsFile)
+    Invoke-Task 'Get-LogzioRegion' @{ListenerUrl = $script:ListenerUrl} 'Getting Logz.io region' @($script:AgentFunctionsFile)
     # Download subtype files
-    Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $RepoRelease} 'Donwloading subtype files' @($AgentFunctionsFile)
+    Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $script:RepoRelease} 'Donwloading subtype files' @($script:AgentFunctionsFile)
 
     # Run subtype prerequisites
     Invoke-SubTypePrerequisites
