@@ -4,7 +4,7 @@
 
 # Checks if localhost can connect to Logz.io logs (port 8071)
 # Input:
-#   ---
+#   FuncArgs- Hashtable {ListenerUrl = $script:ListenerUrl}
 # Output:
 #   ---
 function Test-CanLocalhostConnectToLogzioLogs {
@@ -16,19 +16,13 @@ function Test-CanLocalhostConnectToLogzioLogs {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if localhost can connect to Logz.io logs (port 8071) ...'
-    Send-LogToLogzio $LogLevelDebug $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
-    Write-Log $LogLevelDebug $Message
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Write-Log $script:LogLevelDebug $Message
 
-    if ($FuncArgs.Count -eq 0) {
-        $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
-        Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-    if (-Not $FuncArgs.ContainsKey('ListenerUrl')) {
-        $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'ListenerUrl' key"
-        Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('ListenerUrl')
+    if ($Err.Count -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platform $script:SubType
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -43,13 +37,14 @@ function Test-CanLocalhostConnectToLogzioLogs {
         }
 
         $Message = "prerequisites.ps1 ($ExitCode): localhost cannot connect to '$ListenerUrl`:8071'. please check your network for port 8071"
-        Send-LogToLogzio $LogLevelError $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
+        return $ExitCode
     }
     catch {
         $Message = "prerequisites.ps1 ($ExitCode): error testing network connection to '$ListenerUrl`:8071': $_"
-        Send-LogToLogzio $LogLevelError $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -58,7 +53,7 @@ function Test-CanLocalhostConnectToLogzioLogs {
 
 # Checks if localhost can connect to Logz.io metrics (port 8053)
 # Input:
-#   ---
+#   FuncArgs- Hashtable {ListenerUrl = $script:ListenerUrl}
 # Ouput:
 #   ---
 function Test-CanLocalhostConnectToLogzioMetrics {
@@ -70,19 +65,13 @@ function Test-CanLocalhostConnectToLogzioMetrics {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if localhost can connect to Logz.io metrics (port 8053) ...'
-    Send-LogToLogzio $LogLevelDebug $Message $LogStepPrerequisites $LogScriptPrerequisites $FuncName $AgentId $Platfrom $Subtype
-    Write-Log $LogLevelDebug $Message
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Write-Log $script:LogLevelDebug $Message
 
-    if ($FuncArgs.Count -eq 0) {
-        $Message = "agent.ps1 ($ExitCode): function hashtable argument is empty"
-        Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-    if (-Not $FuncArgs.ContainsKey('ListenerUrl')) {
-        $Message = "agent.ps1 ($ExitCode): function hashtable argument does not contain 'ListenerUrl' key"
-        Send-LogToLogzio $LogLevelError $Message $LogStepInit $LogScriptAgent $FuncName $AgentId $Platform $SubType
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('ListenerUrl')
+    if ($Err.Count -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platform $script:SubType
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -97,13 +86,14 @@ function Test-CanLocalhostConnectToLogzioMetrics {
         }
 
         $Message = "prerequisites.ps1 ($ExitCode): localhost cannot connect to '$ListenerUrl`:8053'. please check your network for port 8053"
-        Send-LogToLogzio $LogLevelError $Message $LogStepPrerequisites $LogScriptAgent $FuncName $AgentId $Platfrom $Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptAgent $FuncName $script:AgentId $script:Platfrom $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
+        return $ExitCode
     }
     catch {
         $Message = "prerequisites.ps1 ($ExitCode): error testing network connection to '$ListenerUrl`:8053': $_"
-        Send-LogToLogzio $LogLevelError $Message $LogStepPrerequisites $LogScriptAgent $FuncName $AgentId $Platfrom $Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptAgent $FuncName $script:AgentId $script:Platfrom $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
