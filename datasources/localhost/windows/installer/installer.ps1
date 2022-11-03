@@ -112,43 +112,25 @@ if ($script:IsServiceExist) {
     # Get user answer about removing the existed service and run logic according the answer
     Invoke-RemoveServiceOrExit
 }
-# Create Logz.io AppData subdirectory
-Invoke-Task 'New-LogzioAppDataSubDir' @{} 'Creating Logz.io AppData subdirectory' @($InstallerScriptFile)
 # Download OTEL collector exe
 Invoke-Task 'Get-OtelCollectorExe' @{} 'Downloading OTEL collector exe' @($InstallerScriptFile)
 # Run each datasource scripts
 Invoke-AllDataSources
 
+# Print title
+Write-Host
+Write-Host '####################'
+Write-Host '### ' -NoNewline
+Write-Host 'Installation' -ForegroundColor Magenta -NoNewline
+Write-Host ' ###'
+Write-Host '####################'
 
-
-
-
-
+# Create Logz.io AppData subdirectory
+Invoke-Task 'New-LogzioAppDataSubDir' @{} 'Creating Logz.io AppData subdirectory' @($InstallerScriptFile)
+# Copy Logz.io OTEL files to AppData sub directory
+Invoke-Task 'Copy-LogzioOtelFilesToAppDataSubDir' @{} 'Copying Logz.io OTEL files to AppData sub directory' @($InstallerScriptFile)
 # Run Logz.io OTEL collector service
-#Write-Host "`ninstaller:"
-#Invoke-Task "Invoke-LogzioOTELCollectorService" "running Logz.io OTEL collector service"
-
-# Print success message
-#Write-Host
-#Write-Info "##### Logz.io agent was finished successfully #####"
-
-# Print information
-#Write-Host "`nInformation:`n"
-#Write-Host "Collector Binary" -ForegroundColor Magenta -NoNewLine
-#Write-Host ": $otelBin"
-#Write-Host "Collector Config" -ForegroundColor Magenta -NoNewLine
-#Write-Host ": $otelConfig"
-#Write-Host "Start Service Command" -ForegroundColor Magenta -NoNewLine
-#Write-Host ": Start-Service -Name LogzioOTELCollector"
-#Write-Host "Stop Service Command" -ForegroundColor Magenta -NoNewLine
-#Write-Host ": Stop-Service -Name LogzioOTELCollector"
-#Write-Host "Delete Service Command" -ForegroundColor Magenta -NoNewLine
-#Write-Host ": sc.exe DELETE LogzioOTELCollector (stop the service before deleting it)"
-#Write-Host "Show Service Command" -ForegroundColor Magenta -NoNewLine
-#Write-Host ": Get-Service -Name LogzioOTELCollector"
-#Write-Host "Show Logs Command" -ForegroundColor Magenta -NoNewLine
-#Write-Host ": eventvwr.msc ('Windows Logs'->'Application' all logs with source 'LogzioOTELCollector')"
-#Write-Host
+Invoke-Task 'Invoke-LogzioOtelCollectorService' @{} 'Running Logz.io OTEL collector service' @($InstallerScriptFile)
 
 # Finished successfully
 Exit 0
