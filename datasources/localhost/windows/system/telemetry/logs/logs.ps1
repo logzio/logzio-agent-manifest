@@ -2,7 +2,7 @@
 ##################################################### WINDOWS Logs Script #######################################################
 #################################################################################################################################
 
-$local:LogsFunctionsScript = "$LogzioTempDir\$Platform\$SubType\$DataSourceSystem\$LogsFunctionsFile"
+$local:LogsFunctionsScript = "$script:LogzioTempDir\$script:Platform\$script:SubType\$($script:CurrentDataSource.ToLower())\$script:LogsFunctionsFile"
 
 # Print headline
 Write-Host

@@ -2,7 +2,7 @@
 #################################################### WINDOWS Metrics Script #####################################################
 #################################################################################################################################
 
-$local:MetricsFunctionsScript = "$LogzioTempDir\$Platform\$SubType\$DataSourceSystem\$MetricsFunctionsFile"
+$local:MetricsFunctionsScript = "$script:LogzioTempDir\$script:Platform\$script:SubType\$($script:CurrentDataSource.ToLower())\$script:MetricsFunctionsFile"
 
 # Print headline
 Write-Host

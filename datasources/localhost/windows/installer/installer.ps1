@@ -13,7 +13,7 @@ function Invoke-RemoveServiceOrExit {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting answer from user about removing the existed service ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     $local:Answer = ''
@@ -29,7 +29,7 @@ function Invoke-RemoveServiceOrExit {
     }
 
     $Message = "The user answer is '$Answer'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     if ($Answer.Equals('n')) {
@@ -51,23 +51,26 @@ function Invoke-AllDataSources {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Running all datasources scripts ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $script:FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $script:FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     foreach ($DataSource in $script:DataSources) {
         $Message = "Running $DataSource datasource prerequisites ..."
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-Log $script:LogLevelDebug $Message
 
+        $script:CurrentDataSource = $DataSource
+        "`$script:CurrentDataSource = '$DataSource'" | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
+
         try {
-            . "$script:LogzioTempDir\$script:Platform\$script:SubType\$DataSource\$script:PrerequisitesFile" -ErrorAction Stop
+            . "$script:LogzioTempDir\$script:Platform\$script:SubType\$($DataSource.ToLower())\$script:PrerequisitesFile" -ErrorAction Stop
             if ($LASTEXITCODE -ne 0) {
                 Exit $LASTEXITCODE
             }
         }
         catch {
             $Message = "installer.ps1 ($ExitCode): error running $DataSource datasource prerequisites: $_"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
             Write-Error $Message
 
             $script:IsAgentFailed = $true
@@ -75,18 +78,18 @@ function Invoke-AllDataSources {
         }
 
         $Message = "Running $DataSource datasource installer ..."
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-Log $script:LogLevelDebug $Message
     
         try {
-            . "$script:LogzioTempDir\$script:Platform\$script:SubType\$DataSource\$script:InstallerFile" -ErrorAction Stop
+            . "$script:LogzioTempDir\$script:Platform\$script:SubType\$($DataSource.ToLower())\$script:InstallerFile" -ErrorAction Stop
             if ($LASTEXITCODE -ne 0) {
                 Exit $LASTEXITCODE
             }
         }
         catch {
             $Message = "installer.ps1 ($ExitCode): error running $DataSource datasource installer: $_"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
             Write-Error $Message
 
             $script:IsAgentFailed = $true

@@ -12,13 +12,13 @@ function Get-LogzioMetricsToken {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting Logz.io metrics token ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Get-JsonFileFieldValue $script:AgentJson '.shippingTokens.METRICS'
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -27,7 +27,7 @@ function Get-LogzioMetricsToken {
     $local:ShippingToken = $script:JsonValue
 
     $Message = "Logz.io metrics token is '$ShippingToken'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:MetricsToken = '$ShippingToken'"
@@ -43,13 +43,13 @@ function Add-MetricsPiplineToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding metrics pipeline to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelResourcesDir\metrics_pipeline.yaml" "$script:OtelResourcesDir\otel_config.yaml" '' '.service.pipelines'
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -70,13 +70,13 @@ function Get-MetricsOtelReceivers {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting metrics OTEL receivers ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsTelemetry')
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -87,7 +87,7 @@ function Get-MetricsOtelReceivers {
     $Err = Get-JsonStrFieldValueList $MetricsTelemetry '.otel.receivers[]'
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -96,7 +96,7 @@ function Get-MetricsOtelReceivers {
     $local:MetricsOtelReceivers = $script:JsonValue
 
     $Message = "Metrics OTEL receivers are '$MetricsOtelReceivers'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:MetricsOtelReceiversStr = Convert-ListToStr $MetricsOtelReceivers
@@ -117,13 +117,13 @@ function Add-MetricsReceiversToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding metrics receivers to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsOtelReceivers')
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -135,7 +135,7 @@ function Add-MetricsReceiversToOtelConfig {
         $Err = Get-YamlFileFieldValue "$script:OtelReceiversDir\$MetricsOtelReceiver.yaml" '.windows_run'
         if ($Err.Count -ne 0) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
@@ -152,7 +152,7 @@ function Add-MetricsReceiversToOtelConfig {
         }
         catch {
             $Message = "metrics.ps1 ($ExitCode): error loading '$MetricsOtelReceiver' OTEL function script: $_"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
@@ -161,23 +161,23 @@ function Add-MetricsReceiversToOtelConfig {
         $Err = New-OtelReceiver @{}
         if ($Err.Count -ne 0 -and $Err[1] -ne 1) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $Lscript:ogScriptMetrics $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
         }
         if ($Err.Count -ne 0) {
             $Message = $Err[0]
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
 
             continue
         }
 
-        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelReceiversDir\$MetricsOtelReceiver.yaml" "$script:OtelResourcesDir\otel_config.yaml" '.receiver' '.receivers'
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelReceiversDir\$MetricsOtelReceiver.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '.receiver' '.receivers'
         if ($Err.Count -ne 0) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -185,17 +185,17 @@ function Add-MetricsReceiversToOtelConfig {
 
         $local:ReceiverName = $MetricsOtelReceiver.Replace('_', '/')
 
-        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.service.pipelines.metrics.receivers' "$ReceiverName/NAME"
+        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.metrics.receivers' "$ReceiverName/NAME"
         if ($Err.Count -ne 0) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
         }
     }
 
-    (Get-Content -Path "$script:OtelResourcesDir\otel_config.yaml").Replace('NAME', "$script:Platform`_$script:SubType`_system") | Set-Content -Path "$script:OtelResourcesDir\otel_config.yaml"
+    (Get-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName").Replace('NAME', "$($script:Platform.ToLower())_$($script:SubType.ToLower())_$($script:CurrentDataSource.ToLower())") | Set-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName"
 }
 
 # Gets metrics OTEL processors
@@ -212,13 +212,13 @@ function Get-MetricsOtelProcessors {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting metrics OTEL processors ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsTelemetry')
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -229,7 +229,7 @@ function Get-MetricsOtelProcessors {
     $Err = Get-JsonStrFieldValueList $MetricsTelemetry '.otel.processors[]'
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -238,7 +238,7 @@ function Get-MetricsOtelProcessors {
     $local:MetricsOtelProcessors = $script:JsonValue
 
     $Message = "Metrics OTEL processors are '$MetricsOtelProcessors'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:MetricsOtelProcessorssStr = Convert-ListToStr $MetricsOtelProcessors
@@ -259,13 +259,13 @@ function Add-MetricsProcessorsToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding metrics processors to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsOtelProcessors')
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -274,10 +274,10 @@ function Add-MetricsProcessorsToOtelConfig {
     $local:MetricsOtelProcessors = $FuncArgs.MetricsOtelProcessors
 
     $local:ExistProcessors = $null
-    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.processors'
+    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -287,10 +287,10 @@ function Add-MetricsProcessorsToOtelConfig {
     }
 
     if ($null -eq $ExistProcessors) {
-        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.processors | keys'
+        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors | keys'
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -302,10 +302,10 @@ function Add-MetricsProcessorsToOtelConfig {
     foreach ($MetricsOtelProcessor in $MetricsOtelProcessors) {
         $local:ProcessorName = $MetricsOtelProcessor.Replace('_', '/')
 
-        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.service.pipelines.metrics.processors' $ProcessorName
+        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.metrics.processors' $ProcessorName
         if ($Err.Count -ne 0) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -326,10 +326,10 @@ function Add-MetricsProcessorsToOtelConfig {
             continue
         }
 
-        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\$MetricsOtelProcessor.yaml" "$script:OtelResourcesDir\otel_config.yaml" '' '.processors'
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\$MetricsOtelProcessor.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.processors'
         if ($Err.Count -ne 0) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -351,13 +351,13 @@ function Add-MetricsExporterToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding metrics exporter to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsToken', 'ListenerUrl')
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -367,10 +367,10 @@ function Add-MetricsExporterToOtelConfig {
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
     $local:ExistProcessors = $null
-    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.exporters'
+    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -380,10 +380,10 @@ function Add-MetricsExporterToOtelConfig {
     }
 
     if ($null -eq $ExistProcessors) {
-        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.exporters | keys'
+        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters | keys'
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -401,7 +401,7 @@ function Add-MetricsExporterToOtelConfig {
     $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' "https://$ListenerUrl`:8053"
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -410,16 +410,16 @@ function Add-MetricsExporterToOtelConfig {
     $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.Authorization' "`"Bearer $MetricsToken`""
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
-    $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelExportersDir\prometheusremotewrite.yaml" "$script:OtelResourcesDir\otel_config.yaml" '' '.exporters'
+    $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelExportersDir\prometheusremotewrite.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.exporters'
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -436,7 +436,7 @@ function Set-MetricsAddressToOTELConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Setting metrics address to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Port = 8888
@@ -454,10 +454,10 @@ function Set-MetricsAddressToOTELConfig {
 
     $local:Address = "localhost:$Port"
 
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.service.telemetry.metrics.address' $Address
+    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.telemetry.metrics.address' $Address
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode

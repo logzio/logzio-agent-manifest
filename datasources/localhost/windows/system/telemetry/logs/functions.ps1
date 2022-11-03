@@ -12,13 +12,13 @@ function Get-LogzioLogsToken {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting Logz.io logs token ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Get-JsonFileFieldValue $script:AgentJson '.shippingTokens.LOG_ANALYTICS'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -27,7 +27,7 @@ function Get-LogzioLogsToken {
     $local:ShippingToken = $script:JsonValue
 
     $Message = "Logz.io logs token is '$ShippingToken'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:LogsToken = '$ShippingToken'"
@@ -47,13 +47,13 @@ function Get-LogSources {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting log sources ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsParams')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -64,7 +64,7 @@ function Get-LogSources {
     $Err = Get-ParamValueList $LogsParams 'logSources'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -73,7 +73,7 @@ function Get-LogSources {
     $local:LogSources = $script:ParamValue
     
     $local:Message = "Log sources are '$LogSources'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $LogSourcesStr = Convert-ListToStr $LogSources
@@ -94,13 +94,13 @@ function Get-IsApplicationLogSelected {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting is application log selected ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsParams')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -111,7 +111,7 @@ function Get-IsApplicationLogSelected {
     $Err = Get-ParamValue $LogsParams 'isApplicationLog'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -124,7 +124,7 @@ function Get-IsApplicationLogSelected {
     else {
         $Message = "Application log option was not selected"
     }
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:IsApplicationLog = `$$IsApplicationLog"
@@ -144,13 +144,13 @@ function Get-IsSecurityLogSelected {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting is security log selected ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsParams')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -161,7 +161,7 @@ function Get-IsSecurityLogSelected {
     $Err = Get-ParamValue $LogsParams 'isSecurityLog'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -174,7 +174,7 @@ function Get-IsSecurityLogSelected {
     else {
         $Message = 'Security log option was not selected'
     }
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:IsSecurityLog = `$$IsSecurityLog"
@@ -194,13 +194,13 @@ function Get-IsSystemLogSelected {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting is system log selected ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsParams')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -211,7 +211,7 @@ function Get-IsSystemLogSelected {
     $Err = Get-ParamValue $LogsParams 'isSystemLog'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -224,7 +224,7 @@ function Get-IsSystemLogSelected {
     else {
         $Message = 'System log option was not selected'
     }
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:IsSystemLog = `$$IsSystemLog"
@@ -240,13 +240,13 @@ function Add-LogsPiplineToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding logs pipeline to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelResourcesDir\logs_pipeline.yaml" "$script:OtelResourcesDir\otel_config.yaml" '' '.service.pipelines'
+    $local:Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelResourcesDir\logs_pipeline.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.service.pipelines'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -267,13 +267,13 @@ function Get-LogsOtelReceivers {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting logs OTEL receivers ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsTelemetry')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -284,7 +284,7 @@ function Get-LogsOtelReceivers {
     $Err = Get-JsonStrFieldValueList $LogsTelemetry '.otel.receivers[]'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -293,7 +293,7 @@ function Get-LogsOtelReceivers {
     $local:LogsOtelReceivers = $script:JsonValue
 
     $Message = "Logs OTEL receivers are '$LogsOtelReceivers'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $LogLevelDebug $Message
 
     $local:LogsOtelReceiversStr = Convert-ListToStr $LogsOtelReceivers
@@ -315,13 +315,13 @@ function Add-LogsReceiversToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding logs receivers to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsOtelReceivers', 'LogSources', 'IsApplicationLog', 'IsSecurityLog', 'IsSystemLog')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -337,7 +337,7 @@ function Add-LogsReceiversToOtelConfig {
         $Err = Get-YamlFileFieldValue "$script:OtelReceiversDir\$LogsOtelReceiver.yaml" '.windows_run'
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
@@ -354,7 +354,7 @@ function Add-LogsReceiversToOtelConfig {
         }
         catch {
             $Message = "logs.ps1 ($ExitCode): error loading '$LogsOtelReceiver' OTEL function script: $_"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
@@ -363,23 +363,23 @@ function Add-LogsReceiversToOtelConfig {
         $Err = New-OtelReceiver @{LogSources = $LogSources; LogsType = 'agent-windows'}
         if ($Err.Count -ne 0 -and $Err[1] -ne 1) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
         }
         if ($Err.Count -ne 0) {
             $Message = $Err[0]
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
 
             continue
         }
 
-        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelReceiversDir\$LogsOtelReceiver.yaml" "$script:OtelResourcesDir\otel_config.yaml" '.receiver' '.receivers'
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelReceiversDir\$LogsOtelReceiver.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '.receiver' '.receivers'
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -387,17 +387,17 @@ function Add-LogsReceiversToOtelConfig {
 
         $local:ReceiverName = $LogsOtelReceiver.Replace('_', '/')
 
-        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.service.pipelines.logs.receivers' "$ReceiverName/NAME"
+        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.logs.receivers' "$ReceiverName/NAME"
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
         }
     }
 
-    (Get-Content -Path "$script:OtelResourcesDir\otel_config.yaml").Replace('NAME', "$script:Platform`_$script:SubType`_system") | Set-Content -Path "$script:OtelResourcesDir\otel_config.yaml"
+    (Get-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName").Replace('NAME', "$($script:Platform.ToLower())_$($script:SubType.ToLower())_$($script:CurrentDataSource.ToLower())") | Set-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName"
 }
 
 # Gets logs OTEL processors
@@ -414,13 +414,13 @@ function Get-LogsOtelProcessors {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting logs OTEL processors ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsTelemetry')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -431,7 +431,7 @@ function Get-LogsOtelProcessors {
     $Err = Get-JsonStrFieldValueList $LogsTelemetry '.otel.processors[]'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -440,7 +440,7 @@ function Get-LogsOtelProcessors {
     $local:LogsOtelProcessors = $script:JsonValue
 
     $Message = "Logs OTEL processors are '$LogsOtelProcessors'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:LogsOtelProcessorssStr = Convert-ListToStr $LogsOtelProcessors
@@ -461,13 +461,13 @@ function Add-LogsProcessorsToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding logs processors to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsOtelProcessors')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -476,10 +476,10 @@ function Add-LogsProcessorsToOtelConfig {
     $local:LogsOtelProcessors = $FuncArgs.LogsOtelProcessors
 
     $local:ExistProcessors = $null
-    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.processors'
+    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -489,10 +489,10 @@ function Add-LogsProcessorsToOtelConfig {
     }
 
     if ($null -eq $ExistProcessors) {
-        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.processors | keys'
+        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors | keys'
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -504,10 +504,10 @@ function Add-LogsProcessorsToOtelConfig {
     foreach ($LogsOtelProcessor in $LogsOtelProcessors) {
         $local:ProcessorName = $LogsOtelProcessor.Replace('_', '/')
 
-        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.service.pipelines.logs.processors' $ProcessorName
+        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.logs.processors' $ProcessorName
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -528,10 +528,10 @@ function Add-LogsProcessorsToOtelConfig {
             continue
         }
 
-        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\$LogsOtelProcessor.yaml" "$script:OtelResourcesDir\otel_config.yaml" '' '.processors'
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\$LogsOtelProcessor.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.processors'
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -553,13 +553,13 @@ function Add-LogsExporterToOtelConfig {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Adding logs exporter to OTEL config ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsToken', 'ListenerUrl')
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -569,10 +569,10 @@ function Add-LogsExporterToOtelConfig {
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
     $local:ExistExporters = $null
-    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.exporters'
+    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -582,10 +582,10 @@ function Add-LogsExporterToOtelConfig {
     }
 
     if ($null -eq $ExistExporers) {
-        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\otel_config.yaml" '.exporters | keys'
+        $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters | keys'
         if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
@@ -603,27 +603,31 @@ function Add-LogsExporterToOtelConfig {
     $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\logzio_logs.yaml" '.logzio/logs.account_token' $LogsToken
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
     $local:LogzioRegion = Get-LogzioRegion $ListenerUrl
+    
+    $Message = "Logz.io region is '$LogzioRegion'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
 
     $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\logzio_logs.yaml" '.logzio/logs.region' $LogzioRegion
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
-    $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelExportersDir\logzio_logs.yaml" "$script:OtelResourcesDir\otel_config.yaml" '' '.exporters'
+    $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelExportersDir\logzio_logs.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.exporters'
     if ($Err.Count -ne 0) {
         $Message = "logs.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode

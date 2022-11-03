@@ -11,7 +11,7 @@ Write-Host '###################'
 Write-Host 'Collector Binary' -ForegroundColor Magenta -NoNewLine
 Write-Host ": $script:OtelCollectorExe"
 Write-Host 'Collector Config' -ForegroundColor Magenta -NoNewLine
-Write-Host ": $script:LogzioOtelCollectorDir\otel_config"
+Write-Host ": $script:OtelConfig"
 Write-Host 'Logz.io Agent Logs' -ForegroundColor Magenta -NoNewLine
 Write-Host ": $script:AgentLogFile"
 Write-Host 'Start Service' -ForegroundColor Magenta -NoNewLine

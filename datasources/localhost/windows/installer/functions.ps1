@@ -11,13 +11,13 @@ function Get-IsLogzioOtelCollectorServiceExist {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if Logz.io OTEL collector service exist ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $LogLevelDebug $Message
 
     $local:Service = Get-Service -Name $script:LogzioOtelCollectorServiceName -ErrorAction SilentlyContinue
     if ([string]::IsNullOrEmpty($Service)) {
         $Message = "$script:LogzioOtelCollectorServiceName service does not exist"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-Log $script:LogLevelDebug $Message
 
         Write-TaskPostRun "`$script:IsServiceExist = `$false"
@@ -25,7 +25,7 @@ function Get-IsLogzioOtelCollectorServiceExist {
     }
 
     $Message = "$script:LogzioOtelCollectorServiceName service is already exists"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:IsServiceExist = `$true"
@@ -41,7 +41,7 @@ function Remove-LogzioOtelCollectorService {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Removing Logz.io OTEL collector service ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     try {
@@ -49,17 +49,17 @@ function Remove-LogzioOtelCollectorService {
     }
     catch {
         $Message = "installer.ps1 ($ExitCode): error stopping '$script:LogzioOtelCollectorServiceName' service: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
     }
 
     sc.exe DELETE $script:LogzioOtelCollectorServiceName 2>$script:TaskErrorFile | Out-Null
-    if ($LASTEXITCODE -eq 0) {
+    if ($LASTEXITCODE -ne 0) {
         return
     }
 
     $Message = "installer.ps1 ($ExitCode): error deleting '$script:LogzioOtelCollectorServiceName' service: $(Get-TaskErrorMessage)"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
@@ -75,7 +75,7 @@ function Get-OtelCollectorExe {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Downloading OTEL collector exe ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     try {
@@ -83,7 +83,7 @@ function Get-OtelCollectorExe {
     }
     catch {
         $Message = "installer.ps1 ($ExitCode): error downloading OTEL collector tar.gz: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -95,7 +95,7 @@ function Get-OtelCollectorExe {
     }
 
     $Message = "installer.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-TaskErrorMessage)"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
@@ -111,7 +111,7 @@ function New-LogzioAppDataSubDir {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Creating Logz.io AppData subdirectory ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
     
     try {
@@ -119,7 +119,7 @@ function New-LogzioAppDataSubDir {
     }
     catch {
         $Message = "installer.ps1 ($ExitCode): error creating Logz.io OTEL collector directory: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -136,16 +136,16 @@ function Copy-LogzioOtelFilesToAppDataSubDir {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Copying Logz.io OTEL files to AppData subdirectory ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     try {
         Copy-Item -Path "$script:LogzioTempDir\$script:OtelCollectorExeName" -Destination $script:LogzioOtelCollectorDir -Force -ErrorAction Stop
-        Copy-Item -Path "$script:OtelResourcesDir\otel_config.yaml" -Destination $script:LogzioOtelCollectorDir -Force -ErrorAction Stop
+        Copy-Item -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Destination $script:LogzioOtelCollectorDir -Force -ErrorAction Stop
     }
     catch {
         $Message = "installer.ps1 ($ExitCode): error copying OTEL files to AppData subdirectory: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -162,24 +162,24 @@ function Invoke-LogzioOtelCollectorService {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Running Logz.io OTEL collector service ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
-    $Message = Get-Content -Path "$script:LogzioOtelCollectorDir\otel_config.yaml"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+    $Message = Get-Content -Path $script:OtelConfig
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
     try {
-        New-Service -Name $script:LogzioOtelCollectorServiceName -BinaryPathName "$script:OtelCollectorExe --config $script:LogzioOtelCollectorDir\otel_config.yaml" -Description "Collects localhost logs/metrics and sends them to Logz.io." -ErrorAction Stop | Out-Null
+        New-Service -Name $script:LogzioOtelCollectorServiceName -BinaryPathName "$script:OtelCollectorExe --config $script:OtelConfig" -Description "Collects localhost logs/metrics and sends them to Logz.io." -ErrorAction Stop | Out-Null
     }
     catch {
         $Message = "installer.ps1 ($ExitCode): error creating '$script:LogzioOtelCollectorServiceName' service: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
         sc.exe DELETE LogzioOTELCollector 2>$script:TaskErrorFile | Out-Null
         if ($LASTEXITCODE -ne 0) {
             $Message = "installer.ps1 ($ExitCode): error deleting '$script:LogzioOtelCollectorServiceName' service: $(Get-TaskErrorMessage)"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
             Write-TaskPostRun "Write-Warning `"$Message`""
         }
 
@@ -191,13 +191,13 @@ function Invoke-LogzioOtelCollectorService {
     }
     catch {
         $Message = "installer.ps1 ($ExitCode): error starting '$script:LogzioOtelCollectorServiceName' service: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
         sc.exe DELETE LogzioOTELCollector 2>$script:TaskErrorFile | Out-Null
         if ($LASTEXITCODE -ne 0) {
             $Message = "installer.ps1 ($ExitCode): error deleting '$script:LogzioOtelCollectorServiceName' service: $(Get-TaskErrorMessage)"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
             Write-TaskPostRun "Write-Warning `"$Message`""
         }
 

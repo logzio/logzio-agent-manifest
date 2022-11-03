@@ -17,12 +17,12 @@ function Get-SelectedProducts {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting the selected products ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     $local:DataSourceIndex = 0
     foreach ($DataSource in $script:DataSources) {
-        if ($Datasource.Equals($script:DataSourceSystem.ToLower())) {
+        if ($Datasource.Equals($script:CurrentDataSource)) {
             break
         }
 
@@ -32,7 +32,7 @@ function Get-SelectedProducts {
     $local:Err = Get-JsonFileFieldValueList $script:AgentJson ".configuration.subtypes[0].datasources[$DataSourceIndex].telemetries[]"
     if ($Err.Count -ne 0) {
         $Message = "installer.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -47,7 +47,7 @@ function Get-SelectedProducts {
         $Err = Get-JsonStrFieldValue $Telemetry '.type'
         if ($Err.Count -ne 0) {
             $Message = "installer.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
@@ -59,7 +59,7 @@ function Get-SelectedProducts {
         $Err = Get-JsonStrFieldValueList $Telemetry '.params[]'
         if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
             $Message = "installer.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
@@ -75,13 +75,13 @@ function Get-SelectedProducts {
 
         if ($type.Equals('LOG_ANALYTICS')) {
             $Message = 'Logs option was selected'
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
             $Message = "Logs telemetry is '$Telemetry'"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
             $Message = "Logs params are '$Params'"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
 
             $IsLogsOptionSelected = $true
@@ -89,13 +89,13 @@ function Get-SelectedProducts {
             Write-TaskPostRun "`$script:LogsParams = $ParamsStr"
         } elseif ($Type.Equals('METRICS')) {
             $Message = 'Metrics option was selected'
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
             $Message = "Metrics telemetry is '$Telemetry'"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
             $Message = "Metrics params are '$Params'"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:DataSourceSystem
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
 
             $IsMetricsOptionSelected = $true
