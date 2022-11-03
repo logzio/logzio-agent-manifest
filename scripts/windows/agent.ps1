@@ -2,40 +2,59 @@
 ###################################################### WINDOWS Agent Script #####################################################
 #################################################################################################################################
 
-function Invoke-AgentFinallizer {
+# Deletes Logz.io temp directory
+# Input:
+#   ---
+# Output:
+#   ---
+function Remove-TempDir {
+    try {
+        Remove-Item -Path $script:LogzioTempDir -Recurse -ErrorAction Stop
+    } 
+    catch {
+        Write-Warning "failed to delete Logz.io temp directory: $_"
+    }
+}
+
+# Prints agent final messages
+# Input:
+#   ---
+# Output:
+#   Agent final messages
+function Write-AgentFinalMessages {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     if ($IsShowHelp) {
         Exit 0
     }
-    if ($IsLoadingAgentScriptsFailed) {
+    if ($script:IsLoadingAgentScriptsFailed) {
         $local:Message = 'Agent Failed'
-        Write-MessageRepeater $Message 'Red'
+        Write-AgentStatus $Message 'Red'
+        Write-AgentSupport
         Exit $LASTEXITCODE
     }
     if ($IsRemoveServiceAnswerNo) {
+        Write-AgentInfo
+        Write-AgentSupport
         Exit 0
     }
     if ($IsAgentFailed) {
         $local:Message = 'Agent Failed'
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+        Write-Log $script:LogLevelInfo $Message
 
-        if ([string]::IsNullOrEmpty($AgentId)) {
-            Send-LogToLogzio $LogLevelInfo $Message $LogStepFinal $LogScriptAgent $FuncName
-        }
-        else {
-            Send-LogToLogzio $LogLevelInfo $Message $LogStepFinal $LogScriptAgent $FuncName $AgentId
-        }
-
-        Write-Log 'INFO' $Message
-        Write-MessageRepeater $Message 'Red'
+        Write-AgentStatus $Message 'Red'
+        Write-AgentSupport
         Exit $LASTEXITCODE
     }
     if ($IsAgentCompleted) {
         $local:Message = 'Agent Completed Successfully'
-        Send-LogToLogzio $LogLevelInfo $Message $LogStepFinal $LogScriptAgent $FuncName $AgentId
-        Write-Log 'INFO' $Message
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+        Write-Log $script:LogLevelInfo $Message
 
-        Write-MessageRepeater $Message 'Green'
+        Write-AgentStatus $Message 'Green'
+        Write-AgentInfo
+        Write-AgentSupport
         Exit 0
     }
 
@@ -43,30 +62,25 @@ function Invoke-AgentFinallizer {
     $local:Message = 'Agent Stopped By User'
     $local:Command = Get-Command -Name Send-LogToLogzio
     if (-Not [string]::IsNullOrEmpty($Command)) {
-        if ([string]::IsNullOrEmpty($AgentId)) {
-            Send-LogToLogzio $LogLevelInfo $Message 'Final' 'agent.ps1' $FuncName
-        }
-        else {
-            Send-LogToLogzio $LogLevelInfo $Message 'Final' 'agent.ps1' $FuncName $AgentId
-        }
-    }
-
-    if (-Not [string]::IsNullOrEmpty($LogFile)) {
-        if (Test-Path -Path $LogFile -PathType Leaf) {
-            Write-Log 'INFO' $Message
-        }
+        Send-LogToLogzio $LogLevelInfo $Message 'Final' 'agent.ps1' $FuncName $AgentId
     }
     
-    Write-MessageRepeater $Message 'Yellow'
+    Write-AgentStatus $Message 'Yellow'
     Exit 0
 }
 
-function Write-MessageRepeater {
+# Prints agent status
+# Input:
+#   ---
+# Ouput:
+#   Agent status
+function Write-AgentStatus {
     param (
         [string]$Message,
         [string]$Color
     )
 
+    Write-Host
     Write-Host
 
     $local:Repeat = 5
@@ -82,6 +96,34 @@ function Write-MessageRepeater {
         $Repeat--
     }
 
+    Write-Host
+    Write-Host
+}
+
+function Write-AgentInfo {
+    try {
+        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:AgentInfoFile" -ErrorAction Stop
+    }
+    catch {
+        $Message = "failed to print agent info: $_"
+        Write-Warning $Message
+    }
+}
+
+# Prints agent support message
+# Input:
+#   ---
+# Output:
+#   Support message 
+function Write-AgentSupport {
+    Write-Host
+    Write-Host '###############'
+    Write-Host '### ' -NoNewline
+    Write-Host 'Support' -ForegroundColor Magenta -NoNewline
+    Write-Host ' ###'
+    Write-Host '###############'
+    Write-Host "If you have any issue, request or additional questions, our Amazing Support Team will be more than happy to assist."
+    Write-Host "You can contact us via 'help@logz.io' email or chat in Logz.io application under 'Need help?'."
     Write-Host
 }
 
@@ -144,8 +186,13 @@ try {
         Exit $ExitCode
     }
 
+    # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
+    if (Test-Path -Path $TaskPostRunFile -PathType Leaf) {
+        Clear-Content $TaskPostRunFile -Force
+    }
+
     # Write agent running log
-    Write-Log $script:LogLevelInfo 'Start running Logz.io agent ...' $false
+    Write-Log $script:LogLevelInfo 'Start running Logz.io agent ...'
 
     # Print title
     Write-Host '##########################'
@@ -154,8 +201,8 @@ try {
     Write-Host ' ###'
     Write-Host '##########################'
 
-    # Set Windows info consts
-    Invoke-Task 'Set-WindowsInfoConsts' @{} 'Setting Windows info consts' @($script:AgentFunctionsFile)
+    # Set Windows and PowerShell info consts
+    Invoke-Task 'Set-WindowsAndPowerShellInfoConsts' @{} 'Setting Windows and PowerShell info consts' @($script:AgentFunctionsFile)
     # Check if PowerShell was run as Administrator
     Invoke-Task 'Test-IsElevated' @{} 'Checking if PowerShell was run as Administrator' @($script:AgentFunctionsFile)
     # Get arguments
@@ -205,23 +252,12 @@ try {
 
     #Run subtype installer
     Invoke-SubTypeInstaller
-
-    $IsAgentCompleted = $true
+    
+    $script:IsAgentCompleted = $true
 }
 finally {
-    #Remove-TempDir
-    Invoke-AgentFinallizer
+    Write-AgentFinalMessages
+    Remove-TempDir
 
     [Console]::CursorVisible = $true
 }
-
-
-<#
-# Append environment variable Path
-if ($env:Path -notcontains "C:\ProgramData\chocolatey\bin") {
-    $env:Path += ";C:\ProgramData\chocolatey\bin"
-}
-
-# Delete temp directory
-Remove-TempDir
-#>

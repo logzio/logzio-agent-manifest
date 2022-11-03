@@ -527,7 +527,7 @@ function Set-AgentJsonConsts {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
 
-    Command = "`$script:SubType = '$SubType'"
+    $Command = "`$script:SubType = '$SubType'"
     Write-TaskPostRun $Command
     $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
     
@@ -672,7 +672,7 @@ function Invoke-SubTypePrerequisites {
     Write-Log $LogLevelDebug $Message
 
     try {
-        . $script:LogzioTempDir\$script:Platform\$script:SubType\$script:PrerequisitesFile -ErrorAction Stop
+        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:PrerequisitesFile" -ErrorAction Stop
         if ($LASTEXITCODE -ne 0) {
             Exit $LASTEXITCODE
         }
@@ -701,7 +701,7 @@ function Invoke-SubTypeInstaller {
     Write-Log $script:LogLevelDebug $Message
 
     try {
-        . $script:LogzioTempDir\$script:Platform\$script:SubType\$script:InstallerFile -ErrorAction Stop
+        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:InstallerFile" -ErrorAction Stop
         if ($LASTEXITCODE -ne 0) {
             Exit $LASTEXITCODE
         }

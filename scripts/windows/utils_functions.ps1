@@ -56,7 +56,7 @@ function Write-Log {
         [string]$Message
     )
     
-    "[$LogLevel] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" | Out-File -Path $script:AgentLogFile -Append -Encoding utf8
+    "[$LogLevel] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" | Out-File -FilePath $script:AgentLogFile -Append -Encoding utf8
 }
 
 # Writes command into task post run script file
@@ -69,7 +69,7 @@ function Write-TaskPostRun {
         [string]$Command
     )
 
-    $Command | Out-File -Path $script:TaskPostRunFile -Append -Encoding utf8
+    $Command | Out-File -FilePath $script:TaskPostRunFile -Append -Encoding utf8
 }
 
 # Gets task error file content
@@ -110,10 +110,9 @@ function Send-LogToLogzio {
         [string]$DataSource = ''
     )
 
-    $Message = $Message.Replace('\', '\\')
-    $Message = $Message.Replace('"', '\"')
+    $Message = $Message.Replace('\', '\\').Replace('"', '\"')
 
-    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"os_name`":`"$WindowsName`",`"os_version`":`"$WindowsVersion`",`"shell_version`":`"$PowerShellVersion`""
+    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"os_name`":`"$script:WindowsName`",`"os_version`":`"$script:WindowsVersion`",`"shell_version`":`"$script:PowerShellVersion`""
 
     if ($Level.Equals($LogLevelError)) {
         $local:ErrorIdPartMatch = $Message | Select-String -Pattern '\([0-9]+\)'
@@ -143,7 +142,7 @@ function Send-LogToLogzio {
     }
 
     try {
-        Invoke-WebRequest -Uri 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -Body $Parameters -Method Get -UseBasicParsing | Out-Null
+        Invoke-WebRequest -Uri $script:SqsUrl -Body $Parameters -Method Get -UseBasicParsing | Out-Null
     }
     catch {
         Write-TaskPostRun "Write-Warning `"failed to send a request with log message to Logz.io agent SQS: $_`""
@@ -176,20 +175,6 @@ function Test-AreFuncArgsExist {
     }
 }
 
-# Deletes Logz.io temp directory
-# Input:
-#   ---
-# Output:
-#   ---
-function Remove-TempDir {
-    try {
-        Remove-Item -Path $LogzioTempDir -Recurse -ErrorAction Stop
-    } 
-    catch {
-        Write-TaskPostRun "Write-Warning `"failed to delete Logz.io temp directory: $_`""
-    }
-}
-
 # Gets json string field value
 # input:
 #   JsonStr - Json string
@@ -203,10 +188,10 @@ function Get-JsonStrFieldValue {
         [string]$JsonPath
     )
 
-    $local:Result = $JsonStr | &$JqExe -r $JsonPath 2>$TaskErrorFile
+    $local:Result = $JsonStr | &$script:JqExe -r $JsonPath 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         $JsonStr = $JsonStr.Replace('"', '`"')
-        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $TaskErrorFile)"
+        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)"
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
@@ -234,10 +219,10 @@ function Get-JsonStrFieldValueList {
         [string]$JsonPath
     )
 
-    $local:Result = $JsonStr | &$JqExe -c $JsonPath 2>$TaskErrorFile
+    $local:Result = $JsonStr | &$script:JqExe -c $JsonPath 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         $JsonStr = $JsonStr.Replace('"', '`"')
-        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $TaskErrorFile)"
+        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)"
         return 1
     }
     if ($Result.Count -eq 0) {
@@ -261,9 +246,9 @@ function Get-JsonFileFieldValue {
         [string]$JsonPath
     )
 
-    $local:Result = &$JqExe -r $JsonPath $JsonFile 2>$TaskErrorFile
+    $local:Result = &$script:JqExe -r $JsonPath $JsonFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-Content -Path $TaskErrorFile)"
+        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)"
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
@@ -291,9 +276,9 @@ function Get-JsonFileFieldValueList {
         [string]$JsonPath
     )
 
-    $local:Result = &$JqExe -c $JsonPath $JsonFile 2>$TaskErrorFile
+    $local:Result = &$script:JqExe -c $JsonPath $JsonFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-Content -Path $TaskErrorFile)"
+        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)"
         return 1
     }
     if ($Result.Count -eq 0) {
@@ -319,9 +304,9 @@ function Add-YamlFileFieldValue {
         [string]$Value
     )
 
-    &$YqExe -i "$YamlPath += ""`"$Value`"""" $YamlFile 2>$TaskErrorFile
+    &$script:YqExe -i "$YamlPath += ""`"$Value`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error adding '$Value' to '$YamlPath in '$YamlPath': $(Get-Content -Path $TaskErrorFile)"
+        Write-Output "error adding '$Value' to '$YamlPath in '$YamlPath': $(Get-TaskErrorMessage)"
         return 1
     }
 }
@@ -341,9 +326,9 @@ function Set-YamlFileFieldValue {
         [string]$Value
     )
 
-    &$YqExe -i "$YamlPath = ""`"$Value`"""" $YamlFile 2>$TaskErrorFile
+    &$script:YqExe -i "$YamlPath = ""`"$Value`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error adding '$Value' to '$YamlPath in '$YamlFile': $(Get-Content -Path $TaskErrorFile)"
+        Write-Output "error setting '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)"
         return 1
     }
 }
@@ -361,9 +346,9 @@ function Get-YamlFileFieldValue {
         [string]$YamlPath
     )
 
-    $local:Result = &$YqExe $YamlPath $YamlFile 2>$TaskErrorFile
+    $local:Result = &$script:YqExe $YamlPath $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error getting '$YamlPath' from '$YamlFile': $(Get-Content -Path $TaskErrorFile)"
+        Write-Output "error getting '$YamlPath' from '$YamlFile': $(Get-TaskErrorMessage)"
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
@@ -395,9 +380,13 @@ function Add-YamlFileFieldValueToAnotherYamlFileField {
         [string]$YamlPathDest
     )
 
-    &$YqExe eval-all -i "select(fileIndex==0)$YamlPathDest += select(fileIndex==1)$YamlPathSource | select(fileIndex==0)" $YamlFileDest $YamlFileSource 2>$TaskErrorFile
+    &$script:YqExe eval-all -i "select(fileIndex==0)$YamlPathDest += select(fileIndex==1)$YamlPathSource | select(fileIndex==0)" $YamlFileDest $YamlFileSource 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error adding '$YamlPathSource' in '$YamlFileSource' to '$YamlPathDest' in '$YamlFileDest': $(Get-Content -Path $TaskErrorFile)"
+        if ([string]::IsNullOrEmpty($YamlPathSource)) {
+            $YamlPathSource = '.'
+        }
+
+        Write-Output "error adding '$YamlPathSource' in '$YamlFileSource' to '$YamlPathDest' in '$YamlFileDest': $(Get-TaskErrorMessage)"
         return 1
     }
 }
@@ -546,30 +535,7 @@ function Get-LogzioRegion {
         $Region = $ListenerPart.Split("-", 2)[1]
     }
 
-    $script:LogzioRegion = $Region
-}
-
-# Installs Chocolatey
-# Error:
-#   Exit Code 1
-function Install-Chocolatey {
-    Write-Log 'INFO' 'Checking if Chocolatey is installed ...'
-    Get-Command -Name choco 2>&1 | Out-Null
-    if ($?) {
-        return
-    }
-
-    Write-Log 'INFO' 'Installing Chocolatey ...'
-    $local:job = Start-Job -ScriptBlock {Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')}
-    Wait-Job -Job $job | Out-Null
-
-    Get-Command choco 2>&1 | Out-Null
-    if ($?) {
-        return
-    }
-    
-    Write-Run "Write-Error `"utils_functions.ps1 (1): failed to install Chocolatey.`n  run the following command 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))', open a new PowerShell and rerun Logz.io agent script`""
-    return 1
+    Write-Output $Region
 }
 
 # Executes command with progress indicator
@@ -613,7 +579,7 @@ function Invoke-Task {
 
         for ($i=0; $i -lt $Frame.Count; $i++) {
             Write-Host "`r  [ $($Frame[$i]) ]" -NoNewline
-            Start-Sleep -Milliseconds $frameInterval
+            Start-Sleep -Milliseconds $FrameInterval
         }
 
         $Counter++
@@ -629,13 +595,16 @@ function Invoke-Task {
         if ($Counter -eq $Timeout) {
             Remove-Job -Job $Job -Force >$null
             $JobState = "Timeout"
-            Write-TaskPostRun "Write-Error `"utils_functions.ps1 (2): timeout error: the task was not completed in time`""
+
+            $local:Message = "timeout error: the task was not completed in time"
+            Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+            Write-TaskPostRun "Write-Error `"$Message`""
             break
         }
     }
 
     Wait-Job -Job $Job | Out-Null
-    $local:ExitCode = 2
+    $local:ExitCode = 25
     
     if (-Not $JobState.Equals("Timeout")) {
         $ExitCode = Receive-Job -Job $Job
@@ -650,10 +619,16 @@ function Invoke-Task {
         Write-Host " ]" -NoNewline
         Write-Host " $Description ...`n" -ForegroundColor Red -NoNewline
         
-        if (Test-Path -Path $TaskPostRunFile) {
-            . $TaskPostRunFile
+        if (Test-Path -Path $script:TaskPostRunFile) {
+            try {
+                . $script:TaskPostRunFile -ErrorAction Stop
+            }
+            catch {
+
+            }
         }
-        
+
+        Clear-Content $script:TaskPostRunFile
         $script:IsAgentFailed = $true
         Exit $ExitCode
     }
@@ -663,8 +638,14 @@ function Invoke-Task {
     Write-Host " ]" -NoNewline
     Write-Host " $Description ...`n" -ForegroundColor Green -NoNewline
 
-    if (Test-Path -Path $TaskPostRunFile) {
-        . $TaskPostRunFile
-        Clear-Content $TaskPostRunFile
+    if (Test-Path -Path $script:TaskPostRunFile) {
+        try {
+            . $script:TaskPostRunFile -ErrorAction Stop
+        }
+        catch {
+            
+        }
+
+        Clear-Content $script:TaskPostRunFile
     }
 }
