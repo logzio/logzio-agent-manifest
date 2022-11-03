@@ -1,0 +1,11 @@
+receivers:
+processors:
+exporters:
+  logging:
+service:
+  pipelines:
+  telemetry:
+    logs:
+      level: "debug"
+    metrics:
+      address: localhost:8888
