@@ -49,17 +49,20 @@ $script:SqsUrl = 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQu
 $script:JqExe = "$script:LogzioTempDir\jq.exe"
 # Yq exe file path
 $script:YqExe = "$script:LogzioTempDir\yq.exe"
+
+## OTEL files
 # OTEL collector exe file name
 $script:OtelCollectorExeName = 'otelcol-logzio-windows_amd64.exe'
 # OTEL collector exe file path
 $script:OtelCollectorExe = "$script:LogzioOtelCollectorDir\$script:OtelCollectorExeName"
+# OTEL config file name
+$script:OtelConfigName = 'otel_config.yaml'
+# OTEL config file path
+$script:OtelConfig = "$script:LogzioOtelCollectorDir\$script:OtelConfigName"
 
 ## Service names
 # Logz.io OTEL collector service name
 $script:LogzioOtelCollectorServiceName = 'LogzioOTELCollector'
-
-## Datasource names
-$script:DataSourceSystem = 'System'
 
 ## Script files
 $script:AgentFunctionsFile = "$LogzioTempDir\functions.ps1"

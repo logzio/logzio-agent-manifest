@@ -538,12 +538,14 @@ function Get-LogzioRegion {
     Write-Output $Region
 }
 
-# Executes command with progress indicator
+# Invokes task
 # Input:
-#   command - Command to execute
-#   desc - Task description
-# Error:
-#   Exit Code 2 if got timeout error, otherwise Exit Code according the executed command
+#   FuncName - Function name to invoke
+#   FuncArgs - Hashtable of the function arguments
+#   Description - Task description that is going to be displayed
+#   ScriptsToLoad - List of script names that need to be loaded before invoking the function
+# Output:
+#   ---
 function Invoke-Task {
     param (
         [string]$FuncName,
@@ -557,14 +559,35 @@ function Invoke-Task {
     $local:Timeout = 300
     $local:Counter = 0
     
-    $local:Job = Start-Job -ScriptBlock { 
+    $local:Job = Start-Job -ScriptBlock {
         $ProgressPreference = 'SilentlyContinue'
         $WarningPreference = 'SilentlyContinue'
-        . $using:LogzioTempDir\consts.ps1;
-        . $using:LogzioTempDir\utils_functions.ps1;
+
+        try {
+            . $using:ConstsFile -ErrorAction Stop
+            . $using:LogzioTempDir\utils_functions.ps1 --ErrorAction Stop
+        }
+        catch {
+            $local:Message = "utils.ps1 (1): error loading agent scripts: $_"
+            Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return 1
+        }
+
         foreach ($ScriptToLoad in $using:ScriptsToLoad) {
-            . $ScriptToLoad 
-        };
+            try {
+                . $ScriptToLoad -ErrorAction Stop
+            }
+            catch {
+                $local:Message = "utils.ps1 (2): error loading '$ScriptToLoad' script: $_"
+                Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
+                Write-TaskPostRun "Write-Error `"$Message`""
+
+                return 2
+            }
+        }
+
         if ($using:FuncArgs.Count -eq 0) {
             &$using:FuncName
         } 
@@ -593,43 +616,48 @@ function Invoke-Task {
         }
 
         if ($Counter -eq $Timeout) {
-            Remove-Job -Job $Job -Force >$null
+            Remove-Job -Job $Job -Force | Out-Null
             $JobState = "Timeout"
 
             $local:Message = "timeout error: the task was not completed in time"
-            Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+            Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptAgent $FuncName $script:AgentId
             Write-TaskPostRun "Write-Error `"$Message`""
             break
         }
     }
 
     Wait-Job -Job $Job | Out-Null
-    $local:ExitCode = 25
+    $local:ExitCode = 3
     
     if (-Not $JobState.Equals("Timeout")) {
         $ExitCode = Receive-Job -Job $Job
         if ([string]::IsNullOrEmpty($ExitCode) -or $ExitCode -isnot [int]) {
-            $exitCode = 0
+            $ExitCode = 0
         }
     }
-    
-    if (-Not $JobState.Equals("Completed") -or $ExitCode -gt 0) {
+
+    if (-Not $JobState.Equals("Completed") -or $ExitCode -ne 0) {
         Write-Host "`r  [ " -NoNewline
         Write-Host "X" -ForegroundColor Red -NoNewline
         Write-Host " ]" -NoNewline
         Write-Host " $Description ...`n" -ForegroundColor Red -NoNewline
         
+        $script:IsAgentFailed = $true
+
         if (Test-Path -Path $script:TaskPostRunFile) {
             try {
                 . $script:TaskPostRunFile -ErrorAction Stop
             }
             catch {
+                $local:Message = "utils.ps1 (4): error running task post run script: $_"
+                Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
+                Write-Error $Message
 
+                Exit 4
             }
         }
 
         Clear-Content $script:TaskPostRunFile
-        $script:IsAgentFailed = $true
         Exit $ExitCode
     }
 
@@ -643,7 +671,11 @@ function Invoke-Task {
             . $script:TaskPostRunFile -ErrorAction Stop
         }
         catch {
-            
+            $local:Message = "utils.ps1 (4): error running task post run script: $_"
+            Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
+            Write-Error $Message
+
+            Exit 4
         }
 
         Clear-Content $script:TaskPostRunFile

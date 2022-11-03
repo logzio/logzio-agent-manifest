@@ -25,7 +25,7 @@ function Write-AgentFinalMessages {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     if ($IsShowHelp) {
-        Exit 0
+        return
     }
     if ($script:IsLoadingAgentScriptsFailed) {
         $local:Message = 'Agent Failed'
@@ -36,16 +36,16 @@ function Write-AgentFinalMessages {
     if ($IsRemoveServiceAnswerNo) {
         Write-AgentInfo
         Write-AgentSupport
-        Exit 0
+        return
     }
-    if ($IsAgentFailed) {
+    if ($script:IsAgentFailed) {
         $local:Message = 'Agent Failed'
         Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
         Write-Log $script:LogLevelInfo $Message
 
         Write-AgentStatus $Message 'Red'
         Write-AgentSupport
-        Exit $LASTEXITCODE
+        return
     }
     if ($IsAgentCompleted) {
         $local:Message = 'Agent Completed Successfully'
@@ -55,7 +55,7 @@ function Write-AgentFinalMessages {
         Write-AgentStatus $Message 'Green'
         Write-AgentInfo
         Write-AgentSupport
-        Exit 0
+        return
     }
 
     # Agent interruption
@@ -66,7 +66,6 @@ function Write-AgentFinalMessages {
     }
     
     Write-AgentStatus $Message 'Yellow'
-    Exit 0
 }
 
 # Prints agent status
@@ -258,6 +257,6 @@ try {
 finally {
     Write-AgentFinalMessages
     Remove-TempDir
-
+    
     [Console]::CursorVisible = $true
 }

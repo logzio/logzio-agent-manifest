@@ -502,7 +502,7 @@ function Set-AgentJsonConsts {
         return $ExitCode
     }
 
-    $local:Platform = $script:JsonValue.ToLower()
+    $local:Platform = $script:JsonValue
 
     $Message = "Platform is '$Platform'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
@@ -521,7 +521,7 @@ function Set-AgentJsonConsts {
         return $ExitCode
     }
     
-    $local:SubType = $script:JsonValue.ToLower()
+    $local:SubType = $script:JsonValue
 
     $Message = "Subtype is '$SubType'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
@@ -560,7 +560,7 @@ function Set-AgentJsonConsts {
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-Log $script:LogLevelDebug $Message
 
-        $DataSourceNames += $DataSourceName.ToLower()
+        $DataSourceNames += $DataSourceName
         $Index++
     }
 
@@ -632,10 +632,10 @@ function Get-SubTypeFiles {
 
     try {
         if ([string]::IsNullOrEmpty($RepoRelease)) {
-            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/windows_$script:Platform`_$script:SubType.tar.gz" -OutFile $script:LogzioTempDir\windows_$script:Platform`_$script:SubType.tar.gz | Out-Null
+            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz" -OutFile $script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz | Out-Null
         }
         else {
-            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/download/$RepoRelease/windows_$script:Platform`_$script:SubType.tar.gz" -OutFile $script:LogzioTempDir\windows_$script:Platform`_$script:SubType.tar.gz | Out-Null
+            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/download/$RepoRelease/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz" -OutFile $script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz | Out-Null
         }
     }
     catch {
