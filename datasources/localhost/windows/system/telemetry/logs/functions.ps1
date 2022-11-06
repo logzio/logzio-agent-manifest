@@ -93,7 +93,7 @@ function Get-IsApplicationLogSelected {
     $local:ExitCode = 3
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Getting is application log selected ...'
+    $local:Message = 'Getting if application log was selected ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -143,7 +143,7 @@ function Get-IsSecurityLogSelected {
     $local:ExitCode = 4
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Getting is security log selected ...'
+    $local:Message = 'Getting if security log was selected ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -193,7 +193,7 @@ function Get-IsSystemLogSelected {
     $local:ExitCode = 5
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Getting is system log selected ...'
+    $local:Message = 'Getting if system log was selected ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
