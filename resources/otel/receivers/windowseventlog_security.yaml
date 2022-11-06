@@ -6,8 +6,20 @@ windows_run: |
       [hashtable]$FuncArgs
     )
 
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('IsSecurityLog', 'LogsType')
+    if ($Err.Count -ne 0) {
+      Write-Output $Err[0]
+      return 2
+    }
+
+    $local:IsSecurityLog = $FuncArgs.IsSecurityLog
     $local:LogsType = $FuncArgs.LogsType
 
+    if (-Not $IsSecurityLog) {
+      Write-Output 'Security log option was not selected'
+      return 1
+    }
+    
     $local:Err = Set-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\windowseventlog_security.yaml" '.receiver.windowseventlog/security/NAME.attributes.type' $LogsType
     if ($Err.Count -ne 0) {
       Write-Output "error setting type to windowseventlog/security receiver: $($Err[0])"

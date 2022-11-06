@@ -6,7 +6,19 @@ windows_run: |
       [hashtable]$FuncArgs
     )
 
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('IsSystemLog', 'LogsType')
+    if ($Err.Count -ne 0) {
+      Write-Output $Err[0]
+      return 2
+    }
+
+    $local:IsSystemLog = $FuncArgs.IsSystemLog
     $local:LogsType = $FuncArgs.LogsType
+
+    if (-Not $IsSystemLog) {
+      Write-Output 'System log option was not selected'
+      return 1
+    }
 
     $local:Err = Set-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\windowseventlog_system.yaml" '.receiver.windowseventlog/system/NAME.attributes.type' $LogsType
     if ($Err.Count -ne 0) {

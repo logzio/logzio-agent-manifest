@@ -360,7 +360,7 @@ function Add-LogsReceiversToOtelConfig {
             return $ExitCode
         }
 
-        $Err = New-OtelReceiver @{LogSources = $LogSources; LogsType = 'agent-windows'}
+        $Err = New-OtelReceiver @{LogSources = $LogSources; IsApplicationLog = $IsApplicationLog; IsSecurityLog = $IsSecurityLog; IsSystemLog = $IsSystemLog; LogsType = 'agent-windows'}
         if ($Err.Count -ne 0 -and $Err[1] -ne 1) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource

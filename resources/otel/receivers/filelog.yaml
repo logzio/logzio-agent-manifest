@@ -6,11 +6,17 @@ windows_run: |
       [hashtable]$FuncArgs
     )
 
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogSources', 'LogsType')
+    if ($Err.Count -ne 0) {
+      Write-Output $Err[0]
+      return 2
+    }
+
     $local:LogSources = $FuncArgs.LogSources
     $local:LogsType = $FuncArgs.LogsType
 
     if ($LogSources.Count -eq 0) {
-      $local:Message = "There is no log source"
+      Write-Output 'There is no log source'
       return 1
     }
   
@@ -18,14 +24,14 @@ windows_run: |
       $local:Err = Add-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\filelog.yaml" '.receiver.filelog/NAME.include' $LogSource
       if ($Err.Count -ne 0) {
         Write-Output "error addinng log sources to filelog receiver: $($Err[0])"
-        return 2
+        return 3
       }
     }
 
     $local:Err = Set-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\filelog.yaml" '.receiver.filelog/NAME.attributes.type' $LogsType
     if ($Err.Count -ne 0) {
       Write-Output "error setting type to filelog receiver: $($Err[0])"
-      return 3
+      return 4
     }
   }
 receiver:
