@@ -58,12 +58,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: manifest
-      - name: Update testing pre-release
+      - name: Update dev pre-release
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: testing
-          tag: testing
+          name: dev
+          tag: dev
           allow_override: true
           prerelease: true
           files: manifest.json
