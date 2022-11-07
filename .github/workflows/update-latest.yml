@@ -50,3 +50,13 @@ jobs:
           prerelease: true
           files: manifest.json
           gzip: false
+      - name: Update test release
+        uses: meeDamian/github-release@2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: testing
+          tag: testing
+          allow_override: true
+          prerelease: true
+          files: manifest.json
+          gzip: false
