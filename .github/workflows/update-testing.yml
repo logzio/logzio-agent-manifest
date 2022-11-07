@@ -18,6 +18,7 @@ jobs:
               - 'testing-configs/**'
 
   update_testing:
+    name: Update testing release
     needs: filter_for_testing_configs
     if: ${{ needs.filter_for_testing_configs.outputs.testing == 'true' }}
     runs-on: ubuntu-latest
