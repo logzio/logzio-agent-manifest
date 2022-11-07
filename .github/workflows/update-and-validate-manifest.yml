@@ -1,9 +1,6 @@
 
 name: build and verify manifest
-on:
-  push:
-    branches-ignore:
-      - 'testing'
+on: [push]
 jobs:
   filter_for_configs:
     name: Filter for configs folder changes
