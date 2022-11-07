@@ -19,7 +19,7 @@ jobs:
             configs:
               - 'configs/**'
 
-  update_latest:
+  update_testing:
     needs: filter_for_configs
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
