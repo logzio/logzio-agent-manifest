@@ -48,7 +48,7 @@ jobs:
           retention-days: 1
 
   update_release:
-    name: Update test release
+    name: Update dev release
     needs: [filter_for_configs, build_manifest]
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
