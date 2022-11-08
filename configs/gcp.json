@@ -33,7 +33,8 @@
                                     "name": "filterLog",
                                     "label": "Google Cloud Logging Filter",
                                     "description": "Send logs that match the filter",
-                                    "hint": "Google Cloud function will be create for parse logs in proper format, right now log"
+                                    "hint": "Google Cloud function will be create for parse logs in proper format, right now log",
+                                    "value": ""
                                 }
                             ]
                         }
