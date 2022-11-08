@@ -1,4 +1,4 @@
-name: build and verify manifest
+name: update testing release
 on: [push]
 
 jobs:
