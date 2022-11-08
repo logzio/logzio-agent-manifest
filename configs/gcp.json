@@ -20,13 +20,20 @@
                             "hint": "Switch the toggle on if you want send logs to logz.io though Google Cloud Sink and Google Cloud Pubsub",
                             "params": [
                                 {
-                                    "type": "path-list",
+                                    "type": "text",
                                     "name": "functionName",
-                                    "label": "Name of Google Cloud Function",
+                                    "label": "Google Cloud Function Name",
                                     "required": true,
-                                    "description": "Name of cloud function to send logs to logz.io",
+                                    "description": "Name of Google Cloud function to send logs to logz.io",
                                     "hint": "Google Cloud function will be create for parse logs in proper format, right now log",
-                                    "value": ["gcpToLogz"]
+                                    "value": "gcpToLogz"
+                                },
+                                {
+                                    "type": "text",
+                                    "name": "filterLog",
+                                    "label": "Google Cloud Logging Filter",
+                                    "description": "Send logs that match the filter",
+                                    "hint": "Google Cloud function will be create for parse logs in proper format, right now log"
                                 }
                             ]
                         }
