@@ -5,13 +5,13 @@
 #################################################################################################################################
 
 
-# Gets Logz.io region
+# Gets Logz.io listener
 # Output:
-#   logzio_region - Logz.io region
+#   logzio_listener - Logz.io listener
 # Error:
 #   Exit Code 1
-function get_logzio_region () {
-    write_log "INFO" "Getting Logz.io region ..."
+function get_logzio_listener () {
+    write_log "INFO" "Getting Logz.io listener ..."
 
     local listener_url=$(jq -r '.listenerUrl' $app_json)
     if [[ "$listener_url" = null ]]; then
@@ -23,14 +23,8 @@ function get_logzio_region () {
         return 1
     fi
 
-    local region="us"
-    if [[ "$listener_url" = *"-"* ]]; then
-        local listener_part=$(cut -d "." -f1 <<< "$listener_url")
-        region=$(cut -d "-" -f2 <<< "$listener_part")
-    fi
-
-    write_log "INFO" "logzio_region = $region"
-    write_run "logzio_region=\"$region\""
+    write_log "INFO" "listener_url = $listener_url"
+    write_run "listener_url=\"$listener_url\""
 }
 
 # Gets Logz.io logs token
@@ -60,39 +54,33 @@ function get_logzio_logs_token () {
 #   log_sources - list of log sources
 # Error:
 #   Exit Code 3
-function get_log_sources () {
+function get_function_name () {
     write_log "INFO" "Getting log sources ..."
 
-    local log_sources_param=$(find_param "$logs_params" "logSources")
-    if [[ -z "$log_sources_param" ]]; then
+    local function_name_param=$(find_param "$logs_params" "functionName")
+    if [[ -z "$function_name_param" ]]; then
         write_run "print_error \"logs.bash (3): log sources param was not found\""
         return 3
     fi
 
-    local log_sources_value=$(echo -e "$log_sources_param" | jq -c '.value[]')
-    if [[ "$log_sources_value" = null ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=optional-log-sources}].value[]' was not found in application JSON\""
+    local function_name_value=$(echo -e "$function_name_param" | jq -c '.value[]')
+    if [[ "$function_name_value" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value[]' was not found in application JSON\""
         return 3
     fi
-    if [[ -z "$log_sources_value" ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=optional-log-sources}].value[]' is empty in application JSON\""
+    if [[ -z "$function_name_value" ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value[]' is empty in application JSON\""
         return 3
     fi
     
-    write_log "INFO" "log_sources = $log_sources_value"
-    write_run "log_sources=\"$log_sources_value\""
+    write_log "INFO" "function_name = $function_name_value"
+    write_run "function_name=\"$function_name_value\""
 }
-
-function download_config(){
-	
-}
-
-
-
 
 
 function populate_data_to_json (){
     write_log "[INFO] Сreate build file..."
+    curl -fsSL https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-linux_amd64.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
 
     contents="$(jq --arg token "${token}" '.substitutions._LOGZIO_TOKEN = $token' config.json)"
     echo "${contents}" > config.json
@@ -112,7 +100,8 @@ function populate_data_to_json (){
     echo "${contents}" > config.json
     contents="$(jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' config.json)"
     echo "${contents}" > config.json
-    echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Populate data to json finished."
+
+    write_log "[INFO] Populate data to json finished."
 }
 
 function run_cloud_build(){
