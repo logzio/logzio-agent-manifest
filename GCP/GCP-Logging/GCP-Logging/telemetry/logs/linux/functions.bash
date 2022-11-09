@@ -105,7 +105,7 @@ function get_filter_log () {
 
 function populate_data_to_config (){
     write_log "[INFO] Сreate build file..."
-    curl -fsSL $repo_path/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
+    curl -fsSL $repo_path/GCP/GCP-Logging/GCP-Logging/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to get yq binary file from Github.\n  $err\""
