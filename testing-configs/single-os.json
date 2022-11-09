@@ -11,7 +11,7 @@
       "supportedOs": ["Mac"],
       "datasources": [
         {
-          "name": "Kubernetes",
+          "name": "datasource with only logs",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
           "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
           "params": [],
@@ -19,31 +19,6 @@
             {
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logzio Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
-              "params": []
-            },
-            {
-              "type": "METRICS",
-              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your Kubernetes cluster, nodes and pods",
-              "params": [
-                {
-                  "type": "boolean",
-                  "name": "isWindows",
-                  "label": "Using Windows nodes",
-                  "description": "",
-                  "hint": "Check this box if any of your Kubernetes pods are running on Windows nodes. As part of the installation process, you will need to provide the root user credentials to those Windows instances",
-                  "value": false
-                }
-              ],
-              "dashboards": [
-                "5jMvBtrxQwMo0GuDO13kpb",
-                "5BjRR3NuNQb3XHVPhn3HQ0",
-                "2TRgFib4ICfKsrzS5oJwgC",
-                "1EcVjdr5c6heqbxpd6Zs8X"
-              ]
-            },
-            {
-              "type": "TRACING",
-              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
               "params": []
             }
           ]
