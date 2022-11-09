@@ -53,7 +53,7 @@ function is_gcloud_user_login(){
 
 	if [ $gcloud_user_active ]
 	then
-		echo "Logged in to account = ${gcloud_user_active}"
+		return
 	else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to get Google Cloud User.\n  $err\""
