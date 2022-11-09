@@ -10,7 +10,7 @@ write_log "INFO" "Loading logs functions ..."
 source $logzio_temp_dir/logs_functions.bash
 
 # Get Logz.io region
-execute_task "get_logzio_region" "getting Logz.io region"
+execute_task "get_logzio_listener" "getting Logz.io listener"
 
 # Get Logz.io logs token
 execute_task "get_logzio_logs_token" "getting Logz.io logs token"
