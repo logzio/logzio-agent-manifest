@@ -167,95 +167,93 @@ function populate_data_to_config (){
     fi
 	# test
 	# echo $repo_path
-    contents="$(jq --arg shipping_token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "shipping_token added to the config"
+    jq --arg shipping_token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+    echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write shipping_token to the config file.\n  $err\""
         return 3
     fi
-    echo "${contents}" >  $logzio_temp_dir/config.json
 
-    contents="$(jq  --arg type_log "${type_log}" '.substitutions._TYPE_NAME = $type_log'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "type_log added to the config"
+    jq  --arg type_log "${type_log}" '.substitutions._TYPE_NAME = $type_log'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write type_log to the config file.\n  $err\""
         return 3
     fi
-    echo "${contents}" >  $logzio_temp_dir/config.json
 
-    contents="$(jq --arg region "${region}" '.substitutions._REGION = $region'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "region added to the config"
+    jq --arg region "${region}" '.substitutions._REGION = $region'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write region to the config file.\n  $err\""
         return 3
     fi
-    echo "${contents}" >  $logzio_temp_dir/config.json
+    # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    contents="$(jq --arg listener_url "${listener_url}" '.substitutions._LOGZIO_LISTENER = $listener_url'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "listener_url added to the config"
+    jq --arg listener_url "${listener_url}" '.substitutions._LOGZIO_LISTENER = $listener_url'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write listener_url to the config file.\n  $err\""
         return 3
     fi
-    echo "${contents}" >  $logzio_temp_dir/config.json
+    # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    contents="$(jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = $function_name+"-func_logzio"'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "function_name added to the config"
+    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = $function_name+"-func_logzio"'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write function_name to the config file.\n  $err\""
         return 3
     fi   
-    echo "${contents}" >  $logzio_temp_dir/config.json
+    # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    contents="$(jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = $topic_prefix+"-pubsub-topic-logs-to-logzio"'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "_PUBSUB_TOPIC_NAME added to the config"
+    jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = $topic_prefix+"-pubsub-topic-logs-to-logzio"'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_TOPIC_NAME to the config file.\n  $err\""
         return 3
     fi   
-	echo "${contents}" >  $logzio_temp_dir/config.json
+	# echo "${contents}" >  $logzio_temp_dir/config.json
 
-    contents="$(jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = $subscription_prefix+"-pubsub-subscription-logs-to-logzio"'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "_PUBSUB_SUBSCRIPTION_NAME added to the config"
+    jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = $subscription_prefix+"-pubsub-subscription-logs-to-logzio"'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_SUBSCRIPTION_NAME to the config file.\n  $err\""
         return 3
     fi   
-    echo "${contents}" >  $logzio_temp_dir/config.json
+    # echo "${contents}" >  $logzio_temp_dir/config.json
     
-	contents="$(jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logs-to-logzio"'  $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "_SINK_NAME added to the config"
+	jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logs-to-logzio"'  $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write _SINK_NAME to the config file.\n  $err\""
         return 3
     fi   
-	echo "${contents}" >  $logzio_temp_dir/config.json
+	# echo "${contents}" >  $logzio_temp_dir/config.json
     
-	contents="$(jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' $logzio_temp_dir/config.json)"
-    if [ contents -eq 0 ]; then
-        write_log "INFO" "_FILTER_LOG added to the config"
+	jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' $logzio_temp_dir/config.json
+    if [ $? -eq 0 ]; then
+        echo "$?" >  $logzio_temp_dir/config.json
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write _FILTER_LOG to the config file.\n  $err\""
         return 3
     fi  
-	echo "${contents}" >  $logzio_temp_dir/config.json
+	# echo "${contents}" >  $logzio_temp_dir/config.json
 
     write_log "[INFO] Populate data to json finished."
 }
@@ -268,10 +266,10 @@ function populate_data_to_config (){
 function deploy_settings_to_gcp(){
     write_log "[INFO] Initialize Cloud Build ..."
     # Take project ID and project Number
-    project_number="$(gcloud projects list \
+    gcloud projects list \
     --filter="$(gcloud config get-value project)" \
-    --format="value(PROJECT_NUMBER)")"
-	if [ project_number -eq 0 ]; then
+    --format="value(PROJECT_NUMBER)"
+    if [ $? -eq 0 ]; then
         write_log "INFO" "Project number retrived"
     else
         local err=$(cat $task_error_file)
