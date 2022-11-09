@@ -96,10 +96,6 @@ function get_filter_log () {
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=filterLog}].value' was not found in application JSON\""
         return 3
     fi
-    if [[ -z "$filter_log_value" ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=filterLog}].value' is empty in application JSON\""
-        return 3
-    fi
     
     write_log "INFO" "filter_log = $filter_log_value"
     write_run "filter_log=\"$filter_log_value\""
