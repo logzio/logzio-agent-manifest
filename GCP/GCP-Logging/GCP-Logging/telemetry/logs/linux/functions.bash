@@ -103,7 +103,7 @@ function get_filter_log () {
 
 
 
-function populate_data_to_json (){
+function populate_data_to_config (){
     write_log "[INFO] Сreate build file..."
     curl -fsSL https://github.com/logzio/logzio-google-pubsub/archive/refs/tags/v1.0.0.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
 
