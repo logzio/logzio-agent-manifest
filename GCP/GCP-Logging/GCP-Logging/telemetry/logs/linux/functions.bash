@@ -167,7 +167,7 @@ function populate_data_to_config (){
     fi
 	# test
 	# echo $repo_path
-    contents="$(jq --arg token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token'  $logzio_temp_dir/config.json)"
+    contents="$(jq --arg shipping_token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token'  $logzio_temp_dir/config.json)"
     if [ contents -eq 0 ]; then
         write_log "INFO" "shipping_token added to the config"
     else
