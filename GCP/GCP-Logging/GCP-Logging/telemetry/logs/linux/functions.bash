@@ -112,8 +112,6 @@ function populate_data_to_config (){
         return 1
     fi
 
-    # tar -zxf $logzio_temp_dir/gcp-build.tar.gz --directory $logzio_temp_dir
-
     contents="$(jq --arg token "${token}" '.substitutions._LOGZIO_TOKEN = $token'  $logzio_temp_dir/config.json)"
     echo "${contents}" >  $logzio_temp_dir/config.json
     contents="$(jq  --arg type_of_log "${type}" '.substitutions._TYPE_NAME = $type_of_log'  $logzio_temp_dir/config.json)"
