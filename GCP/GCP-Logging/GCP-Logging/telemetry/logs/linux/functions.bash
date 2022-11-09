@@ -159,6 +159,7 @@ function get_gcloud_function_region_log () {
 #   Exit Code 3
 function populate_data_to_config (){
     write_log "[INFO] Сreate build file..."
+	tmpfile=$(mktemp)
     curl -fsSL $repo_path/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
@@ -167,7 +168,7 @@ function populate_data_to_config (){
     fi
 	# test
 	# echo $repo_path
-    jq --arg shipping_token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg shipping_token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
     # echo $? >  $logzio_temp_dir/config.json
         write_log "INFO" "_LOGZIO_TOKEN updated"
@@ -177,7 +178,7 @@ function populate_data_to_config (){
         return 3
     fi
 
-    jq  --arg type_log "${type_log}" '.substitutions._TYPE_NAME = $type_log' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq  --arg type_log "${type_log}" '.substitutions._TYPE_NAME = $type_log' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         # echo "$?" >  $logzio_temp_dir/config.json
         write_log "INFO" "_TYPE_NAME updated"
@@ -187,7 +188,7 @@ function populate_data_to_config (){
         return 3
     fi
 
-    jq --arg region "${region}" '.substitutions._REGION = $region' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg region "${region}" '.substitutions._REGION = $region' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json 
     if [ $? -eq 0 ]; then
         write_log "INFO" "_REGION updated"
     else
@@ -197,7 +198,7 @@ function populate_data_to_config (){
     fi
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg listener_url "${listener_url}" '.substitutions._LOGZIO_LISTENER = $listener_url' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg listener_url "${listener_url}" '.substitutions._LOGZIO_LISTENER = $listener_url' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_LOGZIO_LISTENER updated"
 
@@ -208,9 +209,9 @@ function populate_data_to_config (){
     fi
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = $function_name+"-func_logzio"' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = $function_name+"-func_logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
-        write_log "INFO" "_FUNCTION_NAME updated"
+	    write_log "INFO" "_FUNCTION_NAME updated"
 
     else
         local err=$(cat $task_error_file)
@@ -219,7 +220,7 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = $topic_prefix+"-pubsub-topic-logs-to-logzio"' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = $topic_prefix+"-pubsub-topic-logs-to-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_PUBSUB_TOPIC_NAME updated"
 
@@ -230,10 +231,9 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = $subscription_prefix+"-pubsub-subscription-logs-to-logzio"' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = $subscription_prefix+"-pubsub-subscription-logs-to-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
-        write_log "INFO" "_PUBSUB_SUBSCRIPTION_NAME updated"
-
+	    write_log "INFO" "_PUBSUB_SUBSCRIPTION_NAME updated"
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_SUBSCRIPTION_NAME to the config file.\n  $err\""
@@ -241,7 +241,7 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
     
-    jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logs-to-logzio"' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logs-to-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_SINK_NAME updated"
     else
@@ -251,7 +251,7 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
     
-    jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' $logzio_temp_dir/config.json > $logzio_temp_dir/config.json
+    jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_FILTER_LOG updated"
     else
