@@ -33,7 +33,7 @@ function get_logzio_listener () {
 # Error:
 #   Exit Code 2
 function get_logzio_logs_token () {
-    write_log "INFO" "Getting Logz.io logs token ..."
+    write_log "INFO" "Getting Logz.io shipping token ..."
 
     local shipping_token=$(jq -r '.shippingTokens.LOG_ANALYTICS' $app_json)
     if [[ "$shipping_token" = null ]]; then
@@ -45,8 +45,8 @@ function get_logzio_logs_token () {
         return 2
     fi
 
-    write_log "INFO" "logs_token = $shipping_token"
-    write_run "logs_token=\"$shipping_token\""
+    write_log "INFO" "shipping_token = $shipping_token"
+    write_run "shipping_token=\"$shipping_token\""
 }
 
 # Gets Function Name
@@ -55,7 +55,7 @@ function get_logzio_logs_token () {
 # Error:
 #   Exit Code 3
 function get_google_cloud_fuction_name () {
-    write_log "INFO" "Getting log sources ..."
+    write_log "INFO" "Getting Google Cloud Function Name..."
 
     local function_name_param=$(find_param "$logs_params" "functionName")
     if [[ -z "$function_name_param" ]]; then
@@ -63,27 +63,54 @@ function get_google_cloud_fuction_name () {
         return 3
     fi
 
-    local function_name_value=$(echo -e "$function_name_param" | jq -c '.value')
-    if [[ "$function_name_value" = null ]]; then
+    local function_name=$(echo -e "$function_name_param" | jq -c '.value')
+    if [[ "$function_name" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' was not found in application JSON\""
         return 3
     fi
-    if [[ -z "$function_name_value" ]]; then
+    if [[ -z "$function_name" ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' is empty in application JSON\""
         return 3
     fi
     
-    write_log "INFO" "function_name = $function_name_value"
-    write_run "function_name=\"$function_name_value\""
+    write_log "INFO" "function_name = $function_name"
+    write_run "function_name=\"$function_name\""
 }
 
-# Gets Function Name
+
+# Gets Log Type
 # Output:
-#   filter_log - function name
+#   type_log - type log
+# Error:
+#   Exit Code 3
+function get_logzio_log_type () {
+    write_log "INFO" "Getting log filter ..."
+
+    local type_log_param=$(find_param "$logs_params" "typeLog")
+    if [[ -z "$type_log_param" ]]; then
+        write_run "print_error \"logs.bash (3): Log type param was not found\""
+        return 3
+    fi
+
+    local type_log=$(echo -e "$filter_log_param" | jq -c '.value')
+    if [[ "$filter_log" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=typeLog}].value' was not found in application JSON\""
+        return 3
+    fi
+    
+    write_log "INFO" "type_log = $type_log"
+    write_run "type_log=\"$type_log\""
+}
+
+
+
+# Gets Filter for logs
+# Output:
+#   filter_log - filter logs
 # Error:
 #   Exit Code 3
 function get_filter_log () {
-    write_log "INFO" "Getting log sources ..."
+    write_log "INFO" "Getting log filter ..."
 
     local filter_log_param=$(find_param "$logs_params" "filterLog")
     if [[ -z "$filter_log_param" ]]; then
@@ -91,55 +118,166 @@ function get_filter_log () {
         return 3
     fi
 
-    local filter_log_value=$(echo -e "$ffilter_log_param" | jq -c '.value')
-    if [[ "$function_name_value" = null ]]; then
+    local filter_log=$(echo -e "$filter_log_param" | jq -c '.value')
+    if [[ "$filter_log" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=filterLog}].value' was not found in application JSON\""
         return 3
     fi
     
-    write_log "INFO" "filter_log = $filter_log_value"
-    write_run "filter_log=\"$filter_log_value\""
+    write_log "INFO" "filter_log = $filter_log"
+    write_run "filter_log=\"$filter_log\""
 }
 
+# Gets Google Cloud Function Region
+# Output:
+#   region - google cloud function region
+# Error:
+#   Exit Code 3
+function get_gcloud_function_region_log () {
+    write_log "INFO" "Getting Google Cloud Function Region ..."
 
+    local region_param=$(find_param "$logs_params" "functionNameRegion")
+    if [[ -z "$region_param" ]]; then
+        write_run "print_error \"logs.bash (3): region param was not found\""
+        return 3
+    fi
 
+    local region=$(echo -e "$region_param" | jq -c '.value')
+    if [[ "$region" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionNameRegion}].value' was not found in application JSON\""
+        return 3
+    fi
+    
+    write_log "INFO" "region = $region"
+    write_run "region=\"$region\""
+}
+
+# Populate data to config file
+# Output:
+#   config.json file with related data
+# Error:
+#   Exit Code 3
 function populate_data_to_config (){
     write_log "[INFO] Сreate build file..."
     curl -fsSL $repo_path/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to get config.json file from Github.\n  $err\""
-        return 1
+        return 3
     fi
+	# test
+	# echo $repo_path
+    contents="$(jq --arg token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token'  $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "shipping_token added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write shipping_token to the config file.\n  $err\""
+        return 3
+    fi
+    echo "${contents}" >  $logzio_temp_dir/config.json
 
-    contents="$(jq --arg token "${token}" '.substitutions._LOGZIO_TOKEN = $token'  $logzio_temp_dir/config.json)"
+    contents="$(jq  --arg type_log "${type_log}" '.substitutions._TYPE_NAME = $type_log'  $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "type_log added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write type_log to the config file.\n  $err\""
+        return 3
+    fi
     echo "${contents}" >  $logzio_temp_dir/config.json
-    contents="$(jq  --arg type_of_log "${type}" '.substitutions._TYPE_NAME = $type_of_log'  $logzio_temp_dir/config.json)"
-    echo "${contents}" >  $logzio_temp_dir/config.json
+
     contents="$(jq --arg region "${region}" '.substitutions._REGION = $region'  $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "region added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write region to the config file.\n  $err\""
+        return 3
+    fi
     echo "${contents}" >  $logzio_temp_dir/config.json
+
     contents="$(jq --arg listener_url "${listener_url}" '.substitutions._LOGZIO_LISTENER = $listener_url'  $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "listener_url added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write listener_url to the config file.\n  $err\""
+        return 3
+    fi
     echo "${contents}" >  $logzio_temp_dir/config.json
+
     contents="$(jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = $function_name+"-func_logzio"'  $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "function_name added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write function_name to the config file.\n  $err\""
+        return 3
+    fi   
     echo "${contents}" >  $logzio_temp_dir/config.json
+
     contents="$(jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = $topic_prefix+"-pubsub-topic-logs-to-logzio"'  $logzio_temp_dir/config.json)"
-    echo "${contents}" >  $logzio_temp_dir/config.json
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "_PUBSUB_TOPIC_NAME added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_TOPIC_NAME to the config file.\n  $err\""
+        return 3
+    fi   
+	echo "${contents}" >  $logzio_temp_dir/config.json
+
     contents="$(jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = $subscription_prefix+"-pubsub-subscription-logs-to-logzio"'  $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "_PUBSUB_SUBSCRIPTION_NAME added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_SUBSCRIPTION_NAME to the config file.\n  $err\""
+        return 3
+    fi   
     echo "${contents}" >  $logzio_temp_dir/config.json
-    contents="$(jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logs-to-logzio"'  $logzio_temp_dir/config.json)"
-    echo "${contents}" >  $logzio_temp_dir/config.json
-    contents="$(jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' config.json)"
-    echo "${contents}" >  $logzio_temp_dir/config.json
+    
+	contents="$(jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logs-to-logzio"'  $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "_SINK_NAME added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write _SINK_NAME to the config file.\n  $err\""
+        return 3
+    fi   
+	echo "${contents}" >  $logzio_temp_dir/config.json
+    
+	contents="$(jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' $logzio_temp_dir/config.json)"
+    if [ contents -eq 0 ]; then
+        write_log "INFO" "_FILTER_LOG added to the config"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to write _FILTER_LOG to the config file.\n  $err\""
+        return 3
+    fi  
+	echo "${contents}" >  $logzio_temp_dir/config.json
 
     write_log "[INFO] Populate data to json finished."
 }
 
+# Deploy
+# Output:
+#   filter_log - filter logs
+# Error:
+#   Exit Code 3
 function deploy_settings_to_gcp(){
     write_log "[INFO] Initialize Cloud Build ..."
     # Take project ID and project Number
     project_number="$(gcloud projects list \
     --filter="$(gcloud config get-value project)" \
     --format="value(PROJECT_NUMBER)")"
+	if [ project_number -eq 0 ]; then
+        write_log "INFO" "Project number retrived"
+    else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to retrive project number from gcloud.\n  $err\""
+        return 3
+    fi  
     project_id="$(gcloud config get-value project)"
  
     # Give permission for Cloud Build to assign proper roles

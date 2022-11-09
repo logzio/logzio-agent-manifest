@@ -15,10 +15,16 @@ execute_task "get_logzio_listener" "getting Logz.io listener"
 # Get Logz.io logs token
 execute_task "get_logzio_logs_token" "getting Logz.io logs token"
 
-# Get log sources
+# Get Gcloud Function name
 execute_task "get_google_cloud_fuction_name" "getting google cloud function name"
 
-# Get log sources
+# Get Gcloud Function name
+execute_task "get_logzio_log_type" "getting log type"
+
+# Get Gcloud Function  region
+execute_task "get_gcloud_function_region_log" "getting google cloud function region"
+
+# Get Filter for logs
 execute_task "get_filter_log" "getting google cloud logging filter"
 
 
