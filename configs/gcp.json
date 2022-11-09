@@ -4,14 +4,14 @@
     "description": "",
     "subtypes": [
         {
-            "name": "GCP-logging",
+            "name": "GCP-Logging",
             "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
             "description": "Logging from GCP services.",
             "hint": "Logging from GCP services.",
             "supportedOs": ["Linux", "Mac"],
             "datasources": [
                 {
-                    "name": "GCP Logging",
+                    "name": "GCP-Logging",
                     "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
                     "description": "To send logs to logz.io you need provide Google Cloud Function name. When you will run snippet please be sure that is you logged in and assign your profile to relevant project.",
                     "telemetries": [
@@ -25,7 +25,7 @@
                                     "label": "Google Cloud Function Name",
                                     "required": true,
                                     "description": "Name of Google Cloud function to send logs to logz.io",
-                                    "hint": "Google Cloud function will be create for parse logs in proper format, right now log",
+                                    "hint": "Google Cloud function will be create for parse logs in proper format.",
                                     "value": "gcpToLogz"
                                 },
                                 {
@@ -33,7 +33,7 @@
                                     "name": "filterLog",
                                     "label": "Google Cloud Logging Filter",
                                     "description": "Send logs that match the filter",
-                                    "hint": "Google Cloud function will be create for parse logs in proper format, right now log",
+                                    "hint": "(Optional) Logging Sink filter query(syntax is Logging query language)",
                                     "value": ""
                                 }
                             ]
