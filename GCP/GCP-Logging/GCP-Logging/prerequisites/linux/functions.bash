@@ -15,7 +15,7 @@ function is_gcloud_install(){
 
 	if [ $gcloud_ping -gt 0 ]
 	then
-		echo "Gcloud installed"
+		return
 	else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed Gcloud CLI is not installed on running machine.\n  $err\""
