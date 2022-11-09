@@ -105,7 +105,14 @@ function get_filter_log () {
 
 function populate_data_to_config (){
     write_log "[INFO] Сreate build file..."
-    curl -fsSL https://github.com/logzio/logzio-google-pubsub/archive/refs/tags/v1.0.0.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to get yq binary file from Github.\n  $err\""
+        return 1
+    fi
+
+    # tar -zxf $logzio_temp_dir/gcp-build.tar.gz --directory $logzio_temp_dir
 
     contents="$(jq --arg token "${token}" '.substitutions._LOGZIO_TOKEN = $token'  $logzio_temp_dir/config.json)"
     echo "${contents}" >  $logzio_temp_dir/config.json
@@ -129,7 +136,7 @@ function populate_data_to_config (){
     write_log "[INFO] Populate data to json finished."
 }
 
-function run_cloud_build(){
+function deploy_settings_to_gcp(){
     write_log "[INFO] Initialize Cloud Build ..."
     # Take project ID and project Number
     project_number="$(gcloud projects list \
