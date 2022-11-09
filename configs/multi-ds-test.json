@@ -85,7 +85,7 @@
                 },
                 {
                   "type": "boolean",
-                  "name": "datasource-2-metrics-boolean-1",
+                  "name": "datasource-2-metrics-boolean-2",
                   "label": "Datasource 2 Metrics Bool 2",
                   "value": false
                 }
