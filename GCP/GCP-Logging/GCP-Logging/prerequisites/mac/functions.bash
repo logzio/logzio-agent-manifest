@@ -34,7 +34,7 @@ function is_gcloud_install(){
 
 	if [ $gcloud_ping -gt 0 ]
 	then
-		gcloud -v
+		echo "Gcloud installed"
 	else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed Gcloud CLI is not installed on running machine.\n  $err\""
@@ -51,7 +51,7 @@ function is_gcloud_user_login(){
 
 	gcloud_user_active=`gcloud config get-value account`
 
-	if [ $gcloud_user_active -gt 0 ]
+	if [ $gcloud_user_active ]
 	then
 		echo "Logged in to account = ${gcloud_user_active}"
 	else
