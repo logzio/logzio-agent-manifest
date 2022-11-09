@@ -84,7 +84,7 @@ function get_google_cloud_fuction_name () {
 # Error:
 #   Exit Code 3
 function get_logzio_log_type () {
-    write_log "INFO" "Getting log filter ..."
+    write_log "INFO" "Getting type log ..."
 
     local type_log_param=$(find_param "$logs_params" "typeLog")
     if [[ -z "$type_log_param" ]]; then
@@ -92,8 +92,8 @@ function get_logzio_log_type () {
         return 3
     fi
 
-    local type_log=$(echo -e "$filter_log_param" | jq -c '.value')
-    if [[ "$filter_log" = null ]]; then
+    local type_log=$(echo -e "$type_log_param" | jq -c '.value')
+    if [[ "$type_log" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=typeLog}].value' was not found in application JSON\""
         return 3
     fi
