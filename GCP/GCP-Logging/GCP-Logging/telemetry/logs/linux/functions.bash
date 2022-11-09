@@ -54,7 +54,7 @@ function get_logzio_logs_token () {
 #   function_name - function name
 # Error:
 #   Exit Code 3
-function get_function_name () {
+function get_google_cloud_fuction_name () {
     write_log "INFO" "Getting log sources ..."
 
     local function_name_param=$(find_param "$logs_params" "functionName")
