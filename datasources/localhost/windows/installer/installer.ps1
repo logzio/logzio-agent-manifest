@@ -19,7 +19,7 @@ function Invoke-RemoveServiceOrExit {
     $local:Answer = ''
 
     while ($true) {
-        Write-Host "$script:LogzioOtelServiceName service is already exist. If you continue the service will be removed. Are you sure? (y/n) " -ForegroundColor Yellow -NoNewline
+        Write-Host "'$script:LogzioOtelServiceName' service is already exist. If you continue the service will be removed. Are you sure? (y/n) " -ForegroundColor Yellow -NoNewline
 
         $Answer = Read-Host
         $Answer = $Answer.ToLower()
@@ -33,7 +33,7 @@ function Invoke-RemoveServiceOrExit {
     Write-Log $script:LogLevelDebug $Message
 
     if ($Answer.Equals('n')) {
-        $script:IsRemoveServiceAnswerNo = $true
+        $script:IsRemoveAnswerNo = $true
         Exit 0
     }
 
@@ -47,7 +47,7 @@ function Invoke-RemoveServiceOrExit {
 # Output:
 #   ---
 function Invoke-AllDataSources {
-    $local:ExitCode = 4
+    $local:ExitCode = 6
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Running all datasources scripts ...'

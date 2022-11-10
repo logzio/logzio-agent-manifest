@@ -73,12 +73,12 @@ Write-Host '######################################'
 
 # Get the selected products
 Invoke-Task 'Get-SelectedProducts' @{} 'Getting the selected products' @($InstallerFunctionsScript)
-# Run logs script
 if ($script:IsLogsOptionSelected) {
+    # Run logs script
     Invoke-Logs
 }
-# Run metrics script
 if ($script:IsMetricsOptionSelected) {
+    # Run metrics script
     Invoke-Metrics
 }
 

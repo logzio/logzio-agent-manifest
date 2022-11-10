@@ -39,6 +39,7 @@ function Get-SelectedProducts {
     }
 
     $local:Telemetries = $script:JsonValue
+    
     $local:IsLogsOptionSelected = $false
     $local:IsMetricsOptionSelected = $false
     
@@ -73,7 +74,7 @@ function Get-SelectedProducts {
 
         $local:ParamsStr = Convert-ListToStr $Params
 
-        if ($type.Equals('LOG_ANALYTICS')) {
+        if ($Type.Equals('LOG_ANALYTICS')) {
             $Message = 'Logs option was selected'
             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message
@@ -87,7 +88,8 @@ function Get-SelectedProducts {
             $IsLogsOptionSelected = $true
             Write-TaskPostRun "`$script:LogsTelemetry = '$Telemetry'"
             Write-TaskPostRun "`$script:LogsParams = $ParamsStr"
-        } elseif ($Type.Equals('METRICS')) {
+        } 
+        elseif ($Type.Equals('METRICS')) {
             $Message = 'Metrics option was selected'
             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-Log $script:LogLevelDebug $Message

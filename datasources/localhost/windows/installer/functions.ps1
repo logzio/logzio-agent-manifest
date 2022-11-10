@@ -6,17 +6,17 @@
 # Input:
 #   ---
 # Output:
-#   IsServiceExist - Tells if Logz.io OTEL collector service exist (true/false)
+#   IsServiceExist - Tells if Logz.io OTEL collector service exists (true/false)
 function Get-IsLogzioOtelCollectorServiceExist {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Checking if Logz.io OTEL collector service exist ...'
+    $local:Message = 'Checking if Logz.io OTEL collector service exists ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $LogLevelDebug $Message
 
     $local:Service = Get-Service -Name $script:LogzioOtelCollectorServiceName -ErrorAction SilentlyContinue
     if ([string]::IsNullOrEmpty($Service)) {
-        $Message = "$script:LogzioOtelCollectorServiceName service does not exist"
+        $Message = "'$script:LogzioOtelCollectorServiceName' service does not exist"
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-Log $script:LogLevelDebug $Message
 
@@ -24,7 +24,7 @@ function Get-IsLogzioOtelCollectorServiceExist {
         return
     }
 
-    $Message = "$script:LogzioOtelCollectorServiceName service is already exists"
+    $Message = "'$script:LogzioOtelCollectorServiceName' service is already exists"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
