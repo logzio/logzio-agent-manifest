@@ -13,7 +13,7 @@ Write-Host ": $script:LogzioHelmFile"
 Write-Host 'Logz.io Agent Logs' -ForegroundColor Magenta -NoNewLine
 Write-Host ": $script:AgentLogFile"
 Write-Host 'Install Logz.io Helm' -ForegroundColor Magenta -NoNewLine
-Write-Host ": Invoke-Expression -Command (Get-Content $script:LogzioHelmFile)"
+Write-Host ": Invoke-Expression -Command (Get-Content -Path $script:LogzioHelmFile)"
 Write-Host 'Uninstall Logz.io Helm' -ForegroundColor Magenta -NoNewLine
 Write-Host ": helm uninstall -n monitoring logzio-monitoring"
 Write-Host 'Show Helm Status' -ForegroundColor Magenta -NoNewLine
