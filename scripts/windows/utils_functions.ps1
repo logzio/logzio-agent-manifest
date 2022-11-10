@@ -538,6 +538,38 @@ function Get-LogzioRegion {
     Write-Output $Region
 }
 
+# Installs Chocolatey
+# Input:
+#   ---
+# Output:
+#   ---
+function Install-Chocolatey {
+    try {
+        Get-Command choco -ErrorAction Stop | Out-Null
+    }
+    catch {
+        $local:Job = Start-Job -ScriptBlock {
+            Set-ExecutionPolicy Bypass -Scope Process -Force
+            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
+            Invoke-Expression -Command (New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1')
+        }
+    
+        Wait-Job -Job $Job | Out-Null
+
+        if ($env:Path -notcontains "C:\ProgramData\chocolatey\bin") {
+            $env:Path += ";C:\ProgramData\chocolatey\bin"
+        }
+    
+        try {
+            Get-Command choco -ErrorAction Stop | Out-Null
+        }
+        catch {
+            Write-Output "error installing Chocolatey. please run 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))', open a new PowerShell and rerun Logz.io agent"
+            return 1
+        }
+    }
+}
+
 # Invokes task
 # Input:
 #   FuncName - Function name to invoke
@@ -608,18 +640,18 @@ function Invoke-Task {
         $Counter++
 
         $JobState = $Job.State | Write-Output
-        if ($JobState.Equals("Completed")) {
+        if ($JobState.Equals('Completed')) {
             break
         }
-        if ($JobState.Equals("Failed")) {
+        if ($JobState.Equals('Failed')) {
             break
         }
 
         if ($Counter -eq $Timeout) {
             Remove-Job -Job $Job -Force | Out-Null
-            $JobState = "Timeout"
+            $JobState = 'Timeout'
 
-            $local:Message = "timeout error: the task was not completed in time"
+            $local:Message = 'timeout error: the task was not completed in time'
             Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptAgent $FuncName $script:AgentId
             Write-TaskPostRun "Write-Error `"$Message`""
             break
@@ -629,20 +661,22 @@ function Invoke-Task {
     Wait-Job -Job $Job | Out-Null
     $local:ExitCode = 3
     
-    if (-Not $JobState.Equals("Timeout")) {
+    if (-Not $JobState.Equals('Timeout')) {
         $ExitCode = Receive-Job -Job $Job
         if ([string]::IsNullOrEmpty($ExitCode) -or $ExitCode -isnot [int]) {
             $ExitCode = 0
         }
     }
 
-    if (-Not $JobState.Equals("Completed") -or $ExitCode -ne 0) {
+    if (-Not $JobState.Equals('Completed') -or $ExitCode -ne 0) {
         Write-Host "`r  [ " -NoNewline
         Write-Host "X" -ForegroundColor Red -NoNewline
         Write-Host " ]" -NoNewline
         Write-Host " $Description ...`n" -ForegroundColor Red -NoNewline
         
-        $script:IsAgentFailed = $true
+        if (-Not $script:IsPostrequisitesFailed) {
+            $script:IsAgentFailed = $true
+        }
 
         if (Test-Path -Path $script:TaskPostRunFile) {
             try {
@@ -658,6 +692,11 @@ function Invoke-Task {
         }
 
         Clear-Content $script:TaskPostRunFile
+
+        if ($script:IsPostrequisitesFailed) {
+            return
+        }
+        
         Exit $ExitCode
     }
 
@@ -675,6 +714,7 @@ function Invoke-Task {
             Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
             Write-Error $Message
 
+            $script:IsAgentFailed = $true
             Exit 4
         }
 

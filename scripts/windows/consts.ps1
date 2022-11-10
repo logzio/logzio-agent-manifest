@@ -21,6 +21,10 @@ $script:OtelReceiversDir = "$script:OtelResourcesDir\receivers"
 $script:OtelProcessorsDir = "$script:OtelResourcesDir\processors"
 # OTEL exporters directory
 $script:OtelExportersDir = "$script:OtelResourcesDir\exporters"
+# Logz.io Kubernetes AppData subdirectory
+$script:LogzioKubernetesDir = "$script:LogzioAppDataDir\LogzioKubernetes"
+# Resources Kubernetes directory
+$script:KubernetesResourcesDir = "$script:LogzioResourcesDir\k8s"
 
 ## Agent files
 # Log file path
@@ -60,6 +64,10 @@ $script:OtelConfigName = 'otel_config.yaml'
 # OTEL config file path
 $script:OtelConfig = "$script:LogzioOtelCollectorDir\$script:OtelConfigName"
 
+## Kubernetes files
+# Logz.io Helm file path
+$script:LogzioHelmFile = "$script:LogzioKubernetesDir\logzio_helm.txt"
+
 ## Service names
 # Logz.io OTEL collector service name
 $script:LogzioOtelCollectorServiceName = 'LogzioOTELCollector'
@@ -78,6 +86,8 @@ $script:MetricsFile = 'telemetry\metrics\metrics.ps1'
 $script:MetricsFunctionsFile = 'telemetry\metrics\functions.ps1'
 $script:TracesFile = 'telemetry\traces\traces.ps1'
 $script:TracesFunctionsFile = 'telemetry\traces\functions.ps1'
+$script:PostrequisitesFile = 'postrequisites\postrequisites.ps1'
+$script:PostrequisitesFunctionsFile = 'postrequisites\functions.ps1'
 
 ## Log levels
 $script:LogLevelDebug = 'DEBUG'
@@ -95,6 +105,7 @@ $script:LogStepInstallation = 'Installation'
 $script:LogStepLogs = 'Logs'
 $script:LogStepMetrics = 'Metrics'
 $script:LogStepTraces = 'Traces'
+$script:LogStepPostrequisites = 'Post-Requisites'
 $script:LogStepFinal = 'Final'
 
 ## Log script names
@@ -105,5 +116,6 @@ $script:LogScriptInstaller = 'installer.ps1'
 $script:LogScriptLogs = 'logs.ps1'
 $script:LogScriptMetrics = 'metrics.ps1'
 $script:LogsScriptTraces = 'traces.ps1'
+$script:LogScriptPostrequisites = 'postrequisites.ps1'
 
 # Dynamic Consts (Will be added while the agent running)

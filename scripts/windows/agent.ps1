@@ -31,9 +31,9 @@ function Write-AgentFinalMessages {
         $local:Message = 'Agent Failed'
         Write-AgentStatus $Message 'Red'
         Write-AgentSupport
-        Exit $LASTEXITCODE
+        return
     }
-    if ($IsRemoveServiceAnswerNo) {
+    if ($IsRemoveAnswerNo) {
         Write-AgentInfo
         Write-AgentSupport
         return
@@ -44,6 +44,16 @@ function Write-AgentFinalMessages {
         Write-Log $script:LogLevelInfo $Message
 
         Write-AgentStatus $Message 'Red'
+        Write-AgentSupport
+        return
+    }
+    if ($script:IsPostrequisitesFailed) {
+        $local:Message = 'Agent Failed'
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+        Write-Log $script:LogLevelInfo $Message
+
+        Write-AgentStatus $Message 'Red'
+        Write-AgentInfo
         Write-AgentSupport
         return
     }
@@ -135,8 +145,9 @@ $WarningPreference = 'SilentlyContinue'
 # Agent status flags
 $script:IsShowHelp = $false
 $script:IsLoadingAgentScriptsFailed = $false
-$script:IsRemoveServiceAnswerNo = $false
+$script:IsRemoveAnswerNo = $false
 $script:IsAgentFailed = $false
+$script:IsPostrequisitesFailed = $false
 $script:IsAgentCompleted = $false
 
 # Print main title
@@ -249,8 +260,11 @@ try {
     # Run subtype prerequisites
     Invoke-SubTypePrerequisites
 
-    #Run subtype installer
+    # Run subtype installer
     Invoke-SubTypeInstaller
+
+    # Run subtype post-requisites
+    Invoke-SubTypePostrequisites
     
     $script:IsAgentCompleted = $true
 }

@@ -715,3 +715,32 @@ function Invoke-SubTypeInstaller {
         Exit $ExitCode
     }
 }
+
+# Runs subtype post-requisites
+# Input:
+#   ---
+# Output:
+#   ---
+function Invoke-SubTypePostrequisites {
+    $local:ExitCode = 15
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Running subtype post-requisites ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Write-Log $script:LogLevelDebug $Message
+
+    try {
+        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:PostrequisitesFile" -ErrorAction Stop
+        if ($LASTEXITCODE -ne 0) {
+            Exit $LASTEXITCODE
+        }
+    }
+    catch {
+        $Message = "agent.ps1 ($ExitCode): error running subtype post-requisites: $_"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+        Write-Error $Message
+
+        $script:IsAgentFailed = $true
+        Exit $ExitCode
+    }
+}
