@@ -19,7 +19,7 @@ Invoke-Task 'Build-EnableTracesHelmSet' @{} 'Building enable traces Helm set' @(
 # Build Logz.io traces token Helm set
 Invoke-Task 'Build-LogzioTracesTokenHelmSet' @{TracesToken = $script:TracesToken} 'Building Logz.io traces token Helm set' @($TracesFunctionsScript)
 # Build Logz.io region Helm set
-Invoke-Task 'Build-LogzioRegionHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io region Helm set' @($MetricsFunctionsScript)
+Invoke-Task 'Build-LogzioRegionHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io region Helm set' @($TracesFunctionsScript)
 
 # Finished successfully
 Exit 0
