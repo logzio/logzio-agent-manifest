@@ -1,0 +1,49 @@
+{
+   "name": "AWS",
+   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
+   "description": "",
+   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
+   "subtypes": [
+     {
+       "name": "EC2-Linux",
+       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
+       "description": "EC2 Linux server",
+       "hint": "EC2 with Linux.",
+       "supportedOs": ["Linux"],
+       "datasources": [
+         {
+           "name": "System",
+           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+           "description": "Logz.io Uses OpenTelemetry to monitor your EC2.",
+           "telemetries": [
+             {
+               "type": "LOG_ANALYTICS",
+               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your EC2.",
+               "params":
+               [
+                 {
+                   "type": "path-list",
+                   "name": "logSources",
+                   "label": "Location of your logs",
+                   "required": true,
+                   "description": "The paths of log files to collect.",
+                   "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
+                   "value": ["/var/log/*.log"]
+                 }
+               ]
+             },
+             {
+               "type": "METRICS",
+               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your EC2.",
+               "params": [],
+               "dashboards": [
+                 "2oLvCy5p914pM9m5pLoD6u"
+               ]
+             }
+           ]
+         }
+       ]
+     }
+   ]
+ }
+ 
