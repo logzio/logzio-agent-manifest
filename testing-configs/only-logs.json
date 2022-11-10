@@ -7,7 +7,7 @@
     {
       "name": "only-logs",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
-      "description": "Install test with single supported os",
+      "description": "Install Test with single supported os",
       "supportedOs": ["Mac", "Windows"],
       "datasources": [
         {
