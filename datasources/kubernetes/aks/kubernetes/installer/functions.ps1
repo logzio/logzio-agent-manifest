@@ -262,7 +262,7 @@ function Get-EnvironmentID {
         return $ExitCode
     }
 
-    $local:EnvId = $script:JsonValue
+    $local:EnvId = $script:ParamValue
 
     $Message = "Environment id is '$EnvId'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
