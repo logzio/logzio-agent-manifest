@@ -5,7 +5,7 @@
   "manifest": true,
   "subtypes": [
     {
-      "name": "existing-accounts",
+      "name": "all-accounts",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
       "description": "Install test with single supported os",
       "supportedOs": ["Mac", "Windows"],
