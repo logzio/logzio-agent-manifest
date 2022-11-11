@@ -11,7 +11,7 @@
       "supportedOs": ["Mac", "Windows"],
       "datasources": [
         {
-          "name": "datasource with only logs",
+          "name": "datasource with all telemetries",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
           "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
           "params": [],
