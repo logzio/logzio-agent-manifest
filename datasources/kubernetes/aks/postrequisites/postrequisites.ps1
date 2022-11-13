@@ -14,7 +14,7 @@ Write-Host '#######################'
 
 # Check if all pods are running or completed
 Invoke-Task 'Test-AreAllPodsRunningOrCompleted' @{} 'Checking if all pods are running or completed' @($PostrequisitesScriptFile)
-if ($script:AreAllPodsRunningOrCompleted) {
+if (-Not $script:AreAllPodsRunningOrCompleted) {
     # Check if any pod is pending
     Invoke-Task 'Test-IsAnyPodPending' @{} 'Checking if any pod is pending' @($PostrequisitesScriptFile)
     # Check if any pod is failed
