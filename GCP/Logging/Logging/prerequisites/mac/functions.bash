@@ -46,7 +46,7 @@ function is_gcloud_install(){
 # Output:
 # Error:
 #   Exit Code 1
-function is_gcloud_user_login(){
+function gcloud_user_login(){
     write_log "INFO" "running command gcloud config get-value account ..."
 
 	gcloud_user_active=`gcloud auth login`
