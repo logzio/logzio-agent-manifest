@@ -4,6 +4,51 @@
 ################################################## Prerequisites Linux Functions ###################################################
 #################################################################################################################################
 
+# Display gcloud account
+# Output:
+# Error:
+#   Exit Code 1
+function get_project_id(){
+
+    write_log "INFO" "running command gcloud config get-value account ..."
+
+    local project_id_param=$(find_param "$logs_params" "projectID")
+    if [[ -z "$project_id_param" ]]; then
+        write_run "print_error \"logs.bash (3): function name param was not found\""
+        return 3
+    fi
+
+    local project_id=$(echo -e "$project_id_param" | jq -c '.value')
+    if [[ "$project_id" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' was not found in application JSON\""
+        return 3
+    fi
+    if [[ -z "$project_id" ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' is empty in application JSON\""
+        return 3
+    fi
+    
+    write_log "INFO" "project_id = $project_id"
+    write_run "project_id=\"$project_id\""
+}
+
+function set_project_id(){
+    write_log "INFO" "running command gcloud to define user relevant project id ..."
+
+	set_current_project_id="$(gcloud config set project "$project_id")"
+
+	if [ $set_current_project_id ]
+	then
+		return
+	else
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to set Google project.\n  $err\""
+        return 1	
+	fi
+}
+
+
+
 
 # Gets Logz.io listener
 # Output:

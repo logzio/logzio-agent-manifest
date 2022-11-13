@@ -4,14 +4,14 @@
     "description": "",
     "subtypes": [
         {
-            "name": "GCP-Logging",
+            "name": "Logging",
             "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
             "description": "Logging from GCP services.",
             "hint": "Logging from GCP services.",
             "supportedOs": ["Linux", "Mac"],
             "datasources": [
                 {
-                    "name": "GCP-Logging",
+                    "name": "Logging",
                     "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
                     "description": "To send logs to logz.io you need provide Google Cloud Function name. When you will run snippet please be sure that is you logged in and assign your profile to relevant project.",
                     "telemetries": [
@@ -19,24 +19,6 @@
                             "type": "LOG_ANALYTICS",
                             "hint": "Switch the toggle on if you want send logs to logz.io though Google Cloud Sink and Google Cloud Pubsub",
                             "params": [
-                                {
-                                    "type": "text",
-                                    "name": "typeLog",
-                                    "label": "Log type",
-                                    "required": true,
-                                    "description": "The log type, shipped as type field.",
-                                    "hint": "Used by Logz.io for consistent parsing. Can’t contain spaces.",
-                                    "value": "pubsub"
-                                },
-                                {
-                                    "type": "text",
-                                    "name": "functionName",
-                                    "label": "Google Cloud Function Name",
-                                    "required": true,
-                                    "description": "Name of Google Cloud function to send logs to logz.io",
-                                    "hint": "Google Cloud function will be create for parse logs in proper format.",
-                                    "value": "gcpToLogz"
-                                },
                                 {
                                     "type": "single-select",
                                     "name": "functionNameRegion",
@@ -141,10 +123,20 @@
                                 },
                                 {
                                     "type": "text",
-                                    "name": "filterLog",
-                                    "label": "Google Cloud Logging Filter",
-                                    "description": "Send logs that match the filter",
-                                    "hint": "(Optional) Logging Sink filter query(syntax is Logging query language)",
+                                    "name": "projectID",
+                                    "label": "Primary Project ID",
+                                    "required": true,
+                                    "description": "ID of Google Cloud project from where to send logs to logz.io.",
+                                    "hint": "Google Cloud function will be create for parse logs in proper format.",
+                                    "value": ""
+                                },
+
+                                {
+                                    "type": "text",
+                                    "name": "resourceType",
+                                    "label": "Google Cloud Resources",
+                                    "description": "Send logs that includes one of the resource types ",
+                                    "hint": "(Optional) Logging Sink filter, filter only by resource type, need to be fill in an array with comma seperator",
                                     "value": ""
                                 }
                             ]

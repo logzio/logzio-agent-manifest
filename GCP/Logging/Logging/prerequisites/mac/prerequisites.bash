@@ -12,6 +12,6 @@ source ./logzio-temp/prerequisites_functions.bash
 execute_task "is_gcloud_install" "Checking if gcloud is installed"
 
 # Check if user is logged in Google Cloud Platform
-execute_task "is_gcloud_user_login" "Checking if user is login"
+execute_task "gcloud_user_login" "Login to proper Google Account"
 
 

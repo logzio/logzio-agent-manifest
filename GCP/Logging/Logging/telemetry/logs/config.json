@@ -73,7 +73,7 @@
             "entrypoint": "bash",
             "args": [
                 "-c",
-                "gcloud logging sinks create $_SINK_NAME pubsub.googleapis.com/projects/$PROJECT_ID/topics/$_PUBSUB_TOPIC_NAME --log-filter=\"NOT (resource.type=\"cloud_function\" resource.labels.function_name=~\".-func_logzio\") AND $_FILTER_LOG\""
+                "gcloud logging sinks create $_SINK_NAME pubsub.googleapis.com/projects/$PROJECT_ID/topics/$_PUBSUB_TOPIC_NAME --log-filter='NOT (resource.type=\"cloud_function\" resource.labels.function_name=~\"._func_logzio\")$_FILTER_LOG'"
             ]
         },
         {
@@ -110,7 +110,7 @@
         "_PUBSUB_TOPIC_NAME": "pubsub-topic-logs-to-logzio",
         "_PUBSUB_SUBSCRIPTION_NAME": "pubsub-subscription-logs-to-logzio",
         "_SINK_NAME": "sink-logs-to-logzio",
-        "_FUNCTION_NAME": "logzioHandler",
+        "_FUNCTION_NAME": "func_logzio",
         "_REGION": "us-central1",
         "_LOGZIO_LISTENER": "listener",
         "_LOGZIO_TOKEN": "token",
