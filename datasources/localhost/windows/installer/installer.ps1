@@ -33,7 +33,7 @@ function Invoke-RemoveServiceOrExit {
     Write-Log $script:LogLevelDebug $Message
 
     if ($Answer.Equals('n')) {
-        $script:IsRemoveAnswerNo = $true
+        $script:IsRemoveLastRunAnswerNo = $true
         Exit 0
     }
 
