@@ -49,9 +49,9 @@ function is_gcloud_install(){
 function gcloud_user_login(){
     write_log "INFO" "running command gcloud config get-value account ..."
 
-	gcloud_user_active=`gcloud auth login`
+	gcloud_user_active=`gcloud auth login 2>/dev/null | wc -w`
 
-	if [ $gcloud_user_active ]
+	if [ $gcloud_user_active -gt 0 ]
 	then
 		return
 	else
