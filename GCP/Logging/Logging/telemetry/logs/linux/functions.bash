@@ -15,17 +15,17 @@ function get_project_id(){
     local project_id_param=$(find_param "$logs_params" "projectID")
     if [[ -z "$project_id_param" ]]; then
         write_run "print_error \"logs.bash (3): function name param was not found\""
-        return 3
+        return 1
     fi
 
     local project_id=$(echo -e "$project_id_param" | jq -c '.value')
     if [[ "$project_id" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' was not found in application JSON\""
-        return 3
+        return 1
     fi
     if [[ -z "$project_id" ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' is empty in application JSON\""
-        return 3
+        return 1
     fi
     
     write_log "INFO" "project_id = $project_id"
@@ -99,16 +99,10 @@ function get_logzio_logs_token () {
 #   function_name - function name
 # Error:
 #   Exit Code 3
-function get_google_cloud_fuction_name () {
+function get_google_cloud_fuction_name_from_id () {
     write_log "INFO" "Getting Google Cloud Function Name..."
 
-    local function_name_param=$(find_param "$logs_params" "functionName")
-    if [[ -z "$function_name_param" ]]; then
-        write_run "print_error \"logs.bash (3): function name param was not found\""
-        return 3
-    fi
-
-    local function_name=$(echo -e "$function_name_param" | jq -c '.value')
+    local function_name=$(jq -r '.id' $app_json)
     if [[ "$function_name" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' was not found in application JSON\""
         return 3
@@ -128,24 +122,24 @@ function get_google_cloud_fuction_name () {
 #   type_log - type log
 # Error:
 #   Exit Code 3
-function get_logzio_log_type () {
-    write_log "INFO" "Getting type log ..."
+# function get_logzio_log_type () {
+#     write_log "INFO" "Getting type log ..."
 
-    local type_log_param=$(find_param "$logs_params" "typeLog")
-    if [[ -z "$type_log_param" ]]; then
-        write_run "print_error \"logs.bash (3): Log type param was not found\""
-        return 3
-    fi
+#     local type_log_param=$(find_param "$logs_params" "typeLog")
+#     if [[ -z "$type_log_param" ]]; then
+#         write_run "print_error \"logs.bash (3): Log type param was not found\""
+#         return 3
+#     fi
 
-    local type_log=$(echo -e "$type_log_param" | jq -c '.value')
-    if [[ "$type_log" = null ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=typeLog}].value' was not found in application JSON\""
-        return 3
-    fi
+#     local type_log=$(echo -e "$type_log_param" | jq -c '.value')
+#     if [[ "$type_log" = null ]]; then
+#         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=typeLog}].value' was not found in application JSON\""
+#         return 3
+#     fi
     
-    write_log "INFO" "type_log = $type_log"
-    write_run "type_log=\"$type_log\""
-}
+#     write_log "INFO" "type_log = $type_log"
+#     write_run "type_log=\"$type_log\""
+# }
 
 
 
@@ -154,23 +148,19 @@ function get_logzio_log_type () {
 #   filter_log - filter logs
 # Error:
 #   Exit Code 3
-function get_filter_log () {
+function get_resources_type () {
     write_log "INFO" "Getting log filter ..."
 
-    local filter_log_param=$(find_param "$logs_params" "filterLog")
-    if [[ -z "$filter_log_param" ]]; then
-        write_run "print_error \"logs.bash (3): filters log param was not found\""
+    local resource_type_param=$(find_param "$logs_params" "resourceType")
+    if [[ -z "$resource_type_param" ]]; then
+        write_run "print_error \"logs.bash (3): resourceType log param was not found\""
         return 3
     fi
 
-    local filter_log=$(echo -e "$filter_log_param" | jq -c '.value')
-    if [[ "$filter_log" = null ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=filterLog}].value' was not found in application JSON\""
-        return 3
-    fi
-    
-    write_log "INFO" "filter_log = $filter_log"
-    write_run "filter_log=\"$filter_log\""
+    local resource_type=$(echo -e "$resource_type_param" | jq -c '.value')
+
+    write_log "INFO" "resource_type = $resource_type"
+    write_run "resource_type=\"$resource_type\""
 }
 
 # Gets Google Cloud Function Region
@@ -211,25 +201,12 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to get config.json file from Github.\n  $err\""
         return 3
     fi
-	# test
-	# echo $repo_path
     jq --arg shipping_token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
-    # echo $? >  $logzio_temp_dir/config.json
         write_log "INFO" "_LOGZIO_TOKEN updated"
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write shipping_token to the config file.\n  $err\""
-        return 3
-    fi
-
-    jq  --arg type_log "${type_log}" '.substitutions._TYPE_NAME = $type_log' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-        # echo "$?" >  $logzio_temp_dir/config.json
-        write_log "INFO" "_TYPE_NAME updated"
-    else
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write type_log to the config file.\n  $err\""
         return 3
     fi
 
@@ -296,7 +273,7 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
     
-    jq --arg filter_log "${filter_log}" '.substitutions._FILTER_LOG = $filter_log' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
+    jq --arg resource_type "${resource_type}" '.substitutions._FILTER_LOG = $resource_type' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_FILTER_LOG updated"
     else
@@ -309,6 +286,34 @@ function populate_data_to_config (){
     write_log "[INFO] Populate data to json finished."
 }
 
+
+# Populate from resource type to filter by resource type pattern
+# Output:
+#   resource_type - resource type from filter
+
+function populate_filter_for_service_name(){
+    if [[ ! -z "$resource_type" ]]; then
+	filter=" AND"
+	array_filter_names=(${resource_type//,/ })
+
+	last_element=${#array_filter_names[@]}
+	current=0
+	for name in "${array_filter_names[@]}"
+    do
+	    current=$((current + 1))
+	    if [ $current -eq $last_element ]; then
+	        filter+=" resource.type=${name}"
+        else
+	        filter+=" resource.type=${name} AND"
+	    fi
+    done
+	resource_type=$filter
+    fi
+
+}
+
+
+
 # Deploy
 # Output:
 #   filter_log - filter logs
@@ -320,8 +325,6 @@ function deploy_settings_to_gcp(){
     project_number="$(gcloud projects list \
     --filter="$(gcloud config get-value project)" \
     --format="value(PROJECT_NUMBER)")"
-
-    project_id="$(gcloud config get-value project)"
  
     # Give permission for Cloud Build to assign proper roles
     cmd_enable_cloudresourcemanager="$(gcloud services enable cloudresourcemanager.googleapis.com)"
