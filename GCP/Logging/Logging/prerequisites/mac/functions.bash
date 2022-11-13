@@ -46,14 +46,14 @@ function is_gcloud_install(){
 # Output:
 # Error:
 #   Exit Code 1
-function gcloud_user_login(){
+function is_gcloud_user_login(){
     write_log "INFO" "running command gcloud config get-value account ..."
 
 	gcloud_user_active=`gcloud auth login`
 
-	if [ $gcloud_user_active -gt 0 ]
+	if [[ ! $(gcloud config get-value account &> /dev/null) ]]
 	then
-		return
+		write_run "Logged in to account = ${gcloud_user_active}"
 	else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to get Google Cloud User.\n  $err\""
