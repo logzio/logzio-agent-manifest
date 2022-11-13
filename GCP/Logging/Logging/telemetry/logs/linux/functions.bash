@@ -38,8 +38,8 @@ function set_project_id(){
 	set_current_project_id="$(gcloud config set project "$project_id")"
 	
 
-	
-	if [ $set_current_project_id ]
+
+	if [[ $set_current_project_id !="0" ]]
 	then
 		return
 	else
