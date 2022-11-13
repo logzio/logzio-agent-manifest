@@ -35,7 +35,7 @@ function get_project_id(){
 function set_project_id(){
     write_log "INFO" "running command gcloud to define user relevant project id ..."
 
-	set_current_project_id="$(gcloud config set project "$project_id")"
+	set_current_project_id="$(gcloud config set project "$project_id" -y)"
 
 	if [ $set_current_project_id ]
 	then

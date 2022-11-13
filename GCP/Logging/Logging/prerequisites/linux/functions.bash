@@ -32,7 +32,7 @@ function is_gcloud_user_login(){
 
 	gcloud_user_active=`gcloud auth login`
 
-	if [ $gcloud_user_active ]
+	if [[ ! $(gcloud config get-value account &> /dev/null) ]]
 	then
 		write_run "Logged in to account = ${gcloud_user_active}"
 	else

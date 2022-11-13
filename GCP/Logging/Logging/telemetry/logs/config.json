@@ -114,7 +114,7 @@
         "_REGION": "us-central1",
         "_LOGZIO_LISTENER": "listener",
         "_LOGZIO_TOKEN": "token",
-        "_TYPE_NAME": "pubsub",
+        "_TYPE_NAME": "gcp-agent",
         "_FILTER_LOG": ""
     },
     "options": {
