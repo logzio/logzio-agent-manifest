@@ -33,7 +33,7 @@ function Write-AgentFinalMessages {
         Write-AgentSupport
         return
     }
-    if ($IsRemoveAnswerNo) {
+    if ($script:IsRemoveLastRunAnswerNo) {
         Write-AgentInfo
         Write-AgentSupport
         return
@@ -47,7 +47,7 @@ function Write-AgentFinalMessages {
         Write-AgentSupport
         return
     }
-    if ($script:IsPostrequisitesFailed) {
+    if ($script:IsPostrequisiteFailed) {
         $local:Message = 'Agent Failed'
         Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
         Write-Log $script:LogLevelInfo $Message
@@ -57,7 +57,7 @@ function Write-AgentFinalMessages {
         Write-AgentSupport
         return
     }
-    if ($IsAgentCompleted) {
+    if ($script:IsAgentCompleted) {
         $local:Message = 'Agent Completed Successfully'
         Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
         Write-Log $script:LogLevelInfo $Message
@@ -145,9 +145,9 @@ $WarningPreference = 'SilentlyContinue'
 # Agent status flags
 $script:IsShowHelp = $false
 $script:IsLoadingAgentScriptsFailed = $false
-$script:IsRemoveAnswerNo = $false
+$script:IsRemoveLastRunAnswerNo = $false
 $script:IsAgentFailed = $false
-$script:IsPostrequisitesFailed = $false
+$script:IsPostrequisiteFailed = $false
 $script:IsAgentCompleted = $false
 
 # Print main title
@@ -263,8 +263,10 @@ try {
     # Run subtype installer
     Invoke-SubTypeInstaller
 
-    # Run subtype post-requisites
-    Invoke-SubTypePostrequisites
+    if (-Not $script:IsRemoveLastRunAnswerNo) {
+        # Run subtype post-requisites
+        Invoke-SubTypePostrequisites
+    }
     
     $script:IsAgentCompleted = $true
 }

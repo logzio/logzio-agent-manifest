@@ -673,10 +673,6 @@ function Invoke-Task {
         Write-Host "X" -ForegroundColor Red -NoNewline
         Write-Host " ]" -NoNewline
         Write-Host " $Description ...`n" -ForegroundColor Red -NoNewline
-        
-        if (-Not $script:IsPostrequisitesFailed) {
-            $script:IsAgentFailed = $true
-        }
 
         if (Test-Path -Path $script:TaskPostRunFile) {
             try {
@@ -687,14 +683,18 @@ function Invoke-Task {
                 Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
                 Write-Error $Message
 
+                $script:IsAgentFailed = $true
                 Exit 4
             }
         }
 
         Clear-Content $script:TaskPostRunFile
 
-        if ($script:IsPostrequisitesFailed) {
+        if ($script:IsPostrequisiteFailed) {
             return
+        }
+        else {
+            $script:IsAgentFailed = $true
         }
         
         Exit $ExitCode
