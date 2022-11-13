@@ -76,7 +76,7 @@ function Test-IsAnyPodPending {
         return
     }
 
-    $script:IsPostrequisitesFailed = $true
+    Write-TaskPostRun "`$script:IsPostrequisitesFailed = `$true"
 
     $Message = "postrequisites.ps1 ($ExitCode): found pending pods:$Err"
     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
@@ -121,7 +121,7 @@ function Test-IsAnyPodFailed {
         return
     }
 
-    $script:IsPostrequisitesFailed = $true
+    Write-TaskPostRun "`$script:IsPostrequisitesFailed = `$true"
 
     $Message = "postrequisites.ps1 ($ExitCode): found failed pods:$Err"
     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
