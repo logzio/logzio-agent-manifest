@@ -141,7 +141,15 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     $local:IsPodCompleted = $false
     $local:Retries = 3
     while ($Retries -ne 0) {
-        $local:Pod = kubectl get pods | Select-String -Pattern 'logzio-logs-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
+        $local:Pod = kubectl get pods 2>$script:TaskErrorFile | Select-String -Pattern 'logzio-logs-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
+        if ($LASTEXITCODE -ne 0) {
+            $Message = "prerequisites.ps1 ($ExitCode): error getting pods: $(Get-TaskErrorMessage)"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Write-TaskPostRun "Write-Error `"$Message`""
+    
+            return $ExitCode
+        }
+
         $local:PodStatus = $Pod[2]
 
         if ($PodStatus.Equals('Completed')) {
@@ -230,7 +238,15 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     $local:IsPodCompleted = $false
     $local:Retries = 3
     while ($Retries -ne 0) {
-        $local:Pod = kubectl get pods | Select-String -Pattern 'logzio-metrics-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
+        $local:Pod = kubectl get pods 2>$script:TaskErrorFile | Select-String -Pattern 'logzio-metrics-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
+        if ($LASTEXITCODE -ne 0) {
+            $Message = "prerequisites.ps1 ($ExitCode): error getting pods: $(Get-TaskErrorMessage)"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Write-TaskPostRun "Write-Error `"$Message`""
+    
+            return $ExitCode
+        }
+        
         $local:PodStatus = $Pod[2]
 
         if ($PodStatus.Equals('Completed')) {

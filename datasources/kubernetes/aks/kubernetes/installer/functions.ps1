@@ -304,7 +304,15 @@ function Build-TolerationsHelmSets {
     $local:IsMetricsOptionSelected = $FuncArgs.IsMetricsOptionSelected
     $local:IsTracesOptionSelected = $FuncArgs.IsTracesOptionSelected
 
-    $local:Nodes = kubectl get nodes -o json
+    $local:Nodes = kubectl get nodes -o json 2>$script:TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "installer.ps1 ($ExitCode): error getting nodes: $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+    
     $local:Err = Get-JsonStrFieldValueList $Nodes '.items[].spec | select(.taints!=null) | .taints[]'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "installer.ps1 ($ExitCode): $($Err[0])"

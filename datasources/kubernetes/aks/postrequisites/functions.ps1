@@ -8,6 +8,7 @@
 # Output:
 #   AreAllPodsRunningOrCompleted - Tells if all pods are running or completed (true/false)
 function Test-AreAllPodsRunningOrCompleted {
+    $local:ExitCode = 1
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if all pods are running or completed ...'
@@ -16,7 +17,15 @@ function Test-AreAllPodsRunningOrCompleted {
 
     $local:Retries = 3
     while ($Retries -ne 0) {
-        $local:PodStatuses = kubectl get pods -n monitoring --no-headers -o custom-columns=":.status.phase"
+        $local:PodStatuses = kubectl get pods -n monitoring --no-headers -o custom-columns=":.status.phase" 2>$script:TaskErrorFile
+        if ($LASTEXITCODE -ne 0) {
+            $Message = "postrequisites.ps1 ($ExitCode): error getting pod statuses: $(Get-TaskErrorMessage)"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+
         $local:BadStatuses = $PodStatuses | Select-String -Pattern "Running|Completed|Succeeded" -NotMatch
 
         if ([string]::IsNullOrEmpty($BadStatuses)) {
@@ -45,7 +54,7 @@ function Test-AreAllPodsRunningOrCompleted {
 # Output:
 #   ---
 function Test-IsAnyPodPending {
-    $local:ExitCode = 1
+    $local:ExitCode = 2
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if any pod is pending ...'
@@ -53,7 +62,17 @@ function Test-IsAnyPodPending {
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = ''
-    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns=":.metadata.name,:.status.phase" | ForEach-Object {$_ -replace '\s+', ' '}
+    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns=":.metadata.name,:.status.phase" 2>$script:TaskErrorFile | ForEach-Object {$_ -replace '\s+', ' '}
+    if ($LASTEXITCODE -ne 0) {
+        Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
+        
+        $Message = "postrequisites.ps1 ($ExitCode): error getting pod names and statuses: $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
     foreach ($Pod in $Pods) {
         $local:PodSplitted = ForEach-Object {$Pod -split ' '}
         $local:PodName = $PodSplitted[0]
@@ -63,8 +82,28 @@ function Test-IsAnyPodPending {
             continue
         }
 
-        $local:EventReason = kubectl get event -n monitoring --field-selector involvedObject.name=$PodName --no-headers -o custom-columns=":.reason" | Select-Object -last 1 
-        $local:EventMessage = kubectl get event -n monitoring --field-selector involvedObject.name=$PodName --no-headers -o custom-columns=":.message" | Select-Object -last 1 
+        $local:EventReason = kubectl get event -n monitoring --field-selector involvedObject.name=$PodName --no-headers -o custom-columns=":.reason" 2>$script:TaskErrorFile | Select-Object -first 1
+        if ($LASTEXITCODE -ne 0) {
+            Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
+
+            $Message = "postrequisites.ps1 ($ExitCode): error getting pending pod '$PosName' reason: $(Get-TaskErrorMessage)"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+
+        $local:EventMessage = kubectl get event -n monitoring --field-selector involvedObject.name=$PodName --no-headers -o custom-columns=":.message" 2>$script:TaskErrorFile | Select-Object -first 1
+        if ($LASTEXITCODE -ne 0) {
+            Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
+
+            $Message = "postrequisites.ps1 ($ExitCode): error getting pending pod '$PosName' message: $(Get-TaskErrorMessage)"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+
         $Err += "`n'$PodName' pod status is 'Pending'. reason: $EventReason, message: $EventMessage"
     }
 
@@ -76,13 +115,12 @@ function Test-IsAnyPodPending {
         return
     }
 
-    Write-TaskPostRun "`$script:IsPostrequisitesFailed = `$true"
+    Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
 
     $Message = "postrequisites.ps1 ($ExitCode): found pending pods:$Err"
     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
-    Write-Log $script:LogLevelError $Message
-
     Write-TaskPostRun "Write-Error `"$Message`""
+
     return $ExitCode
 }
 
@@ -92,7 +130,7 @@ function Test-IsAnyPodPending {
 # Output:
 #   ---
 function Test-IsAnyPodFailed {
-    $local:ExitCode = 2
+    $local:ExitCode = 3
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if any pod is failed ...'
@@ -100,7 +138,17 @@ function Test-IsAnyPodFailed {
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = ''
-    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns=':.metadata.name,:.status.phase' | ForEach-Object {$_ -replace '\s+', ' '}
+    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns=':.metadata.name,:.status.phase' 2>$script:TaskErrorFile | ForEach-Object {$_ -replace '\s+', ' '}
+    if ($LASTEXITCODE -ne 0) {
+        Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
+
+        $Message = "postrequisites.ps1 ($ExitCode): error getting pod names and statuses: $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
+        Write-TaskPostRun "Write-Error `"$Message`""
+        
+        return $ExitCode
+    }
+
     foreach ($Pod in $Pods) {
         $local:PodSplitted = ForEach-Object {$Pod -split ' '}
         $local:PodName = $PodSplitted[0]
@@ -121,12 +169,11 @@ function Test-IsAnyPodFailed {
         return
     }
 
-    Write-TaskPostRun "`$script:IsPostrequisitesFailed = `$true"
+    Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
 
     $Message = "postrequisites.ps1 ($ExitCode): found failed pods:$Err"
     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
-    Write-Log $script:LogLevelError $Message
-
     Write-TaskPostRun "Write-Error `"$Message`""
+
     return $ExitCode
 }
