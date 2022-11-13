@@ -39,9 +39,9 @@ function set_project_id(){
 	
 
 
-	if [[ $set_current_project_id !="0" ]]
+	if [[ $set_current_project_id == 'Updated property [core/project].' ]]
 	then
-		return
+	    write_log "INFO" "Default Gcloud project set to ${project_id}"
 	else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to set Google project.\n  $err\""
