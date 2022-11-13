@@ -20,8 +20,8 @@ if (-Not $script:AreAllPodsRunningOrCompleted) {
     # Check if any pod is failed
     Invoke-Task 'Test-IsAnyPodFailed' @{} 'Checking if any pod is failed' @($PostrequisitesScriptFile)
 
-    if ($script:IsPostrequisitesFailed) {
-        Exit 3
+    if ($script:IsPostrequisiteFailed) {
+        Exit 4
     }
 }
 

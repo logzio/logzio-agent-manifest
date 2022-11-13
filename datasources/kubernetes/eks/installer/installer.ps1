@@ -33,7 +33,7 @@ function Invoke-RemoveHelmOrExit {
     Write-Log $script:LogLevelDebug $Message
 
     if ($Answer.Equals('n')) {
-        $script:IsRemoveServiceAnswerNo = $true
+        $script:IsRemoveLastRunAnswerNo = $true
         Exit 0
     }
 
