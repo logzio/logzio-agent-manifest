@@ -135,7 +135,7 @@
                     { "label": "AWS IoT", "value": "aws-iot" },
                     { "label": "Lambda", "value": "lambda" },
                     { "label": "Amazon Macie", "value": "macie" },
-                    { "label": "Amazon MQ", "value": "amazon-mq" },
+                    { "label": "Amazon MQ", "value": "amazon-mq" }
                   ]
                 },
                 { 
@@ -161,7 +161,7 @@
                 {
                   "type": "single-select",
                   "name": "param_triggerLambdaLogLevel",
-                  "label": "trigger lambda log levell",
+                  "label": "trigger lambda log level",
                   "description": "Log level for the trigger function",
                   "options": [
                     { "label": "debug", "value": "debug" },
