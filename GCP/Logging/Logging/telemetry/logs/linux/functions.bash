@@ -11,7 +11,7 @@
 #   Exit Code 1
 function get_project_id(){
 
-    write_log "INFO" "running command gcloud config get-value account ..."
+    write_log "INFO" "Getting user project id ..."
 
     local project_id_param=$(find_param "$logs_params" "projectID")
     if [[ -z "$project_id_param" ]]; then
