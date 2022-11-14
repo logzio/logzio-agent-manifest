@@ -119,33 +119,6 @@ function get_google_cloud_fuction_name_from_id () {
     write_run "function_name=\"$function_name\""
 }
 
-
-# Gets Log Type
-# Output:
-#   type_log - type log
-# Error:
-#   Exit Code 3
-# function get_logzio_log_type () {
-#     write_log "INFO" "Getting type log ..."
-
-#     local type_log_param=$(find_param "$logs_params" "typeLog")
-#     if [[ -z "$type_log_param" ]]; then
-#         write_run "print_error \"logs.bash (3): Log type param was not found\""
-#         return 3
-#     fi
-
-#     local type_log=$(echo -e "$type_log_param" | jq -c '.value')
-#     if [[ "$type_log" = null ]]; then
-#         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=typeLog}].value' was not found in application JSON\""
-#         return 3
-#     fi
-    
-#     write_log "INFO" "type_log = $type_log"
-#     write_run "type_log=\"$type_log\""
-# }
-
-
-
 # Gets Filter for logs
 # Output:
 #   filter_log - filter logs
