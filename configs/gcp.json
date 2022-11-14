@@ -128,7 +128,7 @@
                                     "required": true,
                                     "description": "ID of Google Cloud project from where to send logs to logz.io.",
                                     "hint": "Google Cloud function will be create for parse logs in proper format.",
-                                    "value": ""
+                                    "value": "Google project ID"
                                 },
                                 {
                                     "type": "multi-select",
