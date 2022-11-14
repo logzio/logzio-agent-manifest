@@ -29,7 +29,7 @@
                     "description": "Resource group name for logz.io logs integration resources.",
                     "hint": "A name for a new azure resource group to create for all logz.io integration resources",
                     "value": "logzio-logs-integration"
-                  }
+                  },
                   {
                     "type": "text",
                     "name": "region",
