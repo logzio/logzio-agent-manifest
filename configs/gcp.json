@@ -130,7 +130,6 @@
                                     "hint": "Google Cloud function will be create for parse logs in proper format.",
                                     "value": ""
                                 },
-
                                 {
                                     "type": "multi-select",
                                     "name": "resourceType",
@@ -231,7 +230,7 @@
                                             "value": "bigquery_dataset"
                                         }
                                     ],
-                                    "value": []
+                                    "value": ["api"]
                                 }
                             ]
                         }
