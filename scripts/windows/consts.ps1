@@ -4,15 +4,19 @@
 
 # Static Consts
 
-## Directories
+## Agent Directories
 # Logz.io temp directory
 $script:LogzioTempDir = "$env:TEMP\Logzio"
 # Logz.io AppData directory
 $script:LogzioAppDataDir = "$env:APPDATA\LogzioAgent"
-# Logz.io OTEL collector AppData subdirectory
-$script:LogzioOtelCollectorDir = "$script:LogzioAppDataDir\LogzioOTELCollector"
+
+## Resources Directory
 # Resources directory
 $script:LogzioResourcesDir = "$script:LogzioTempDir\resources"
+
+## OTEL Directories
+# Logz.io OTEL collector AppData subdirectory
+$script:LogzioOtelCollectorDir = "$script:LogzioAppDataDir\LogzioOTELCollector"
 # Resources OTEL directory
 $script:OtelResourcesDir = "$script:LogzioResourcesDir\otel"
 # OTEL receivers directory
@@ -21,6 +25,8 @@ $script:OtelReceiversDir = "$script:OtelResourcesDir\receivers"
 $script:OtelProcessorsDir = "$script:OtelResourcesDir\processors"
 # OTEL exporters directory
 $script:OtelExportersDir = "$script:OtelResourcesDir\exporters"
+
+## Kubernetes Directories
 # Logz.io Kubernetes AppData subdirectory
 $script:LogzioKubernetesDir = "$script:LogzioAppDataDir\LogzioKubernetes"
 # Resources Kubernetes directory
@@ -35,8 +41,6 @@ $script:TaskPostRunFile = "$script:LogzioTempDir\task_post_run.ps1"
 $script:TaskErrorFile = "$script:LogzioTempDir\task_error.txt"
 # Agent json file path
 $script:AgentJson = "$script:LogzioTempDir\agent.json"
-# OTEL function file
-$script:OtelFunctionFile = "$script:LogzioTempDir\otel_function.ps1"
 
 ## Urls
 # Url for downloading jq exe
@@ -55,6 +59,8 @@ $script:JqExe = "$script:LogzioTempDir\jq.exe"
 $script:YqExe = "$script:LogzioTempDir\yq.exe"
 
 ## OTEL files
+# OTEL function file
+$script:OtelFunctionFile = "$script:LogzioTempDir\otel_function.ps1"
 # OTEL collector exe file name
 $script:OtelCollectorExeName = 'otelcol-logzio-windows_amd64.exe'
 # OTEL collector exe file path
