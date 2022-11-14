@@ -1,19 +1,19 @@
 {
     "name": "Azure",
-    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
+    "logo": "s3://logzio-aws-integrations-us-east-1/logos/azure-logo.png",
     "description": "",
     "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
     "subtypes": [
       {
         "name": "Cloud services",
-        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws_ec2_linux.png",
+        "logo": "s3://logzio-aws-integrations-us-east-1/logos/azure-logo.png",
         "description": "Azure cloud services",
         "hint": "All azure cloud services",
         "supportedOs": ["Linux", "Windows", "Mac"],
         "datasources": [
           {
             "name": "Diagnostic settings", 
-            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+            "logo": "s3://logzio-aws-integrations-us-east-1/logos/az-diagnostics.png",
             "description": "Ship Azure Diagnostic settings logs to logzio and monitor your cloud services.",
             "telemetries": [
               {
@@ -42,8 +42,8 @@
                         {"label":"West US 2","value":"West US 2"},
                         {"label":"France Central","value":"France Central"},
                         {"label":"Germany West Central","value":"Germany West Central"},
-                        {"label":"`North Europe","value":"North Europe"},
-                        {"label":"`West Europe","value":"West Europe"},
+                        {"label":"North Europe","value":"North Europe"},
+                        {"label":"West Europe","value":"West Europe"},
                         {"label":"UK South","value":"UK South"}
                     ],
                     "required": true,
