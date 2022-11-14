@@ -1,8 +1,147 @@
 #!/bin/bash
 
 #################################################################################################################################
-####################################################### Agent Linux Script ######################################################
+####################################################### LINUX Agent Script ######################################################
 #################################################################################################################################
+
+# Deletes Logz.io temp directory
+# Input:
+#   ---
+# Output:
+#   ---
+function delete_temp_dir {
+    rm -f -R $LOGZIO_TEMP_DIR 2>$TASK_ERROR_FILE
+    if [[$? -ne 0]]; then
+        write_warning "failed to delete Logz.io temp directory: $(get_task_error_message)"
+    fi
+}
+
+# Prints agent final messages
+# Input:
+#   ---
+# Output:
+#   Agent final messages
+function write_agent_final_messages {
+    local func_name=$0
+
+    if $IS_SHOW_HELP; then
+        return
+    fi
+    if $IS_LOADING_AGENT_SCRIPTS_FAILED; then
+        local message='Agent Failed'
+        write_agent_status $message 'Red'
+        write_agent_support
+        return
+    fi
+    if $IS_REMOVE_LAST_RUN_ANSWER_NO; then
+        write_agent_info
+        write_agent_support
+        return
+    fi
+    if $Is_AGENT_FAILED; then
+        local message='Agent Failed'
+        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
+        write_log $LOG_LEVEL_INFO $message
+
+        write_agent_status $message 'Red'
+        write_agent_support
+        return
+    fi
+    if $IS_POSTREQUISITE_FAILED; then
+        local message='Agent Failed'
+        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
+        write_log $LOG_LEVEL_INFO $message
+
+        write_agent_status $message 'Red'
+        write_agent_info
+        write_agent_support
+        return
+    fi
+    if $IS_AGENT_COMPLETED; then
+        local message='Agent Completed Successfully'
+        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
+        write_log $LOG_LEVEL_INFO $message
+
+        write_agent_status $message 'Green'
+        write_agent_info
+        write_agent_support
+        return
+    fi
+}
+
+# Prints agent interruption message
+# Input:
+#   ---
+# Output:
+#   Agent interruption message
+function write_agent_interruption_message {
+    trap SIGINT
+    local message='Agent Stopped By User'
+    
+    if [[ $(type -t send_log_to_logzio) == function ]]; then
+        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
+    fi
+
+    write_agent_status $message 'Yellow'
+}
+
+# Prints agent status
+# Input:
+#   ---
+# Ouput:
+#   Agent status
+function write_agent_status {
+    local $message=$1
+    local $color=$2
+
+    echo
+    echo
+
+    local repeat=5
+    while [[ $repeat -ne 0 ]]; do
+        if [[ $repeat % 2 -eq 0 ]]; then
+            echo -e "\r##### $message #####"
+        else
+            echo -e "\r$color##### $message #####$WHITE_COLOR"
+        fi
+
+        sleep 250
+        (($repeat--))
+    done
+
+    echo
+    echo
+}
+
+function write_agent_info {
+    source "$LOGZIO_TEMP_DIR/$PLATFORM/$SUB_TYPE/$AGENT_INFO_FILE" 2>$TASK_ERROR_FILE
+    if [[ $? -ne 0 ]]; then
+        local message="failed to print agent info: $(get_task_error_message)"
+        write_warning $message
+    fi
+}
+
+# Prints agent support message
+# Input:
+#   ---
+# Output:
+#   Support message 
+function write_agent_support {
+    echo
+    echo -e '###############'
+    echo -e "###$MAGENTA_COLOR Support $WHITE_COLOR###"
+    echo -e '###############'
+    echo -e 'If you have any issue, request or additional questions, our Amazing Support Team will be more than happy to assist.'
+    echo -e "You can contact us via 'help@logz.io' email or chat in Logz.io application under 'Need help?'."
+    echo
+}
+
+
+
+
+
+
+
 
 # Prints usage
 # Output:
