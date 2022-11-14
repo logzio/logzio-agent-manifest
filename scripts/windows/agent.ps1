@@ -119,7 +119,7 @@ function Write-AgentInfo {
         . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:AgentInfoFile" -ErrorAction Stop
     }
     catch {
-        $Message = "failed to print agent info: $_"
+        $local:Message = "failed to print agent info: $_"
         Write-Warning $Message
     }
 }
@@ -136,7 +136,7 @@ function Write-AgentSupport {
     Write-Host 'Support' -ForegroundColor Magenta -NoNewline
     Write-Host ' ###'
     Write-Host '###############'
-    Write-Host "If you have any issue, request or additional questions, our Amazing Support Team will be more than happy to assist."
+    Write-Host 'If you have any issue, request or additional questions, our Amazing Support Team will be more than happy to assist.'
     Write-Host "You can contact us via 'help@logz.io' email or chat in Logz.io application under 'Need help?'."
     Write-Host
 }
