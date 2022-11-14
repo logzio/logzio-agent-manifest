@@ -40,7 +40,7 @@ function get_project_id(){
 function set_project_id(){
     write_log "INFO" "running command gcloud to define user relevant project id ..."
 
-	gcloud_user_project_list=$(gcloud projects list --filter='projectId="$project_id"')
+	gcloud_user_project_list=$(gcloud projects list --filter='projectId=$project_id')
 	#   -z "$project_id_param"
 	if [[ -z "$gcloud_user_project_list" ]]; then
         write_run "print_error \"logs.bash (1): 'projectId is not exist of user's project list. Please check projectId\""
