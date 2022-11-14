@@ -1,19 +1,19 @@
 {
     "name": "Azure",
-    "logo": "s3://logzio-aws-integrations-us-east-1/logos/azure-logo.png",
+    "logo": "https://logzio-aws-integrations-us-east-1.s3.amazonaws.com/logos/azure-logo.png",
     "description": "",
     "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
     "subtypes": [
       {
         "name": "Cloud services",
-        "logo": "s3://logzio-aws-integrations-us-east-1/logos/azure-logo.png",
+        "logo": "https://logzio-aws-integrations-us-east-1.s3.amazonaws.com/logos/azure-logo.png",
         "description": "Azure cloud services",
         "hint": "All azure cloud services",
         "supportedOs": ["Linux", "Windows", "Mac"],
         "datasources": [
           {
             "name": "Diagnostic settings", 
-            "logo": "s3://logzio-aws-integrations-us-east-1/logos/az-diagnostics.png",
+            "logo": "https://logzio-aws-integrations-us-east-1.s3.amazonaws.com/logos/az-diagnostics.png",
             "description": "Ship Azure Diagnostic settings logs to logzio and monitor your cloud services.",
             "telemetries": [
               {
