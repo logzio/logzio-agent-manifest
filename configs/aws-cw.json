@@ -161,7 +161,7 @@
                 {
                   "type": "single-select",
                   "name": "param_triggerLambdaLogLevel",
-                  "label": "trigger lambda log level",
+                  "label": "trigger lambda log levell",
                   "description": "Log level for the trigger function",
                   "options": [
                     { "label": "debug", "value": "debug" },
