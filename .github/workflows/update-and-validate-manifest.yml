@@ -47,7 +47,7 @@ jobs:
           retention-days: 1
 
   update_release:
-    name: Update testing release
+    name: Update dev release
     needs: [filter_for_configs, build_manifest]
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
@@ -57,12 +57,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: manifest
-      - name: Update testing pre-release
+      - name: Update dev pre-release
         uses: meeDamian/github-release@2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          name: testing
-          tag: testing
+          name: dev
+          tag: dev
           allow_override: true
           prerelease: true
           files: manifest.json
