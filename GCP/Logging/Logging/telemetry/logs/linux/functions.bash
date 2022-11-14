@@ -35,19 +35,16 @@ function get_project_id(){
 function set_project_id(){
     write_log "INFO" "running command gcloud to define user relevant project id ..."
 
-	set_current_project_id="$(gcloud config set project "$project_id")"
-	
-	write_log "INFO" "${set_current_project_id}"
+	gcloud_user_project_list=$(gcloud projects list --filter='projectId=$project_id')
+	#   -z "$project_id_param"
+	if [[ -z "$gcloud_user_project_list" ]]; then
+        write_run "print_error \"logs.bash (1): 'projectId is not exist of user's project list. Please check projectId\""
+        return 1
+	else
+		set_current_project_id="$(gcloud config set project "$project_id")"
+		write_log "INFO" "${set_current_project_id}"
+	fi
 
-
-	# if [[ $set_current_project_id == 'Updated property [core/project].' ]]
-	# then
-	#     write_log "INFO" "Default Gcloud project set to ${project_id}"
-	# else
-    #     local err=$(cat $task_error_file)
-    #     write_run "print_error \"prerequisites.bash (1): failed to set Google project.\n  $err\""
-    #     return 1	
-	# fi
 }
 
 
