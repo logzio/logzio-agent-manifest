@@ -129,6 +129,108 @@
                                     "description": "ID of Google Cloud project from where to send logs to logz.io.",
                                     "hint": "Google Cloud function will be create for parse logs in proper format.",
                                     "value": ""
+                                },
+                                {
+                                    "type": "multi-select",
+                                    "name": "resourceType",
+                                    "label": "Google Cloud Resources",
+                                    "description": "Send logs that includes one of the resource types ",
+                                    "hint": "(Optional) Logging Sink filter, filter only by resource type, need to be fill in an array with comma seperator. If that field empty will send all logs",
+                                    "options": [
+                                        {
+                                            "label": "api",
+                                            "value": "api"
+                                        },
+                                        {
+                                            "label": "app_script_function",
+                                            "value": "app_script_function"
+                                        },
+                                        {
+                                            "label": "assistant_action",
+                                            "value": "assistant_action"
+                                        },
+                                        {
+                                            "label": "audited_resource",
+                                            "value": "audited_resource"
+                                        },
+                                        {
+                                            "label": "autoscaler",
+                                            "value": "autoscaler"
+                                        },
+                                        {
+                                            "label": "aws_alb_load_balancer",
+                                            "value": "aws_alb_load_balancer"
+                                        },
+                                        {
+                                            "label": "aws_cloudfront_distribution",
+                                            "value": "aws_cloudfront_distribution"
+                                        },
+                                        {
+                                            "label": "aws_dynamodb_table",
+                                            "value": "aws_dynamodb_table"
+                                        },
+                                        {
+                                            "label": "aws_ebs_volume",
+                                            "value": "aws_ebs_volume"
+                                        },
+                                        {
+                                            "label": "aws_ec2_instance",
+                                            "value": "aws_ec2_instance"
+                                        },
+                                        {
+                                            "label": "aws_elasticache_cluster",
+                                            "value": "aws_elasticache_cluster"
+                                        },
+                                        {
+                                            "label": "aws_elb_load_balancer",
+                                            "value": "aws_elb_load_balancer"
+                                        },
+                                        {
+                                            "label": "aws_emr_cluster",
+                                            "value": "aws_emr_cluster"
+                                        },
+                                        {
+                                            "label": "aws_kinesis_stream",
+                                            "value": "aws_kinesis_stream"
+                                        },
+                                        {
+                                            "label": "aws_lambda_function",
+                                            "value": "aws_lambda_function"
+                                        },
+                                        {
+                                            "label": "aws_rds_database",
+                                            "value": "aws_rds_database"
+                                        },
+                                        {
+                                            "label": "aws_redshift_cluster",
+                                            "value": "aws_redshift_cluster"
+                                        },
+                                        {
+                                            "label": "aws_s3_bucket",
+                                            "value": "aws_s3_bucket"
+                                        },
+                                        {
+                                            "label": "aws_ses",
+                                            "value": "aws_ses"
+                                        },
+                                        {
+                                            "label": "aws_sns_topic",
+                                            "value": "aws_sns_topic"
+                                        },
+                                        {
+                                            "label": "aws_sqs_queue",
+                                            "value": "aws_sqs_queue"
+                                        },
+                                        {
+                                            "label": "bigquery_biengine_model",
+                                            "value": "bigquery_biengine_model"
+                                        },
+                                        {
+                                            "label": "bigquery_dataset",
+                                            "value": "bigquery_dataset"
+                                        }
+                                    ],
+                                    "value": ["api"]
                                 }
                             ]
                         }
