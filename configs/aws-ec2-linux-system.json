@@ -34,7 +34,7 @@
                  },
                  {
                    "type": "string-list",
-                   "name": "stringList",
+                   "name": "stringListnotrequired",
                    "label": "not-required",
                    "required": false,
                    "description": "The paths of log files to collect.",
@@ -45,7 +45,7 @@
                  },
                  {
                    "type": "string-list",
-                   "name": "stringList",
+                   "name": "stringListwithpattern",
                    "label": "with pattern",
                    "required": false,
                    "description": "The paths of log files to collect.",
@@ -57,7 +57,7 @@
                  },
                  {
                    "type": "string-list",
-                   "name": "stringList",
+                   "name": "stringListwithpatternerror",
                    "label": "with pattern error",
                    "required": false,
                    "description": "The paths of log files to collect.",
@@ -66,7 +66,7 @@
                    "placeholder": "Barak placeholder",
                    "actionText": "Barak action text",
                    "pattern": "^[0-9]+$",
-                   "patternError": "Wrong pattern haha"
+                   "patternError": "only number pleasee"
                  }
                ]
              },
