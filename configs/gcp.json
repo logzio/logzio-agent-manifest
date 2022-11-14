@@ -138,6 +138,10 @@
                                     "hint": "(Optional) Logging Sink filter, filter only by resource type, need to be fill in an array with comma seperator. If that field empty will send all logs",
                                     "options": [
                                         {
+                                            "label": "all_logs",
+                                            "value": "all_logs"
+                                        },
+                                        {
                                             "label": "api",
                                             "value": "api"
                                         },

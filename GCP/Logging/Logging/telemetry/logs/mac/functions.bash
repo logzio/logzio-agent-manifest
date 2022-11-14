@@ -134,7 +134,7 @@ function get_resources_type () {
         return 3
     fi
 
-    local resource_type=$(echo -e "$resource_type_param" | jq -c '.value')
+    local resource_type=$(echo -e "$resource_type_param" | jq -c '.value[]')
 
     write_log "INFO" "resource_type = $resource_type"
     write_run "resource_type=\"$resource_type\""
@@ -269,13 +269,14 @@ function populate_data_to_config (){
 #   resource_type - resource type from filter
 
 function populate_filter_for_service_name(){
+	all_logs="all_logs"
+
     if [[ ! -z "$resource_type" ]]; then
 	filter=" AND"
-	array_filter_names=(${resource_type//,/ })
 
-	last_element=${#array_filter_names[@]}
+	last_element=${#resource_type[@]}
 	current=0
-	for name in "${array_filter_names[@]}"
+	for name in "${resource_type[@]}"
     do
 	    current=$((current + 1))
 	    if [ $current -eq $last_element ]; then
@@ -287,6 +288,10 @@ function populate_filter_for_service_name(){
 	resource_type=$filter
     fi
 
+	if [[ " ${resource_type[*]} " =~ " ${all_logs} " ]]; then
+			resource_type=""
+		# whatever you want to do when array contains value
+	fi
 }
 
 
