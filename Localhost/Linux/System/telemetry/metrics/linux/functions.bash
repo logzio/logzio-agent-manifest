@@ -12,7 +12,7 @@
 function get_logzio_metrics_listener_url () {
     write_log "INFO" "Getting Logz.io metrics listener URL ..."
 
-    local listener_url=$(jq -r '.listenerUrl' $app_json)
+    local listener_url=$($jq_bin -r '.listenerUrl' $app_json)
     if [[ "$listener_url" = null ]]; then
         write_run "print_error \"metrics.bash (1): '.listenerUrl' was not found in application JSON\""
         return 1
@@ -35,7 +35,7 @@ function get_logzio_metrics_listener_url () {
 function get_logzio_metrics_token () {
     write_log "INFO" "Getting Logz.io metrics token ..."
 
-    local shipping_token=$(jq -r '.shippingTokens.METRICS' $app_json)
+    local shipping_token=$($jq_bin -r '.shippingTokens.METRICS' $app_json)
     if [[ "$shipping_token" = null ]]; then
         write_run "print_error \"metrics.bash (2): '.shippingTokens.METRICS' was not found in application JSON\""
         return 2

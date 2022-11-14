@@ -24,7 +24,7 @@ function build_enable_metrics_helm_set () {
 function build_logzio_metrics_listener_url_helm_set () {
     write_log "INFO" "Building Logz.io metrics listener URL Helm set ..."
 
-    local listener_url=$(jq -r '.listenerUrl' $app_json)
+    local listener_url=$($jq_bin -r '.listenerUrl' $app_json)
     if [[ "$listener_url" = null ]]; then
         write_run "print_error \"metrics.bash (1): '.listenerUrl' was not found in application JSON\""
         return 1
@@ -49,7 +49,7 @@ function build_logzio_metrics_listener_url_helm_set () {
 function build_logzio_metrics_token_helm_set () {
     write_log "INFO" "Building Logz.io metrics token Helm set ..."
 
-    local shipping_token=$(jq -r '.shippingTokens.METRICS' $app_json)
+    local shipping_token=$($jq_bin -r '.shippingTokens.METRICS' $app_json)
     if [[ "$shipping_token" = null ]]; then
         write_run "print_error \"metrics.bash (2): '.shippingTokens.METRICS' was not found in application JSON\""
         return 2
@@ -79,7 +79,7 @@ function get_is_k8s_runs_on_windows_os () {
         return 3
     fi
 
-    local is_windows_value=$(echo -e "$is_windows_param" | jq -r '.value')
+    local is_windows_value=$(echo -e "$is_windows_param" | $jq_bin -r '.value')
     if [[ "$is_windows_value" = null ]]; then
         write_run "print_error \"metrics.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=METRICS}].params[{name=isWindows}].value' was not found in application JSON\""
         return 3

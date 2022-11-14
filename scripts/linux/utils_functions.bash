@@ -72,7 +72,7 @@ function find_param () {
     local requested_param=""
 
     while read -r param; do
-        local name=$(echo -e "$param" | jq -r '.name')
+        local name=$(echo -e "$param" | $jq_bin -r '.name')
         if [[ -z "$name" || "$name" = null ]]; then
             continue
         fi
@@ -80,7 +80,7 @@ function find_param () {
         if [[ "$name" = "$requested_name" ]]; then
             requested_param="$param"
         fi
-    done < <(echo -e "$params" | jq -c '.')
+    done < <(echo -e "$params" | $jq_bin -c '.')
 
     echo -e "$requested_param"
 }
