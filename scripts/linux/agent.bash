@@ -210,7 +210,6 @@ echo -e "Running \033[0;36mLogz.io\033[0;37m Agent:\n"
 
 # Run prerequisite installations
 echo -e "prerequisite installations:"
-execute_task "is_package_manager_installed" "checking if a package manager is installed"
 execute_task "install_jq" "installing jq"                                                       # Install jq
 
 # Run last preparations
