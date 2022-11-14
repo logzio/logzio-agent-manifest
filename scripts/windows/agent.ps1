@@ -175,7 +175,7 @@ Write-Host '
     LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzzzzzzzzzzzzzzzz ...... iiiiiiii   ooooooooooo   
                                                          g:::::g                                                   
                                              gggggg      g:::::g                                                   
-                Agent v1.0.18                g:::::gg   gg:::::g                                                   
+                Agent v1.0.19                g:::::gg   gg:::::g                                                   
                                               g::::::ggg:::::::g                                                   
                                                gg:::::::::::::g                                                    
                                                  ggg::::::ggg                                                      
