@@ -61,13 +61,6 @@
                "params":
                [
                 {
-                  "type": "boolean",
-                  "name": "param_logzioCompress",
-                  "label": "Compress",
-                  "description": "Send logs compressed",
-                  "value": true
-                },
-                {
                   "type": "key-value",
                   "name": "param_logzioEnrich",
                   "label": "Logzio Enrich",
@@ -90,6 +83,13 @@
                   "label": "LogzioSendAll",
                   "description": "LogzioSendAll",
                   "value": false
+                },
+                                {
+                  "type": "boolean",
+                  "name": "param_logzioCompress",
+                  "label": "Compress",
+                  "description": "Send logs compressed",
+                  "value": true
                 },
                 {
                   "type": "text",
