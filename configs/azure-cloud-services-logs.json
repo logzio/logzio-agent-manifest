@@ -12,9 +12,9 @@
         "supportedOs": ["Linux", "Windows", "Mac"],
         "datasources": [
           {
-            "name": "Diagnostic settings",
+            "name": "Diagnostic settings", 
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
-            "description": "Logz.io Uses Azure Diagnostic settings logs to monitor your cloud services.",
+            "description": "Ship Azure Diagnostic settings logs to logzio and monitor your cloud services.",
             "telemetries": [
               {
                 "type": "LOG_ANALYTICS",
@@ -31,9 +31,21 @@
                     "value": "logzio-logs-integration"
                   },
                   {
-                    "type": "text",
+                    "type": "single-select",
                     "name": "region",
                     "label": "Azure region for the resource group deployment",
+                    "options": [
+                        {"label":"Canada Central","value":"Canada Central"},
+                        {"label":"Central US","value":"Central US"},
+                        {"label":"East US","value":"East US"},
+                        {"label":"South Central US","value":"South Central US"},
+                        {"label":"West US 2","value":"West US 2"},
+                        {"label":"France Central","value":"France Central"},
+                        {"label":"Germany West Central","value":"Germany West Central"},
+                        {"label":"`North Europe","value":"North Europe"},
+                        {"label":"`West Europe","value":"West Europe"},
+                        {"label":"UK South","value":"UK South"}
+                    ],
                     "required": true,
                     "description": "Azure region for the respurce group deployment.",
                     "hint": "Avilable regions: `Canada Central`, `Central US`, `East US`, `South Central US`, `West US 2`, `France Central`, `Germany West Central`, `North Europe`, `UK South`, `West Europe`",
