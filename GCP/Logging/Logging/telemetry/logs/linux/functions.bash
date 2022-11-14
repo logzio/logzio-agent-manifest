@@ -4,8 +4,9 @@
 ################################################## Prerequisites Linux Functions ###################################################
 #################################################################################################################################
 
-# Display gcloud account
+# Get Google project Id
 # Output:
+# project_id - Google Project Id
 # Error:
 #   Exit Code 1
 function get_project_id(){
@@ -32,6 +33,10 @@ function get_project_id(){
     write_run "project_id=\"$project_id\""
 }
 
+# Set to google cloud acc, relevant project ID 
+# Output:
+# Error:
+#   Exit Code 1
 function set_project_id(){
     write_log "INFO" "running command gcloud to define user relevant project id ..."
 
@@ -46,8 +51,6 @@ function set_project_id(){
 	fi
 
 }
-
-
 
 
 # Gets Logz.io listener
@@ -242,7 +245,7 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = $topic_prefix+"-pubsub-topic-logs-to-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
+    jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = $topic_prefix+"-topic-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_PUBSUB_TOPIC_NAME updated"
 
@@ -253,7 +256,7 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = $subscription_prefix+"-pubsub-subscription-logs-to-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
+    jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = $subscription_prefix+"-subscription-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
 	    write_log "INFO" "_PUBSUB_SUBSCRIPTION_NAME updated"
     else
@@ -263,7 +266,7 @@ function populate_data_to_config (){
     fi   
     # echo "${contents}" >  $logzio_temp_dir/config.json
     
-    jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logs-to-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
+    jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = $sink_prefix+"-sink-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_SINK_NAME updated"
     else
