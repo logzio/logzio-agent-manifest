@@ -72,7 +72,12 @@ function Write-AgentFinalMessages {
     $local:Message = 'Agent Stopped By User'
     $local:Command = Get-Command -Name Send-LogToLogzio
     if (-Not [string]::IsNullOrEmpty($Command)) {
-        Send-LogToLogzio $LogLevelInfo $Message 'Final' 'agent.ps1' $FuncName $AgentId
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+    }
+    
+    $Command = Get-Command -Name Write-Log
+    if (-Not [string]::IsNullOrEmpty($Command)) {
+        Write-Log $script:LogLevelInfo $Message
     }
     
     Write-AgentStatus $Message 'Yellow'
