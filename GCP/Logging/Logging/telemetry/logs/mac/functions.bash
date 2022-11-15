@@ -270,30 +270,35 @@ function populate_data_to_config (){
 #   resource_type - resource type from filter
 
 function populate_filter_for_service_name(){
-	all_logs="all_logs"
+	 all_services="all_services"
 
     if [[ ! -z "$resource_type" ]]; then
-	filter=" AND"
+	array_filter_bulk_names=(${resource_type//,/ })
+	last_bulk_element=${#array_filter_bulk_names[@]}
 
-	last_element=${#resource_type[@]}
-	current=0
-	for name in "${resource_type[@]}"
+	for resource_bulk_type in "${array_filter_bulk_names[@]}"
     do
-	    current=$((current + 1))
-	    if [ $current -eq $last_element ]; then
-	        filter+=" resource.type=${name}"
-        else
-	        filter+=" resource.type=${name} AND"
-	    fi
-    done
+		filter+=" AND"
+		array_filter_names=(${resource_bulk_type//,/ })
+		last_element=${#array_filter_names[@]}
+		current=0
+		for name in "${array_filter_names[@]}"
+		do
+			current=$((current + 1))
+			if [ $current -eq $last_element ]; then
+				filter+=" resource.type=${name}"
+			else
+				filter+=" resource.type=${name} AND"
+			fi
+		done
+	done
 	resource_type=$filter
     fi
-
-	if [[ " ${resource_type[*]} " =~ " ${all_logs} " ]]; then
-			resource_type=""
-		# whatever you want to do when array contains value
-	fi
+	if [[ $filter == *"all_services"* ]]; then
+       resource_type=""
+    fi
 }
+
 
 
 
