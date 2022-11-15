@@ -59,6 +59,9 @@ function set_project_id(){
         done	
 		set_current_project_id="$(gcloud config set project "$project_id")"
 		write_log "INFO" "${set_current_project_id}"
+		write_log "INFO" "project_id = $project_id"
+		write_run "project_id=\"$project_id\""
+
 	fi
 
 }
