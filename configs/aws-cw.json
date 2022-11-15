@@ -85,14 +85,14 @@
                 { 
                   "type": "path-list",
                   "name": "param_customLogGroups",
-                  "label": "custom log groups",
-                  "description": "custom log groups you want to collect logs from"
+                  "label": "Custom Log Groups",
+                  "description": "Custom log groups you want to collect logs from"
                 },
                 {
                   "type": "key-value",
                   "name": "param_logzioEnrich",
                   "label": "Logzio Enrich",
-                  "description": "Key value param description"
+                  "description": "Enrich CloudWatch events with custom properties"
                 }
                ]
              }
