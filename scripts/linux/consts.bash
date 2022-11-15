@@ -6,57 +6,57 @@
 
 ## Agent Directories
 # Logz.io temp directory
-LOGZIO_TEMP_DIR="/tmp/Logzio"
-# Logz.io AppData directory
-$script:LogzioAppDataDir = "$env:APPDATA\LogzioAgent"
+LOGZIO_TEMP_DIR='/tmp/logzio'
+# Logz.io opt directory
+LOGZIO_OPT_DIR='/opt/logzio-agent'
 
 ## Resources Directory
 # Resources directory
-$script:LogzioResourcesDir = "$script:LogzioTempDir\resources"
+LOGZIO_RESOURCES_DIR="$LOGZIO_TEMP_DIR/resources"
 
 ## OTEL Directories
-# Logz.io OTEL collector AppData subdirectory
-$script:LogzioOtelCollectorDir = "$script:LogzioAppDataDir\LogzioOTELCollector"
+# Logz.io OTEL collector opt subdirectory
+LOGZIO_OTEL_COLLECTOR_DIR="$LOGZIO_OPT_DIR/Logzio-otel-collector"
 # Resources OTEL directory
-$script:OtelResourcesDir = "$script:LogzioResourcesDir\otel"
+OTEL_RESOURCES_DIR="$LOGZIO_RESOURCES_DIR/otel"
 # OTEL receivers directory
-$script:OtelReceiversDir = "$script:OtelResourcesDir\receivers"
+OTEL_RECEIVERS_DIR="$OTEL_RESOURCES_DIR/receivers"
 # OTEL processors directory
-$script:OtelProcessorsDir = "$script:OtelResourcesDir\processors"
+OTEL_PROCESSORS_DIR="$OTEL_RESOURCES_DIR/processors"
 # OTEL exporters directory
-$script:OtelExportersDir = "$script:OtelResourcesDir\exporters"
+OTEL_EXPORTERS_DIR="$OTEL_RESOURCES_DIR/exporters"
 
 ## Kubernetes Directories
 # Logz.io Kubernetes AppData subdirectory
-$script:LogzioKubernetesDir = "$script:LogzioAppDataDir\LogzioKubernetes"
+LOGZIO_KUBERNETES_DIR="$LOGZIO_OPT_DIR/logzio-kubernetes"
 # Resources Kubernetes directory
-$script:KubernetesResourcesDir = "$script:LogzioResourcesDir\k8s"
+KUBERNETES_RESOURCES_DIR="$LOGZIO_RESOURCES_DIR/k8s"
 
 ## Agent files
 # Log file path
-$script:AgentLogFile = "$script:LogzioAppDataDir\logzio_agent.log"
+AGENT_LOG_FILE="$LOGZIO_TEMP_DIR/logzio_agent.log"
 # Task post run script file path
-$script:TaskPostRunFile = "$script:LogzioTempDir\task_post_run.ps1"
+TASK_POST_RUN_FILE="$LOGZIO_TEMP_DIR/task_post_run.bash"
 # Task error file path
-$script:TaskErrorFile = "$script:LogzioTempDir\task_error.txt"
+TASK_ERROR_FILE="$LOGZIO_TEMP_DIR/task_error.txt"
 # Agent json file path
-$script:AgentJson = "$script:LogzioTempDir\agent.json"
+AGENT_JSON="$LOGZIO_TEMP_DIR/agent.json"
 
 ## Urls
 # Url for downloading jq exe
-$script:JqUrlDownload = 'https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe'
+JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe'
 # Url for downloading yq exe
-$script:YqUrlDownload = 'https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_windows_amd64.exe'
+YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_windows_amd64.exe'
 # Url for downloading OTEL collector tar.gz
-$script:OtelCollectorUrlDownload = 'https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-windows_amd64.tar.gz'
+OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-windows_amd64.tar.gz'
 # Url for AWS SQS
-$script:SqsUrl = 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
+SQS_URL='https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
 
 ## Exe files
-# Jq exe file path
-$script:JqExe = "$script:LogzioTempDir\jq.exe"
-# Yq exe file path
-$script:YqExe = "$script:LogzioTempDir\yq.exe"
+# Jq binary file path
+JQ_BIN="$LOGZIO_TEMP_DIR/jq"
+# Yq binary file path
+YQ_BIN="$LOGZIO_TEMP_DIR/yq"
 
 ## OTEL files
 # OTEL function file

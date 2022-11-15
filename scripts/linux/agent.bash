@@ -180,21 +180,21 @@ $WHITE_COLOR"
 echo
 
 # Load consts
-source /tmp/Logzio/consts.bash 2>$TASK_ERROR_FILE
+source /tmp/logzio/consts.bash 2>$TASK_ERROR_FILE
 if [[ $? -ne 0 ]]; then
     local exit_code=1
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
     echo -e "agent.ps1 ($exit_code): error loading agent scripts: $(get_task_error_message)"
 fi
 # Load agent functions
-source /tmp/Logzio/functions.bash 2>$TASK_ERROR_FILE
+source /tmp/logzio/functions.bash 2>$TASK_ERROR_FILE
 if [[ $? -ne 0 ]]; then
     local exit_code=1
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
     echo -e "agent.ps1 ($exit_code): error loading agent scripts: $(get_task_error_message)"
 fi
 # Load agent utils functions
-source /tmp/Logzio/utils_functions.bash 2>$TASK_ERROR_FILE
+source /tmp/logzio/utils_functions.bash 2>$TASK_ERROR_FILE
 if [[ $? -ne 0 ]]; then
     local exit_code=1
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
