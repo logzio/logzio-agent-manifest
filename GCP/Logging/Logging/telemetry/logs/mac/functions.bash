@@ -47,6 +47,16 @@ function set_project_id(){
         write_run "print_error \"logs.bash (1): 'projectId is not exist of user's project list. Please check projectId\""
         return 1
 	else
+	  last_element=4
+        current=0
+
+        for addr in $project_list
+        do
+        current=$((current + 1))
+        if [ $current -eq $last_element ]; then
+            project_id=addr
+		fi
+        done	
 		set_current_project_id="$(gcloud config set project "$project_id")"
 		write_log "INFO" "${set_current_project_id}"
 	fi
