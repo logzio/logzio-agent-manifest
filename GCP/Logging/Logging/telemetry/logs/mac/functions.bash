@@ -11,27 +11,28 @@
 #   Exit Code 1
 function get_project_id(){
 
-    write_log "INFO" "running command gcloud config get-value account ..."
+    write_log "INFO" "Getting user project name ..."
 
-    local project_id_param=$(find_param "$logs_params" "projectID")
-    if [[ -z "$project_id_param" ]]; then
-        write_run "print_error \"logs.bash (3): function name param was not found\""
+    local project_name_param=$(find_param "$logs_params" "projectName")
+    if [[ -z "$project_name_param" ]]; then
+        write_run "print_error \"logs.bash (3): project name param was not found\""
         return 1
     fi
 
-    local project_id=$(echo -e "$project_id_param" | jq -c '.value')
-    if [[ "$project_id" = null ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' was not found in application JSON\""
+    local project_name=$(echo -e "$project_name_param" | jq -c '.value')
+    if [[ "$project_name" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectName}].value' was not found in application JSON\""
         return 1
     fi
-    if [[ -z "$project_id" ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' is empty in application JSON\""
+    if [[ -z "$project_name" ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectName}].value' is empty in application JSON\""
         return 1
     fi
     
-    write_log "INFO" "project_id = $project_id"
-    write_run "project_id=\"$project_id\""
+    write_log "INFO" "project_name = $project_name"
+    write_run "project_name=\"$project_name\""
 }
+
 
 # Set to google cloud acc, relevant project ID 
 # Output:

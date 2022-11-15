@@ -11,7 +11,7 @@
 #   Exit Code 1
 function get_project_id(){
 
-    write_log "INFO" "Getting user project id ..."
+    write_log "INFO" "Getting user project name ..."
 
     local project_name_param=$(find_param "$logs_params" "projectName")
     if [[ -z "$project_name_param" ]]; then
@@ -142,8 +142,7 @@ function get_resources_type () {
         return 3
     fi
 
-    local resource_type=$(echo -e "$resource_type_param" | jq -c '.value')
-
+    local resource_type=$(echo -e "$resource_type_param" | jq -c '.value[]')
     write_log "INFO" "resource_type = $resource_type"
     write_run "resource_type=\"$resource_type\""
 }
