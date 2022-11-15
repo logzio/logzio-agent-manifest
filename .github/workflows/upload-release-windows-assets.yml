@@ -13,19 +13,19 @@ jobs:
         uses: actions/checkout@v3.0.2
       - name: Compress Agent
         run: |
-          tar -czvf agent_windows.tar.gz -C ./scripts/windows *
+          tar czvf agent_windows.tar.gz -C ./scripts/windows *
       - name: Compress Kubernetes AKS
         run: |
-          tar -czvf windows_kubernetes_aks.tar.gz -C ./datasources/windows ./kubernetes/aks -C . ./resources
+          tar czvf windows_kubernetes_aks.tar.gz -C ./datasources/windows ./kubernetes/aks -C . ./resources
       - name: Compress Kubernetes EKS
         run: |
-          tar -czvf windows_kubernetes_eks.tar.gz -C ./datasources/windows ./kubernetes/eks -C . ./resources
+          tar czvf windows_kubernetes_eks.tar.gz -C ./datasources/windows ./kubernetes/eks -C . ./resources
       - name: Compress Kubernetes GKE
         run: |
-          tar -czvf windows_kubernetes_gke.tar.gz -C ./datasources/windows ./kubernetes/gke -C . ./resources
+          tar czvf windows_kubernetes_gke.tar.gz -C ./datasources/windows ./kubernetes/gke -C . ./resources
       - name: Compress Localhost Windows
         run: |
-          tar -czvf windows_localhost_windows.tar.gz -C ./datasources/windows ./localhost/windows -C . ./resources
+          tar czvf windows_localhost_windows.tar.gz -C ./datasources/windows ./localhost/windows -C . ./resources
       - name: Upload Assets
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
