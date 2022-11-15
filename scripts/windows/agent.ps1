@@ -142,6 +142,9 @@ function Write-AgentSupport {
 }
 
 
+# Agent version
+$script:AgentVersion = 'v1.0.19'
+
 # Settings
 $ProgressPreference = 'SilentlyContinue'
 $WarningPreference = 'SilentlyContinue'
@@ -156,7 +159,7 @@ $script:IsPostrequisiteFailed = $false
 $script:IsAgentCompleted = $false
 
 # Print main title
-Write-Host '
+Write-Host "
     LLLLLLLLLLL                                                                             iiii                   
     L:::::::::L                                                                            i::::i                  
     L:::::::::L                                                                             iiii                   
@@ -175,12 +178,12 @@ Write-Host '
     LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzzzzzzzzzzzzzzzz ...... iiiiiiii   ooooooooooo   
                                                          g:::::g                                                   
                                              gggggg      g:::::g                                                   
-                Agent v1.0.19                g:::::gg   gg:::::g                                                   
+                                             g:::::gg   gg:::::g               Agent $script:AgentVersion                                   
                                               g::::::ggg:::::::g                                                   
                                                gg:::::::::::::g                                                    
                                                  ggg::::::ggg                                                      
                                                     gggggg                                                          
-' -ForegroundColor Cyan
+" -ForegroundColor Cyan
 Write-Host
 
 try {
