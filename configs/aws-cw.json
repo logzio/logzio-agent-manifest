@@ -61,64 +61,9 @@
                "params":
                [
                 {
-                  "type": "key-value",
-                  "name": "param_logzioEnrich",
-                  "label": "Logzio Enrich",
-                  "description": "Key value param description"
-                },
-                {
-                  "type": "single-select",
-                  "name": "param_logzioFormat",
-                  "label": "Logzio Format",
-                  "description": "format",
-                  "options": [
-                    { "label": "text", "value": "text" },
-                    { "label": "json", "value": "json" }
-                  ],
-                  "value": "text"
-                },
-                {
-                  "type": "boolean",
-                  "name": "param_logzioSendAll",
-                  "label": "LogzioSendAll",
-                  "description": "LogzioSendAll",
-                  "value": false
-                },
-                                {
-                  "type": "boolean",
-                  "name": "param_logzioCompress",
-                  "label": "Compress",
-                  "description": "Send logs compressed",
-                  "value": true
-                },
-                {
-                  "type": "text",
-                  "name": "param_logzioType",
-                  "label": "Log Type",
-                  "required": true,
-                  "description": "Log type",
-                  "value": "logzio-cloudwatch-lambda",
-                  "pattern": "^[a-zA-Z0-9-]+$",
-                  "patternError": "Only letters, numbers and dash"
-                },
-                {
-                  "type": "number",
-                  "name": "param_shipperLambdaTimeout",
-                  "label": "shipper lambda timeout",
-                  "description": "The number of seconds that Lambda allows a function to run before stopping it, for the shipper function.",
-                  "value": 60
-                },
-                {
-                  "type": "number",
-                  "name": "param_shipperLambdaMemory",
-                  "label": "shipper lambda memory",
-                  "description": "Shipper function's allocated CPU proportional to the memory configured, in MB.",
-                  "value": 512
-                },
-                {
                   "type": "multi-select",
                   "name": "param_services",
-                  "label": "services",
+                  "label": "AWS Services",
                   "description": "Services you want to collect logs from",
                   "options": [
                     { "label": "API Gateway", "value": "apigateway" },
@@ -144,33 +89,10 @@
                   "description": "custom log groups you want to collect logs from"
                 },
                 {
-                  "type": "number",
-                  "name": "param_triggerLambdaTimeout",
-                  "label": "trigger lambda timeout",
-                  "description": "The number of seconds that Lambda allows a function to run before stopping it, for the trigger function.",
-                  "value": 60
-                },
-                {
-                  "type": "number",
-                  "name": "param_triggerLambdaMemory",
-                  "label": "trigger lambda memory",
-                  "description": "Trigger function's allocated CPU proportional to the memory configured, in MB.",
-                  "value": 512
-                },
-                {
-                  "type": "single-select",
-                  "name": "param_triggerLambdaLogLevel",
-                  "label": "trigger lambda log level",
-                  "description": "Log level for the trigger function",
-                  "options": [
-                    { "label": "debug", "value": "debug" },
-                    { "label": "info", "value": "info" },
-                    { "label": "warn", "value": "warn" },
-                    { "label": "error", "value": "error" },
-                    { "label": "fatal", "value": "fatal" },
-                    { "label": "panic", "value": "panic" }
-                  ],
-                  "value": "info"
+                  "type": "key-value",
+                  "name": "param_logzioEnrich",
+                  "label": "Logzio Enrich",
+                  "description": "Key value param description"
                 }
                ]
              }
@@ -180,4 +102,3 @@
      }
    ]
  }
- 
