@@ -11,7 +11,7 @@ jobs:
         uses: actions/checkout@v3.0.2
       - name: Compress Agent
         run: |
-          tar -czvf agent_windows.tar.gz -C ./scripts/windows *
+          tar -czvf agent_windows.tar.gz -C ./scripts/windows .
       - name: Compress Kubernetes AKS
         run: |
           tar -czvf windows_kubernetes_aks.tar.gz -C ./datasources/windows ./kubernetes/aks -C . ./resources
