@@ -205,8 +205,8 @@ try {
     }
 
     # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
-    if (Test-Path -Path $TaskPostRunFile -PathType Leaf) {
-        Clear-Content $TaskPostRunFile -Force
+    if (Test-Path -Path $script:TaskPostRunFile -PathType Leaf) {
+        Clear-Content $script:TaskPostRunFile -Force
     }
 
     # Write agent running log
