@@ -190,11 +190,11 @@ try {
     # Load agent scripts
     try {
         # Load consts
-        . $env:TEMP\logzio\consts.ps1 -ErrorAction Stop
+        . $env:TEMP\Logzio\consts.ps1 -ErrorAction Stop
         # Load agent functions
-        . $env:TEMP\logzio\functions.ps1 -ErrorAction Stop
+        . $env:TEMP\Logzio\functions.ps1 -ErrorAction Stop
         # Load agent utils functions
-        . $env:TEMP\logzio\utils_functions.ps1 -ErrorAction Stop
+        . $env:TEMP\Logzio\utils_functions.ps1 -ErrorAction Stop
     }
     catch {
         $local:ExitCode = 1
