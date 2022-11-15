@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: logzio-logs-connection-test
+spec:
+  containers:
+    - name: logzio-logs-connection-test
+      image: busybox:latest
+      command: ["/bin/sh", "-c"]
+  nodeSelector:
+    kubernetes.io/os: linux
+  restartPolicy: OnFailure
