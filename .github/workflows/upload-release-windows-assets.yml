@@ -1,6 +1,7 @@
 name: upload release windows assets
 on:
-  push:
+  release:
+    types: [published]
     tags:
       - "v*.*.*"
 
