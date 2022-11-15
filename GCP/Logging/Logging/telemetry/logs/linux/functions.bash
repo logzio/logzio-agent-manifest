@@ -13,24 +13,24 @@ function get_project_id(){
 
     write_log "INFO" "Getting user project id ..."
 
-    local project_id_param=$(find_param "$logs_params" "projectID")
-    if [[ -z "$project_id_param" ]]; then
-        write_run "print_error \"logs.bash (3): function name param was not found\""
+    local project_name_param=$(find_param "$logs_params" "projectName")
+    if [[ -z "$project_name_param" ]]; then
+        write_run "print_error \"logs.bash (3): project name param was not found\""
         return 1
     fi
 
-    local project_id=$(echo -e "$project_id_param" | jq -c '.value')
-    if [[ "$project_id" = null ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' was not found in application JSON\""
+    local project_name=$(echo -e "$project_name_param" | jq -c '.value')
+    if [[ "$project_name" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectName}].value' was not found in application JSON\""
         return 1
     fi
-    if [[ -z "$project_id" ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectID}].value' is empty in application JSON\""
+    if [[ -z "$project_name" ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=projectName}].value' is empty in application JSON\""
         return 1
     fi
     
-    write_log "INFO" "project_id = $project_id"
-    write_run "project_id=\"$project_id\""
+    write_log "INFO" "project_name = $project_name"
+    write_run "project_name=\"$project_name\""
 }
 
 # Set to google cloud acc, relevant project ID 
@@ -40,12 +40,21 @@ function get_project_id(){
 function set_project_id(){
     write_log "INFO" "running command gcloud to define user relevant project id ..."
 
-	gcloud_user_project_list=$(gcloud projects list --filter='projectId='"$project_id"'')
-	#   -z "$project_id_param"
+	gcloud_user_project_list=$(gcloud projects list --filter='projectId='"$project_name"'')
 	if [[ -z "$gcloud_user_project_list" ]]; then
         write_run "print_error \"logs.bash (1): 'projectId is not exist of user's project list. Please check projectId\""
         return 1
 	else
+        last_element=4
+        current=0
+
+        for addr in $project_list
+        do
+        current=$((current + 1))
+        if [ $current -eq $last_element ]; then
+            project_id=addr
+		fi
+        done	
 		set_current_project_id="$(gcloud config set project "$project_id")"
 		write_log "INFO" "${set_current_project_id}"
 	fi

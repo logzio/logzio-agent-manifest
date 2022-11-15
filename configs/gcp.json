@@ -22,7 +22,7 @@
                                 {
                                     "type": "single-select",
                                     "name": "functionNameRegion",
-                                    "label": "Function Name Location",
+                                    "label": " GCloud Function Region",
                                     "description": "Choose region to where you want to deploy gcloud function.",
                                     "hint": "Region need to provide for deploy Google Cloud Function",
                                     "options": [
@@ -123,7 +123,7 @@
                                 },
                                 {
                                     "type": "text",
-                                    "name": "projectID",
+                                    "name": "projectName",
                                     "label": "Primary Project ID",
                                     "required": true,
                                     "description": "ID of Google Cloud project from where to send logs to logz.io.",
@@ -138,735 +138,207 @@
                                     "hint": "(Optional) Logging Sink filter, filter only by resource type, need to be fill in an array with comma seperator. If that field empty will send all logs",
                                     "options": [
                                         {
-                                            "label": "all_logs",
-                                            "value": "all_logs"
+                                            "label": "All Services",
+                                            "value": "all_services"
                                         },
                                         {
-                                            "label": "api",
-                                            "value": "api"
-                                        },
-                                        {
-                                            "label": "app_script_function",
-                                            "value": "app_script_function"
-                                        },
-                                        {
-                                            "label": "assistant_action",
-                                            "value": "assistant_action"
-                                        },
-                                        {
-                                            "label": "audited_resource",
-                                            "value": "audited_resource"
-                                        },
-                                        {
-                                            "label": "autoscaler",
-                                            "value": "autoscaler"
-                                        },
-                                        {
-                                            "label": "bigquery_biengine_model",
-                                            "value": "bigquery_biengine_model"
-                                        },
-                                        {
-                                            "label": "bigquery_dataset",
-                                            "value": "bigquery_dataset"
-                                        },
-                                        {
-                                            "label": "bigquery_dts_config",
-                                            "value": "bigquery_dts_config"
-                                        },
-                                        {
-                                            "label": "bigquery_dts_run",
-                                            "value": "bigquery_dts_run"
-                                        },
-                                        {
-                                            "label": "bigquery_project",
-                                            "value": "bigquery_project"
-                                        },
-                                        {
-                                            "label": "bigquery_resource",
-                                            "value": "bigquery_resource"
-                                        },
-                                        {
-                                            "label": "bigquery_table",
-                                            "value": "bigquery_table"
-                                        },
-                                        {
-                                            "label": "billing_account",
-                                            "value": "billing_account"
-                                        },
-                                        {
-                                            "label": "build",
-                                            "value": "build"
-                                        },
-                                        {
-                                            "label": "aws_lambda_function",
-                                            "value": "aws_lambda_function"
-                                        },
-                                        {
-                                            "label": "certificatemanager.googleapis.com/Project",
-                                            "value": "certificatemanager.googleapis.com/Project"
-                                        },
-                                        {
-                                            "label": "client_auth_config_brand",
-                                            "value": "client_auth_config_brand"
-                                        },
-                                        {
-                                            "label": "client_auth_config_client",
-                                            "value": "client_auth_config_client"
-                                        },
-                                        {
-                                            "label": "cloud_composer_environment",
-                                            "value": "cloud_composer_environment"
-                                        },
-                                        {
-                                            "label": "cloud_dataproc_batch",
-                                            "value": "cloud_dataproc_batch"
-                                        },
-                                        {
-                                            "label": "cloud_dataproc_cluster",
-                                            "value": "cloud_dataproc_cluster"
-                                        },
-                                        {
-                                            "label": "cloud_dataproc_job",
-                                            "value": "cloud_dataproc_job"
-                                        },
-                                        {
-                                            "label": "cloud_debugger_resource",
-                                            "value": "cloud_debugger_resource"
-                                        },
-                                        {
-                                            "label": "cloud_function",
-                                            "value": "cloud_function"
-                                        },
-                                        {
-                                            "label": "cloud_run_job",
-                                            "value": "cloud_run_job"
-                                        },
-                                        {
-                                            "label": "cloud_run_revision",
-                                            "value": "cloud_run_revision"
-                                        },
-                                        {
-                                            "label": "cloud_scheduler_job",
-                                            "value": "cloud_scheduler_job"
-                                        },
-                                        {
-                                            "label": "cloud_tasks_queue",
-                                            "value": "cloud_tasks_queue"
-                                        },
-                                        {
-                                            "label": "clouddeploy.googleapis.com/DeliveryPipeline",
-                                            "value": "clouddeploy.googleapis.com/DeliveryPipeline"
-                                        },
-                                        {
-                                            "label": "cloudiot_device",
-                                            "value": "cloudiot_device"
-                                        },
-                                        {
-                                            "label": "cloudiot_device_registry",
-                                            "value": "cloudiot_device_registry"
-                                        },
-                                        {
-                                            "label": "cloudkms_cryptokey",
-                                            "value": "cloudkms_cryptokey"
-                                        },
-                                        {
-                                            "label": "cloudkms_cryptokeyversion",
-                                            "value": "cloudkms_cryptokeyversion"
-                                        },
-                                        {
-                                            "label": "cloudkms_keyring",
-                                            "value": "cloudkms_keyring"
-                                        },
-                                        {
-                                            "label": "cloudml_model_version",
-                                            "value": "cloudml_model_version"
-                                        },
-                                        {
-                                            "label": "cloudsql_database",
-                                            "value": "cloudsql_database"
-                                        },
-                                        {
-                                            "label": "cloudvolumesgcp-api.netapp.com/CloudVolume",
-                                            "value": "cloudvolumesgcp-api.netapp.com/CloudVolume"
-                                        },
-                                        {
-                                            "label": "consumed_api",
-                                            "value": "consumed_api"
-                                        },
-                                        {
-                                            "label": "container",
-                                            "value": "container"
-                                        },
-                                        {
-                                            "label": "csr_repository",
-                                            "value": "csr_repository"
-                                        },
-                                        {
-                                            "label": "dataflow_step",
-                                            "value": "dataflow_step"
-                                        },
-                                        {
-                                            "label": "datamigration.googleapis.com/MigrationJob",
-                                            "value": "datamigration.googleapis.com/MigrationJob"
-                                        },
-                                        {
-                                            "label": "dataplex.googleapis.com/Environment",
-                                            "value": "dataplex.googleapis.com/Environment"
-                                        },
-                                        {
-                                            "label": "dataplex.googleapis.com/Lake",
-                                            "value": "dataplex.googleapis.com/Lake"
-                                        },
-                                        {
-                                            "label": "dataplex.googleapis.com/Project",
-                                            "value": "dataplex.googleapis.com/Project"
-                                        },
-                                        {
-                                            "label": "dataplex.googleapis.com/Task",
-                                            "value": "dataplex.googleapis.com/Task"
-                                        },
-                                        {
-                                            "label": "dataplex.googleapis.com/Zone",
-                                            "value": "dataplex.googleapis.com/Zone"
-                                        },
-                                        {
-                                            "label": "dataproc_cluster",
-                                            "value": "dataproc_cluster"
-                                        },
-                                        {
-                                            "label": "datastore_database",
-                                            "value": "datastore_database"
-                                        },
-                                        {
-                                            "label": "datastore_index",
-                                            "value": "datastore_index"
-                                        },
-                                        {
-                                            "label": "datastream.googleapis.com/Stream",
-                                            "value": "datastream.googleapis.com/Stream"
-                                        },
-                                        {
-                                            "label": "deployment",
-                                            "value": "deployment"
-                                        },
-                                        {
-                                            "label": "deployment_manager_manifest",
-                                            "value": "deployment_manager_manifest"
-                                        },
-                                        {
-                                            "label": "deployment_manager_operation",
-                                            "value": "deployment_manager_operation"
-                                        },
-                                        {
-                                            "label": "deployment_manager_resource",
-                                            "value": "deployment_manager_resource"
-                                        },
-                                        {
-                                            "label": "deployment_manager_type",
-                                            "value": "deployment_manager_type"
-                                        },
-                                        {
-                                            "label": "dns_managed_zone",
-                                            "value": "dns_managed_zone"
-                                        },
-                                        {
-                                            "label": "dns_policy",
-                                            "value": "dns_policy"
-                                        },
-                                        {
-                                            "label": "dns_query",
-                                            "value": "dns_query"
-                                        },
-                                        {
-                                            "label": "edgecache.googleapis.com/EdgeCacheRouteRule",
-                                            "value": "edgecache.googleapis.com/EdgeCacheRouteRule"
-                                        },
-                                        {
-                                            "label": "firebase_domain",
-                                            "value": "firebase_domain"
-                                        },
-                                        {
-                                            "label": "firebase_namespace",
-                                            "value": "firebase_namespace"
-                                        },
-                                        {
-                                            "label": "fleetengine.googleapis.com/Fleet",
-                                            "value": "fleetengine.googleapis.com/Fleet"
-                                        },
-                                        {
-                                            "label": "folder",
-                                            "value": "folder"
-                                        },
-                                        {
-                                            "label": "gae_app",
-                                            "value": "gae_app"
-                                        },
-                                        {
-                                            "label": "gateway_scope",
-                                            "value": "gateway_scope"
-                                        },
-                                        {
-                                            "label": "gce_autoscaler",
-                                            "value": "gce_autoscaler"
-                                        },
-                                        {
-                                            "label": "gce_backend_bucket",
-                                            "value": "gce_backend_bucket"
-                                        },
-                                        {
-                                            "label": "gce_backend_service",
-                                            "value": "gce_backend_service"
-                                        },
-                                        {
-                                            "label": "gce_client_ssl_policy",
-                                            "value": "gce_client_ssl_policy"
-                                        },
-                                        {
-                                            "label": "gce_commitment",
-                                            "value": "gce_commitment"
-                                        },
-                                        {
-                                            "label": "gce_disk",
-                                            "value": "gce_disk"
-                                        },
-                                        {
-                                            "label": "gce_firewall_rule",
-                                            "value": "gce_firewall_rule"
-                                        },
-                                        {
-                                            "label": "gce_forwarding_rule",
-                                            "value": "gce_forwarding_rule"
-                                        },
-                                        {
-                                            "label": "gce_health_check",
-                                            "value": "gce_health_check"
-                                        },
-                                        {
-                                            "label": "gce_image",
-                                            "value": "gce_image"
-                                        },
-                                        {
-                                            "label": "gce_instance",
-                                            "value": "gce_instance"
-                                        },
-                                        {
-                                            "label": "gce_instance_group",
-                                            "value": "gce_instance_group"
-                                        },
-                                        {
-                                            "label": "gce_instance_group_manager",
-                                            "value": "gce_instance_group_manager"
-                                        },
-                                        {
-                                            "label": "gce_instance_template",
-                                            "value": "gce_instance_template"
-                                        },
-                                        {
-                                            "label": "gce_license",
-                                            "value": "gce_license"
-                                        },
-                                        {
-                                            "label": "gce_network",
-                                            "value": "gce_network"
-                                        },
-                                        {
-                                            "label": "gce_network_endpoint_group",
-                                            "value": "gce_network_endpoint_group"
-                                        },
-                                        {
-                                            "label": "gce_network_region",
-                                            "value": "gce_network_region"
-                                        },
-                                        {
-                                            "label": "gce_node_group",
-                                            "value": "gce_node_group"
-                                        },
-                                        {
-                                            "label": "gce_node_template",
-                                            "value": "gce_node_template"
-                                        },
-                                        {
-                                            "label": "gce_operation",
-                                            "value": "gce_operation"
-                                        },
-                                        {
-                                            "label": "gce_packet_mirroring",
-                                            "value": "gce_packet_mirroring"
-                                        },
-                                        {
-                                            "label": "gce_project",
-                                            "value": "gce_project"
-                                        },
-                                        {
-                                            "label": "gce_reserved_address",
-                                            "value": "gce_reserved_address"
-                                        },
-                                        {
-                                            "label": "gce_resource_policy",
-                                            "value": "gce_resource_policy"
-                                        },
-                                        {
-                                            "label": "gce_route",
-                                            "value": "gce_route"
-                                        },
-                                        {
-                                            "label": "gce_router",
-                                            "value": "gce_router"
-                                        },
-                                        {
-                                            "label": "gce_snapshot",
-                                            "value": "gce_snapshot"
-                                        },
-                                        {
-                                            "label": "gce_ssl_certificate",
-                                            "value": "gce_ssl_certificate"
-                                        },
-                                        {
-                                            "label": "gce_subnetwork",
-                                            "value": "gce_subnetwork"
-                                        },
-                                        {
-                                            "label": "gce_target_http_instance",
-                                            "value": "gce_target_http_instance"
-                                        },
-                                        {
-                                            "label": "gce_target_http_proxy",
-                                            "value": "gce_target_http_proxy"
-                                        },
-                                        {
-                                            "label": "gce_target_https_proxy",
-                                            "value": "gce_target_https_proxy"
-                                        },
-                                        {
-                                            "label": "gce_target_pool",
-                                            "value": "gce_target_pool"
-                                        },
-                                        {
-                                            "label": "gce_target_ssl_proxy",
-                                            "value": "gce_target_ssl_proxy"
-                                        },
-                                        {
-                                            "label": "gce_url_map",
-                                            "value": "gce_url_map"
-                                        },
-                                        {
-                                            "label": "gcs_bucket",
-                                            "value": "gcs_bucket"
-                                        },
-                                        {
-                                            "label": "generic_node",
-                                            "value": "generic_node"
-                                        },
-                                        {
-                                            "label": "generic_task",
-                                            "value": "generic_task"
-                                        },
-                                        {
-                                            "label": "genomics_dataset",
-                                            "value": "genomics_dataset"
-                                        },
-                                        {
-                                            "label": "genomics_operation",
-                                            "value": "genomics_operation"
-                                        },
-                                        {
-                                            "label": "gke_cluster",
-                                            "value": "gke_cluster"
-                                        },
-                                        {
-                                            "label": "gke_nodepool",
-                                            "value": "gke_nodepool"
-                                        },
-                                        {
-                                            "label": "gkebackup.googleapis.com/BackupPlan",
-                                            "value": "gkebackup.googleapis.com/BackupPlan"
-                                        },
-                                        {
-                                            "label": "gkebackup.googleapis.com/RestorePlan",
-                                            "value": "gkebackup.googleapis.com/RestorePlan"
-                                        },
-                                        {
-                                            "label": "global",
-                                            "value": "global"
-                                        },
-                                        {
-                                            "label": "healthcare_annotation_store",
-                                            "value": "healthcare_annotation_store"
-                                        },
-                                        {
-                                            "label": "healthcare_consent_store",
-                                            "value": "healthcare_consent_store"
-                                        },
-                                        {
-                                            "label": "healthcare_dataset",
-                                            "value": "healthcare_dataset"
-                                        },
-                                        {
-                                            "label": "healthcare_dicom_store",
-                                            "value": "healthcare_dicom_store"
-                                        },
-                                        {
-                                            "label": "healthcare_fhir_store",
-                                            "value": "healthcare_fhir_store"
-                                        },
-                                        {
-                                            "label": "healthcare_hl7v2_store",
-                                            "value": "healthcare_hl7v2_store"
-                                        },
-                                        {
-                                            "label": "http_external_regional_lb_rule",
-                                            "value": "http_external_regional_lb_rule"
-                                        },
-                                        {
-                                            "label": "http_load_balancer",
-                                            "value": "http_load_balancer"
-                                        },
-                                        {
-                                            "label": "iam_role",
-                                            "value": "iam_role"
-                                        },
-                                        {
-                                            "label": "identitytoolkit_project",
-                                            "value": "identitytoolkit_project"
-                                        },
-                                        {
-                                            "label": "identitytoolkit_tenant",
-                                            "value": "identitytoolkit_tenant"
-                                        },
-                                        {
-                                            "label": "ids.googleapis.com/Endpoint",
-                                            "value": "ids.googleapis.com/Endpoint"
-                                        },
-                                        {
-                                            "label": "integrations.googleapis.com/IntegrationVersion",
-                                            "value": "integrations.googleapis.com/IntegrationVersion"
-                                        },
-                                        {
-                                            "label": "issuerswitch.googleapis.com/UPIInstance",
-                                            "value": "issuerswitch.googleapis.com/UPIInstance"
-                                        },
-                                        {
-                                            "label": "istio_control_plane",
-                                            "value": "istio_control_plane"
-                                        },
-                                        {
-                                            "label": "k8s_cluster",
+                                            "label": "Anthos Audit API",
                                             "value": "k8s_cluster"
                                         },
                                         {
-                                            "label": "k8s_container",
-                                            "value": "k8s_container"
+                                            "label": "Anthos GKE",
+                                            "value": "k8s_cluster"
                                         },
                                         {
-                                            "label": "k8s_control_plane_component",
-                                            "value": "k8s_control_plane_component"
+                                            "label": "App Engine",
+                                            "value": "gae_app,gce_instance"
                                         },
                                         {
-                                            "label": "k8s_node",
-                                            "value": "k8s_node"
-                                        },
-                                        {
-                                            "label": "k8s_pod",
-                                            "value": "k8s_pod"
-                                        },
-                                        {
-                                            "label": "k8s_service",
-                                            "value": "k8s_service"
-                                        },
-                                        {
-                                            "label": "l4_proxy_rule",
-                                            "value": "l4_proxy_rule"
-                                        },
-                                        {
-                                            "label": "livestream.googleapis.com/Channel",
-                                            "value": "livestream.googleapis.com/Channel"
-                                        },
-                                        {
-                                            "label": "loadbalancing.googleapis.com/ExternalNetworkLoadBalancerRule",
-                                            "value": "loadbalancing.googleapis.com/ExternalNetworkLoadBalancerRule"
-                                        },
-                                        {
-                                            "label": "loadbalancing.googleapis.com/InternalNetworkLoadBalancerRule",
-                                            "value": "loadbalancing.googleapis.com/InternalNetworkLoadBalancerRule"
-                                        },
-                                        {
-                                            "label": "logging_bucket",
-                                            "value": "logging_bucket"
-                                        },
-                                        {
-                                            "label": "logging_exclusion",
-                                            "value": "logging_exclusion"
-                                        },
-                                        {
-                                            "label": "logging_log",
-                                            "value": "logging_log"
-                                        },
-                                        {
-                                            "label": "logging_sink",
-                                            "value": "logging_sink"
-                                        },
-                                        {
-                                            "label": "managed_service",
-                                            "value": "managed_service"
-                                        },
-                                        {
-                                            "label": "mesh",
-                                            "value": "mesh"
-                                        },
-                                        {
-                                            "label": "metastore.googleapis.com/Federation",
-                                            "value": "metastore.googleapis.com/Federation"
-                                        },
-                                        {
-                                            "label": "metastore.googleapis.com/Service",
-                                            "value": "metastore.googleapis.com/Service"
-                                        },
-                                        {
-                                            "label": "metric",
-                                            "value": "metric"
-                                        },
-                                        {
-                                            "label": "ml_job",
-                                            "value": "ml_job"
-                                        },
-                                        {
-                                            "label": "nat_gateway",
-                                            "value": "nat_gateway"
-                                        },
-                                        {
-                                            "label": "network_security_policy",
-                                            "value": "network_security_policy"
-                                        },
-                                        {
-                                            "label": "networking.googleapis.com/Location",
-                                            "value": "networking.googleapis.com/Location"
-                                        },
-                                        {
-                                            "label": "organization",
+                                            "label": "Assured Workloads",
                                             "value": "organization"
                                         },
                                         {
-                                            "label": "project",
+                                            "label": "BigQuery",
+                                            "value": "bigquery_dataset,bigquery_project,bigquery_resource,bigquery_table"
+                                        },
+                                        {
+                                            "label": "BigQuery BI Engine",
+                                            "value": "bigquery_biengine_model,bigquery_dataset,bigquery_project"
+                                        },
+                                        {
+                                            "label": "BigQuery Data Transfer API",
+                                            "value": "bigquery_dts_config"
+                                        },
+                                        {
+                                            "label": "BigQuery Reservation",
+                                            "value": "bigquery_project"
+                                        },
+                                        {
+                                            "label": "Client Auth Configuration API",
+                                            "value": "client_auth_config_brand,client_auth_config_client"
+                                        },
+                                        {
+                                            "label": "Cloud Asset Inventory",
                                             "value": "project"
                                         },
                                         {
-                                            "label": "pubsub_snapshot",
-                                            "value": "pubsub_snapshot"
+                                            "label": "Cloud Billing API",
+                                            "value": "billing_account,organization,project,build"
                                         },
                                         {
-                                            "label": "pubsub_subscription",
-                                            "value": "pubsub_subscription"
+                                            "label": "Cloud Composer",
+                                            "value": "cloud_composer_environment"
                                         },
                                         {
-                                            "label": "pubsub_topic",
-                                            "value": "pubsub_topic"
+                                            "label": "Cloud Datastore",
+                                            "value": "datastore_database,datastore_index"
                                         },
                                         {
-                                            "label": "recaptchaenterprise.googleapis.com/Key",
-                                            "value": "recaptchaenterprise.googleapis.com/Key"
+                                            "label": "Cloud Debugger",
+                                            "value": "cloud_debugger_resource"
                                         },
                                         {
-                                            "label": "recommender",
-                                            "value": "recommender"
+                                            "label": "Cloud DNS",
+                                            "value": "dns_managed_zone,dns_policy,project"
                                         },
                                         {
-                                            "label": "recommender_insight_type",
-                                            "value": "recommender_insight_type"
+                                            "label": "Cloud Firestore",
+                                            "value": "datastore_database,datastore_index"
                                         },
                                         {
-                                            "label": "redis_instance",
+                                            "label": "Cloud Functions",
+                                            "value": "cloud_function"
+                                        },
+                                        {
+                                            "label": "Cloud Identity-Aware Proxy (IAP)",
+                                            "value": "gae_app,gce_backend_service,gce_instance"
+                                        },
+                                        {
+                                            "label": "Cloud IoT",
+                                            "value": "cloudiot_device,cloudiot_device_registry,cloudiot_group"
+                                        },
+                                        {
+                                            "label": "Cloud KMS",
+                                            "value": "cloudkms_cryptokey,cloudkms_cryptokeyversion,cloudkms_importjob,cloudkms_keyring"
+                                        },
+                                        {
+                                            "label": "Cloud Mail",
+                                            "value": "cloudmail_domain,cloudmail_sender"
+                                        },
+                                        {
+                                            "label": "Cloud ML Engine",
+                                            "value": "cloudml_model_version,gae_app,ml_job"
+                                        },
+                                        {
+                                            "label": "Cloud Pub/Sub",
+                                            "value": "project,pubsub_snapshot,pubsub_subscription,pubsub_topic"
+                                        },
+                                        {
+                                            "label": "Cloud Redis",
                                             "value": "redis_instance"
                                         },
                                         {
-                                            "label": "reported_errors",
-                                            "value": "reported_errors"
+                                            "label": "Cloud Resource Manager",
+                                            "value": "folder,organization,project"
                                         },
                                         {
-                                            "label": "secretmanager.googleapis.com/Secret",
-                                            "value": "secretmanager.googleapis.com/Secret"
+                                            "label": "Cloud Run",
+                                            "value": "cloud_run_revision,serverless_service"
                                         },
                                         {
-                                            "label": "sensitiveaction.googleapis.com/Location",
-                                            "value": "sensitiveaction.googleapis.com/Location"
+                                            "label": "Cloud Scheduler API",
+                                            "value": "cloud_scheduler_job"
                                         },
                                         {
-                                            "label": "service_account",
-                                            "value": "service_account"
+                                            "label": "Cloud Source Repositories",
+                                            "value": "csr_repository"
                                         },
                                         {
-                                            "label": "service_rollout",
-                                            "value": "service_rollout"
+                                            "label": "Cloud SQL",
+                                            "value": "cloudsql_database"
                                         },
                                         {
-                                            "label": "service_config",
-                                            "value": "service_config"
+                                            "label": "Cloud Storage",
+                                            "value": "gcs_bucket"
                                         },
                                         {
-                                            "label": "servicedirectory_namespace",
-                                            "value": "servicedirectory_namespace"
+                                            "label": "Cloud TPU",
+                                            "value": "tpu_worker"
                                         },
                                         {
-                                            "label": "serviceusage_service",
-                                            "value": "serviceusage_service"
+                                            "label": "Compute Engine",
+                                            "value": "vpn_tunnel,api,gce_autoscaler,gce_backend_bucket,gce_backend_service,gce_commitment,gce_disk,gce_firewall_rule,gce_forwarding_rule,gce_health_check,gce_image,gce_instance,gce_instance_group,gce_instance_group_manager,gce_instance_template,gce_license,gce_network,gce_node_group,gce_node_template,gce_operation,gce_packet_mirroring,gce_project,gce_reserved_address,gce_resource_policy,gce_route,gce_router,gce_snapshot,gce_ssl_certificate,gce_subnetwork,gce_target_http_instance,gce_target_http_proxy,gce_target_https_proxy,gce_target_pool,gce_target_ssl_proxy,gce_url_map,global,nat_gateway,network_security_policy,vpn_gateway"
                                         },
                                         {
-                                            "label": "serviceuser_service",
-                                            "value": "serviceuser_service"
+                                            "label": "Dataflow",
+                                            "value": "dataflow_job,dataflow_step,global"
                                         },
                                         {
-                                            "label": "spanner_instance",
-                                            "value": "spanner_instance"
+                                            "label": "Dataproc",
+                                            "value": "cloud_dataproc_cluster"
                                         },
                                         {
-                                            "label": "storage_transfer_job",
-                                            "value": "storage_transfer_job"
+                                            "label": "Deployment Manager",
+                                            "value": "deployment,deployment_manager_manifest,deployment_manager_operation,deployment_manager_resource,deployment_manager_type"
                                         },
                                         {
-                                            "label": "stream.googleapis.com/StreamInstance",
-                                            "value": "stream.googleapis.com/StreamInstance"
-                                        },
-                                        {
-                                            "label": "tcp_ssl_proxy_rule",
-                                            "value": "tcp_ssl_proxy_rule"
-                                        },
-                                        {
-                                            "label": "testservice_matrix",
-                                            "value": "testservice_matrix"
-                                        },
-                                        {
-                                            "label": "threat_detector",
+                                            "label": "Event Threat Detection",
                                             "value": "threat_detector"
                                         },
                                         {
-                                            "label": "uptime_url",
-                                            "value": "uptime_url"
+                                            "label": "Firebase Rules",
+                                            "value": "firebaserules_release,firebaserules_ruleset"
                                         },
                                         {
-                                            "label": "vmmigration.googleapis.com/MigratingVM",
-                                            "value": "vmmigration.googleapis.com/MigratingVM"
+                                            "label": "GCE Serial Port Access",
+                                            "value": "gce_instance"
                                         },
                                         {
-                                            "label": "vmmigration.googleapis.com/Source",
-                                            "value": "vmmigration.googleapis.com/Source"
+                                            "label": "Genomics",
+                                            "value": "genomics_dataset,genomics_operation"
                                         },
                                         {
-                                            "label": "vpc_access_connector",
-                                            "value": "vpc_access_connector"
+                                            "label": "Google Apps Script",
+                                            "value": "app_script_function"
                                         },
                                         {
-                                            "label": "vpn_gateway",
-                                            "value": "vpn_gateway"
+                                            "label": "Google Service Management",
+                                            "value": "managed_service,service_config,service_rollout"
                                         },
                                         {
-                                            "label": "vpn_tunnel",
-                                            "value": "vpn_tunnel"
+                                            "label": "IAM",
+                                            "value": "api,iam_role,service_account,service_account,gae_app,gce_backend_service,gce_instance,project"
                                         },
                                         {
-                                            "label": "workflows.googleapis.com/Workflow",
-                                            "value": "workflows.googleapis.com/Workflow"
+                                            "label": "Identity Platform",
+                                            "value": "identitytoolkit_project,identitytoolkit_tenant"
+                                        },
+                                        {
+                                            "label": "Kubernetes Engine API",
+                                            "value": "gke_cluster,gke_nodepool"
+                                        },
+                                        {
+                                            "label": "Remote Build Execution",
+                                            "value": "remotebuild_instance"
+                                        },
+                                        {
+                                            "label": "Serial Console",
+                                            "value": "gce_instance"
+                                        },
+                                        {
+                                            "label": "Serverless Engine",
+                                            "value": "gae_app,serverless_service"
+                                        },
+                                        {
+                                            "label": "Service Directory",
+                                            "value": "servicedirectory_namespace,service_registry"
+                                        },
+                                        {
+                                            "label": "Web Security Scanner API",
+                                            "value": "security_scanner_scan_config"
                                         }
                                     ],
-                                    "value": ["api"]
+                                    "value": ["all_services"]
                                 }
                             ]
                         }
