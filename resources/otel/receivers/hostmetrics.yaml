@@ -1,0 +1,22 @@
+mac_run:
+linux_run:
+windows_run: |
+  function New-OtelReceiver {
+    param (
+      [hashtable]$FuncArgs
+    )
+  }
+receiver:
+  hostmetrics/NAME:
+    collection_interval: 15s
+    scrapers:
+      cpu:
+      disk:
+      load:
+      filesystem:
+      memory:
+      network:
+      paging:
+      process:
+        mute_process_name_error: true
+
