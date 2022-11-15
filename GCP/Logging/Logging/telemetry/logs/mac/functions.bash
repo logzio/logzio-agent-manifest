@@ -136,7 +136,7 @@ function get_resources_type () {
     fi
 
     local resource_type=$(echo -e "$resource_type_param" | jq -c '.value[]')
-
+    write_log "INFO" "resource_type[0] = ${resource_type[0]}"	
     write_log "INFO" "resource_type = $resource_type"
     write_run "resource_type=\"$resource_type\""
 }
