@@ -53,7 +53,7 @@ function gcloud_user_login(){
 
 	if [[ ! $(gcloud config get-value account &> /dev/null) ]]
 	then
-		write_run "User is logged in"
+		write_run "INFO" "User is logged in"
 	else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to get Google Cloud User.\n  $err\""
