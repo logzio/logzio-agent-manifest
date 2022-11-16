@@ -93,12 +93,6 @@
                   "name": "param_logzioEnrich",
                   "label": "Logzio Enrich",
                   "description": "Enrich CloudWatch events with custom properties."
-                },
-                {
-                  "type": "key-value",
-                  "name": "param_logzioEnrich",
-                  "label": "Logzio Enrich",
-                  "description": "Enrich CloudWatch events with custom properties."
                 }
                ]
              }
