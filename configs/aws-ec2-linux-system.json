@@ -76,6 +76,15 @@
                    "description": "The paths of log files to collect.",
                    "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
                    "value": []
+                 },
+                 {
+                   "type": "path-list",
+                   "name": "logSourcesnotrequired",
+                   "required": false,
+                   "label": "Location of your logs",
+                   "description": "The paths of log files to collect.",
+                   "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
+                   "value": []
                  }
                ]
              },
