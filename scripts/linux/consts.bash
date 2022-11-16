@@ -60,66 +60,74 @@ YQ_BIN="$LOGZIO_TEMP_DIR/yq"
 
 ## OTEL files
 # OTEL function file
-$script:OtelFunctionFile = "$script:LogzioTempDir\otel_function.ps1"
-# OTEL collector exe file name
-$script:OtelCollectorExeName = 'otelcol-logzio-windows_amd64.exe'
-# OTEL collector exe file path
-$script:OtelCollectorExe = "$script:LogzioOtelCollectorDir\$script:OtelCollectorExeName"
+OTEL_FUNCTION_FILE="$LOGZIO_TEMP_DIR/otel_function.bash"
+# OTEL collector binary file name
+OTEL_COLLECTOR_BIN_NAME='otelcol-logzio-windows_amd64.exe'
+# OTEL collector binary file path
+OTEL_COLLECTOR_BIN="$LOGZIO_OTEL_COLLECTOR_DIR/$OTEL_COLLECTOR_BIN_NAME"
 # OTEL config file name
-$script:OtelConfigName = 'otel_config.yaml'
+OTEL_CONFIG_NAME='otel_config.yaml'
 # OTEL config file path
-$script:OtelConfig = "$script:LogzioOtelCollectorDir\$script:OtelConfigName"
+OTEL_CONFIG="$LOGZIO_OTEL_COLLECTOR_DIR/OTEL_CONFIG_NAME"
 
 ## Kubernetes files
 # Logz.io Helm file path
-$script:LogzioHelmFile = "$script:LogzioKubernetesDir\logzio_helm.txt"
+LOGZIO_HELM_FILE="$LOGZIO_KUBERNETES_DIR/logzio_helm.txt"
 
 ## Service names
 # Logz.io OTEL collector service name
-$script:LogzioOtelCollectorServiceName = 'LogzioOTELCollector'
+LOGZIO_OTEL_COLLECTOR_SERVICE_NAME='LogzioOTELCollector'
 
 ## Script files
-$script:AgentFunctionsFile = "$LogzioTempDir\functions.ps1"
-$script:ConstsFile = "$LogzioTempDir\consts.ps1"
-$script:PrerequisitesFile = 'prerequisites\prerequisites.ps1'
-$script:PrerequisitesFunctionsFile = 'prerequisites\functions.ps1'
-$script:InstallerFile = 'installer\installer.ps1'
-$script:AgentInfoFile = 'installer\agent_info.ps1'
-$script:InstallerFunctionsFile = 'installer\functions.ps1'
-$script:LogsFile = 'telemetry\logs\logs.ps1'
-$script:LogsFunctionsFile = 'telemetry\logs\functions.ps1'
-$script:MetricsFile = 'telemetry\metrics\metrics.ps1'
-$script:MetricsFunctionsFile = 'telemetry\metrics\functions.ps1'
-$script:TracesFile = 'telemetry\traces\traces.ps1'
-$script:TracesFunctionsFile = 'telemetry\traces\functions.ps1'
-$script:PostrequisitesFile = 'postrequisites\postrequisites.ps1'
-$script:PostrequisitesFunctionsFile = 'postrequisites\functions.ps1'
+AGENT_FUNCTIONS_FILE="$LOGZIO_TEMP_DIR/functions.ps1"
+CONSTS_FILE="$LOGZIO_TEMP_DIR/consts.ps1"
+PREREQUISITES_FILE='prerequisites\prerequisites.ps1'
+PREREQUISITES_FUNCTIONS_FILE='prerequisites\functions.ps1'
+INSTALLER_FILE='installer\installer.ps1'
+AGENT_INFO_FILE='installer\agent_info.ps1'
+INSTALLER_FUNCTIONS_FILE='installer\functions.ps1'
+LOGS_FILE='telemetry\logs\logs.ps1'
+LOGS_FUNCTIONS_FILE='telemetry\logs\functions.ps1'
+METRICS_FILE='telemetry\metrics\metrics.ps1'
+METRICS_FUNCTIONS_FILE='telemetry\metrics\functions.ps1'
+TRACES_FILE='telemetry\traces\traces.ps1'
+TRACES_FUNCTIONS_FILE='telemetry\traces\functions.ps1'
+POSTREQUISITES_FILE='postrequisites\postrequisites.ps1'
+POSTREQUISITES_FUNCTIONS_FILE='postrequisites\functions.ps1'
 
 ## Log levels
-$script:LogLevelDebug = 'DEBUG'
-$script:LogLevelInfo = 'INFO'
-$script:LogLevelError = 'ERROR'
-$script:LogLevelWarn = 'WARN'
+LOG_LEVEL_DEBUG='DEBUG'
+LOG_LEVEL_INFO='INFO'
+LOG_LEVEL_ERROR='ERROR'
+LOG_LEVEL_WARN='WARN'
 
 ## Log steps
-$script:LogStepPreInit = 'Pre-Init'
-$script:LogStepDownloads = 'Downloads'
-$script:LogStepInit = 'Init'
-$script:LogStepPrerequisites = 'Prerequisites'
-$script:LogStepPreInstallation = 'Pre-Installation'
-$script:LogStepInstallation = 'Installation'
-$script:LogStepLogs = 'Logs'
-$script:LogStepMetrics = 'Metrics'
-$script:LogStepTraces = 'Traces'
-$script:LogStepPostrequisites = 'Post-Requisites'
-$script:LogStepFinal = 'Final'
+LOG_STEP_PRE_INIT='Pre-Init'
+LOG_STEP_DOWNLOADS='Downloads'
+LOG_STEP_INIT='Init'
+LOG_STEP_PREREQUISITES='Prerequisites'
+LOG_STEP_PRE_INSTALLATION='Pre-Installation'
+LOG_STEP_INSTALLATION='Installation'
+LOG_STEP_LOGS='Logs'
+LOG_STEP_METRICS='Metrics'
+LOG_STEP_TRACES='Traces'
+LOG_STEP_POSTREQUISITES='Post-Requisites'
+LOG_STEP_FINAL='Final'
 
 ## Log script names
-$script:LogScriptAgent = 'agent.ps1'
-$script:LogScriptUtilsFunctions = 'utils_functions.ps1'
-$script:LogScriptPrerequisites = 'prerequisites.ps1'
-$script:LogScriptInstaller = 'installer.ps1'
-$script:LogScriptLogs = 'logs.ps1'
-$script:LogScriptMetrics = 'metrics.ps1'
-$script:LogsScriptTraces = 'traces.ps1'
-$script:LogScriptPostrequisites = 'postrequisites.ps1'
+LOG_SCRIPT_AGENT='agent.ps1'
+LOG_SCRIPT_UTILS_FUNCTIONS='utils_functions.ps1'
+LOG_SCRIPT_PREREQUISITES='prerequisites.ps1'
+LOG_SCRIPT_INSTALLER='installer.ps1'
+LOG_SCRIPT_LOGS='logs.ps1'
+LOG_SCRIPT_METRICS='metrics.ps1'
+LOG_SCRIPT_TRACES='traces.ps1'
+LOG_SCRIPT_POSTREQUISITES='postrequisites.ps1'
+
+## Colors
+RED_COLOR='\033[0;31m'
+GREEN_COLOR='\033[1;32m'
+YELLOW_COLOR='\033[0;33m'
+PURPLE_COLOR='\033[0;35m'
+CYAN_COLOR='\033[0;36m'
+WHITE_COLOR='\033[0;37m'

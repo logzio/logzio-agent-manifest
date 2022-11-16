@@ -129,7 +129,7 @@ function write_agent_info {
 function write_agent_support {
     echo
     echo -e '###############'
-    echo -e "###$MAGENTA_COLOR Support $WHITE_COLOR###"
+    echo -e "###$PURPLE_COLOR Support $WHITE_COLOR###"
     echo -e '###############'
     echo -e 'If you have any issue, request or additional questions, our Amazing Support Team will be more than happy to assist.'
     echo -e "You can contact us via 'help@logz.io' email or chat in Logz.io application under 'Need help?'."
@@ -203,7 +203,7 @@ fi
 
 # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
 if [[ -f $TASK_POST_RUN_FILE ]]; then
-    > $TASK_POST_RUN_FILE
+    >$TASK_POST_RUN_FILE
 fi
 
 # Write agent running log
@@ -211,7 +211,7 @@ write_log $LOG_LEVEL_INFO 'Start running Logz.io agent ...'
 
 # Print title
 echo -e '##########################'
-echo -e "###$MAGENTA_COLOR Pre-Initialization $WHITE_COLOR###"
+echo -e "###$PURPLE_COLOR Pre-Initialization $WHITE_COLOR###"
 echo -e '##########################'
 
 
