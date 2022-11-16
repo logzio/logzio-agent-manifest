@@ -7,7 +7,7 @@
     {
       "name": "multiple-os",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
-      "description": "Install test with single supported os",
+      "description": "Install test with single support os",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
         {
