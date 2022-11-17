@@ -133,6 +133,7 @@
                                     "name": "resourceType",
                                     "label": "Google Cloud Resources",
                                     "description": "Send logs that include any of these resource types.",
+                                    "required": true,
                                     "hint": "To send all resource types of the project select 'All services'",
                                     "options": [
                                         {

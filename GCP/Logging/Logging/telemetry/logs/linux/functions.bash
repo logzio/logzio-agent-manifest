@@ -226,7 +226,7 @@ function populate_data_to_config (){
     fi
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = "f"+$function_name+"-func_logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
+    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = "f"+$function_name+"_func_logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
 	    write_log "INFO" "_FUNCTION_NAME updated"
 
@@ -289,9 +289,9 @@ function populate_data_to_config (){
 function populate_filter_for_service_name(){
     all_services="all_services"
 	local resource_type=""
-    while read -r resource_type_bulk; do
-    if [[ ! -z "$resource_type" ]]; then
-	array_filter_bulk_names=(${resource_type//,/ })
+    while read -r resource_type_item; do
+    if [[ ! -z "$resource_type_item" ]]; then
+	array_filter_bulk_names=(${resource_type_item//,/ })
 	last_bulk_element=${#array_filter_bulk_names[@]}
 
 	for resource_bulk_type in "${array_filter_bulk_names[@]}"

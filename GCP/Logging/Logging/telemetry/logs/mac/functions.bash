@@ -147,11 +147,11 @@ function get_resources_type () {
 
     local resource_types=$(echo -e "$resource_type_param" | jq -c '.value[]')
 	 if [[ "$resource_types" = null ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' was not found in application JSON\""
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=resourceType}].value[]' was not found in application JSON\""
         return 3
     fi
     if [[ -z "$resource_types" ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' is empty in application JSON\""
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=resourceType}].value[]' is empty in application JSON\""
         return 3
     fi
     write_log "INFO" "resource_types = $resource_types"
@@ -226,7 +226,7 @@ function populate_data_to_config (){
     fi
     # echo "${contents}" >  $logzio_temp_dir/config.json
 
-    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = "f"+$function_name+"-func_logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
+    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = "f"+$function_name+"_func_logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
 	    write_log "INFO" "_FUNCTION_NAME updated"
 
