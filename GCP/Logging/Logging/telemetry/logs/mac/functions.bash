@@ -40,11 +40,11 @@ function get_project_id(){
 function set_project_id(){
     write_log "INFO" "running command gcloud to define user relevant project id ..."
 
-	gcloud_user_project_list=$(gcloud projects list --filter='projectName='"$project_name"'')
-	if [[ -z "$gcloud_user_project_list" ]]; then
+    gcloud_user_project_list=$(gcloud projects list --filter='projectName='"$project_name"'')
+    if [[ -z "$gcloud_user_project_list" ]]; then
         write_run "print_error \"logs.bash (1): 'projectId is not exist of user's project list. Please check projectId\""
         return 1
-	else
+    else
         last_element=4
         current=0
         project_list=$(echo $gcloud_user_project_list | tr " " "\n")
@@ -54,13 +54,13 @@ function set_project_id(){
             current=$((current + 1))
             if [ $current -eq $last_element ]; then
                 project_id="${addr}"
-		    fi
+            fi
         done	
-		set_current_project_id="$(gcloud config set project $project_id)"
-		write_log "INFO" "${set_current_project_id}"
-		write_log "INFO" "project_id = $project_id"
-		write_run "project_id=\"$project_id\""
-	fi
+        set_current_project_id="$(gcloud config set project $project_id)"
+        write_log "INFO" "${set_current_project_id}"
+        write_log "INFO" "project_id = $project_id"
+        write_run "project_id=\"$project_id\""
+    fi
 
 }
 
@@ -145,7 +145,7 @@ function get_resources_type () {
     fi
 
     local resource_types=$(echo -e "$resource_type_param" | jq -c '.value[]')
-	 if [[ "$resource_types" = null ]]; then
+    if [[ "$resource_types" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' was not found in application JSON\""
         return 3
     fi
@@ -188,7 +188,7 @@ function get_gcloud_function_region_log () {
 #   Exit Code 3
 function populate_data_to_config (){
     write_log "[INFO] Сreate build file..."
-	tmpfile=$(mktemp)
+    tmpfile=$(mktemp)
     curl -fsSL $repo_path/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
@@ -212,7 +212,6 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to write region to the config file.\n  $err\""
         return 3
     fi
-    # echo "${contents}" >  $logzio_temp_dir/config.json
 
     jq --arg listener_url "${listener_url}" '.substitutions._LOGZIO_LISTENER = $listener_url' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
@@ -223,18 +222,16 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to write listener_url to the config file.\n  $err\""
         return 3
     fi
-    # echo "${contents}" >  $logzio_temp_dir/config.json
 
     jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = "f"+$function_name+"_func_logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
-	    write_log "INFO" "_FUNCTION_NAME updated"
+        write_log "INFO" "_FUNCTION_NAME updated"
 
     else
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to write function_name to the config file.\n  $err\""
         return 3
     fi   
-    # echo "${contents}" >  $logzio_temp_dir/config.json
 
     jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = "p"+$topic_prefix+"-topic-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
@@ -245,7 +242,6 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_TOPIC_NAME to the config file.\n  $err\""
         return 3
     fi   
-    # echo "${contents}" >  $logzio_temp_dir/config.json
 
     jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = "s"+$subscription_prefix+"-subscription-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
@@ -255,7 +251,6 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_SUBSCRIPTION_NAME to the config file.\n  $err\""
         return 3
     fi   
-    # echo "${contents}" >  $logzio_temp_dir/config.json
     
     jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = "sink-"+$sink_prefix+"-sink-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
@@ -265,7 +260,6 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to write _SINK_NAME to the config file.\n  $err\""
         return 3
     fi   
-    # echo "${contents}" >  $logzio_temp_dir/config.json
     
     jq --arg resource_type "${resource_type}" '.substitutions._FILTER_LOG = $resource_type' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
@@ -275,7 +269,6 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to write _FILTER_LOG to the config file.\n  $err\""
         return 3
     fi  
-	# echo "${contents}" >  $logzio_temp_dir/config.json
 
     write_log "[INFO] Populate data to json finished."
 }
@@ -285,39 +278,39 @@ function populate_data_to_config (){
 #   resource_type - resource type from filter
 function populate_filter_for_service_name(){
     all_services="all_services"
-	local resource_type=""
+    local resource_type=""
     while read -r resource_type_item; do
-    if [[ ! -z "$resource_type_item" ]]; then
-	array_filter_bulk_names=(${resource_type_item//,/ })
-	last_bulk_element=${#array_filter_bulk_names[@]}
-    current_bulk=0
-	filter=" AND"
-	for resource_bulk_type in "${array_filter_bulk_names[@]}"
-    do
-		array_filter_names=(${resource_bulk_type//,/ })
-		last_element=${#array_filter_names[@]}
-		current_bulk=$((current_bulk + 1))
-		current=0
-		for name in "${array_filter_names[@]}"
-		do
-			current=$((current + 1))
-			if [ $current -eq $last_element ]; then
-				filter+=" resource.type=${name}"
-			else
-				filter+=" resource.type=${name} OR"
-			fi
-		done
-		if [ ! $current_bulk -eq $last_bulk_element ]; then
-            filter+=" OR"
-        fi	
-	done
-	resource_type=$filter
-    fi
-	if [[ $filter == *"all_services"* ]]; then
-       resource_type=""
-    fi
-	done < <(echo -e "$resource_types")
-	write_log "INFO" "resource_type = $resource_type"
+        if [[ ! -z "$resource_type_item" ]]; then
+            array_filter_bulk_names=(${resource_type_item//,/ })
+            last_bulk_element=${#array_filter_bulk_names[@]}
+            current_bulk=0
+            filter=" AND"
+            for resource_bulk_type in "${array_filter_bulk_names[@]}"
+            do
+                array_filter_names=(${resource_bulk_type//,/ })
+                last_element=${#array_filter_names[@]}
+                current_bulk=$((current_bulk + 1))
+                current=0
+                for name in "${array_filter_names[@]}"
+                do
+                    current=$((current + 1))
+                    if [ $current -eq $last_element ]; then
+                        filter+=" resource.type=${name}"
+                    else
+                        filter+=" resource.type=${name} OR"
+                    fi
+                done
+                if [ ! $current_bulk -eq $last_bulk_element ]; then
+                    filter+=" OR"
+                fi	
+            done
+        resource_type=$filter
+        fi
+        if [[ $filter == *"all_services"* ]]; then
+            resource_type=""
+        fi
+    done < <(echo -e "$resource_types")
+    write_log "INFO" "resource_type = $resource_type"
     write_run "resource_type=\"$resource_type\""
 }
 
