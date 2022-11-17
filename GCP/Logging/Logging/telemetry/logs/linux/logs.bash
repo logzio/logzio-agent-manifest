@@ -32,7 +32,7 @@ execute_task "get_google_cloud_fuction_name_from_id" "getting google cloud funct
 execute_task "get_gcloud_function_region_log" "getting google cloud function region"
 
 # Get Filter for logs
-execute_task "get_resources_type" "getting google cloud logging filter"
+execute_task "get_resources_type" "getting google cloud logging resource type"
 
 # Create Filter pattern 
 execute_task "populate_filter_for_service_name" "populate resource type to filter"

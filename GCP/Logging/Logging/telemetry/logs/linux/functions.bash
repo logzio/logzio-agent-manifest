@@ -136,7 +136,7 @@ function get_google_cloud_fuction_name_from_id () {
 # Error:
 #   Exit Code 3
 function get_resources_type () {
-    write_log "INFO" "Getting log filter ..."
+    write_log "INFO" "Getting log resource type ..."
 
     local resource_type_param=$(find_param "$logs_params" "resourceType")
     if [[ -z "$resource_type_param" ]]; then
