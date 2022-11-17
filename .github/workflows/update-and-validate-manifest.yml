@@ -92,7 +92,6 @@ jobs:
             with open("./manifest.json", mode='r', encoding='utf-8') as f:
               manifest = json.load(f)
               response = requests.post(url, json = manifest)
-            print(response.json())
             isValid = response.json()['valid']
             if isValid != True:
               message = (response.json()['message'])
