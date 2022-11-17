@@ -44,7 +44,7 @@ function get_app_json () {
         return 4
     fi
 
-    local status_code=$(jq -r '.statusCode' $app_json)
+    local status_code=$($jq_bin -r '.statusCode' $app_json)
     if [[ "$status_code" = null ]]; then
         return
     fi
@@ -61,7 +61,7 @@ function get_app_json () {
 function build_repo_path () {
     write_log "INFO" "Building repo path ..."
     
-    local dir1=$(jq -r '.configuration.name' $app_json)
+    local dir1=$($jq_bin -r '.configuration.name' $app_json)
     if [[ "$dir1" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.name' was not found in application JSON\""
         return 5
@@ -71,7 +71,7 @@ function build_repo_path () {
         return 5
     fi
 
-    local dir2=$(jq -r '.configuration.subtypes[0].name' $app_json)
+    local dir2=$($jq_bin -r '.configuration.subtypes[0].name' $app_json)
     if [[ "$dir2" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].name' was not found in application JSON\""
         return 5
@@ -81,7 +81,7 @@ function build_repo_path () {
         return 5
     fi
 
-    local dir3=$(jq -r '.configuration.subtypes[0].datasources[0].name' $app_json)
+    local dir3=$($jq_bin -r '.configuration.subtypes[0].datasources[0].name' $app_json)
     if [[ "$dir3" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON\""
         return 5
