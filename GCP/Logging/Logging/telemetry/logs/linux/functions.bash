@@ -145,9 +145,17 @@ function get_resources_type () {
         return 3
     fi
 
-    local resource_type=$(echo -e "$resource_type_param" | jq -c '.value[]')
-    write_log "INFO" "resource_type = $resource_type"
-    write_run "resource_type=\"$resource_type\""
+    local resource_types=$(echo -e "$resource_type_param" | jq -c '.value[]')
+	 if [[ "$resource_types" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' was not found in application JSON\""
+        return 3
+    fi
+    if [[ -z "$resource_types" ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' is empty in application JSON\""
+        return 3
+    fi
+    write_log "INFO" "resource_types = $resource_types"
+    write_run "resource_types=\"$resource_types\""
 }
 
 # Gets Google Cloud Function Region
@@ -279,8 +287,9 @@ function populate_data_to_config (){
 #   resource_type - resource type from filter
 
 function populate_filter_for_service_name(){
-	 all_services="all_services"
-
+    all_services="all_services"
+	local resource_type=""
+    while read -r resource_type_bulk; do
     if [[ ! -z "$resource_type" ]]; then
 	array_filter_bulk_names=(${resource_type//,/ })
 	last_bulk_element=${#array_filter_bulk_names[@]}
@@ -306,10 +315,10 @@ function populate_filter_for_service_name(){
 	if [[ $filter == *"all_services"* ]]; then
        resource_type=""
     fi
+	done < <(echo -e "$resource_types")
+	write_log "INFO" "resource_type = $resource_type"
+    write_run "resource_type=\"$resource_type\""
 }
-
-
-
 
 
 # Deploy
