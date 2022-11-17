@@ -64,7 +64,6 @@ function set_project_id(){
 
 }
 
-
 # Gets Logz.io listener
 # Output:
 #   logzio_listener - Logz.io listener
@@ -281,11 +280,9 @@ function populate_data_to_config (){
     write_log "[INFO] Populate data to json finished."
 }
 
-
 # Populate from resource type to filter by resource type pattern
 # Output:
 #   resource_type - resource type from filter
-
 function populate_filter_for_service_name(){
     all_services="all_services"
 	local resource_type=""
@@ -323,7 +320,6 @@ function populate_filter_for_service_name(){
 	write_log "INFO" "resource_type = $resource_type"
     write_run "resource_type=\"$resource_type\""
 }
-
 
 # Deploy
 # Output:
