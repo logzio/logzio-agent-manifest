@@ -37,7 +37,7 @@
                    "name": "stringListnotrequired",
                    "label": "not-required",
                    "required": false,
-                   "description": "The paths of log files to collect.",
+                   "description": "The paths of log files to collect",
                    "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
                    "value": [],
                    "placeholder": "Barak placeholder",
