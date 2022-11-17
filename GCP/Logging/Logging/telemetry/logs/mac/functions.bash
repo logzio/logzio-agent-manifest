@@ -54,7 +54,7 @@ function set_project_id(){
         do
         current=$((current + 1))
         if [ $current -eq $last_element ]; then
-            project_id=addr
+            project_id="${addr}"
 		fi
         done	
 		set_current_project_id="$(gcloud config set project $project_id)"
