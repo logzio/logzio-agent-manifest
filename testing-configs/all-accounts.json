@@ -1,13 +1,13 @@
 {
   "name": "Wizard",
   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-  "description": "Configurations to be used for wizard tests",
+  "description": "",
   "manifest": true,
   "subtypes": [
     {
       "name": "all-accounts",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
-      "description": "Install test with single supported os",
+      "description": "",
       "supportedOs": ["Mac", "Windows"],
       "datasources": [
         {
