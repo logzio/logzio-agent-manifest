@@ -99,14 +99,14 @@ function write_agent_status {
 
     local repeat=5
     while [[ $repeat -ne 0 ]]; do
-        if [[ $repeat % 2 -eq 0 ]]; then
+        if [[ $((repeat%2)) -eq 0 ]]; then
             echo -e "\r##### $message #####"
         else
             echo -e "\r$color##### $message #####$WHITE_COLOR"
         fi
 
         sleep 250
-        (($repeat--))
+        ((repeat--))
     done
 
     echo
@@ -152,7 +152,7 @@ IS_POSTREQUISITE_FAILED=false
 IS_AGENT_COMPLETED=false
 
 # Print main title
-echo -e "$CYAN_COLOR
+echo -e "\033[0;36m
     LLLLLLLLLLL                                                                             iiii                   
     L:::::::::L                                                                            i::::i                  
     L:::::::::L                                                                             iiii                   
@@ -176,29 +176,32 @@ echo -e "$CYAN_COLOR
                                                gg:::::::::::::g                                                    
                                                  ggg::::::ggg                                                      
                                                     gggggg                                                          
-$WHITE_COLOR"
+\033[0;37m"
 echo
 
 # Load consts
-source /tmp/logzio/consts.bash 2>$TASK_ERROR_FILE
+source /tmp/logzio/consts.bash 2>/tmp/logzio/task_error.txt
 if [[ $? -ne 0 ]]; then
-    local exit_code=1
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "agent.ps1 ($exit_code): error loading agent scripts: $(get_task_error_message)"
+    echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+
+    exit 1
 fi
 # Load agent functions
-source /tmp/logzio/functions.bash 2>$TASK_ERROR_FILE
+source /tmp/logzio/functions.bash 2>/tmp/logzio/task_error.txt
 if [[ $? -ne 0 ]]; then
-    local exit_code=1
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "agent.ps1 ($exit_code): error loading agent scripts: $(get_task_error_message)"
+    echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+
+    exit 1
 fi
 # Load agent utils functions
-source /tmp/logzio/utils_functions.bash 2>$TASK_ERROR_FILE
+source /tmp/logzio/utils_functions.bash 2>/tmp/logzio/task_error.txt
 if [[ $? -ne 0 ]]; then
-    local exit_code=1
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "agent.ps1 ($exit_code): error loading agent scripts: $(get_task_error_message)"
+    echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+
+    exit 1
 fi
 
 # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
