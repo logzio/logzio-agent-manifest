@@ -47,9 +47,9 @@ function set_project_id(){
         write_run "print_error \"logs.bash (1): 'projectId is not exist of user's project list. Please check projectId\""
         return 1
 	else
-	  last_element=4
+	    last_element=4
         current=0
-
+        project_list=$(echo $gcloud_user_project_list | tr " " "\n")
         for addr in $project_list
         do
         current=$((current + 1))

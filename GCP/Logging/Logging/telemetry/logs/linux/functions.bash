@@ -47,8 +47,9 @@ function set_project_id(){
 	else
         last_element=4
         current=0
-
-        for addr in $gcloud_user_project_list
+        project_list=$(echo $gcloud_user_project_list | tr " " "\n")
+		
+        for addr in $project_list
         do
         current=$((current + 1))
         if [ $current -eq $last_element ]; then

@@ -13,7 +13,7 @@
                 {
                     "name": "Logging",
                     "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
-                    "description": "To send logs to logz.io you need provide Google Cloud Function name. When you will run snippet please be sure that is you logged in and assign your profile to relevant project.",
+                    "description": "To send logs from your Gcloud Function to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
                     "telemetries": [
                         {
                             "type": "LOG_ANALYTICS",
@@ -22,9 +22,8 @@
                                 {
                                     "type": "single-select",
                                     "name": "functionNameRegion",
-                                    "label": " GCloud Function Region",
-                                    "description": "Choose region to where you want to deploy gcloud function.",
-                                    "hint": "Region need to provide for deploy Google Cloud Function",
+                                    "label": " Google Cloud Function Region",
+                                    "description": "GCP region where you will deploy Google Cloud Function",
                                     "options": [
                                         {
                                             "label": "us-central1",
@@ -124,18 +123,17 @@
                                 {
                                     "type": "text",
                                     "name": "projectName",
-                                    "label": "Primary Project ID",
+                                    "label": "Primary project name",
                                     "required": true,
                                     "description": "ID of Google Cloud project from where to send logs to logz.io.",
-                                    "hint": "Google Cloud function will be create for parse logs in proper format.",
-                                    "value": "Google project ID"
+                                    "value": "Google project name"
                                 },
                                 {
                                     "type": "multi-select",
                                     "name": "resourceType",
                                     "label": "Google Cloud Resources",
-                                    "description": "Send logs that includes one of the resource types ",
-                                    "hint": "(Optional) Logging Sink filter, filter only by resource type, need to be fill in an array with comma seperator. If that field empty will send all logs",
+                                    "description": "Send logs that include any of these resource types.",
+                                    "hint": "To send all resource types of the project select 'All services'",
                                     "options": [
                                         {
                                             "label": "All Services",
