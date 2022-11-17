@@ -147,11 +147,11 @@ function get_resources_type () {
 
     local resource_types=$(echo -e "$resource_type_param" | jq -c '.value[]')
 	 if [[ "$resource_types" = null ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=resourceType}].value[]' was not found in application JSON\""
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' was not found in application JSON\""
         return 3
     fi
     if [[ -z "$resource_types" ]]; then
-        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=resourceType}].value[]' is empty in application JSON\""
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=functionName}].value' is empty in application JSON\""
         return 3
     fi
     write_log "INFO" "resource_types = $resource_types"
@@ -293,12 +293,13 @@ function populate_filter_for_service_name(){
     if [[ ! -z "$resource_type_item" ]]; then
 	array_filter_bulk_names=(${resource_type_item//,/ })
 	last_bulk_element=${#array_filter_bulk_names[@]}
-
+    current_bulk=0
+	filter=" AND"
 	for resource_bulk_type in "${array_filter_bulk_names[@]}"
     do
-		filter+=" AND"
 		array_filter_names=(${resource_bulk_type//,/ })
 		last_element=${#array_filter_names[@]}
+		current_bulk=$((current_bulk + 1))
 		current=0
 		for name in "${array_filter_names[@]}"
 		do
@@ -309,6 +310,9 @@ function populate_filter_for_service_name(){
 				filter+=" resource.type=${name} OR"
 			fi
 		done
+		if [ ! $current_bulk -eq $last_bulk_element ]; then
+            filter+=" OR"
+        fi	
 	done
 	resource_type=$filter
     fi
