@@ -306,7 +306,7 @@ function populate_filter_for_service_name(){
 			if [ $current -eq $last_element ]; then
 				filter+=" resource.type=${name}"
 			else
-				filter+=" resource.type=${name} AND"
+				filter+=" resource.type=${name} OR"
 			fi
 		done
 	done

@@ -13,7 +13,7 @@
                 {
                     "name": "Logging",
                     "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
-                    "description": "To send logs from your Gcloud Function to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
+                    "description": "To send logs from your GCloud Platform to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
                     "telemetries": [
                         {
                             "type": "LOG_ANALYTICS",
