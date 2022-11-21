@@ -23,6 +23,7 @@
               "label": "AWS Region",
               "description": "AWS Region",
               "required": true,
+              "hint": "Your AWS account region",
               "options": [
                 { "label": "us-east-1", "value": "us-east-1" },
                 { "label": "us-east-2", "value": "us-east-2" },
@@ -93,8 +94,8 @@
                 {
                   "type": "key-value",
                   "name": "param_logzioEnrich",
-                  "label": "Logzio Enrich",
-                  "description": "Enrich CloudWatch events with custom properties."
+                  "label": "Fields Enrichment",
+                  "description": "Enrich CloudWatch events with custom fields."
                 }
                ]
              }
