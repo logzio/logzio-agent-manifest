@@ -68,19 +68,19 @@
                   "description": "Services that you need to collect logs from.",
                   "options": [
                     { "label": "API Gateway", "value": "apigateway" },
-                    { "label": "RDS", "value": "rds" },
+                    { "label": "AWS Elastic Beanstalk", "value": "elasticbeanstalk" },
+                    { "label": "AWS Glue", "value": "aws-glue" },
+                    { "label": "AWS IoT", "value": "aws-iot" },
+                    { "label": "Amazon Connect", "value": "connect" },
+                    { "label": "Amazon MQ", "value": "amazon-mq" },
+                    { "label": "Amazon Macie", "value": "macie" },
                     { "label": "CloudHSM", "value": "cloudhsm" },
                     { "label": "CloudTrail", "value": "cloudtrail" },
                     { "label": "CodeBuild", "value": "codebuild" },
-                    { "label": "Amazon Connect", "value": "connect" },
-                    { "label": "AWS Elastic Beanstalk", "value": "elasticbeanstalk" },
                     { "label": "ECS", "value": "ecs" },
                     { "label": "EKS", "value": "eks" },
-                    { "label": "AWS Glue", "value": "aws-glue" },
-                    { "label": "AWS IoT", "value": "aws-iot" },
                     { "label": "Lambda", "value": "lambda" },
-                    { "label": "Amazon Macie", "value": "macie" },
-                    { "label": "Amazon MQ", "value": "amazon-mq" }
+                    { "label": "RDS", "value": "rds" }
                   ]
                 },
                 { 
