@@ -45,8 +45,8 @@
                   "type": "boolean",
                   "name": "isFargate",
                   "label": "AWS Fargate",
-                  "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable to deploy on AWS Fargate.",
-                  "hint": "By checking this option the Logz.io Telemetry Collector will be deplyed on AWS Fargate.",
+                  "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable this if your EKS is based on Fargate.",
+                  "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on EKS based on Fargate.",
                   "value": false
                 }
               ]
