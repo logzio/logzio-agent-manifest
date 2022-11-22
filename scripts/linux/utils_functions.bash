@@ -94,8 +94,8 @@ function send_log_to_logzio {
     log="{\"@timestamp\":\"$(date +'%Y-%m-%dT%H:%M:%S%:z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\""
 
     if [[ $level == $LOG_LEVEL_ERROR ]]; then
-        local error_id_part=$(echo -e $message | grep -oe '([0-9]\+)'
-        local error_id=$(echo -e $error_id_part | grep -oe '[0-9]\+'
+        local error_id_part=$(echo -e $message | grep -oE '([0-9]\+)')
+        local error_id=$(echo -e $error_id_part | grep -oE '[0-9]\+')
         
         log+=",\"error_id\":\"$error_id\""
     fi
@@ -155,7 +155,7 @@ function get_json_str_field_value {
     local json_str=$1
     local json_path=$2
 
-    local result=$(echo -e $json_str | $JQ_BIN -r $json_path 2>$TASK_ERROR_FILE
+    local result=$(echo -e $json_str | $JQ_BIN -r $json_path 2>$TASK_ERROR_FILE)
     if [[ $? -ne 0 ]]; then
         json_str=${json_str/'"'/'\"'}
         echo -e "error getting '$json_path' from '$json_str': $(get_task_error_message)"
@@ -184,7 +184,7 @@ function get_json_str_field_value_list {
     local json_str=$1
     local json_path=$2
 
-    local result=$(echo -e $json_str | $JQ_BIN -c $json_path 2>$TASK_ERROR_FILE
+    local result=$(echo -e $json_str | $JQ_BIN -c $json_path 2>$TASK_ERROR_FILE)
     if [[ $? -ne 0 ]]; then
         json_str=${json_str/'"'/'\"'}
         echo -e "error getting '$json_path' from '$json_str': $(get_task_error_message)"
@@ -221,7 +221,7 @@ function get_json_file_field_value {
     if [[ $result == 'null' ]]; then
         echo -e "'$json_path' does not exist in '$json_file'"
         return 3
-    }
+    fi
 
     JSON_VALUE=$result
 }
@@ -359,7 +359,7 @@ function convert_list_to_str {
 
     local str_list=''
     for item in $list; do
-        if [[ $(echo -e $item | grep -oe "^'.*'$") || $(echo -e $item | grep -oe '^".*"$') ]]; then
+        if [[ $(echo -e $item | grep -oE "^'.*'$") || $(echo -e $item | grep -oE '^".*"$') ]]; then
             str_list+="$item "
         else
             str_list+="'$item' "
@@ -395,7 +395,7 @@ function get_param {
 
         TARGET_PARAM=$param
         return
-    }
+    done
 
     echo -e "$param_name param was not found"
     return 2
@@ -492,7 +492,6 @@ function execute_task {
     local func_name=$1
     local func_args=$2
     local description=$3
-    local scripts_to_load=$4
 
     local frame=('-' '\' '|' '/')
     local frame_interval=250

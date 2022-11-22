@@ -79,21 +79,21 @@ LOGZIO_HELM_FILE="$LOGZIO_KUBERNETES_DIR/logzio_helm.txt"
 LOGZIO_OTEL_COLLECTOR_SERVICE_NAME='LogzioOTELCollector'
 
 ## Script files
-AGENT_FUNCTIONS_FILE="$LOGZIO_TEMP_DIR/functions.ps1"
-CONSTS_FILE="$LOGZIO_TEMP_DIR/consts.ps1"
-PREREQUISITES_FILE='prerequisites\prerequisites.ps1'
-PREREQUISITES_FUNCTIONS_FILE='prerequisites\functions.ps1'
-INSTALLER_FILE='installer\installer.ps1'
-AGENT_INFO_FILE='installer\agent_info.ps1'
-INSTALLER_FUNCTIONS_FILE='installer\functions.ps1'
-LOGS_FILE='telemetry\logs\logs.ps1'
-LOGS_FUNCTIONS_FILE='telemetry\logs\functions.ps1'
-METRICS_FILE='telemetry\metrics\metrics.ps1'
-METRICS_FUNCTIONS_FILE='telemetry\metrics\functions.ps1'
-TRACES_FILE='telemetry\traces\traces.ps1'
-TRACES_FUNCTIONS_FILE='telemetry\traces\functions.ps1'
-POSTREQUISITES_FILE='postrequisites\postrequisites.ps1'
-POSTREQUISITES_FUNCTIONS_FILE='postrequisites\functions.ps1'
+AGENT_FUNCTIONS_FILE="$LOGZIO_TEMP_DIR/functions.bash"
+CONSTS_FILE="$LOGZIO_TEMP_DIR/consts.bash"
+PREREQUISITES_FILE='prerequisites\prerequisites.bash'
+PREREQUISITES_FUNCTIONS_FILE='prerequisites\functions.bash'
+INSTALLER_FILE='installer\installer.bash'
+AGENT_INFO_FILE='installer\agent_info.bash'
+INSTALLER_FUNCTIONS_FILE='installer\functions.bash'
+LOGS_FILE='telemetry\logs\logs.bash'
+LOGS_FUNCTIONS_FILE='telemetry\logs\functions.bash'
+METRICS_FILE='telemetry\metrics\metrics.bash'
+METRICS_FUNCTIONS_FILE='telemetry\metrics\functions.bash'
+TRACES_FILE='telemetry\traces\traces.bash'
+TRACES_FUNCTIONS_FILE='telemetry\traces\functions.bash'
+POSTREQUISITES_FILE='postrequisites\postrequisites.bash'
+POSTREQUISITES_FUNCTIONS_FILE='postrequisites\functions.bash'
 
 ## Log levels
 LOG_LEVEL_DEBUG='DEBUG'
@@ -115,14 +115,14 @@ LOG_STEP_POSTREQUISITES='Post-Requisites'
 LOG_STEP_FINAL='Final'
 
 ## Log script names
-LOG_SCRIPT_AGENT='agent.ps1'
-LOG_SCRIPT_UTILS_FUNCTIONS='utils_functions.ps1'
-LOG_SCRIPT_PREREQUISITES='prerequisites.ps1'
-LOG_SCRIPT_INSTALLER='installer.ps1'
-LOG_SCRIPT_LOGS='logs.ps1'
-LOG_SCRIPT_METRICS='metrics.ps1'
-LOG_SCRIPT_TRACES='traces.ps1'
-LOG_SCRIPT_POSTREQUISITES='postrequisites.ps1'
+LOG_SCRIPT_AGENT='agent.bash'
+LOG_SCRIPT_UTILS_FUNCTIONS='utils_functions.bash'
+LOG_SCRIPT_PREREQUISITES='prerequisites.bash'
+LOG_SCRIPT_INSTALLER='installer.bash'
+LOG_SCRIPT_LOGS='logs.bash'
+LOG_SCRIPT_METRICS='metrics.bash'
+LOG_SCRIPT_TRACES='traces.bash'
+LOG_SCRIPT_POSTREQUISITES='postrequisites.bash'
 
 ## Colors
 RED_COLOR='\033[0;31m'

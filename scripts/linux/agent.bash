@@ -138,7 +138,7 @@ function write_agent_support {
 
 
 # Agent version
-AGENT_VERSION='v1.0.20'
+AGENT_VERSION='v1.0.21'
 
 # Settings
 tput civis -- invisible
@@ -199,7 +199,7 @@ fi
 source /tmp/logzio/utils_functions.bash 2>/tmp/logzio/task_error.txt
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+    echo -e "${RED_COLOR}agent.bash (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)$WHITE_COLOR"
 
     exit 1
 fi
@@ -217,7 +217,9 @@ echo -e '##########################'
 echo -e "###$PURPLE_COLOR Pre-Initialization $WHITE_COLOR###"
 echo -e '##########################'
 
-
+# Get Linux and Bash info
+func_args=()
+execute_task 'get_linux_and_bash_info' $func_args 'Getting Linux and Bash info'
 
 
 
