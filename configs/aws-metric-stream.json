@@ -5,7 +5,7 @@
    "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
    "subtypes": [
      {
-       "name": "Clouwdwatch",
+       "name": "Metric stream",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
        "description": "Cloudwatch Logs",
        "hint": "Cloudwatch logs to ship to Logz.io",
