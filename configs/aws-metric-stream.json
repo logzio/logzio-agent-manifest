@@ -1,0 +1,107 @@
+{
+   "name": "AWS",
+   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
+   "description": "",
+   "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
+   "subtypes": [
+     {
+       "name": "Clouwdwatch",
+       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
+       "description": "Cloudwatch Logs",
+       "hint": "Cloudwatch logs to ship to Logz.io",
+       "supportedOs": ["AWS_Cloudformation"],
+       "integrationTemplate": "metric-stream-helpers/cloudformation/1.0.0/sam-template.yaml&stackName=logzio-metric-stream&param_logzioType=agent-aws-cloudwatch&param_logzioDestination=https://listener-aws-metrics-stream-<<ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
+       "datasources": [
+         {
+           "name": "Cloudwatch",
+           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
+           "description": "Ship your Cloudwatch logs to Logz.io",
+           "params": [
+            {
+              "type": "single-select",
+              "name": "awsRegion",
+              "label": "AWS Region",
+              "description": "AWS Region",
+              "required": true,
+              "hint": "Your AWS account region",
+              "options": [
+                { "label": "us-east-1", "value": "us-east-1" },
+                { "label": "us-east-2", "value": "us-east-2" },
+                { "label": "us-west-1", "value": "us-west-1" },
+                { "label": "us-west-2", "value": "us-west-2" },
+                { "label": "eu-central-1", "value": "eu-central-1" },
+                { "label": "eu-north-1", "value": "eu-north-1" },
+                { "label": "eu-west-1", "value": "eu-west-1" },
+                { "label": "eu-west-2", "value": "eu-west-2" },
+                { "label": "eu-west-3", "value": "eu-west-3" },
+                { "label": "sa-east-1", "value": "sa-east-1" },
+                { "label": "ap-northeast-1", "value": "ap-northeast-1" },
+                { "label": "ap-northeast-2", "value": "ap-northeast-2" },
+                { "label": "ap-northeast-3", "value": "ap-northeast-3" },
+                { "label": "ap-south-1", "value": "ap-south-1" },
+                { "label": "ap-southeast-1", "value": "ap-southeast-1" },
+                { "label": "ap-southeast-2", "value": "ap-southeast-2" },
+                { "label": "ca-central-1", "value": "ca-central-1" }
+              ]
+            },
+            {
+              "type": "text",
+              "name": "stackName",
+              "label": "Enter your stack name",
+              "required": true,
+              "description": "The name of your Cloudwatch stack.",
+              "value": "logzio-cloudwatch-shipper",
+              "pattern": "^[a-zA-Z0-9-]+$",
+              "patternError": "Only letters, numbers and dashes are allowed"
+            }
+             ],
+           "telemetries": [
+             {
+               "type": "LOG_ANALYTICS",
+               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your EC2.",
+               "params":
+               [
+                {
+                  "type": "multi-select",
+                  "name": "param_services",
+                  "label": "AWS Services",
+                  "description": "Services that you need to collect logs from.",
+                  "options": [
+                    { "label": "Amazon Connect", "value": "connect" },
+                    { "label": "Amazon MQ", "value": "amazon-mq" },
+                    { "label": "Amazon Macie", "value": "macie" },
+                    { "label": "API Gateway", "value": "apigateway" },
+                    { "label": "AWS Elastic Beanstalk", "value": "elasticbeanstalk" },
+                    { "label": "AWS Glue", "value": "aws-glue" },
+                    { "label": "AWS IoT", "value": "aws-iot" },
+                    { "label": "CloudHSM", "value": "cloudhsm" },
+                    { "label": "CloudTrail", "value": "cloudtrail" },
+                    { "label": "CodeBuild", "value": "codebuild" },
+                    { "label": "ECS", "value": "ecs" },
+                    { "label": "EKS", "value": "eks" },
+                    { "label": "Lambda", "value": "lambda" },
+                    { "label": "RDS", "value": "rds" }
+                  ]
+                },
+                { 
+                  "type": "string-list",
+                  "name": "param_customLogGroups",
+                  "label": "Custom Log Groups",
+                  "description": "Custom log groups that you need to collect logs from.",
+                  "placeholder": "Your log group /my/custom/log-group",
+                  "actionText": "Add custom log group"
+                },
+                {
+                  "type": "key-value",
+                  "name": "param_logzioEnrich",
+                  "label": "Fields Enrichment",
+                  "description": "Enrich CloudWatch events with custom fields."
+                }
+               ]
+             }
+           ]
+         }
+       ]
+     }
+   ]
+ }
