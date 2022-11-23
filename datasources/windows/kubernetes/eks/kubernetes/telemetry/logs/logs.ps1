@@ -22,6 +22,12 @@ Invoke-Task 'Build-LogzioLogsListenerUrlHelmSet' @{ListenerUrl = $script:Listene
 Invoke-Task 'Build-LogzioLogsTokenHelmSet' @{LogsToken = $script:LogsToken} 'Building Logz.io logs token Helm set' @($LogsFunctionsScript)
 # Build environment id Helm set
 Invoke-Task 'Build-EnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building environment id Helm set' @($LogsFunctionsScript)
+# Get is Fargate option was selected
+Invoke-Task 'Get-IsFargateWasSelected' @{LogsParams = $script:LogsParams} 'Getting is Fargate was selected' @($LogsFunctionsScript)
+if ($script:IsFargate) {
+    # Build enable Fargate Helm set
+    Invoke-Task 'Build-EnableFargateHelmSet' @{} 'Building enable Fargate Helm set' @($LogsFunctionsScript)
+}
 
 # Finished successfully
 Exit 0
