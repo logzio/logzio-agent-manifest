@@ -11,19 +11,19 @@
 #   LINUX_NAME - Linux name
 #   LINUX_VERSION - Linux version
 #   CPU_ARCH - Linux cpu architecture
-#   BASH_VERSION - Bash version
+#   BASH_VER - Bash version
 function get_linux_and_bash_info {
     local exit_code=2
-    local func_name=$0
+    local func_name=${FUNCNAME[0]}
 
-    local message='Setting Linux consts ...'
-    send_log_to_logzio $LOG_LEVEL_DEBUG $message $LOG_STEP_PRE_INIT $LOG_SCRIPT_AGENT $func_name
-    write_log $LOG_LEVEL_DEBUG $message
+    local message='Getting Linux and Bash info ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local linux_info=$(cat /etc/os-release 2>$TASK_ERROR_FILE)
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($exit_code): error getting Linux info: $(get_task_error_message)"
-        send_log_to_logzio $LOG_LEVEL_ERROR $message $LOG_STEP_PRE_INIT $LOG_SCRIPT_AGENT $func_name
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
@@ -32,8 +32,16 @@ function get_linux_and_bash_info {
     local linux_name=$(echo -e $linux_info | grep -oE '^NAME')
     write_task_post_run "LINUX_NAME=\"$linux_name\""
 
+    message="Linux name is '$linux_name'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
     local linux_version=$(echo -e $linux_info | grep -oE '^VERSION')
     write_task_post_run "LINUX_VERSION=\"$linux_version\""
+
+    message="Linux version is '$linux_version'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local cpu_arch=$(uname -p 2>$TASK_ERROR_FILE)
     if [[ $? -ne 0 ]]; then
@@ -43,11 +51,22 @@ function get_linux_and_bash_info {
 
         return $exit_code
     fi
+    
+    message="CPU architecture is '$cpu_arch'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
     write_task_post_run "CPU_ARCH=\"$cpu_arch\""
 
-    local bash_version=$BASH_VERSION
-    write_task_post_run "BASH_VERSION=\"$bash_version\""
+    local bash_version="$BASH_VERSION"
+    #bach_version=${bash_version//'('/'\('}
+    #bach_version=${bash_version//')'/'\)'}
+
+    message="Bash version is '$bash_version'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    write_task_post_run "BASH_VER=\"$bash_version\""
 }
 
 # # Checks if PowerShell was run as Administrator

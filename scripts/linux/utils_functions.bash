@@ -58,7 +58,7 @@ function write_task_post_run {
 # Output:
 #   Task error file content
 function get_task_error_message {
-    local err=$(cat $TASK_POST_RUN_FILE)
+    local err=$(cat $TASK_ERROR_FILE)
     err=${err//'"'/''}
 
     echo -e $err
@@ -91,7 +91,7 @@ function send_log_to_logzio {
     message=${message//'\'/'\\'}
     message=${message//'"'/'\"'}
 
-    log="{\"@timestamp\":\"$(date +'%Y-%m-%dT%H:%M:%S%:z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\""
+    log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VER\""
 
     if [[ $level == $LOG_LEVEL_ERROR ]]; then
         local error_id_part=$(echo -e $message | grep -oE '([0-9]\+)')
@@ -114,7 +114,7 @@ function send_log_to_logzio {
 
     log+='}'
 
-    curl -fsSL $SQS_URL -d Action='SendMessage' -d MessageBody=$log 2>$TASK_ERROR_FILE
+    curl -fsSL $SQS_URL -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>$TASK_ERROR_FILE
     if [[ $? -ne 0 ]]; then
         write_task_post_run "write_warning \"failed to send a request with log message to Logz.io agent SQS: $(get_task_error_message)\""
     fi
@@ -493,24 +493,24 @@ function execute_task {
     local func_args=$2
     local description=$3
 
-    local frame=('-' '\' '|' '/')
-    local frame_interval=250
+    local frame=('-' "\\" '|' '/')
+    local frame_interval=0.25
     local timeout=300
     local counter=0
 
     if [[ ${#func_args} -eq 0 ]]; then
         $func_name &
     else
-        $func_name $func_args &
+        $func_name "$func_args" &
     fi
 
     local pid=$!
 
     while true; do
-        echo -ne "\r[   ] $description ..."
+        echo -ne "\r  [   ] $description ..."
 
         for i in "${!frame[@]}"; do
-            echo -ne "\r[ ${frame[i]} ]"
+            echo -ne "\r  [ ${frame[i]} ]"
             sleep $frame_interval
         done
 
@@ -535,7 +535,7 @@ function execute_task {
     local exit_code=$?
 
     if [[ $exit_code -ne 0 || $is_timeout ]]; then
-        echo -ne "\r[ $RED_COLOR_BOLD✗$WHITE_COLOR ] $RED_COLOR_BOLD$description ...$WHITE_COLOR\n"
+        echo -ne "\r  [ $RED_COLOR_BOLD✗$WHITE_COLOR ] $RED_COLOR_BOLD$description ...$WHITE_COLOR\n"
 
         if [[ -f $TASK_POST_RUN_FILE ]]; then
             source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE
@@ -564,7 +564,7 @@ function execute_task {
         exit $exit_code
     fi
 
-    echo -ne "\r[ $GREEN_COLOR_BOLD✔$WHITE_COLOR ] $GREEN_COLOR_BOLD$description ...$WHITE_COLOR\n"
+    echo -ne "\r  [ $GREEN_COLOR_BOLD✔$WHITE_COLOR ] $GREEN_COLOR_BOLD$description ...$WHITE_COLOR\n"
 
     if [[ -f $TASK_POST_RUN_FILE ]]; then
         source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE

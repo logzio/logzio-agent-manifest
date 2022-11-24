@@ -219,7 +219,7 @@ echo -e '##########################'
 
 # Get Linux and Bash info
 func_args=()
-execute_task 'get_linux_and_bash_info' $func_args 'Getting Linux and Bash info'
+execute_task 'get_linux_and_bash_info' "$func_args" 'Getting Linux and Bash info'
 
 
 
