@@ -77,6 +77,7 @@ function can_k8s_cluster_connect_to_logzio_logs () {
     local retries=3
     while [[ $retries -ne 0 ]]; do
         local pod_status=$(kubectl get pods | grep logzio-metrics-connection-test | tr -s ' ' | cut -d ' ' -f3)
+        echo -e "$pod_status" >> test.txt
         if [[ "$pod_status" == "Completed" ]]; then
             is_pod_completed=true
             break
