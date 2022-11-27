@@ -82,10 +82,10 @@ function can_k8s_cluster_connect_to_logzio_logs () {
     fi
 
     local is_pod_completed=false
-    local retries = 3
+    local retries=3
     while [[ $retries -ne 0 ]]; do
         local pod_status=$(kubectl get pods | grep logzio-metrics-connection-test | tr -s ' ' | cut -d ' ' -f3)
-        if [[ "$pod_status" = "Completed" ]]; then
+        if [[ "$pod_status" == "Completed" ]]; then
             is_pod_completed=true
             break
         fi
@@ -152,10 +152,10 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
     fi
 
     local is_pod_completed=false
-    local retries = 3
+    local retries=3
     while [[ $retries -ne 0 ]]; do
         local pod_status=$(kubectl get pods | grep logzio-metrics-connection-test | tr -s ' ' | cut -d ' ' -f3)
-        if [[ "$pod_status" = "Completed" ]]; then
+        if [[ "$pod_status" == "Completed" ]]; then
             is_pod_completed=true
             break
         fi
