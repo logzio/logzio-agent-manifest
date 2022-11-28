@@ -54,6 +54,12 @@ if ($script:IsWindows) {
     # Build Windows node username and password Helm sets
     Build-WindowsNodeUsernameAndPasswordHelmSets
 }
+# Get if metrics filter option was selected
+Invoke-Task 'Get-IsFilterWasSelected' @{MetricsParams = $script:MetricsParams} 'Getting if metrics filter was selected' @($MetricsFunctionsScript)
+if ($script:IsFilter) {
+    # Build enable metrics filter Helm set
+    Invoke-Task 'Build-EnableMetricsFilterHelmSet' @{} 'Building enable metrics filter Helm set' @($MetricsFunctionsScript)
+}
 
 # Finished successfully
 Exit 0
