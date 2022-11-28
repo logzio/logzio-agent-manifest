@@ -47,6 +47,14 @@
               "params": [
                 {
                   "type": "boolean",
+                  "name": "isFilter",
+                  "label": "Filter metrics",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect specific metrics from your Kubernetes cluster, nodes and pods.",
+                  "value": false
+                },
+                {
+                  "type": "boolean",
                   "name": "isWindows",
                   "label": "Using Windows nodes",
                   "description": "",
