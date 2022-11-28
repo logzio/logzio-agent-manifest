@@ -109,3 +109,43 @@ function build_windows_node_username_and_password_helm_sets () {
     write_run "log_helm_sets+=\"\$windows_username_set\$windows_password_set\$secured_password\""
     write_run "helm_sets+=\"\$windows_username_set\$windows_password_set\$password\""
 }
+
+# Gets if metrics filter was selected
+# Output:
+#   is_filter - Tells if metrics filter was selected (true/false)
+# Error:
+#   Exit Code 4
+function get_is_metrics_filter_was_selected () {
+    write_log "INFO" "Getting if metrics filter was selected ..."
+
+    local is_filter_param=$(find_param "$metrics_params" "isFilter")
+    if [[ -z "$is_filter_param" ]]; then
+        write_run "print_error \"metrics.bash (4): isFilter param was not found\""
+        return 4
+    fi
+
+    local is_filter_value=$(echo -e "$is_filter_param" | $jq_bin -r '.value')
+    if [[ "$is_filter_value" = null ]]; then
+        write_run "print_error \"metrics.bash (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=METRICS}].params[{name=isFilter}].value' was not found in application JSON\""
+        return 4
+    fi
+    if [[ -z "$is_filter_value" ]]; then
+        write_run "print_error \"installer.bash (4): '.configuration.subtypes[0].datasources[0].telemetries[{type=METRICS}].params[{name=isFilter}].value' is empty in application JSON\""
+        return 4
+    fi
+
+    write_log "INFO" "is_filter = $is_filter_value"
+    write_run "is_filter=$is_filter_value"
+}
+
+# Builds enable metrics filter Helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+function build_enable_metrics_filter_helm_set () {
+    write_log "INFO" "Building enable metrics filter Helm set ..."
+    
+    local helm_set=" --set enableMetricsFilter.aks=true"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
