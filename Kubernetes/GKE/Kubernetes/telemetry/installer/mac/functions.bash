@@ -237,22 +237,10 @@ function build_enable_metrics_or_traces_helm_set () {
 # Builds metrics/traces environment tag helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
-# Error:
-#   Exit Code 5
 function build_environment_tag_helm_set () {
     write_log "INFO" "Building environment tag Helm set ..."
 
-    local env_tag=$($jq_bin -r '.id' $app_json)
-    if [[ "$env_tag" = null ]]; then
-        write_run "print_error \"installer.bash (5): '.id' was not found in application JSON\""
-        return 5
-    fi
-    if [[ -z "$env_tag" ]]; then
-        write_run "print_error \"installer.bash (5): '.id' is empty in application JSON\""
-        return 5
-    fi
-
-    local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
+    local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_id"
     write_log "INFO" "helm_set = $helm_set"
     write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"

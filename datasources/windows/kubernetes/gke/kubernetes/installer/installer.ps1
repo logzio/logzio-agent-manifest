@@ -116,7 +116,7 @@ if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
     # Build enable metrics or traces Helm set
     Invoke-Task 'Build-EnableMetricsOrTracesHelmSet' @{} 'Building enable metrics or traces Helm set' @($InstallerFunctionsScript)
     # Build environment tag Helm set
-    Invoke-Task 'Build-EnvironmentTagHelmSet' @{} 'Building environment tag Helm set' @($InstallerFunctionsScript)
+    Invoke-Task 'Build-EnvironmentTagHelmSet' @{EnvId = $script:EnvId} 'Building environment tag Helm set' @($InstallerFunctionsScript)
     # Build environment id Helm set
     Invoke-Task 'Build-EnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building environment id Helm set' @($InstallerFunctionsScript)
 }
