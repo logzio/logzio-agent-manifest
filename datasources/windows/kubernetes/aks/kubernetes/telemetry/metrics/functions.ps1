@@ -186,12 +186,12 @@ function Get-IsKubernetesRunOnWindowsOsSelected {
     Write-TaskPostRun "`$script:IsWindows = `$$IsWindows"
 }
 
-# Gets Logz.io metrics token
+# Gets is metrics filter was selected
 # Input:
 #   FuncArgs - Hashtable {MetricsParams = $script:MetricsParams}
 # Output:
-#   MetricsToken - Logz.io metrics token
-function Get-IsFilterWasSelected {
+#   IsFilter - Tells if metrics filter was selected (true/false)
+function Get-IsMetricsFilterWasSelected {
     param (
         [hashtable]$FuncArgs
     )
