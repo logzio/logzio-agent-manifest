@@ -91,7 +91,7 @@ function send_log_to_logzio {
     message=${message//'\'/'\\'}
     message=${message//'"'/'\"'}
 
-    log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VER\""
+    log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\",\"cpu_arch\":\"$CPU_ARCH\""
 
     if [[ $level == $LOG_LEVEL_ERROR ]]; then
         local error_id_part=$(echo -e $message | grep -oE '([0-9]\+)')

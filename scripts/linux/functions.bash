@@ -4,23 +4,22 @@
 ###################################################### LINUX Agent Functions ####################################################
 #################################################################################################################################
 
-# Gets Linux and Bash info
+# Gets Linux info
 # Input:
 #   ---
 # Output:
 #   LINUX_NAME - Linux name
 #   LINUX_VERSION - Linux version
 #   CPU_ARCH - Linux cpu architecture
-#   BASH_VER - Bash version
-function get_linux_and_bash_info {
+function get_linux_info {
     local exit_code=2
-    local func_name=${FUNCNAME[0]}
+    local func_name="${FUNCNAME[0]}"
 
-    local message='Getting Linux and Bash info ...'
+    local message='Getting Linux info ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local linux_info=$(cat /etc/os-release 2>$TASK_ERROR_FILE)
+    local linux_info=$(cat /etc/os-release 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($exit_code): error getting Linux info: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
@@ -29,24 +28,24 @@ function get_linux_and_bash_info {
         return $exit_code
     fi
 
-    local linux_name=$(echo -e $linux_info | grep -oE '^NAME')
+    local linux_name=$(echo -e "$linux_info" | grep -oP '(?<=^NAME=").*?(?=")')
     write_task_post_run "LINUX_NAME=\"$linux_name\""
 
     message="Linux name is '$linux_name'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local linux_version=$(echo -e $linux_info | grep -oE '^VERSION')
+    local linux_version=$(echo -e "$linux_info" | grep -oP '(?<=^VERSION=").*?(?=")')
     write_task_post_run "LINUX_VERSION=\"$linux_version\""
 
     message="Linux version is '$linux_version'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local cpu_arch=$(uname -p 2>$TASK_ERROR_FILE)
+    local cpu_arch=$(uname -p 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($exit_code): error getting cpu arch: $(get_task_error_message)"
-        send_log_to_logzio $LOG_LEVEL_ERROR $message $LOG_STEP_PRE_INIT $LOG_SCRIPT_AGENT $func_name
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
@@ -57,181 +56,158 @@ function get_linux_and_bash_info {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     write_task_post_run "CPU_ARCH=\"$cpu_arch\""
+}
 
-    local bash_version="$BASH_VERSION"
-    #bach_version=${bash_version//'('/'\('}
-    #bach_version=${bash_version//')'/'\)'}
+# Checks if script was run as root
+# Input:
+#   ---
+# Output:
+#   ---
+function check_is_elevated {
+    local exit_code=3
+    local func_name="${FUNCNAME[0]}"
 
-    message="Bash version is '$bash_version'"
+    local message='Checking if script was run as root ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    write_task_post_run "BASH_VER=\"$bash_version\""
+    local id=$(id -u)
+    if [[ $id -eq 0 ]]; then
+        return
+    fi
+
+    message="agent.bash ($exit_code): agent script was not run as root. please rerun the agent script with 'sudo' command"
+    send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_task_post_run "write_error \"$message\""
+
+    return $exit_code
 }
 
-# # Checks if PowerShell was run as Administrator
-# # Input:
-# #   ---
-# # Output:
-# #   ---
-# function Test-IsElevated {
-#     $local:ExitCode = 3
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+# Prints usage
+# Input:
+#   ---
+# Output:
+#   Help usage
+function show_help {
+    write_task_post_run "echo -e \"Usage: .\agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release<repo_release>]\""
+    write_task_post_run "echo -e ' --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)'"
+    write_task_post_run "echo -e ' --id=<agent_id>              Logz.io agent ID'"
+    write_task_post_run "echo -e ' --debug=<agent_json>         Debug run using a local agent json file'"
+    write_task_post_run "echo -e ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
+    write_task_post_run "echo -e ' --help                       Show usage'"
+}
 
-#     $local:Message = 'Checking if PowerShell was run as Administrator ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#     Write-Log $script:LogLevelDebug $Message
+# Gets arguments
+# Input:
+#   func_args - Dictionary (agent_args = $@)
+# Output:
+#   app_url - Logz.io app url
+#   agent_id - Logz.io agent id
+#   agent_json_file - Agent json file path (for debug)
+#   repo_release - Repo release (for debug)
+function get_arguments {
+    local func_args=$1
 
-#     $local:Id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    local exit_code=4
+    local func_name="${FUNCNAME[0]}"
 
-#     try {
-#         $local:Principal = New-Object System.Security.Principal.WindowsPrincipal($Id) -ErrorAction Stop
-#         if ($Principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)) {
-#             return
-#         }
-#     }
-#     catch {
-#         $Message = "agent.ps1 ($ExitCode): error checking if PowerShell was run as Administrator"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#         Write-TaskPostRun "Write-Error `"$Message`""
+    local message='Getting arguments ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#         return $ExitCode
-#     }
+    local err=$(are_func_args_exist $func_args ('AgentArgs'))
+    # if ($Err.Count -ne 0) {
+    #     $Message = "agent.ps1 ($ExitCode): $($Err[0])"
+    #     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #     Write-TaskPostRun "Write-Error `"$Message`""
 
-#     $Message = "agent.ps1 ($ExitCode): PowerShell was not run as Administrator. please run Powershell as Administrator and rerun the agent script"
-#     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#     Write-TaskPostRun "Write-Error `"$Message`""
+    #     return $ExitCode
+    # }
 
-#     return $ExitCode
-# }
+    # $local:AgentArgs = $FuncArgs.AgentArgs
 
-# # Prints usage
-# # Input:
-# #   ---
-# # Output:
-# #   Help usage
-# function Show-Help {
-#     Write-TaskPostRun "Write-Host `"Usage: .\agent.ps1 --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release<repo_release>]`""
-#     Write-TaskPostRun "Write-Host ' --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)'"
-#     Write-TaskPostRun "Write-Host ' --id=<agent_id>              Logz.io agent ID'"
-#     Write-TaskPostRun "Write-Host ' --debug=<agent_json>         Debug run using a local agent json file'"
-#     Write-TaskPostRun "Write-Host ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
-#     Write-TaskPostRun "Write-Host ' --help                       Show usage'"
-# }
+    # foreach ($Arg in $AgentArgs) {
+    #     switch -Regex ($Arg) {
+    #         --help {
+    #             Show-Help
+    #             Write-TaskPostRun "`$script:IsShowHelp = `$true"
 
-# # Gets arguments
-# # Input:
-# #   FuncArgs - Hashtable {AgentArgs = $args}
-# # Output:
-# #   AppUrl - Logz.io app url
-# #   AgentId - Logz.io agent id
-# #   AgentJsonFile - Agent json file path (for debug)
-# #   RepoRelease - Repo release (for debug)
-# function Get-Arguments {
-#     param (
-#         [hashtable]$FuncArgs
-#     )
+    #             return
+    #         }
+    #         --url=* {
+    #             $local:AppUrl = $Arg.Split('=', 2)[1]
+    #             if ([string]::IsNullOrEmpty($AppUrl)) {
+    #                 $Message = "agent.ps1 ($ExitCode): no Logz.io app URL specified!"
+    #                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #                 Write-TaskPostRun "Write-Error `"$Message`""
 
-#     $local:ExitCode = 4
-#     $local:FuncName = $MyInvocation.MyCommand.Name
-
-#     $local:Message = 'Getting arguments ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#     Write-Log $script:LogLevelDebug $Message
-
-#     $local:Err = Test-AreFuncArgsExist $FuncArgs @('AgentArgs')
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#         Write-TaskPostRun "Write-Error `"$Message`""
-
-#         return $ExitCode
-#     }
-
-#     $local:AgentArgs = $FuncArgs.AgentArgs
-
-#     foreach ($Arg in $AgentArgs) {
-#         switch -Regex ($Arg) {
-#             --help {
-#                 Show-Help
-#                 Write-TaskPostRun "`$script:IsShowHelp = `$true"
-
-#                 return
-#             }
-#             --url=* {
-#                 $local:AppUrl = $Arg.Split('=', 2)[1]
-#                 if ([string]::IsNullOrEmpty($AppUrl)) {
-#                     $Message = "agent.ps1 ($ExitCode): no Logz.io app URL specified!"
-#                     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                     Write-TaskPostRun "Write-Error `"$Message`""
-
-#                     return $ExitCode
-#                 }
+    #                 return $ExitCode
+    #             }
                 
-#                 $Message = "Agent argument 'url' is '$AppUrl'"
-#                 Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                 Write-Log $script:LogLevelDebug $Message
+    #             $Message = "Agent argument 'url' is '$AppUrl'"
+    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #             Write-Log $script:LogLevelDebug $Message
 
-#                 Write-TaskPostRun "`$script:AppUrl = '$AppUrl'"
-#                 continue
-#             }
-#             --id=* {
-#                 $local:AgentId = $Arg.Split('=', 2)[1]
-#                 if ([string]::IsNullOrEmpty($AgentId)) {
-#                     $Message = "agent.ps1 ($ExitCode): no agent ID specified!"
-#                     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                     Write-TaskPostRun "Write-Error `"$Message`""
+    #             Write-TaskPostRun "`$script:AppUrl = '$AppUrl'"
+    #             continue
+    #         }
+    #         --id=* {
+    #             $local:AgentId = $Arg.Split('=', 2)[1]
+    #             if ([string]::IsNullOrEmpty($AgentId)) {
+    #                 $Message = "agent.ps1 ($ExitCode): no agent ID specified!"
+    #                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #                 Write-TaskPostRun "Write-Error `"$Message`""
 
-#                     return $ExitCode
-#                 }
+    #                 return $ExitCode
+    #             }
                 
-#                 $Message = "Agent argument 'id' is '$AgentId'"
-#                 Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                 Write-Log $script:LogLevelDebug $Message
+    #             $Message = "Agent argument 'id' is '$AgentId'"
+    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #             Write-Log $script:LogLevelDebug $Message
 
-#                 Write-TaskPostRun "`$script:AgentId = '$AgentId'"
-#                 continue
-#             }
-#             --debug=* {
-#                 $local:AgentJsonFile = $Arg.Split('=', 2)[1]
-#                 if ([string]::IsNullOrEmpty($AgentJsonFile)) {
-#                     $Message = "agent.ps1 ($ExitCode): no json file specified!"
-#                     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                     Write-TaskPostRun "Write-Error `"$Message`""
+    #             Write-TaskPostRun "`$script:AgentId = '$AgentId'"
+    #             continue
+    #         }
+    #         --debug=* {
+    #             $local:AgentJsonFile = $Arg.Split('=', 2)[1]
+    #             if ([string]::IsNullOrEmpty($AgentJsonFile)) {
+    #                 $Message = "agent.ps1 ($ExitCode): no json file specified!"
+    #                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #                 Write-TaskPostRun "Write-Error `"$Message`""
 
-#                     return $ExitCode
-#                 }
+    #                 return $ExitCode
+    #             }
 
-#                 $Message = "Agent argument 'debug' is '$AgentJsonFile'"
-#                 Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                 Write-Log $script:LogLevelDebug $Message
+    #             $Message = "Agent argument 'debug' is '$AgentJsonFile'"
+    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #             Write-Log $script:LogLevelDebug $Message
 
-#                 Write-TaskPostRun "`$script:AgentJsonFile = '$AgentJsonFile'"
-#                 continue
-#             }
-#             --release=* {
-#                 $local:RepoRelease = $Arg.Split('=', 2)[1]
+    #             Write-TaskPostRun "`$script:AgentJsonFile = '$AgentJsonFile'"
+    #             continue
+    #         }
+    #         --release=* {
+    #             $local:RepoRelease = $Arg.Split('=', 2)[1]
 
-#                 $Message = "Agent argument 'release' is '$RepoRelease'"
-#                 Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                 Write-Log $script:LogLevelDebug $Message
+    #             $Message = "Agent argument 'release' is '$RepoRelease'"
+    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #             Write-Log $script:LogLevelDebug $Message
 
-#                 Write-TaskPostRun "`$script:RepoRelease = '$RepoRelease'"
-#                 continue
-#             }
-#             default {
-#                 $Message = "agent.ps1 ($ExitCode): unrecognized flag"
-#                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                 Write-TaskPostRun "Write-Error `"$Message`""
-#                 $Message = "agent.ps1 ($ExitCode): try running the agent with '--help' flag for more information"
-#                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#                 Write-TaskPostRun "Write-Error `"$Message`""
+    #             Write-TaskPostRun "`$script:RepoRelease = '$RepoRelease'"
+    #             continue
+    #         }
+    #         default {
+    #             $Message = "agent.ps1 ($ExitCode): unrecognized flag"
+    #             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #             Write-TaskPostRun "Write-Error `"$Message`""
+    #             $Message = "agent.ps1 ($ExitCode): try running the agent with '--help' flag for more information"
+    #             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #             Write-TaskPostRun "Write-Error `"$Message`""
 
-#                 return $ExitCode
-#             }
-#         }
-#     }
-# }
+    #             return $ExitCode
+    #         }
+    #     }
+    # }
+}
 
 # # Checks validation of the arguments
 # # Input:
