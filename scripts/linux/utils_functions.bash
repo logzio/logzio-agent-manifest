@@ -131,7 +131,7 @@ function are_func_args_exist {
     local func_args=$1
     local arg_names=$2
 
-    if [[ ${#func_args} -eq 0 ]]; then
+    if [[ ${#func_args[@]} -eq 0 ]]; then
         echo -e 'function hashtable argument is empty'
         return 1
     fi
@@ -498,7 +498,7 @@ function execute_task {
     local timeout=300
     local counter=0
 
-    if [[ ${#func_args} -eq 0 ]]; then
+    if [[ ${#func_args[@]} -eq 0 ]]; then
         $func_name &
     else
         $func_name "$func_args" &

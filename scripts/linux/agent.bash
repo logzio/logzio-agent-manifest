@@ -218,9 +218,9 @@ echo -e "###$PURPLE_COLOR Pre-Initialization $WHITE_COLOR###"
 echo -e '##########################'
 
 # Get Linux info
-execute_task 'get_linux_info' func_args=() 'Getting Linux info'
-execute_task 'check_is_elevated' func_args=() 'Checking if script was run as root'
-execute_task 'get_arguments' func_args=(['agent_args']=$@) 'Getting arguments'
+execute_task 'get_linux_info' "$(func_args=())" 'Getting Linux info'
+execute_task 'check_is_elevated' "$(func_args=())" 'Checking if script was run as root'
+execute_task 'get_arguments' "$(func_args=(['agent_args']=$@))" 'Getting arguments'
 
 
 

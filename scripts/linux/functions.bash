@@ -108,6 +108,8 @@ function show_help {
 function get_arguments {
     local func_args=$1
 
+    echo -e "${#func_args}" > ./args.txt
+
     local exit_code=4
     local func_name="${FUNCNAME[0]}"
 
@@ -115,7 +117,7 @@ function get_arguments {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local err=$(are_func_args_exist $func_args ('AgentArgs'))
+    #local err=$(are_func_args_exist $func_args ('AgentArgs'))
     # if ($Err.Count -ne 0) {
     #     $Message = "agent.ps1 ($ExitCode): $($Err[0])"
     #     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
