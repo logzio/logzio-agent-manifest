@@ -143,6 +143,9 @@ AGENT_VERSION='v1.0.21'
 # Settings
 tput civis -- invisible
 
+# Agent declarations
+declare -A FUNC_ARGS
+
 # Agent status flags
 IS_SHOW_HELP=false
 IS_LOADING_AGENT_SCRIPTS_FAILED=false
@@ -218,9 +221,17 @@ echo -e "###$PURPLE_COLOR Pre-Initialization $WHITE_COLOR###"
 echo -e '##########################'
 
 # Get Linux info
-execute_task 'get_linux_info' "$(func_args=())" 'Getting Linux info'
-execute_task 'check_is_elevated' "$(func_args=())" 'Checking if script was run as root'
-execute_task 'get_arguments' "$(func_args=(['agent_args']=$@))" 'Getting arguments'
+FUNC_ARGS=()
+execute_task 'get_linux_info' 'Getting Linux info' "$FUNC_ARGS"
+# Check if script was run as root
+FUNC_ARGS=()
+execute_task 'check_is_elevated' 'Checking if script was run as root' "$FUNC_ARGS"
+# Get arguments
+FUNC_ARGS=([agent_args]=$@)
+execute_task 'get_arguments' 'Getting arguments' "$FUNC_ARGS"
+# Check arguments validation
+FUNC_ARGS=([app_url]=$APP_URL [agent_id]=$AGENT_ID [agent_json_file]=$AGENT_JSON_FILE)
+execute_task 'check_arguments_validation' 'Checking arguments validation' "$FUNC_ARGS"
 
 
 
@@ -231,91 +242,6 @@ execute_task 'get_arguments' "$(func_args=(['agent_args']=$@))" 'Getting argumen
 
 
 
-
-
-
-
-# # Prints usage
-# # Output:
-# #   Help usage
-# function show_help () {
-#     echo -e "Usage: ./agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<app_json>] [--branch<repo_branch>]"
-#     echo -e " --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)"
-#     echo -e " --id=<agent_id>              Logz.io agent ID"
-#     echo -e " --debug=<app_json>           Debug run using a local application JSON"
-#     echo -e " --branch=<repo_branch>       The branch of Logz.io repo. Default is master"
-#     echo -e " --help                       Show usage"
-# }
-
-# # Gets arguments
-# # Input:
-# #   Agent script arguments ($@)
-# # Output:
-# #   app_url - Logz.io app URL
-# #   agent_id - Logz.io agent ID
-# #   app_json_file - App JSON (only in debug)
-# #   repo_branch - Repo branch (for tests)
-# # Error:
-# #   Exit Code 1
-# function get_arguments () {
-#     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting arguments ..." >> $log_file
-
-#     while true; do
-#         case "$1" in
-#             --help)
-#                 show_help
-#                 exit
-#                 ;;
-#             --url=*)
-#                 app_url=$(echo "$1" | cut -d "=" -f2)
-#                 if [[ "$app_url" = "" ]]; then
-#                     echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): no Logz.io app URL specified!" >> $log_file
-#                     echo -e "\033[0;31magent.bash (1): no Logz.io app URL specified!\033[0;37m"
-#                     exit 1
-#                 fi
-
-#                 echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] url = $app_url" >> $log_file
-#                 ;;
-#             --id=*)
-#                 agent_id=$(echo "$1" | cut -d "=" -f2)
-#                 if [[ "$agent_id" = "" ]]; then
-#                     echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): no agent ID specified!" >> $log_file
-#                     echo -e "\033[0;31magent.bash (1): no agent ID specified!\033[0;37m"
-#                     exit 1
-#                 fi
-
-#                 echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] id = $agent_id" >> $log_file
-#                 ;;
-#             --debug=*)
-#                 app_json_file=$(echo "$1" | cut -d "=" -f2)
-#                 if [[ "$app_json_file" = "" ]]; then
-#                     echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): no JSON file specified!" >> $log_file
-#                     echo -e "\033[0;31magent.bash (1): no JSON file specified!\033[0;37m"
-#                     exit 1
-#                 fi
-
-#                 echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] debug = $app_json_file" >> $log_file
-#                 ;;
-#             --branch=*)
-#                 repo_branch=$(echo "$1" | cut -d "=" -f2)
-#                 echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] branch = $repo_branch" >> $log_file
-#                 ;;
-#             "")
-#                 break
-#                 ;;
-#             *)
-#                 echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): unrecognized flag" >> $log_file
-#                 echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): try './agent.bash --help' for more information" >> $log_file
-#                 echo -e "\033[0;31magent.bash (1): unrecognized flag\033[0;37m"
-#                 echo -e "\033[0;31magent.bash (1): agent.bash (1): try './agent.bash --help' for more information\033[0;37m"
-#                 exit 1
-#                 ;;
-#         esac
-#         shift
-#     done
-
-#     check_validation
-# }
 
 # # Checks validation of the arguments
 # # Error:

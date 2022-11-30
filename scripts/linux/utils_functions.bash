@@ -10,10 +10,10 @@
 # Output:
 #   The message
 function write_error {
-    local message=$1
+    local message="$1"
 
-    write_log $LOG_LEVEL_ERROR $message
-    echo -e "$RED_COLOR$Message$WHITE_COLOR"
+    write_log "$LOG_LEVEL_ERROR" "$message"
+    echo -e "$RED_COLOR$message$WHITE_COLOR"
 }
 
 # Prints warning message in yellow
@@ -22,9 +22,9 @@ function write_error {
 # Output:
 #   The message
 function write_warning {
-    local message=$1
+    local message="$1"
 
-    write_log $LOG_LEVEL_WARN $message
+    write_log "$LOG_LEVEL_WARN" "$message"
     echo -e "$YELLOW_COLOR$message$WHITE_COLOR"
 }
 
@@ -35,10 +35,10 @@ function write_warning {
 # Output:
 #   ---
 function write_log {
-    local log_level=$1
-    local message=$2
+    local log_level="$1"
+    local message="$2"
     
-    echo -e "[$log_level] [$(date +'%Y-%m-%d %H:%M:%S')] $message" >>$AGENT_LOG_FILE
+    echo -e "[$log_level] [$(date +'%Y-%m-%d %H:%M:%S')] $message" >>"$AGENT_LOG_FILE"
 }
 
 # Writes command into task post run script file
@@ -47,9 +47,9 @@ function write_log {
 # Output:
 #   ---
 function write_task_post_run {
-    local command=$1
+    local command="$1"
 
-    echo -e $command >>$TASK_POST_RUN_FILE
+    echo -e "$command" >>"$TASK_POST_RUN_FILE"
 }
 
 # Gets task error file content
@@ -58,10 +58,10 @@ function write_task_post_run {
 # Output:
 #   Task error file content
 function get_task_error_message {
-    local err=$(cat $TASK_ERROR_FILE)
+    local err=$(cat "$TASK_ERROR_FILE")
     err=${err//'"'/''}
 
-    echo -e $err
+    echo -e "$err"
 }
 
 # Sends log to Logz.io
@@ -78,43 +78,43 @@ function get_task_error_message {
 # Output:
 #   ---
 function send_log_to_logzio {
-    local level=$1
-    local message=$2
-    local step=$3
-    local script_name=$4
-    local func_name=$5
-    local agent_id=$6
-    local platform=$7
-    local sub_type=$8
-    local data_source=$9
+    local level="$1"
+    local message="$2"
+    local step="$3"
+    local script_name="$4"
+    local func_name="$5"
+    local agent_id="$6"
+    local platform="$7"
+    local sub_type="$8"
+    local data_source="$9"
 
     message=${message//'\'/'\\'}
     message=${message//'"'/'\"'}
 
     log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\",\"cpu_arch\":\"$CPU_ARCH\""
 
-    if [[ $level == $LOG_LEVEL_ERROR ]]; then
-        local error_id_part=$(echo -e $message | grep -oE '([0-9]\+)')
-        local error_id=$(echo -e $error_id_part | grep -oE '[0-9]\+')
+    if [[ "$level" == "$LOG_LEVEL_ERROR" ]]; then
+        local error_id_part=$(echo -e "$message" | grep -o '([0-9]\+)')
+        local error_id=$(echo -e "$error_id_part" | grep -o '[0-9]\+')
         
         log+=",\"error_id\":\"$error_id\""
     fi
-    if [[ ! -z $agent_id ]]; then
+    if [[ ! -z "$agent_id" ]]; then
         log+=",\"agent_id\":\"$agent_id\""
     fi
-    if [[ ! -z $platform ]]; then
+    if [[ ! -z "$platform" ]]; then
         log+=",\"platform\":\"$platform\""
     fi
-    if [[ ! -z $sub_type ]]; then
+    if [[ ! -z "$sub_type" ]]; then
         log+=",\"subtype\":\"$sub_type\""
     fi
-    if [[ ! -z $data_source ]]; then
+    if [[ ! -z "$data_source" ]]; then
         log+=",\"datasource\":\"$data_source\""
     fi
 
     log+='}'
 
-    curl -fsSL $SQS_URL -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>$TASK_ERROR_FILE
+    curl -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         write_task_post_run "write_warning \"failed to send a request with log message to Logz.io agent SQS: $(get_task_error_message)\""
     fi
@@ -129,15 +129,15 @@ function send_log_to_logzio {
 #   If got error will output message with exit code.
 function are_func_args_exist {
     local func_args=$1
-    local arg_names=$2
+    local arg_names="$2"
 
     if [[ ${#func_args[@]} -eq 0 ]]; then
-        echo -e 'function hashtable argument is empty'
+        echo -e 'function dictionary argument is empty'
         return 1
     fi
 
     for arg_name in ${arg_names[@]}; do
-        if [[ ! -z ${func_args[$arg_name]} ]]; then
+        if [[ ! "${func_args[$arg_name]}" ]]; then
             echo -e "function dictionary argument does not have '$arg_name' key"
             return 2
         fi
@@ -152,25 +152,25 @@ function are_func_args_exist {
 #   JSON_VALUE - The value of the field. Only if got no error.
 #   If got error will output message with exit code.
 function get_json_str_field_value {
-    local json_str=$1
-    local json_path=$2
+    local json_str="$1"
+    local json_path="$2"
 
-    local result=$(echo -e $json_str | $JQ_BIN -r $json_path 2>$TASK_ERROR_FILE)
+    local result=$(echo -e "$json_str" | $JQ_BIN -r "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         json_str=${json_str/'"'/'\"'}
         echo -e "error getting '$json_path' from '$json_str': $(get_task_error_message)"
         return 1
     fi
-    if [[ -z $result ]]; then
+    if [[ -z "$result" ]]; then
         echo -e "'$json_path' is empty in '$json_str'"
         return 2
     fi
-    if [[ $result == 'null' ]]; then
+    if [[ "$result" == 'null' ]]; then
         echo -e "'$json_path' does not exist in '$json_str'"
         return 3
     fi
 
-    JSON_VALUE=$result
+    JSON_VALUE="$result"
 }
 
 # Gets json string field value list
@@ -181,10 +181,10 @@ function get_json_str_field_value {
 #   JSON_VALUE - The value (list) of the field. Only if got no error.
 #   If got error will output message with exit code.
 function get_json_str_field_value_list {
-    local json_str=$1
-    local json_path=$2
+    local json_str="$1"
+    local json_path="$2"
 
-    local result=$(echo -e $json_str | $JQ_BIN -c $json_path 2>$TASK_ERROR_FILE)
+    local result=$(echo -e "$json_str" | $JQ_BIN -c "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         json_str=${json_str/'"'/'\"'}
         echo -e "error getting '$json_path' from '$json_str': $(get_task_error_message)"
@@ -195,7 +195,7 @@ function get_json_str_field_value_list {
         return 2
     fi
 
-    JSON_VALUE=$result
+    JSON_VALUE="$result"
 }
 
 # Gets json file field value
@@ -206,24 +206,24 @@ function get_json_str_field_value_list {
 #   JSON_VALUE - The value of the field. Only if got no error.
 #   If got error will output message with exit code.
 function get_json_file_field_value {
-    local json_str=$1
-    local json_path=$2
+    local json_str="$1"
+    local json_path="$2"
 
-    local result=$($JQ_BIN -r $json_path $json_file 2>$TASK_ERROR_FILE)
+    local result=$($JQ_BIN -r "$json_path" "$json_file" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         echo -e "error getting '$json_path' from '$json_file': $(get_task_error_message)"
         return 1
     fi
-    if [[ -z $result ]]; then
+    if [[ -z "$result" ]]; then
         echo -e "'$json_path' is empty in '$json_file'"
         return 2
     fi
-    if [[ $result == 'null' ]]; then
+    if [[ "$result" == 'null' ]]; then
         echo -e "'$json_path' does not exist in '$json_file'"
         return 3
     fi
 
-    JSON_VALUE=$result
+    JSON_VALUE="$result"
 }
 
 # Gets json file field value list
@@ -234,10 +234,10 @@ function get_json_file_field_value {
 #   JSON_VALUE - The value (list) of the field. Only if got no error.
 #   If got error will output message with exit code.
 function get_json_file_field_value_list {
-    local json_str=$1
-    local json_path=$2
+    local json_str="$1"
+    local json_path="$2"
 
-    local result=$($JQ_BIN -c $json_path $json_file 2>$TASK_ERROR_FILE)
+    local result=$($JQ_BIN -c "$json_path" "$json_file" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         echo -e "error getting '$json_path' from '$json_file': $(get_task_error_message)"
         return 1
@@ -247,7 +247,7 @@ function get_json_file_field_value_list {
         return 2
     fi
 
-    JSON_VALUE=$result
+    JSON_VALUE="$result"
 }
 
 # Adds yaml file field value
@@ -259,11 +259,11 @@ function get_json_file_field_value_list {
 #   Returns nothing if everything ok.
 #   If got error will output message with exit code.
 function add_yaml_file_field_value {
-    local yaml_file=$1
-    local yaml_path=$2
-    local value=$3
+    local yaml_file="$1"
+    local yaml_path="$2"
+    local value="$3"
 
-    $YQ_BIN -i "$yaml_path += ""\"$value\"""" $yaml_file 2>$TASK_ERROR_FILE
+    $YQ_BIN -i "$yaml_path += ""\"$value\"""" $yaml_file 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         echo -e "error adding '$value' to '$yaml_path in '$yaml_path': $(get_task_error_message)"
         return 1
@@ -279,11 +279,11 @@ function add_yaml_file_field_value {
 #   Returns nothing if everything ok.
 #   If got error will output message with exit code.
 function set_yaml_file_field_value {
-    local yaml_file=$1
-    local yaml_path=$2
-    local value=$3
+    local yaml_file="$1"
+    local yaml_path="$2"
+    local value="$3"
 
-    $YQ_BIN -i "$yaml_path = ""\"$value\"""" $yaml_file 2>$TASK_ERROR_FILE
+    $YQ_BIN -i "$yaml_path = ""\"$value\"""" "$yaml_file" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         echo -e "error setting '$value' to '$yaml_path in '$yaml_file': $(get_task_error_message)"
         return 1
@@ -298,24 +298,24 @@ function set_yaml_file_field_value {
 #   YAML_VALUE - The value of the field. Only if got no error.
 #   If got error will output message with exit code.
 function Get-YamlFileFieldValue {
-    local yaml_file=$1
-    local yaml_path=$2
+    local yaml_file="$1"
+    local yaml_path="$2"
 
-    local result=$($YQ_BIN $yaml_path $yaml_file 2>$TASK_ERROR_FILE)
+    local result=$($YQ_BIN "$yaml_path" "$yaml_file" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         echo -e "error getting '$yaml_path' from '$yaml_file': $(get_task_error_message)"
         return 1
     fi
-    if [[ -z $result ]]; then
+    if [[ -z "$result" ]]; then
         echo -e "'$yaml_path' is empty in '$yaml_file'"
         return 2
     fi
-    if [[ $result == 'null' ]]; then
+    if [[ "$result" == 'null' ]]; then
         echo -e "'$yaml_path' does not exist in '$yaml_file'"
         return 3
     fi
 
-    YAML_VALUE=$result
+    YAML_VALUE="$result"
 }
 
 # Adds yaml file field value to another yaml file field
@@ -359,7 +359,7 @@ function convert_list_to_str {
 
     local str_list=''
     for item in $list; do
-        if [[ $(echo -e $item | grep -oE "^'.*'$") || $(echo -e $item | grep -oE '^".*"$') ]]; then
+        if [[ $(echo -e $item | grep -o "^'.*'$") || $(echo -e $item | grep -o '^".*"$') ]]; then
             str_list+="$item "
         else
             str_list+="'$item' "
@@ -489,9 +489,9 @@ function get_logzio_region {
 # Output:
 #   ---
 function execute_task {
-    local func_name=$1
-    local func_args=$2
-    local description=$3
+    local func_name="$1"
+    local description="$2"
+    local func_args=$3
 
     local frame=('-' "\\" '|' '/')
     local frame_interval=0.25
@@ -501,7 +501,7 @@ function execute_task {
     if [[ ${#func_args[@]} -eq 0 ]]; then
         $func_name &
     else
-        $func_name "$func_args" &
+        $func_name "${func_args[@]}" &
     fi
 
     local pid=$!
@@ -558,7 +558,7 @@ function execute_task {
         if $IS_POSTREQUISITE_FAILED; then
             return
         else
-            $IS_AGENT_FAILED=true
+            IS_AGENT_FAILED=true
         fi
         
         exit $exit_code

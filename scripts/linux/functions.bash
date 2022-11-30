@@ -99,16 +99,14 @@ function show_help {
 
 # Gets arguments
 # Input:
-#   func_args - Dictionary (agent_args = $@)
+#   func_args - Dictionary (['agent_args']=$@)
 # Output:
-#   app_url - Logz.io app url
-#   agent_id - Logz.io agent id
-#   agent_json_file - Agent json file path (for debug)
-#   repo_release - Repo release (for debug)
+#   APP_URL - Logz.io app url
+#   AGENT_ID - Logz.io agent id
+#   AGENT_JSON_FILE - Agent json file path (for debug)
+#   REPO_RELEASE - Repo release (for debug)
 function get_arguments {
-    local func_args=$1
-
-    echo -e "${#func_args}" > ./args.txt
+    local func_args=$@
 
     local exit_code=4
     local func_name="${FUNCNAME[0]}"
@@ -117,167 +115,163 @@ function get_arguments {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    #local err=$(are_func_args_exist $func_args ('AgentArgs'))
-    # if ($Err.Count -ne 0) {
-    #     $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-    #     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #     Write-TaskPostRun "Write-Error `"$Message`""
+    local arg_names=('agent_args')
+    local err=$(are_func_args_exist "$func_args" "$arg_names")
+    if [[ ! -z "$err" ]]; then
+        message="agent.bash ($exit_code): $err"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-    #     return $ExitCode
-    # }
+        return $exit_code
+    fi
 
-    # $local:AgentArgs = $FuncArgs.AgentArgs
+    local agent_args="${func_args[agent_args]}"
 
-    # foreach ($Arg in $AgentArgs) {
-    #     switch -Regex ($Arg) {
-    #         --help {
-    #             Show-Help
-    #             Write-TaskPostRun "`$script:IsShowHelp = `$true"
-
-    #             return
-    #         }
-    #         --url=* {
-    #             $local:AppUrl = $Arg.Split('=', 2)[1]
-    #             if ([string]::IsNullOrEmpty($AppUrl)) {
-    #                 $Message = "agent.ps1 ($ExitCode): no Logz.io app URL specified!"
-    #                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #                 Write-TaskPostRun "Write-Error `"$Message`""
-
-    #                 return $ExitCode
-    #             }
+    for arg in $agent_args; do
+        case "$arg" in
+            --help)
+                show_help
+                write_task_post_run "IS_SHOW_HELP=true"
                 
-    #             $Message = "Agent argument 'url' is '$AppUrl'"
-    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #             Write-Log $script:LogLevelDebug $Message
+                return
+                ;;
+            --url=*)
+                app_url=$(echo -e "$arg" | cut -d '=' -f2)
+                if [[ -z "$app_url" ]]; then
+                    message="agent.bash ($exit_code): no Logz.io app URL specified!"
+                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                    write_task_post_run "write_error \"$message\""
 
-    #             Write-TaskPostRun "`$script:AppUrl = '$AppUrl'"
-    #             continue
-    #         }
-    #         --id=* {
-    #             $local:AgentId = $Arg.Split('=', 2)[1]
-    #             if ([string]::IsNullOrEmpty($AgentId)) {
-    #                 $Message = "agent.ps1 ($ExitCode): no agent ID specified!"
-    #                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #                 Write-TaskPostRun "Write-Error `"$Message`""
+                    return $exit_code
+                fi
 
-    #                 return $ExitCode
-    #             }
+                message="Agent argument 'url' is '$app_url'"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                write_log "$LOG_LEVEL_DEBUG" "$message"
                 
-    #             $Message = "Agent argument 'id' is '$AgentId'"
-    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #             Write-Log $script:LogLevelDebug $Message
+                write_task_post_run "APP_URL='$app_url'"
+                ;;
+            --id=*)
+                agent_id=$(echo "$arg" | cut -d '=' -f2)
+                if [[ -z "$agent_id" ]]; then
+                    message="agent.bash ($exit_code): no agent ID specified!"
+                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                    write_task_post_run "write_error \"$message\""
 
-    #             Write-TaskPostRun "`$script:AgentId = '$AgentId'"
-    #             continue
-    #         }
-    #         --debug=* {
-    #             $local:AgentJsonFile = $Arg.Split('=', 2)[1]
-    #             if ([string]::IsNullOrEmpty($AgentJsonFile)) {
-    #                 $Message = "agent.ps1 ($ExitCode): no json file specified!"
-    #                 Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #                 Write-TaskPostRun "Write-Error `"$Message`""
+                    return $exit_code
+                fi
 
-    #                 return $ExitCode
-    #             }
+                message="Agent argument 'id' is '$agent_id'"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                write_log "$LOG_LEVEL_DEBUG" "$message"
+                
+                write_task_post_run "AGENT_ID='$agent_id'"
+                ;;
+            --debug=*)
+                agent_json_file=$(echo "$arg" | cut -d '=' -f2)
+                if [[ -z "$agent_json_file" ]]; then
+                    message="agent.bash ($exit_code): no json file specified!"
+                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                    write_task_post_run "write_error \"$message\""
 
-    #             $Message = "Agent argument 'debug' is '$AgentJsonFile'"
-    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #             Write-Log $script:LogLevelDebug $Message
+                    return $exit_code
+                fi
 
-    #             Write-TaskPostRun "`$script:AgentJsonFile = '$AgentJsonFile'"
-    #             continue
-    #         }
-    #         --release=* {
-    #             $local:RepoRelease = $Arg.Split('=', 2)[1]
+                message="Agent argument 'debug' is '$agent_json_file'"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                write_log "$LOG_LEVEL_DEBUG" "$message"
+                
+                write_task_post_run "AGENT_JSON_FILE='$agent_json_file'"
+                ;;
+            --release=*)
+                repo_release=$(echo "$arg" | cut -d '=' -f2)
+                
+                message="Agent argument 'release' is '$repo_release'"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    #             $Message = "Agent argument 'release' is '$RepoRelease'"
-    #             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #             Write-Log $script:LogLevelDebug $Message
-
-    #             Write-TaskPostRun "`$script:RepoRelease = '$RepoRelease'"
-    #             continue
-    #         }
-    #         default {
-    #             $Message = "agent.ps1 ($ExitCode): unrecognized flag"
-    #             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #             Write-TaskPostRun "Write-Error `"$Message`""
-    #             $Message = "agent.ps1 ($ExitCode): try running the agent with '--help' flag for more information"
-    #             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-    #             Write-TaskPostRun "Write-Error `"$Message`""
-
-    #             return $ExitCode
-    #         }
-    #     }
-    # }
+                write_task_post_run "REPO_RELEASE='$repo_release'"
+                ;;
+            *)
+                message="agent.bash ($exit_code): unrecognized flag"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                write_task_post_run "write_error \"$message\""
+                message="agent.bash ($exit_code): try running the agent with '--help' flag for more information"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                write_task_post_run "write_error \"$message\""
+                
+                return $exit_code
+                ;;
+        esac
+    done
 }
 
-# # Checks validation of the arguments
-# # Input:
-# #   FuncArgs - Hashtable {AppUrl = $script:AppUrl; AgentId = $script:AgentId; AgentJsonFile = $script:AgentJsonFile}
-# # Output:
-# #   ---
-# function Test-ArgumentsValidation {
-#     param (
-#         [hashtable]$FuncArgs
-#     )
+# Checks validation of the arguments
+# Input:
+#   func_args - Dictionary ([app_url]=$APP_URL [agent_id]=$AGENT_ID [agent_json_file]=$AGENT_JSON_FILE)
+# Output:
+#   ---
+function check_arguments_validation {
+    local func_args=$@
 
-#     $local:ExitCode = 5
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+    local exit_code=5
+    local func_name="${FUNCNAME[0]}"
 
-#     $local:Message = 'Checking validation ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#     Write-Log $script:LogLevelDebug $Message
+    local message='Checking validation ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Err = Test-AreFuncArgsExist $FuncArgs @('AppUrl', 'AgentId', 'AgentJsonFile')
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#         Write-TaskPostRun "Write-Error `"$Message`""
+    local arg_names=('app_url' 'agent_id' 'agent_json_file')
+    local err=$(are_func_args_exist "$func_args" "$arg_names")
+    if [[ ! -z "$err" ]]; then
+        message="agent.bash ($exit_code): $err"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#         return $ExitCode
-#     }
+        return $exit_code
+    fi
 
-#     $local:AppUrl = $FuncArgs.AppUrl
-#     $local:AgentId = $FuncArgs.AgentId
-#     $local:AgentJsonFile = $FuncArgs.AgentJsonFile
+    local app_url="${func_args[app_url]}"
+    local agent_id="${func_args[agent_id]}"
+    local agent_json_file="${func_args[agent_json_file]}"
 
-#     if (-Not [string]::IsNullOrEmpty($AgentJsonFile)) {
-#         if (Test-Path -Path $AgentJsonFile -PathType Leaf) {
-#             return
-#         }
+    if [[ ! -z "$agent_json_file" ]]; then
+        if [[ -f "$agent_json_file" ]]; then
+            return
+        fi
 
-#         $Message = "agent.ps1 ($ExitCode): the json file '$AgentJsonFile' does not exist"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#         Write-TaskPostRun "Write-Error `"$Message`""
+        message="agent.bash ($exit_code): the json file '$agent_json_file' does not exist"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#         return $ExitCode
-#     }
+        return $exit_code
+    fi
 
-#     $local:IsError = $false
+    local is_error=false
 
-#     if ([string]::IsNullOrEmpty($AppUrl)) {
-#         $IsError = $true
-#         $Message = "agent.ps1 ($ExitCode): Logz.io app url must be specified"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#         Write-TaskPostRun "Write-Error `"$Message`""
-#     }
-#     if ([string]::IsNullOrEmpty($AgentId)) {
-#         $IsError = $true
-#         $Message = "agent.ps1 ($ExitCode): agent id must be specified"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#         Write-TaskPostRun "Write-Error `"$Message`""
-#     }
+    if [[ -z "$app_url" ]]; then
+        is_error=true
+        message="agent.bash ($exit_code): Logz.io app url must be specified"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
+    fi
+    if [[ -z "$agent_id" ]]; then
+        is_error=true
+        message="agent.bash ($exit_code): agent id must be specified"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
+    fi
 
-#     if (-Not $IsError) {
-#         return
-#     }
+    if [[ ! $is_error ]]; then
+        return
+    fi
 
-#     $Message = "agent.ps1 ($ExitCode): try running the agent with '--help' flag for more information"
-#     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#     Write-TaskPostRun "Write-Error `"$Message`""
+    message="agent.bash ($exit_code): try running the agent with '--help' flag for more information"
+    send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_task_post_run "write_error \"$message\""
 
-#     return $ExitCode
-# }
+    return $exit_code
+}
 
 # # Sets agent id const
 # # Input:
