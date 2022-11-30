@@ -199,7 +199,7 @@ function Build-EnableMetricsFilterHelmSet {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
     
-    $local:HelmSet = " --set enableMetricsFilter.eks=true"
+    $local:HelmSet = " --set logzio-k8s-telemetry.enableMetricsFilter.eks=true"
 
     $local:Message = "Enable metrics filter Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource

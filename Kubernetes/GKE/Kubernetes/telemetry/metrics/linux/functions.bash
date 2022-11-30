@@ -99,7 +99,7 @@ function get_is_metrics_filter_was_selected () {
 function build_enable_metrics_filter_helm_set () {
     write_log "INFO" "Building enable metrics filter Helm set ..."
     
-    local helm_set=" --set enableMetricsFilter.gke=true"
+    local helm_set=" --set logzio-k8s-telemetry.enableMetricsFilter.gke=true"
     write_log "INFO" "helm_set = $helm_set"
     write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
