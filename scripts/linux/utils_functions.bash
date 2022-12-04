@@ -120,30 +120,6 @@ function send_log_to_logzio {
     fi
 }
 
-# Checks if function arguments exist
-# Input:
-#   func_args - Dictionary of function arguments
-#   arg_name - Argument names
-# Output:
-#   Retunrs nothing if everything ok.
-#   If got error will output message with exit code.
-function are_func_args_exist {
-    local func_args=$1
-    local arg_names="$2"
-
-    if [[ ${#func_args[@]} -eq 0 ]]; then
-        echo -e 'function dictionary argument is empty'
-        return 1
-    fi
-
-    for arg_name in ${arg_names[@]}; do
-        if [[ ! "${func_args[$arg_name]}" ]]; then
-            echo -e "function dictionary argument does not have '$arg_name' key"
-            return 2
-        fi
-    done
-}
-
 # Gets json string field value
 # input:
 #   json_str - Json string
@@ -491,19 +467,13 @@ function get_logzio_region {
 function execute_task {
     local func_name="$1"
     local description="$2"
-    local func_args=$3
 
     local frame=('-' "\\" '|' '/')
     local frame_interval=0.25
     local timeout=300
     local counter=0
 
-    if [[ ${#func_args[@]} -eq 0 ]]; then
-        $func_name &
-    else
-        $func_name "${func_args[@]}" &
-    fi
-
+    $func_name &
     local pid=$!
 
     while true; do
@@ -535,7 +505,7 @@ function execute_task {
     local exit_code=$?
 
     if [[ $exit_code -ne 0 || $is_timeout ]]; then
-        echo -ne "\r  [ $RED_COLOR_BOLD✗$WHITE_COLOR ] $RED_COLOR_BOLD$description ...$WHITE_COLOR\n"
+        echo -ne "\r  [ $RED_COLOR_BOLD\xE2\x9C\x97$WHITE_COLOR ] $RED_COLOR_BOLD$description ...$WHITE_COLOR\n"
 
         if [[ -f $TASK_POST_RUN_FILE ]]; then
             source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE
@@ -564,7 +534,7 @@ function execute_task {
         exit $exit_code
     fi
 
-    echo -ne "\r  [ $GREEN_COLOR_BOLD✔$WHITE_COLOR ] $GREEN_COLOR_BOLD$description ...$WHITE_COLOR\n"
+    echo -ne "\r  [ $GREEN_COLOR_BOLD\xE2\x9C\x94$WHITE_COLOR ] $GREEN_COLOR_BOLD$description ...$WHITE_COLOR\n"
 
     if [[ -f $TASK_POST_RUN_FILE ]]; then
         source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE

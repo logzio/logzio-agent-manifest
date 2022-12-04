@@ -99,15 +99,13 @@ function show_help {
 
 # Gets arguments
 # Input:
-#   func_args - Dictionary (['agent_args']=$@)
+#   ---
 # Output:
 #   APP_URL - Logz.io app url
 #   AGENT_ID - Logz.io agent id
 #   AGENT_JSON_FILE - Agent json file path (for debug)
 #   REPO_RELEASE - Repo release (for debug)
 function get_arguments {
-    local func_args=$@
-
     local exit_code=4
     local func_name="${FUNCNAME[0]}"
 
@@ -115,19 +113,7 @@ function get_arguments {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local arg_names=('agent_args')
-    local err=$(are_func_args_exist "$func_args" "$arg_names")
-    if [[ ! -z "$err" ]]; then
-        message="agent.bash ($exit_code): $err"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
-        write_task_post_run "write_error \"$message\""
-
-        return $exit_code
-    fi
-
-    local agent_args="${func_args[agent_args]}"
-
-    for arg in $agent_args; do
+    for arg in $AGENT_ARGS; do
         case "$arg" in
             --help)
                 show_help
@@ -208,12 +194,10 @@ function get_arguments {
 
 # Checks validation of the arguments
 # Input:
-#   func_args - Dictionary ([app_url]=$APP_URL [agent_id]=$AGENT_ID [agent_json_file]=$AGENT_JSON_FILE)
-# Output:
 #   ---
+# Output:
+#   if debug flag was used AGENT_ID='Debug'
 function check_arguments_validation {
-    local func_args=$@
-
     local exit_code=5
     local func_name="${FUNCNAME[0]}"
 
@@ -221,26 +205,16 @@ function check_arguments_validation {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local arg_names=('app_url' 'agent_id' 'agent_json_file')
-    local err=$(are_func_args_exist "$func_args" "$arg_names")
-    if [[ ! -z "$err" ]]; then
-        message="agent.bash ($exit_code): $err"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
-        write_task_post_run "write_error \"$message\""
-
-        return $exit_code
-    fi
-
     local app_url="${func_args[app_url]}"
     local agent_id="${func_args[agent_id]}"
-    local agent_json_file="${func_args[agent_json_file]}"
 
-    if [[ ! -z "$agent_json_file" ]]; then
-        if [[ -f "$agent_json_file" ]]; then
+    if [[ ! -z "$AGENT_JSON_FILE" ]]; then
+        if [[ -f "$AGENT_JSON_FILE" ]]; then
+            write_task_post_run "AGENT_ID='Debug'"
             return
         fi
 
-        message="agent.bash ($exit_code): the json file '$agent_json_file' does not exist"
+        message="agent.bash ($exit_code): the json file '$AGENT_JSON_FILE' does not exist"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
@@ -249,20 +223,20 @@ function check_arguments_validation {
 
     local is_error=false
 
-    if [[ -z "$app_url" ]]; then
+    if [[ -z "$APP_URL" ]]; then
         is_error=true
         message="agent.bash ($exit_code): Logz.io app url must be specified"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
     fi
-    if [[ -z "$agent_id" ]]; then
+    if [[ -z "$AGENT_ID" ]]; then
         is_error=true
         message="agent.bash ($exit_code): agent id must be specified"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
     fi
 
-    if [[ ! $is_error ]]; then
+    if ! $is_error; then
         return
     fi
 
@@ -273,180 +247,118 @@ function check_arguments_validation {
     return $exit_code
 }
 
-# # Sets agent id const
-# # Input:
-# #   FuncArgs - Hashtable {AgentId = $script:AgentId}
-# # Output:
-# #   AgentId - Agent id
-# function Set-AgentIdConst {
-#     param (
-#         [hashtable]$FuncArgs
-#     )
+# Downloads jq
+# Input:
+#   ---
+# Output:
+#   Jq binary file in Logz.io temp directory
+function download_jq {
+    local exit_code=6
+    local func_name="${FUNCNAME[0]}"
 
-#     $local:ExitCode = 6
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+    local message='Downloading jq ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Message = 'Setting agent id const ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#     Write-Log $script:LogLevelDebug $Message
+    curl -fsSL "$JQ_URL_DOWNLOAD" >"$JQ_BIN" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error downloading jq binary: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#     $local:Err = Test-AreFuncArgsExist $FuncArgs @('AgentId')
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#         Write-TaskPostRun "Write-Error `"$Message`""
+        return $exit_code
+    fi
+}
 
-#         return $ExitCode
-#     }
+# Downloads yq
+# Input:
+#   ---
+# Output:
+#   Yq binary file in Logz.io temp directory
+function download_yq {
+    local exit_code=7
+    local func_name="${FUNCNAME[0]}"
 
-#     $local:AgentId = $FuncArgs.AgentId
+    local message='Downloading yq ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     if ([string]::IsNullOrEmpty($AgentId)) {
-#         $AgentId = 'Debug'
-#     }
+    curl -fsSL "$YQ_URL_DOWNLOAD" >"$YQ_BIN" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error downloading yq binary: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#     $local:Message = "Agent id is '$AgentId'"
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-#     Write-Log $LogLevelDebug $Message
+        return $exit_code
+    fi
+}
 
-#     $local:Command = "`$script:AgentId = '$AgentId'"
-#     Write-TaskPostRun $Command
-#     $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
-# }
+# Gets the agent json from the agent or local file
+# Input:
+#   FuncArgs - Hashtable {AppUrl = $script:AppUrl; AgentJsonFile = $script:AgentJsonFile}
+# Output:
+#   Agent json file in Logz.io temp directory
+function get_agent_json {
+    local exit_code=8
+    local func_name="${FUNCNAME[0]}"
 
-# # Downloads jq
-# # Input:
-# #   ---
-# # Output:
-# #   Jq exe file in Logz.io temp directory
-# function Get-JQ {
-#     $local:ExitCode = 7
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+    local message='Getting agent json ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Message = 'Downloading jq ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-Log $script:LogLevelDebug $Message
+    if [[ ! -z "$AGENT_JSON_FILE" ]]; then
+        # Using local app json file
+        message='Using local agent json file ...'
+        send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     try {
-#         Invoke-WebRequest -Uri $script:JqUrlDownload -OutFile $script:JqExe | Out-Null
-#     }
-#     catch {
-#         $Message = "error downloading jq exe: $_"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
+        cp "$AGENT_JSON_FILE" "$AGENT_JSON" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($exit_code): error copying '$AGENT_JSON_FILE' to '$AGENT_JSON': $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+            write_task_post_run "write_error \"$message\""
 
-#         return $ExitCode
-#     }
-# }
+            return $exit_code
+        fi
 
-# # Downloads yq
-# # Input:
-# #   ---
-# # Output:
-# #   Yq exe file in Logz.io temp directory
-# function Get-Yq {
-#     $local:ExitCode = 8
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+        return
+    fi
 
-#     $local:Message = 'Downloading yq ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-Log $script:LogLevelDebug $Message
+    # Getting agent json from agent
+    message='Getting agent json from agent ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     try {
-#         Invoke-WebRequest -Uri $script:YqUrlDownload -OutFile $script:YqExe | Out-Null
-#     }
-#     catch {
-#         $Message = "error downloading yq exe: $_"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
+    curl -fsSL "$APP_URL/telemetry-agent/public/agents/configuration/$AGENT_ID" >"$AGENT_JSON" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error getting Logz.io agent json from agent. make sure your url is valid: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#         return $ExitCode
-#     }
-# }
+        return $exit_code
+    fi
 
-# # Gets the agent json from the agent or local file
-# # Input:
-# #   FuncArgs - Hashtable {AppUrl = $script:AppUrl; AgentJsonFile = $script:AgentJsonFile}
-# # Output:
-# #   Agent json file in Logz.io temp directory
-# function Get-AgentJson {
-#     param (
-#         [hashtable]$FuncArgs
-#     )
+    local err=$(get_json_file_field_value "$AGENT_JSON" '.statusCode')
+    local func_exit_code=$?
+    if [[ ! -z "$err" && $func_exit_code -eq 1 ]]; then
+        message="agent.bash ($exit_code): $err"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#     $local:ExitCode = 9
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+        return $exit_code
+    fi
+    if [[ ! -z "$err" && $func_exit_code -eq 3 ]]; then
+        return
+    fi
 
-#     $local:Message = 'Getting agent json ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-Log $script:LogLevelDebug $Message
+    local status_code="$JSON_VALUE"
 
-#     $local:Err = Test-AreFuncArgsExist $FuncArgs @('AppUrl', 'AgentJsonFile')
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $(Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
-#     }
+    message="agent.bash ($exit_code): error getting Logz.io agent json from agent (statusCode '$status_code'). make sure your id is valid."
+    send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_task_post_run "write_error \"$message\""
 
-#     $local:AppUrl = $FuncArgs.AppUrl
-#     $local:AgentJsonFile = $FuncArgs.AgentJsonFile
-
-#     if (-Not [string]::IsNullOrEmpty($AgentJsonFile)) {
-#         # Using local app json file
-#         $Message = 'Using local agent json file ...'
-#         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-Log $script:LogLevelDebug $Message
-
-#         try {
-#             Copy-Item -Path $AgentJsonFile -Destination $script:AgentJson -ErrorAction Stop
-#         }
-#         catch {
-#             $Message = "agent.ps1 ($ExitCode): error copying '$AgentJsonFile' to '$script:AgentJson': $_"
-#             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#             Write-TaskPostRun "Write-Error `"$Message`""
-
-#             return $ExitCode
-#         }
-
-#         return
-#     }
-
-#     # Getting agent json from agent
-#     $Message = 'Getting agent json from agent ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-Log $LogLevelDebug $Message
-
-#     try {
-#         Invoke-WebRequest -Uri "$AppUrl/telemetry-agent/public/agents/configuration/$script:AgentID" -OutFile $script:AgentJson | Out-Null
-#     }
-#     catch {
-#         $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent. make sure your url is valid: $_"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
-
-#         return $ExitCode
-#     }
-
-#     $local:Err = Get-JsonFileFieldValue $script:AgentJson '.statusCode'
-#     if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
-
-#         return $ExitCode
-#     }
-#     if ($Err.Count -ne 0 -and $Err[1] -eq 3) {
-#         return
-#     }
-
-#     $local:StatusCode = $script:JsonValue
-
-#     $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent (statusCode '$StatusCode'). make sure your id is valid."
-#     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-TaskPostRun "Write-Error `"$Message`""
-
-#     return $ExitCode
-# }
+    return $exit_code
+}
 
 # # Sets agent json consts
 # # input:

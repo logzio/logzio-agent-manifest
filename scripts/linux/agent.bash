@@ -138,13 +138,13 @@ function write_agent_support {
 
 
 # Agent version
-AGENT_VERSION='v1.0.21'
+AGENT_VERSION='v1.0.29'
 
 # Settings
 tput civis -- invisible
 
-# Agent declarations
-declare -A FUNC_ARGS
+# Agent args
+AGENT_ARGS="$@"
 
 # Agent status flags
 IS_SHOW_HELP=false
@@ -221,153 +221,34 @@ echo -e "###$PURPLE_COLOR Pre-Initialization $WHITE_COLOR###"
 echo -e '##########################'
 
 # Get Linux info
-FUNC_ARGS=()
-execute_task 'get_linux_info' 'Getting Linux info' "$FUNC_ARGS"
+execute_task 'get_linux_info' 'Getting Linux info'
 # Check if script was run as root
-FUNC_ARGS=()
-execute_task 'check_is_elevated' 'Checking if script was run as root' "$FUNC_ARGS"
+execute_task 'check_is_elevated' 'Checking if script was run as root'
 # Get arguments
-FUNC_ARGS=([agent_args]=$@)
-execute_task 'get_arguments' 'Getting arguments' "$FUNC_ARGS"
+execute_task 'get_arguments' 'Getting arguments'
 # Check arguments validation
-FUNC_ARGS=([app_url]=$APP_URL [agent_id]=$AGENT_ID [agent_json_file]=$AGENT_JSON_FILE)
-execute_task 'check_arguments_validation' 'Checking arguments validation' "$FUNC_ARGS"
+execute_task 'check_arguments_validation' 'Checking arguments validation'
+
+# Print title
+echo -e '#################'
+echo -e "###$PURPLE_COLOR Downloads $WHITE_COLOR###"
+echo -e '#################'
+
+# Download jq
+execute_task 'download_jq' 'Downloading jq'
+# Download yq
+execute_task 'download_yq' 'Downloading yq'
+
+# Print title
+echo -e '######################'
+echo -e "###$PURPLE_COLOR Initialization $WHITE_COLOR###"
+echo -e '######################'
+
+# Get agent json
+execute_task 'get_agent_json' 'Getting agent json'
 
 
 
-
-
-
-
-
-
-
-
-# # Checks validation of the arguments
-# # Error:
-# #   Exit Code 1
-# function check_validation () {
-#     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Checking validation ..." >> $log_file
-
-#     if [[ ! -z "$app_json_file" ]]; then
-#         if [[ -f "$app_json_file" ]]; then
-#             return
-#         fi
-
-#         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): the JSON file $app_json_file does not exist" >> $log_file
-#         echo -e "\033[0;31magent.bash (1): the JSON file $app_json_file does not exist\033[0;37m"
-#         exit 1
-#     fi
-
-#     local is_error=false
-
-#     if [[ -z "$app_url" ]]; then
-#         is_error=true
-#         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): Logz.io app URL must be specified" >> $log_file
-#         echo -e "\033[0;31magent.bash (1): Logz.io app URL must be specified\033[0;37m"
-#     fi
-#     if [[ -z "$agent_id" ]]; then
-#         is_error=true
-#         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): agent ID must be specified" >> $log_file
-#         echo -e "\033[0;31magent.bash (1): agent ID must be specified\033[0;37m"
-#     fi
-
-#     if $is_error; then
-#         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (1): try './agent.bash --help' for more information" >> $log_file
-#         echo -e "\033[0;31magent.bash (1): try './agent.bash --help' for more information\033[0;37m"
-#         exit 1
-#     fi
-# }
-
-# # Gets agent functions scripts from logzio-agent-manifest repo to logzio-temp directory
-# # Error:
-# #   Exit Code 2
-# function get_agent_functions_scripts () {
-#     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting agent functions script file from logzio-agent-manifest repo ..." >> $log_file
-#     curl -fsSL $repo_url/scripts/linux/functions.bash > $logzio_temp_dir/agent_functions.bash 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (2): failed to get agnet functions script file from logzio-agent-manifest repo.\n  $err" >> $log_file
-#         echo -e "\033[0;31magent.bash (2): failed to get agnet functions script file from logzio-agent-manifest repo.\n  $err\033[0;37m"
-#         rm -R logzio-temp
-#         exit 2
-#     fi
-
-#     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Getting utils functions script file from logzio-agent-manifest repo ..." >> $log_file
-#     curl -fsSL $repo_url/scripts/linux/utils_functions.bash > $logzio_temp_dir/utils_functions.bash 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (2): failed to get utils functions script file from logzio-agent-manifest repo.\n  $err" >> $log_file
-#         echo -e "\033[0;31magent.bash (2): failed to get utils functions script file from logzio-agent-manifest repo.\n  $err\033[0;37m"
-#         rm -R logzio-temp
-#         exit 2
-#     fi
-# }
-
-
-# # Consts
-# logzio_temp_dir="./logzio-temp"                                                                 # Logz.io temp directory
-# log_file="./logzio_agent.log"                                                                   # Log file path
-# run_file="$logzio_temp_dir/run"                                                                 # Run file path
-# task_error_file="$logzio_temp_dir/task_error"                                                   # Task error file path
-# app_json="$logzio_temp_dir/app.json"                                                            # App JSON path
-
-# # Get arguments and check validation
-# get_arguments "$@"
-
-# # Set default repo branch
-# if [[ -z "$repo_branch" ]]; then
-#     repo_branch="master"
-#     echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] branch = master (default)" >> $log_file
-# fi
-
-# # Consts
-# repo_url="https://raw.githubusercontent.com/logzio/logzio-agent-manifest/$repo_branch"          # logzio-agent-manifest repo URL
-
-# # Create temp directory with files
-# mkdir -p $logzio_temp_dir
-# touch $run_file
-# touch $task_error_file
-
-# # Get agent functions scripts
-# get_agent_functions_scripts
-
-# # Load agent functions
-# echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading agent functions ..." >> $log_file
-# source ./logzio-temp/agent_functions.bash
-# source ./logzio-temp/utils_functions.bash
-
-# # Print title
-# echo -e "\033[0;36m
-# LLLLLLLLLLL                                                                             iiii                   
-# L:::::::::L                                                                            i::::i                  
-# L:::::::::L                                                                             iiii                   
-# LL:::::::LL                                                                                                    
-#   L:::::L                  ooooooooooo      ggggggggg   gggggzzzzzzzzzzzzzzzzz        iiiiiii    ooooooooooo   
-#   L:::::L                oo:::::::::::oo   g:::::::::ggg::::gz:::::::::::::::z        i:::::i  oo:::::::::::oo 
-#   L:::::L               o:::::::::::::::o g:::::::::::::::::gz::::::::::::::z          i::::i o:::::::::::::::o
-#   L:::::L               o:::::ooooo:::::og::::::ggggg::::::ggzzzzzzzz::::::z           i::::i o:::::ooooo:::::o
-#   L:::::L               o::::o     o::::og:::::g     g:::::g       z::::::z            i::::i o::::o     o::::o
-#   L:::::L               o::::o     o::::og:::::g     g:::::g      z::::::z             i::::i o::::o     o::::o
-#   L:::::L               o::::o     o::::og:::::g     g:::::g     z::::::z              i::::i o::::o     o::::o
-#   L:::::L         LLLLLLo::::o     o::::og::::::g    g:::::g    z::::::z               i::::i o::::o     o::::o
-# LL:::::::LLLLLLLLL:::::Lo:::::ooooo:::::og:::::::ggggg:::::g   z::::::zzzzzzzz        i::::::io:::::ooooo:::::o
-# L::::::::::::::::::::::Lo:::::::::::::::o g::::::::::::::::g  z::::::::::::::z ...... i::::::io:::::::::::::::o
-# L::::::::::::::::::::::L oo:::::::::::oo   gg::::::::::::::g z:::::::::::::::z .::::. i::::::i oo:::::::::::oo 
-# LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzzzzzzzzzzzzzzzz ...... iiiiiiii   ooooooooooo   
-#                                                      g:::::g                                                   
-#                                          gggggg      g:::::g                                                   
-#                                          g:::::gg   gg:::::g                                                   
-#                                           g::::::ggg:::::::g                                                   
-#                                            gg:::::::::::::g                                                    
-#                                              ggg::::::ggg                                                      
-#                                                 gggggg                                                         
-# \033[0;37m"
-# echo -e "Running \033[0;36mLogz.io\033[0;37m Agent:\n"
-
-# # Run prerequisite installations
-# echo -e "prerequisite installations:"
-# execute_task "install_jq" "installing jq"                                                       # Install jq
 
 # # Run last preparations
 # echo -e "\nlast preparations:"
