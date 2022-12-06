@@ -182,7 +182,7 @@ function get_json_str_field_value_list {
 #   JSON_VALUE - The value of the field. Only if got no error.
 #   If got error will output message with exit code.
 function get_json_file_field_value {
-    local json_str="$1"
+    local json_file="$1"
     local json_path="$2"
 
     local result=$($JQ_BIN -r "$json_path" "$json_file" 2>"$TASK_ERROR_FILE")
@@ -210,7 +210,7 @@ function get_json_file_field_value {
 #   JSON_VALUE - The value (list) of the field. Only if got no error.
 #   If got error will output message with exit code.
 function get_json_file_field_value_list {
-    local json_str="$1"
+    local json_file="$1"
     local json_path="$2"
 
     local result=$($JQ_BIN -c "$json_path" "$json_file" 2>"$TASK_ERROR_FILE")

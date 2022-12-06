@@ -44,11 +44,11 @@ AGENT_JSON="$LOGZIO_TEMP_DIR/agent.json"
 
 ## Urls
 # Url for downloading jq exe
-JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe'
+JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64'
 # Url for downloading yq exe
-YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_windows_amd64.exe'
+YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.27.2/yq_linux_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
-OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-windows_amd64.tar.gz'
+OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-linux_amd64.tar.gz'
 # Url for AWS SQS
 SQS_URL='https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
 
@@ -56,7 +56,7 @@ SQS_URL='https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
 # Jq binary file path
 JQ_BIN="$LOGZIO_TEMP_DIR/jq"
 # Yq binary file path
-YQ_BIN="$LOGZIO_TEMP_DIR/yq"
+YQ_BIN="$LOGZIO_TEMP_DIR/yq_linux_amd64"
 
 ## OTEL files
 # OTEL function file

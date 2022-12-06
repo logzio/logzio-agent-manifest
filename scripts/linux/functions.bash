@@ -268,6 +268,8 @@ function download_jq {
 
         return $exit_code
     fi
+
+    chmod +x "$JQ_BIN"
 }
 
 # Downloads yq
@@ -283,14 +285,25 @@ function download_yq {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    curl -fsSL "$YQ_URL_DOWNLOAD" >"$YQ_BIN" 2>"$TASK_ERROR_FILE"
+    curl -fsSL "$YQ_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/yq.tar.gz" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): error downloading yq binary: $(get_task_error_message)"
+        message="agent.bash ($exit_code): error downloading yq tar.gz: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
     fi
+
+    tar -zxf "$LOGZIO_TEMP_DIR/yq.tar.gz" --directory "$LOGZIO_TEMP_DIR" --overwrite 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error extracting yq tar.gz file: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
+
+        return $exit_code
+    fi
+
+    chmod +x "$YQ_BIN"
 }
 
 # Gets the agent json from the agent or local file
@@ -338,16 +351,17 @@ function get_agent_json {
         return $exit_code
     fi
 
-    local err=$(get_json_file_field_value "$AGENT_JSON" '.statusCode')
-    local func_exit_code=$?
-    if [[ ! -z "$err" && $func_exit_code -eq 1 ]]; then
+    local err
+    err=$(get_json_file_field_value "$AGENT_JSON" '.statusCode')
+    local func_status=$?
+    if [[ ! -z "$err" && $func_status -eq 1 ]]; then
         message="agent.bash ($exit_code): $err"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
     fi
-    if [[ ! -z "$err" && $func_exit_code -eq 3 ]]; then
+    if [[ ! -z "$err" && $func_status -eq 3 ]]; then
         return
     fi
 

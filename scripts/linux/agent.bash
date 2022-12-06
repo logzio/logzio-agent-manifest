@@ -230,6 +230,7 @@ execute_task 'get_arguments' 'Getting arguments'
 execute_task 'check_arguments_validation' 'Checking arguments validation'
 
 # Print title
+echo
 echo -e '#################'
 echo -e "###$PURPLE_COLOR Downloads $WHITE_COLOR###"
 echo -e '#################'
@@ -240,6 +241,7 @@ execute_task 'download_jq' 'Downloading jq'
 execute_task 'download_yq' 'Downloading yq'
 
 # Print title
+echo
 echo -e '######################'
 echo -e "###$PURPLE_COLOR Initialization $WHITE_COLOR###"
 echo -e '######################'
