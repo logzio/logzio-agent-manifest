@@ -102,7 +102,7 @@ function create_logzio_opt_dir () {
 #   Exit Code 2
 function get_otel_collector_binary () {
     write_log "INFO" "Getting OTEL collector binary ..."
-    curl -fsSL https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-linux_amd64.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
+    curl -fsSL https://github.com/logzio/otel-collector-distro/releases/download/v0.66.0/otelcol-logzio-linux_amd64.tar.gz > $logzio_temp_dir/otelcol-logzio.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"instalelr.bash (2): failed to get OTEL collector binary file from Logz.io repo.\n  $err\""
