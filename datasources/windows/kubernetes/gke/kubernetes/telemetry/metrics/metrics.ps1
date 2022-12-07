@@ -20,6 +20,12 @@ Invoke-Task 'Build-EnableMetricsHelmSet' @{} 'Building enable metrics Helm set' 
 Invoke-Task 'Build-LogzioMetricsListenerUrlHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io metrics listener URL Helm set' @($MetricsFunctionsScript)
 # Build Logz.io metrics token Helm set
 Invoke-Task 'Build-LogzioMetricsTokenHelmSet' @{MetricsToken = $script:MetricsToken} 'Building Logz.io metrics token Helm set' @($MetricsFunctionsScript)
+# Get if metrics filter option was selected
+Invoke-Task 'Get-IsMetricsFilterWasSelected' @{MetricsParams = $script:MetricsParams} 'Getting if metrics filter was selected' @($MetricsFunctionsScript)
+if ($script:IsFilter) {
+    # Build enable metrics filter Helm set
+    Invoke-Task 'Build-EnableMetricsFilterHelmSet' @{} 'Building enable metrics filter Helm set' @($MetricsFunctionsScript)
+}
 
 # Finished successfully
 Exit 0
