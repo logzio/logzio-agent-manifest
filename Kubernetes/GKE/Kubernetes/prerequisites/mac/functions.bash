@@ -81,10 +81,20 @@ function can_k8s_cluster_connect_to_logzio_logs () {
         return 3
     fi
 
-    sleep 5
+    local is_pod_completed=false
+    local retries=3
+    while [[ $retries -ne 0 ]]; do
+        local pod_status=$(kubectl get pods | grep logzio-logs-connection-test | tr -s ' ' | cut -d ' ' -f3)
+        if [[ "$pod_status" == "Completed" ]]; then
+            is_pod_completed=true
+            break
+        fi
 
-    local pod_status=$(kubectl get pods | grep logzio-logs-connection-test | tr -s ' ' | cut -d ' ' -f3)
-    if [[ "$pod_status" != "Completed" ]]; then
+        sleep 5
+        ((retries--))
+    done
+
+    if ! $is_pod_completed; then
         local pod_logs=$(kubectl logs logzio-logs-connection-test 2>$task_error_file)
         local err=$(cat $task_error_file)
 
@@ -141,10 +151,20 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
         return 3
     fi
 
-    sleep 5
+    local is_pod_completed=false
+    local retries=3
+    while [[ $retries -ne 0 ]]; do
+        local pod_status=$(kubectl get pods | grep logzio-metrics-connection-test | tr -s ' ' | cut -d ' ' -f3)
+        if [[ "$pod_status" == "Completed" ]]; then
+            is_pod_completed=true
+            break
+        fi
 
-    local pod_status=$(kubectl get pods | grep logzio-metrics-connection-test | tr -s ' ' | cut -d ' ' -f3)
-    if [[ "$pod_status" != "Completed" ]]; then
+        sleep 5
+        ((retries--))
+    done
+
+    if ! $is_pod_completed; then
         local pod_logs=$(kubectl logs logzio-metrics-connection-test 2>$task_error_file)
         local err=$(cat $task_error_file)
 
