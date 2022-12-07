@@ -374,432 +374,238 @@ function get_agent_json {
     return $exit_code
 }
 
-# Sets agent json consts
+# Gets agent json info
 # input:
 #   ---
 # Output:
-#   Platform - Platfrom name
-#   SubType - Subtype name
-#   DataSourceNames - List of datasource names
-function Set-AgentJsonConsts {
-    $local:ExitCode = 10
-    $local:FuncName = $MyInvocation.MyCommand.Name
+#   PLATFORM - Platfrom name
+#   SUB_TYPE - Subtype name
+#   DATA_SOURCES - List of datasource names
+function get_agent_json_info {
+    local exit_code=9
+    local func_name="${FUNCNAME[0]}"
 
-    $local:Message = 'Setting agent json consts ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-    Write-Log $script:LogLevelDebug $Message
+    local message='Getting agent json info ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
     
-    $local:Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.name'
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-        Write-TaskPostRun "Write-Error `"$Message`""
+    local err
+    err=$(get_json_file_field_value "$AGENT_JSON" '.configuration.name')
+    if [[ ! -z $err && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $err"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-        return $ExitCode
-    }
+        return $exit_code
+    fi
 
-    $local:Platform = $script:JsonValue
-
-    $Message = "Platform is '$Platform'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Command = "`$script:Platform = '$Platform'"
-    Write-TaskPostRun $Command
-    $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
-
-    $Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.subtypes[0].name'
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
+    local platform="$JSON_VALUE"
     
-    $local:SubType = $script:JsonValue
+    message="Platform is '$platform'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    $Message = "Subtype is '$SubType'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-    Write-Log $script:LogLevelDebug $Message
+    local command="PLATFORM='$platform'"
+    write_task_post_run "$command"
 
-    $Command = "`$script:SubType = '$SubType'"
-    Write-TaskPostRun $Command
-    $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
+    err=$(Get-get_json_file_field_value "$AGENT_JSON" '.configuration.subtypes[0].name')
+    if [[ ! -z $err && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $err"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
+
+        return $exit_code
+    fi
     
-    $local:Err = Get-JsonFileFieldValueList $script:AgentJson '.configuration.subtypes[0].datasources[]'
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-        Write-TaskPostRun "Write-Error `"$Message`""
+    local sub_type="$JSON_VALUE"
 
-        return $ExitCode
-    }
+    message="Subtype is '$sub_type'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    $local:DataSources = $script:JsonValue
-
-    $local:Index = 0
-    $local:DataSourceNames = @()
-    foreach ($DataSource in $DataSources) {
-        $Err = Get-JsonStrFieldValue $Datasource '.name'
-        if ($Err.Count -ne 0) {
-            $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-            Write-TaskPostRun "Write-Error `"$Message`""
+    command="SUB_TYPE='$sub_type'"
+    write_task_post_run "$command"
     
-            return $ExitCode
-        }
+    err=$(get_json_file_field_value_list "$AGENT_JSON" '.configuration.subtypes[0].datasources[]')
+    if [[ ! -z $err && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $err"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
+
+        return $exit_code
+    fi
+
+    local data_sources="$JSON_VALUE"
+
+    local index=0
+    local data_source_names=()
+    for data_source in $data_sources; do
+        err=$(get_json_str_field_value "$data_source" '.name')
+        if [[ ! -z $err && $? -ne 0 ]]; then
+            message="agent.bash ($exit_code): $err"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+            write_task_post_run "write_error \"$message\""
+
+            return $exit_code
+        fi
         
-        $local:DataSourceName = $script:JsonValue
+        local data_source_name="$JSON_VALUE"
 
-        $Message = "DataSource #$($Index+1) is '$DataSourceName'"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-        Write-Log $script:LogLevelDebug $Message
+        message="DataSource #(($index+1)) is '$data_source_name'"
+        send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_log "$LOG_LEVEL_DEBUG" "$message"
 
-        $DataSourceNames += $DataSourceName
-        $Index++
-    }
+        data_source_names+=("$data_source_name")
+        $index++
+    done
 
-    $local:DataSourcesStr = Convert-ListToStr $DataSourceNames
-
-    $Command = "`$script:DataSources = $DataSourcesStr"
-    Write-TaskPostRun $Command
-    $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
+    command="DATA_SOURCES=$data_source_names"
+    write_task_post_run "$command"
 }
 
-# # Gets Logz.io listener url
-# # Input:
-# #   ---
-# # Ouput:
-# #   ListenerUrl - Logz.io listener url
-# function Get-LogzioListenerUrl {
-#     $local:ExitCode = 11
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+# Gets Logz.io listener url
+# Input:
+#   ---
+# Ouput:
+#   LISTENER_URL - Logz.io listener url
+function get_logzio_listener_url {
+    local exit_code=10
+    local func_name="${FUNCNAME[0]}"
 
-#     $local:Message = 'Getting Logz.io listener url ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#     Write-Log $script:LogLevelDebug $Message
+    local message='Getting Logz.io listener url ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Err = Get-JsonFileFieldValue $script:AgentJson '.listenerUrl'
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#         Write-TaskPostRun "Write-Error `"$Message`""
+    local err
+    err=$(get_json_file_field_value "$AGENT_JSON" '.listenerUrl')
+    if [[ ! -z $err && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $err"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#         return $ExitCode
-#     }
+        return $exit_code
+    fi
 
-#     $local:ListenerUrl = $script:JsonValue
+    local listener_url="$JSON_VALUE"
 
-#     $Message = "Logz.io listener url is '$ListenerUrl'"
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#     Write-Log $script:LogLevelDebug $Message
+    message="Logz.io listener url is '$listener_url'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     Write-TaskPostRun "`$script:ListenerUrl = '$ListenerUrl'"
-# }
+    write_task_post_run "LISTENER_URL='$listener_url'"
+}
 
-# # Downloads subtype files
-# # Input:
-# #   FuncArgs - Hashtable {RepoRelease = $RepoRelease}
-# # Output:
-# #   Subtype files in Logz.io temp directory
-# function Get-SubTypeFiles {
-#     param (
-#         [hashtable]$FuncArgs
-#     )
+# Downloads subtype files
+# Input:
+#   ---
+# Output:
+#   Subtype files in Logz.io temp directory
+function download_sub_type_files {
+    local exit_code=11
+    local func_name="${FUNCNAME[0]}"
 
-#     $local:ExitCode = 12
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+    local message='Donwloading subtype files ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Message = 'Donwloading subtype files ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#     Write-Log $script:LogLevelDebug $Message
+    if [[ -z "$REPO_RELEASE" ]]; then
+        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR\linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($exit_code): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+            write_task_post_run "write_error \"$message\""
 
-#     $local:Err = Test-AreFuncArgsExist $FuncArgs @('RepoRelease')
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#         Write-TaskPostRun "Write-Error `"$Message`""
+            return $exit_code
+        fi
+    else
+        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/download/$REPO_RELEASE/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR\linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($exit_code): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+            write_task_post_run "write_error \"$message\""
 
-#         return $ExitCode
-#     }
-
-#     $local:RepoRelease = $FuncArgs.RepoRelease
-
-#     try {
-#         if ([string]::IsNullOrEmpty($RepoRelease)) {
-#             Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz" -OutFile $script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz | Out-Null
-#         }
-#         else {
-#             Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/download/$RepoRelease/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz" -OutFile $script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz | Out-Null
-#         }
-#     }
-#     catch {
-#         $Message = "agent.ps1 ($ExitCode): error downloading subtype tar.gz file from Logz.io repo: $_"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#         Write-TaskPostRun "Write-Error `"$Message`""
-
-#         return $ExitCode
-#     }
+            return $exit_code
+        fi
+    fi
     
-#     tar -zxf $script:LogzioTempDir\windows_$script:Platform`_$script:SubType.tar.gz --directory $script:LogzioTempDir 2>$script:TaskErrorFile | Out-Null
-#     if ($LASTEXITCODE -eq 0) {
-#         return
-#     }
+    tar -zxf "$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.g"z --directory "$LOZGIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error extracting files from tar.gz: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#     $Message = "agent.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-TaskErrorMessage)"
-#     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#     Write-TaskPostRun "Write-Error `"$Message`""
+        return $exit_code
+    fi
+}
 
-#     return $ExitCode
-# }
+# Runs subtype prerequisites
+# Input:
+#   ---
+# Output:
+#   ---
+function run_sub_type_prerequisites {
+    local exit_code=12
+    local func_name="${FUNCNAME[0]}"
 
-# # Runs subtype prerequisites
-# # Input:
-# #   ---
-# # Output:
-# #   ---
-# function Invoke-SubTypePrerequisites {
-#     $local:ExitCode = 13
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+    local message='Running subtype prerequisites ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Message = 'Running subtype prerequisites ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#     Write-Log $LogLevelDebug $Message
+    source "$LOGZIO_TEMP_DIR/$PLATFORM/$SUB_TYPE/$PREREQUISITES_FILE" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error running subtype prerequisites: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#     try {
-#         . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:PrerequisitesFile" -ErrorAction Stop
-#         if ($LASTEXITCODE -ne 0) {
-#             Exit $LASTEXITCODE
-#         }
-#     }
-#     catch {
-#         $Message = "agent.ps1 ($ExitCode): error running subtype prerequisites: $_"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#         Write-Error $Message
+        IS_AGENT_FAILED=true
+        exit $exit_code
+    fi
+}
 
-#         $script:IsAgentFailed = $true
-#         Exit $ExitCode
-#     }
-# }
+# Runs subtype installer
+# Input:
+#   ---
+# Output:
+#   ---
+function run_sub_type_installer {
+    local exit_code=13
+    local func_name="${FUNCNAME[0]}"
 
-# # Runs subtype installer
-# # Input:
-# #   ---
-# # Output:
-# #   ---
-# function Invoke-SubTypeInstaller {
-#     $local:ExitCode = 14
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+    local message='Running subtype installer ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Message = 'Running subtype installer ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#     Write-Log $script:LogLevelDebug $Message
+    source "$LOGZIO_TEMP_DIR/$PLATFORM/$SUB_TYPE/$INSTALLER_FILE" >"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error running subtype installer: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#     try {
-#         . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:InstallerFile" -ErrorAction Stop
-#         if ($LASTEXITCODE -ne 0) {
-#             Exit $LASTEXITCODE
-#         }
-#     }
-#     catch {
-#         $Message = "agent.ps1 ($ExitCode): error running subtype installer: $_"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#         Write-Error $Message
+        IS_AGENT_FAILED=true
+        exit $exit_code
+    fi
+}
 
-#         $script:IsAgentFailed = $true
-#         Exit $ExitCode
-#     }
-# }
+# Runs subtype post-requisites
+# Input:
+#   ---
+# Output:
+#   ---
+function run_sub_type_postrequisites {
+    local exit_code=14
+    local func_name="${FUNCNAME[0]}"
 
-# # Runs subtype post-requisites
-# # Input:
-# #   ---
-# # Output:
-# #   ---
-# function Invoke-SubTypePostrequisites {
-#     $local:ExitCode = 15
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+    local message='Running subtype post-requisites ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
 
-#     $local:Message = 'Running subtype post-requisites ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#     Write-Log $script:LogLevelDebug $Message
+    source "$LOGZIO_TEMP_DIR/$PLATFORM/$SUB_TYPE/$POSTREQUISITES_FILE" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error running subtype post-requisites: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
 
-#     try {
-#         . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:PostrequisitesFile" -ErrorAction Stop
-#         if ($LASTEXITCODE -ne 0) {
-#             Exit $LASTEXITCODE
-#         }
-#     }
-#     catch {
-#         $Message = "agent.ps1 ($ExitCode): error running subtype post-requisites: $_"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-#         Write-Error $Message
-
-#         $script:IsAgentFailed = $true
-#         Exit $ExitCode
-#     }
-# }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# # Installs jq
-# # Error:
-# #   Exit Code 3
-# function install_jq () {
-#     write_log "INFO" "Installing jq ..."
-
-#     jq_bin="$logzio_temp_dir/jq"
-#     curl -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 > $jq_bin 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         write_run "print_error \"agent.bash (3): failed to get jq binary file from Github.\n  $err\""
-#         return 3
-#     fi
-
-#     chmod +x $jq_bin
-#     write_run "jq_bin=\"$jq_bin\""
-# }
-
-# # Gets the application JSON from the agent/local file into logzio-temp directory
-# # Error:
-# #   Exit Code 4
-# function get_app_json () {
-#     write_log "INFO" "Getting application JSON ..."
-
-#     if [[ ! -z "$app_json_file" ]]; then
-#         # Using local app JSON file
-#         write_log "INFO" "Using local application JSON file ..."
-#         cp $app_json_file $app_json
-#         return
-#     fi
-
-#     # Getting app JSON from agent
-#     write_log "INFO" "Getting application JSON from agent ..."
-#     curl -fsSL $app_url/telemetry-agent/public/agents/configuration/$agent_id > $app_json 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         write_run "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent. make sure your URL is valid.\n  $err\""
-#         return 4
-#     fi
-
-#     local status_code=$($jq_bin -r '.statusCode' $app_json)
-#     if [[ "$status_code" = null ]]; then
-#         return
-#     fi
-
-#     write_run "print_error \"agent.bash (4): failed to get Logz.io application JSON from agent (statusCode $status_code). make sure your ID is valid\""
-#     return 4
-# }
-
-# # Builds path to logzio-agent-manifest repo according the app JSON
-# # Output:
-# #   repo_path - Path to logzio-agent-manifest repo according the app JSON
-# # Error:
-# #   Exit Code 5
-# function build_repo_path () {
-#     write_log "INFO" "Building repo path ..."
-    
-#     local dir1=$($jq_bin -r '.configuration.name' $app_json)
-#     if [[ "$dir1" = null ]]; then
-#         write_run "print_error \"agent.bash (5): '.configuration.name' was not found in application JSON\""
-#         return 5
-#     fi
-#     if [[ -z "$dir1" ]]; then
-#         write_run "print_error \"agent.bash (5): '.configuration.name' is empty in application JSON\""
-#         return 5
-#     fi
-
-#     local dir2=$($jq_bin -r '.configuration.subtypes[0].name' $app_json)
-#     if [[ "$dir2" = null ]]; then
-#         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].name' was not found in application JSON\""
-#         return 5
-#     fi
-#     if [[ -z "$dir2" ]]; then
-#         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].name' is empty in application JSON\""
-#         return 5
-#     fi
-
-#     local dir3=$($jq_bin -r '.configuration.subtypes[0].datasources[0].name' $app_json)
-#     if [[ "$dir3" = null ]]; then
-#         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON\""
-#         return 5
-#     fi
-#     if [[ -z "$dir3" ]]; then
-#         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' is empty in application JSON\""
-#         return 5
-#     fi
-
-#     local repo_path="$repo_url/$dir1/$dir2/$dir3"
-#     write_log "INFO" "repo_path = $repo_path"
-#     write_run "repo_path=\"$repo_path\""
-# }
-
-# # Gets prerequisites scripts from logzio-agent-manifest repo to logzio-temp directory
-# # Error:
-# #   Exit Code 6
-# function get_prerequisites_scripts () {
-#     write_log "INFO" "Getting prerequisites script file from logzio-agent-manifest repo ..."
-#     curl -fsSL $repo_path/prerequisites/linux/prerequisites.bash > $logzio_temp_dir/prerequisites.bash 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         write_run "print_error \"agent.bash (6): failed to get prerequisites script file from logzio-agent-manifest repo.\n  $err\""
-#         return 6
-#     fi
-
-#     write_log "INFO" "Getting prerequisites functions script file from logzio-agent-manifest repo ..."
-#     curl -fsSL $repo_path/prerequisites/linux/functions.bash > $logzio_temp_dir/prerequisites_functions.bash 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         write_run "print_error \"agent.bash (6): failed to get prerequisites functions script file from logzio-agent-manifest repo.\n  $err\""
-#         return 6
-#     fi
-# }
-
-# # Gets installer scripts from logzio-agent-manifest repo to logzio-temp directory
-# # Error:
-# #   Exit Code 7
-# function get_installer_scripts () {
-#     write_log "INFO" "Getting installer script file from logzio-agent-manifest repo ..."
-#     curl -fsSL $repo_path/telemetry/installer/linux/installer.bash > $logzio_temp_dir/installer.bash 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         write_run "print_error \"agent.bash (7): failed to get installer script file from logzio-agent-manifest repo.\n  $err\""
-#         return 7
-#     fi
-
-#     write_log "INFO" "Getting installer functions script file from logzio-agent-manifest repo ..."
-#     curl -fsSL $repo_path/telemetry/installer/linux/functions.bash > $logzio_temp_dir/installer_functions.bash 2>$task_error_file
-#     if [[ $? -ne 0 ]]; then
-#         local err=$(cat $task_error_file)
-#         write_run "print_error \"agent.bash (7): failed to get installer functions script file from logzio-agent-manifest repo.\n  $err\""
-#         return 7
-#     fi
-# }
+        IS_AGENT_FAILED=true
+        exit $exit_code
+    fi
+}

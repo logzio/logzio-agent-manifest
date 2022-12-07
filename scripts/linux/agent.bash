@@ -248,26 +248,12 @@ echo -e '######################'
 
 # Get agent json
 execute_task 'get_agent_json' 'Getting agent json'
+# Get agent json info
+execute_task 'get_agent_json_info' 'Getting agent json info'
+# Get Logz.io listener url
+execute_task 'get_logzio_listener_url' 'Getting Logz.io listener url'
+# Download subtype files
+execute_task 'download_sub_type_files' 'Downloading subtype files'
 
-
-
-
-# # Run last preparations
-# echo -e "\nlast preparations:"
-# execute_task "get_app_json" "getting application JSON"                                          # Get app JSON
-# execute_task "build_repo_path" "building path to logzio-agent-manifest repo"                    # Build repo path to logzio-agent-manifest repo
-# execute_task "get_prerequisites_scripts" "getting prerequisites scripts"                        # Get prerequisites scripts
-# execute_task "get_installer_scripts" "getting installer scripts"                                # Get installer scripts
-
-# # Run prerequisites script
-# write_log "INFO" "Running prerequisites script ..."
-# echo -e "\nprerequisites:"
-# source $logzio_temp_dir/prerequisites.bash
-
-# # Run installer script
-# write_log "INFO" "Running installer script ..."
-# echo -e "\ninstaller:"
-# source $logzio_temp_dir/installer.bash
-
-# # Delete temp directory
-# delete_temp_dir
+# Run subtype prerequisites
+#run_sub_type_prerequisites
