@@ -351,21 +351,21 @@ function get_agent_json {
         return $exit_code
     fi
 
-    local err
-    err=$(get_json_file_field_value "$AGENT_JSON" '.statusCode')
+    local result
+    result=$(get_json_file_field_value "$AGENT_JSON" '.statusCode')
     local func_status=$?
-    if [[ ! -z "$err" && $func_status -eq 1 ]]; then
-        message="agent.bash ($exit_code): $err"
+    if [[ ! -z "$result" && $func_status -eq 1 ]]; then
+        message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
     fi
-    if [[ ! -z "$err" && $func_status -eq 3 ]]; then
+    if [[ ! -z "$result" && $func_status -eq 3 ]]; then
         return
     fi
 
-    local status_code="$JSON_VALUE"
+    local status_code="$result"
 
     message="agent.bash ($exit_code): error getting Logz.io agent json from agent (statusCode '$status_code'). make sure your id is valid."
     send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
@@ -389,17 +389,17 @@ function get_agent_json_info {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
     
-    local err
-    err=$(get_json_file_field_value "$AGENT_JSON" '.configuration.name')
-    if [[ ! -z $err && $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): $err"
+    local result
+    result=$(get_json_file_field_value "$AGENT_JSON" '.configuration.name')
+    if [[ ! -z $result && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
     fi
 
-    local platform="$JSON_VALUE"
+    local platform="$result"
     
     message="Platform is '$platform'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
@@ -408,16 +408,16 @@ function get_agent_json_info {
     local command="PLATFORM='$platform'"
     write_task_post_run "$command"
 
-    err=$(Get-get_json_file_field_value "$AGENT_JSON" '.configuration.subtypes[0].name')
-    if [[ ! -z $err && $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): $err"
+    result=$(get_json_file_field_value "$AGENT_JSON" '.configuration.subtypes[0].name')
+    if [[ ! -z $result && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
     fi
     
-    local sub_type="$JSON_VALUE"
+    local sub_type="$result"
 
     message="Subtype is '$sub_type'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
@@ -426,30 +426,30 @@ function get_agent_json_info {
     command="SUB_TYPE='$sub_type'"
     write_task_post_run "$command"
     
-    err=$(get_json_file_field_value_list "$AGENT_JSON" '.configuration.subtypes[0].datasources[]')
-    if [[ ! -z $err && $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): $err"
+    result=$(get_json_file_field_value_list "$AGENT_JSON" '.configuration.subtypes[0].datasources[]')
+    if [[ ! -z $result && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
     fi
 
-    local data_sources="$JSON_VALUE"
+    local data_sources="$result"
 
     local index=0
     local data_source_names=()
     for data_source in $data_sources; do
-        err=$(get_json_str_field_value "$data_source" '.name')
-        if [[ ! -z $err && $? -ne 0 ]]; then
-            message="agent.bash ($exit_code): $err"
+        result=$(get_json_str_field_value "$data_source" '.name')
+        if [[ ! -z $result && $? -ne 0 ]]; then
+            message="agent.bash ($exit_code): $result"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
             write_task_post_run "write_error \"$message\""
 
             return $exit_code
         fi
         
-        local data_source_name="$JSON_VALUE"
+        local data_source_name="$result"
 
         message="DataSource #(($index+1)) is '$data_source_name'"
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
@@ -476,17 +476,17 @@ function get_logzio_listener_url {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local err
-    err=$(get_json_file_field_value "$AGENT_JSON" '.listenerUrl')
-    if [[ ! -z $err && $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): $err"
+    local result
+    result=$(get_json_file_field_value "$AGENT_JSON" '.listenerUrl')
+    if [[ ! -z $result && $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
         return $exit_code
     fi
 
-    local listener_url="$JSON_VALUE"
+    local listener_url="$result"
 
     message="Logz.io listener url is '$listener_url'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"

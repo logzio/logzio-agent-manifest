@@ -171,7 +171,7 @@ function get_json_str_field_value_list {
         return 2
     fi
 
-    JSON_VALUE="$result"
+    echo -e "${result[@]}"
 }
 
 # Gets json file field value
@@ -199,7 +199,7 @@ function get_json_file_field_value {
         return 3
     fi
 
-    JSON_VALUE="$result"
+    echo -e "$result"
 }
 
 # Gets json file field value list
@@ -223,7 +223,7 @@ function get_json_file_field_value_list {
         return 2
     fi
 
-    JSON_VALUE="$result"
+    echo -e "${result[@]}"
 }
 
 # Adds yaml file field value
