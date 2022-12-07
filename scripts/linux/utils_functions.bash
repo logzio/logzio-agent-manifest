@@ -494,7 +494,7 @@ function execute_task {
             kill $pid
             is_timeout=true
 
-            local message='utils.ps1 (1): timeout error: the task was not completed in time'
+            local message='utils.bash (1): timeout error: the task was not completed in time'
             send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_AGENT $func_name $AGENT_ID
             write_task_post_run "write_error \"$message\""
             break
@@ -510,9 +510,9 @@ function execute_task {
         if [[ -f $TASK_POST_RUN_FILE ]]; then
             source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE
             if [[ $? -ne 0 ]]; then
-                local message="utils.ps1 (2): error running task post run script: $(get_task_error_message)"
+                local message="utils.bash (2): error running task post run script: $(get_task_error_message)"
                 send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_UTILS_FUNCTIONS $func_name $AGENT_ID
-                write_error $message
+                write_error "$message"
 
                 IS_AGENT_FAILED=true
                 exit 2
@@ -539,9 +539,9 @@ function execute_task {
     if [[ -f $TASK_POST_RUN_FILE ]]; then
         source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE
         if [[ $? -ne 0 ]]; then
-            local message="utils.ps1 (2): error running task post run script: $(get_task_error_message)"
+            local message="utils.bash (2): error running task post run script: $(get_task_error_message)"
             send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_UTILS_FUNCTIONS $func_name $AGENT_ID
-            write_error $message
+            write_error "$message"
 
             IS_AGENT_FAILED=true
             exit 2

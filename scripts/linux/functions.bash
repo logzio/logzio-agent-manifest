@@ -308,7 +308,7 @@ function download_yq {
 
 # Gets the agent json from the agent or local file
 # Input:
-#   FuncArgs - Hashtable {AppUrl = $script:AppUrl; AgentJsonFile = $script:AgentJsonFile}
+#   ---
 # Output:
 #   Agent json file in Logz.io temp directory
 function get_agent_json {
@@ -391,7 +391,7 @@ function get_agent_json_info {
     
     local result
     result=$(get_json_file_field_value "$AGENT_JSON" '.configuration.name')
-    if [[ ! -z $result && $? -ne 0 ]]; then
+    if [[ ! -z "$result" && $? -ne 0 ]]; then
         message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
@@ -409,7 +409,7 @@ function get_agent_json_info {
     write_task_post_run "$command"
 
     result=$(get_json_file_field_value "$AGENT_JSON" '.configuration.subtypes[0].name')
-    if [[ ! -z $result && $? -ne 0 ]]; then
+    if [[ ! -z "$result" && $? -ne 0 ]]; then
         message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
@@ -427,7 +427,7 @@ function get_agent_json_info {
     write_task_post_run "$command"
     
     result=$(get_json_file_field_value_list "$AGENT_JSON" '.configuration.subtypes[0].datasources[]')
-    if [[ ! -z $result && $? -ne 0 ]]; then
+    if [[ ! -z "$result" && $? -ne 0 ]]; then
         message="agent.bash ($exit_code): $result"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
@@ -441,7 +441,7 @@ function get_agent_json_info {
     local data_source_names=()
     for data_source in $data_sources; do
         result=$(get_json_str_field_value "$data_source" '.name')
-        if [[ ! -z $result && $? -ne 0 ]]; then
+        if [[ ! -z "$result" && $? -ne 0 ]]; then
             message="agent.bash ($exit_code): $result"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
             write_task_post_run "write_error \"$message\""
