@@ -143,7 +143,7 @@ function Write-AgentSupport {
 
 
 # Agent version
-$script:AgentVersion = 'v1.0.30'
+$script:AgentVersion = 'v1.0.31'
 
 # Settings
 $ProgressPreference = 'SilentlyContinue'
