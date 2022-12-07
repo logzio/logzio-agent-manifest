@@ -374,98 +374,98 @@ function get_agent_json {
     return $exit_code
 }
 
-# # Sets agent json consts
-# # input:
-# #   ---
-# # Output:
-# #   Platform - Platfrom name
-# #   SubType - Subtype name
-# #   DataSourceNames - List of datasource names
-# function Set-AgentJsonConsts {
-#     $local:ExitCode = 10
-#     $local:FuncName = $MyInvocation.MyCommand.Name
+# Sets agent json consts
+# input:
+#   ---
+# Output:
+#   Platform - Platfrom name
+#   SubType - Subtype name
+#   DataSourceNames - List of datasource names
+function Set-AgentJsonConsts {
+    $local:ExitCode = 10
+    $local:FuncName = $MyInvocation.MyCommand.Name
 
-#     $local:Message = 'Setting agent json consts ...'
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-Log $script:LogLevelDebug $Message
+    $local:Message = 'Setting agent json consts ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Write-Log $script:LogLevelDebug $Message
     
-#     $local:Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.name'
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
+    $local:Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.name'
+    if ($Err.Count -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Write-TaskPostRun "Write-Error `"$Message`""
 
-#         return $ExitCode
-#     }
+        return $ExitCode
+    }
 
-#     $local:Platform = $script:JsonValue
+    $local:Platform = $script:JsonValue
 
-#     $Message = "Platform is '$Platform'"
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-Log $script:LogLevelDebug $Message
+    $Message = "Platform is '$Platform'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Write-Log $script:LogLevelDebug $Message
 
-#     $local:Command = "`$script:Platform = '$Platform'"
-#     Write-TaskPostRun $Command
-#     $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
+    $local:Command = "`$script:Platform = '$Platform'"
+    Write-TaskPostRun $Command
+    $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
 
-#     $Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.subtypes[0].name'
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
+    $Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.subtypes[0].name'
+    if ($Err.Count -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Write-TaskPostRun "Write-Error `"$Message`""
 
-#         return $ExitCode
-#     }
+        return $ExitCode
+    }
     
-#     $local:SubType = $script:JsonValue
+    $local:SubType = $script:JsonValue
 
-#     $Message = "Subtype is '$SubType'"
-#     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#     Write-Log $script:LogLevelDebug $Message
+    $Message = "Subtype is '$SubType'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Write-Log $script:LogLevelDebug $Message
 
-#     $Command = "`$script:SubType = '$SubType'"
-#     Write-TaskPostRun $Command
-#     $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
+    $Command = "`$script:SubType = '$SubType'"
+    Write-TaskPostRun $Command
+    $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
     
-#     $local:Err = Get-JsonFileFieldValueList $script:AgentJson '.configuration.subtypes[0].datasources[]'
-#     if ($Err.Count -ne 0) {
-#         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-TaskPostRun "Write-Error `"$Message`""
+    $local:Err = Get-JsonFileFieldValueList $script:AgentJson '.configuration.subtypes[0].datasources[]'
+    if ($Err.Count -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Write-TaskPostRun "Write-Error `"$Message`""
 
-#         return $ExitCode
-#     }
+        return $ExitCode
+    }
 
-#     $local:DataSources = $script:JsonValue
+    $local:DataSources = $script:JsonValue
 
-#     $local:Index = 0
-#     $local:DataSourceNames = @()
-#     foreach ($DataSource in $DataSources) {
-#         $Err = Get-JsonStrFieldValue $Datasource '.name'
-#         if ($Err.Count -ne 0) {
-#             $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-#             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#             Write-TaskPostRun "Write-Error `"$Message`""
+    $local:Index = 0
+    $local:DataSourceNames = @()
+    foreach ($DataSource in $DataSources) {
+        $Err = Get-JsonStrFieldValue $Datasource '.name'
+        if ($Err.Count -ne 0) {
+            $Message = "agent.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+            Write-TaskPostRun "Write-Error `"$Message`""
     
-#             return $ExitCode
-#         }
+            return $ExitCode
+        }
         
-#         $local:DataSourceName = $script:JsonValue
+        $local:DataSourceName = $script:JsonValue
 
-#         $Message = "DataSource #$($Index+1) is '$DataSourceName'"
-#         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-#         Write-Log $script:LogLevelDebug $Message
+        $Message = "DataSource #$($Index+1) is '$DataSourceName'"
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Write-Log $script:LogLevelDebug $Message
 
-#         $DataSourceNames += $DataSourceName
-#         $Index++
-#     }
+        $DataSourceNames += $DataSourceName
+        $Index++
+    }
 
-#     $local:DataSourcesStr = Convert-ListToStr $DataSourceNames
+    $local:DataSourcesStr = Convert-ListToStr $DataSourceNames
 
-#     $Command = "`$script:DataSources = $DataSourcesStr"
-#     Write-TaskPostRun $Command
-#     $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
-# }
+    $Command = "`$script:DataSources = $DataSourcesStr"
+    Write-TaskPostRun $Command
+    $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
+}
 
 # # Gets Logz.io listener url
 # # Input:
