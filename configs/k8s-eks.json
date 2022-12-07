@@ -62,9 +62,9 @@
                 {
                   "type": "boolean",
                   "name": "isFilter",
-                  "label": "Filter metrics",
+                  "label": "Use recommended metrics",
                   "description": "",
-                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect specific metrics from your Kubernetes cluster, nodes and pods.",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate k360 and prebuilt dashboards. We will still collect application metrics that are exposed by your pods.",
                   "value": false
                 }
               ],
