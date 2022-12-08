@@ -133,20 +133,19 @@ function get_json_str_field_value {
 
     local result=$(echo -e "$json_str" | $JQ_BIN -r "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        json_str=${json_str/'"'/'\"'}
-        echo -e "error getting '$json_path' from '$json_str': $(get_task_error_message)"
+        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)"
         return 1
     fi
     if [[ -z "$result" ]]; then
-        echo -e "'$json_path' is empty in '$json_str'"
+        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'"
         return 2
     fi
     if [[ "$result" == 'null' ]]; then
-        echo -e "'$json_path' does not exist in '$json_str'"
+        echo -e "'$json_path' does not exist in '${json_str/'"'/'\"'}'"
         return 3
     fi
 
-    JSON_VALUE="$result"
+    echo -e "$result"
 }
 
 # Gets json string field value list
@@ -162,12 +161,11 @@ function get_json_str_field_value_list {
 
     local result=$(echo -e "$json_str" | $JQ_BIN -c "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        json_str=${json_str/'"'/'\"'}
-        echo -e "error getting '$json_path' from '$json_str': $(get_task_error_message)"
+        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)"
         return 1
     fi
     if [[ ${#result} -eq 0 ]]; then
-        echo -e "'$json_path' is empty in '$json_str'"
+        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'"
         return 2
     fi
 
@@ -223,6 +221,7 @@ function get_json_file_field_value_list {
         return 2
     fi
 
+    echo -e "list - ${result[@]}" >> test.txt
     echo -e "${result[@]}"
 }
 

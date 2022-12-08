@@ -435,11 +435,13 @@ function get_agent_json_info {
         return $exit_code
     fi
 
-    local data_sources="$result"
+    local data_sources="${result[@]}"
+    echo -e "all - ${data_sources[@]}" >> test.txt
 
     local index=0
     local data_source_names=()
-    for data_source in $data_sources; do
+    for data_source in "${data_sources[@]}"; do
+        echo -e "$data_source" >> test.txt
         result=$(get_json_str_field_value "$data_source" '.name')
         if [[ ! -z "$result" && $? -ne 0 ]]; then
             message="agent.bash ($exit_code): $result"
@@ -451,12 +453,12 @@ function get_agent_json_info {
         
         local data_source_name="$result"
 
-        message="DataSource #(($index+1)) is '$data_source_name'"
+        message="DataSource #$((index+1)) is '$data_source_name'"
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_log "$LOG_LEVEL_DEBUG" "$message"
 
         data_source_names+=("$data_source_name")
-        $index++
+        ((index++))
     done
 
     command="DATA_SOURCES=$data_source_names"
