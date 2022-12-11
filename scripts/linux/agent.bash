@@ -147,6 +147,17 @@ function get_agent_functions_scripts () {
     fi
 }
 
+function get_logo_theme () {
+    curl -fsSL $repo_url/scripts/mac/logo-theme/christmas.bash > $logzio_temp_dir/christmas.bash 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (2): failed to get agnet logo theme script file from logzio-agent-manifest repo.\n  $err" >> $log_file
+        echo -e "\033[0;31magent.bash (2): failed to get agnet logo theme script file from logzio-agent-manifest repo.\n  $err\033[0;37m"
+        rm -R logzio-temp
+        exit 2
+    fi
+}
+
 
 # Consts
 logzio_temp_dir="./logzio-temp"                                                                 # Logz.io temp directory
@@ -180,33 +191,11 @@ echo -e "[INFO] [$(date +"%Y-%m-%d %H:%M:%S")] Loading agent functions ..." >> $
 source ./logzio-temp/agent_functions.bash
 source ./logzio-temp/utils_functions.bash
 
-# Print title
-echo -e "\033[0;36m
-LLLLLLLLLLL                                                                             iiii                   
-L:::::::::L                                                                            i::::i                  
-L:::::::::L                                                                             iiii                   
-LL:::::::LL                                                                                                    
-  L:::::L                  ooooooooooo      ggggggggg   gggggzzzzzzzzzzzzzzzzz        iiiiiii    ooooooooooo   
-  L:::::L                oo:::::::::::oo   g:::::::::ggg::::gz:::::::::::::::z        i:::::i  oo:::::::::::oo 
-  L:::::L               o:::::::::::::::o g:::::::::::::::::gz::::::::::::::z          i::::i o:::::::::::::::o
-  L:::::L               o:::::ooooo:::::og::::::ggggg::::::ggzzzzzzzz::::::z           i::::i o:::::ooooo:::::o
-  L:::::L               o::::o     o::::og:::::g     g:::::g       z::::::z            i::::i o::::o     o::::o
-  L:::::L               o::::o     o::::og:::::g     g:::::g      z::::::z             i::::i o::::o     o::::o
-  L:::::L               o::::o     o::::og:::::g     g:::::g     z::::::z              i::::i o::::o     o::::o
-  L:::::L         LLLLLLo::::o     o::::og::::::g    g:::::g    z::::::z               i::::i o::::o     o::::o
-LL:::::::LLLLLLLLL:::::Lo:::::ooooo:::::og:::::::ggggg:::::g   z::::::zzzzzzzz        i::::::io:::::ooooo:::::o
-L::::::::::::::::::::::Lo:::::::::::::::o g::::::::::::::::g  z::::::::::::::z ...... i::::::io:::::::::::::::o
-L::::::::::::::::::::::L oo:::::::::::oo   gg::::::::::::::g z:::::::::::::::z .::::. i::::::i oo:::::::::::oo 
-LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzzzzzzzzzzzzzzzz ...... iiiiiiii   ooooooooooo   
-                                                     g:::::g                                                   
-                                         gggggg      g:::::g                                                   
-                                         g:::::gg   gg:::::g                                                   
-                                          g::::::ggg:::::::g                                                   
-                                           gg:::::::::::::g                                                    
-                                             ggg::::::ggg                                                      
-                                                gggggg                                                         
-\033[0;37m"
-echo -e "Running \033[0;36mLogz.io\033[0;37m Agent:\n"
+# Get logo theme script
+get_logo_theme
+
+# Print main title
+source ./logzio-temp/christmas.bash
 
 # Run prerequisite installations
 echo -e "prerequisite installations:"
