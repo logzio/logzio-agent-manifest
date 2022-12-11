@@ -2,100 +2,36 @@
 ################################################## WINDOWS Logo Theme Script ####################################################
 #################################################################################################################################
 
-# Christmas title
+# Default title
 
 Write-Host
-Write-Host "        LLLLLLLLLLL                                                                             iiii" -ForegroundColor Cyan -NoNewLine
-Write-Host "                                      *" -ForegroundColor Yellow
-Write-Host "        L:::::::::L                                                                            i::::i" -ForegroundColor Cyan -NoNewline
-Write-Host "                                    /.\" -ForegroundColor Green
-Write-Host "        L:::::::::L                                                                             iiii" -ForegroundColor Cyan -NoNewline
-Write-Host "                                    /" -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine 
-Write-Host "..\" -ForegroundColor Green
-Write-Host "        LL:::::::LL" -ForegroundColor Cyan -NoNewline
-Write-Host "                                                                                                                     /.." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "\" -ForegroundColor Green
-Write-Host "          L:::::L                  ooooooooooo      ggggggggg   gggggzzzzzzzzzzzzzzzzz        iiiiiii    ooooooooooo" -ForegroundColor Cyan -NoNewLine
-Write-Host "                   /." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host ".." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "\" -ForegroundColor Green
-Write-Host "          L:::::L                oo:::::::::::oo   g:::::::::ggg::::gz:::::::::::::::z        i:::::i  oo:::::::::::oo" -ForegroundColor Cyan -NoNewLine
-Write-Host "                 /..." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host ".\" -ForegroundColor Green
-Write-Host "          L:::::L               o:::::::::::::::o g:::::::::::::::::gz::::::::::::::z          i::::i o:::::::::::::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "               /." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "..." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host ".\" -ForegroundColor Green
-Write-Host "          L:::::L               o:::::ooooo:::::og::::::ggggg::::::ggzzzzzzzz::::::z           i::::i o:::::ooooo:::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "               /..." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "...\" -ForegroundColor Green
-Write-Host "          L:::::L               o::::o     o::::og:::::g     g:::::g       z::::::z            i::::i o::::o     o::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "              /" -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "...." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host ".\" -ForegroundColor Green
-Write-Host "          L:::::L               o::::o     o::::og:::::g     g:::::g      z::::::z             i::::i o::::o     o::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "              /..." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host ".." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "..\" -ForegroundColor Green
-Write-Host "          L:::::L               o::::o     o::::og:::::g     g:::::g     z::::::z              i::::i o::::o     o::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "             /." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "..." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host ".....\" -ForegroundColor Green
-Write-Host "          L:::::L         LLLLLLo::::o     o::::og::::::g    g:::::g    z::::::z               i::::i o::::o     o::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "             /.." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "...." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host ".." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "\" -ForegroundColor Green
-Write-Host "        LL:::::::LLLLLLLLL:::::Lo:::::ooooo:::::og:::::::ggggg:::::g   z::::::zzzzzzzz        i::::::io:::::ooooo:::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "            /" -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "...." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "...." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "..\" -ForegroundColor Green
-Write-Host "        L::::::::::::::::::::::Lo:::::::::::::::o g::::::::::::::::g  z::::::::::::::z ...... i::::::io:::::::::::::::o" -ForegroundColor Cyan -NoNewLine
-Write-Host "            /.." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "....." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "....\" -ForegroundColor Green
-Write-Host "        L::::::::::::::::::::::L oo:::::::::::oo   gg::::::::::::::g z:::::::::::::::z .::::. i::::::i oo:::::::::::oo" -ForegroundColor Cyan -NoNewLine
-Write-Host "            /." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "...." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "....." -ForegroundColor Green -NoNewLine
-Write-Host "o" -ForegroundColor Red -NoNewLine
-Write-Host "..\" -ForegroundColor Green
-Write-Host "        LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzzzzzzzzzzzzzzzz ...... iiiiiiii   ooooooooooo" -ForegroundColor Cyan -NoNewLine
-Write-Host "              ^^^^^^^[ ]^^^^^^^" -ForegroundColor Green
-Write-Host "                                                             g:::::g" -ForegroundColor Cyan -NoNewLine
-Write-Host "                                                                     [_]" -ForegroundColor Green
-Write-Host "                                                 gggggg      g:::::g" -ForegroundColor Cyan
-Write-Host "                                                 g:::::gg   gg:::::g               Agent $script:AgentVersion" -ForegroundColor Cyan
-Write-Host "                                                  g::::::ggg:::::::g" -ForegroundColor Cyan
-Write-Host "                                                   gg:::::::::::::g" -ForegroundColor Cyan
-Write-Host "                                                     ggg::::::ggg" -ForegroundColor Cyan
-Write-Host "                                                        gggggg" -ForegroundColor Cyan
-Write-Host
+Write-Host '    LLLLLLLLLLL' -ForegroundColor Red -NoNewLine
+Write-Host '                                                                          .-""-.' -ForegroundColor Red
+Write-Host '    L:::::::::L' -ForegroundColor White -NoNewLine
+Write-Host '                                                                         /,..' -ForegroundColor Red -NoNewLine
+Write-Host '___' -ForegroundColor White -NoNewLine
+Write-Host '\' -ForegroundColor Red
+Write-Host '    L:::::::::L' -ForegroundColor Red -NoNewline
+Write-Host '                                                                        () {_____}' -ForegroundColor White
+Write-Host '    LL:::::::LL' -ForegroundColor White
+Write-Host '      L:::::L                  ooooooooooo      ggggggggg   gggggzzzzzzzzzzzzzzzzz        iiiiiii    ooooooooooo' -ForegroundColor Red
+Write-Host '      L:::::L                oo:::::::::::oo   g:::::::::ggg::::gz:::::::::::::::z        i:::::i  oo:::::::::::oo' -ForegroundColor White
+Write-Host '      L:::::L               o:::::::::::::::o g:::::::::::::::::gz::::::::::::::z          i::::i o:::::::::::::::o' -ForegroundColor Red
+Write-Host '      L:::::L               o:::::ooooo:::::og::::::ggggg::::::ggzzzzzzzz::::::z           i::::i o:::::ooooo:::::o' -ForegroundColor White
+Write-Host '      L:::::L               o::::o     o::::og:::::g     g:::::g       z::::::z            i::::i o::::o     o::::o' -ForegroundColor Red
+Write-Host '      L:::::L               o::::o     o::::og:::::g     g:::::g      z::::::z             i::::i o::::o     o::::o' -ForegroundColor White
+Write-Host '      L:::::L               o::::o     o::::og:::::g     g:::::g     z::::::z              i::::i o::::o     o::::o' -ForegroundColor Red
+Write-Host '      L:::::L         LLLLLLo::::o     o::::og::::::g    g:::::g    z::::::z               i::::i o::::o     o::::o' -ForegroundColor White
+Write-Host '    LL:::::::LLLLLLLLL:::::Lo:::::ooooo:::::og:::::::ggggg:::::g   z::::::zzzzzzzz        i::::::io:::::ooooo:::::o' -ForegroundColor Red
+Write-Host '    L::::::::::::::::::::::Lo:::::::::::::::o g::::::::::::::::g  z::::::::::::::z ...... i::::::io:::::::::::::::o' -ForegroundColor White
+Write-Host '    L::::::::::::::::::::::L oo:::::::::::oo   gg::::::::::::::g z:::::::::::::::z .::::. i::::::i oo:::::::::::oo' -ForegroundColor Red
+Write-Host '    LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzzzzzzzzzzzzzzzz ...... iiiiiiii   ooooooooooo' -ForegroundColor White
+Write-Host '                                                         g:::::g' -ForegroundColor Red
+Write-Host '                                             gggggg      g:::::g' -ForegroundColor White
+Write-Host '                                             g:::::gg   gg:::::g' -ForegroundColor Red -NoNewline
+Write-Host '               Agent $script:AgentVersion' -ForegroundColor Cyan
+Write-Host '                                              g::::::ggg:::::::g' -ForegroundColor White
+Write-Host '                                               gg:::::::::::::g' -ForegroundColor Red
+Write-Host '                                                 ggg::::::ggg' -ForegroundColor White
+Write-Host '                                                    gggggg' -ForegroundColor Red
 Write-Host
