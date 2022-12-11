@@ -221,7 +221,6 @@ function get_json_file_field_value_list {
         return 2
     fi
 
-    echo -e "list - ${result[@]}" >> test.txt
     echo -e "${result[@]}"
 }
 

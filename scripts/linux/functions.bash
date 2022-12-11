@@ -436,12 +436,10 @@ function get_agent_json_info {
     fi
 
     local data_sources="${result[@]}"
-    echo -e "all - ${data_sources[@]}" >> test.txt
 
     local index=0
     local data_source_names=()
     for data_source in "${data_sources[@]}"; do
-        echo -e "$data_source" >> test.txt
         result=$(get_json_str_field_value "$data_source" '.name')
         if [[ ! -z "$result" && $? -ne 0 ]]; then
             message="agent.bash ($exit_code): $result"
@@ -461,7 +459,7 @@ function get_agent_json_info {
         ((index++))
     done
 
-    command="DATA_SOURCES=$data_source_names"
+    command="DATA_SOURCES=${data_source_names[@]}"
     write_task_post_run "$command"
 }
 
@@ -511,7 +509,7 @@ function download_sub_type_files {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     if [[ -z "$REPO_RELEASE" ]]; then
-        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR\linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
             message="agent.bash ($exit_code): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
@@ -520,7 +518,7 @@ function download_sub_type_files {
             return $exit_code
         fi
     else
-        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/download/$REPO_RELEASE/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR\linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/download/$REPO_RELEASE/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
             message="agent.bash ($exit_code): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
@@ -530,9 +528,9 @@ function download_sub_type_files {
         fi
     fi
     
-    tar -zxf "$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.g"z --directory "$LOZGIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
+    tar -zxf "$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" --directory "$LOGZIO_TEMP_DIR" --overwrite 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): error extracting files from tar.gz: $(get_task_error_message)"
+        message="agent.bash ($exit_code): error extracting files from '$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz': $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
@@ -549,15 +547,29 @@ function run_sub_type_prerequisites {
     local exit_code=12
     local func_name="${FUNCNAME[0]}"
 
-    local message='Running subtype prerequisites ...'
+    local message='Laoding subtype prerequisites functions ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    source "$LOGZIO_TEMP_DIR/$PLATFORM/$SUB_TYPE/$PREREQUISITES_FILE" 2>"$TASK_ERROR_FILE"
+    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/$PREREQUISITES_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error loading subtype prerequisites functions: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_error "$message"
+
+        IS_AGENT_FAILED=true
+        exit $exit_code
+    fi
+
+    message='Running subtype prerequisites ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/$PREREQUISITES_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($exit_code): error running subtype prerequisites: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
-        write_task_post_run "write_error \"$message\""
+        write_error "$message"
 
         IS_AGENT_FAILED=true
         exit $exit_code
