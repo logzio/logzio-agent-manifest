@@ -2,7 +2,7 @@
 ################################################## WINDOWS Logo Theme Script ####################################################
 #################################################################################################################################
 
-# Default title
+# Hanukkah title
 
 Write-Host
 Write-Host '         (' -ForegroundColor Yellow
@@ -11,9 +11,9 @@ Write-Host '        /  )' -ForegroundColor Yellow
 Write-Host '       (' -ForegroundColor Yellow -NoNewline
 Write-Host ' *' -ForegroundColor Red -NoNewline
 Write-Host ' (' -ForegroundColor Yellow
-Write-Host '        \' -ForegroundColor Blue -NoNewline
+Write-Host '        \' -ForegroundColor Cyan -NoNewline
 Write-Host '#' -ForegroundColor Red -NoNewline
-Write-Host '/' -ForegroundColor Blue -NoNewline
+Write-Host '/' -ForegroundColor Cyan -NoNewline
 Write-Host '                         )               )                    (                   (            )' -ForegroundColor Yellow
 Write-Host '         #' -ForegroundColor White -NoNewline
 Write-Host '                         /(              /(                    )\                  )\          /(' -ForegroundColor Yellow
@@ -36,21 +36,21 @@ Write-Host '        )' -ForegroundColor Yellow -NoNewline
 Write-Host ' *' -ForegroundColor Red -NoNewline
 Write-Host ' )' -ForegroundColor Yellow
 Write-Host '    L:::::::::L' -ForegroundColor Yellow -NoNewline
-Write-Host '                   \' -ForegroundColor Blue -NoNewline
+Write-Host '                   \' -ForegroundColor Cyan -NoNewline
 Write-Host ' #' -ForegroundColor Red -NoNewline
-Write-Host ' /' -ForegroundColor Blue -NoNewline
-Write-Host '            \' -ForegroundColor Blue -NoNewline
+Write-Host ' /' -ForegroundColor Cyan -NoNewline
+Write-Host '            \' -ForegroundColor Cyan -NoNewline
 Write-Host '#' -ForegroundColor Red -NoNewline
-Write-Host '/' -ForegroundColor Blue -NoNewline
-Write-Host '                 \' -ForegroundColor Blue -NoNewline
+Write-Host '/' -ForegroundColor Cyan -NoNewline
+Write-Host '                 \' -ForegroundColor Cyan -NoNewline
 Write-Host ' #' -ForegroundColor Red -NoNewline
-Write-Host ' /' -ForegroundColor Blue -NoNewline
-Write-Host '                \' -ForegroundColor Blue -NoNewLine
+Write-Host ' /' -ForegroundColor Cyan -NoNewline
+Write-Host '                \' -ForegroundColor Cyan -NoNewLine
 Write-Host '#' -ForegroundColor Red -NoNewLine
-Write-Host '/' -ForegroundColor Blue -NoNewline
-Write-Host '         \' -ForegroundColor Blue -NoNewline
+Write-Host '/' -ForegroundColor Cyan -NoNewline
+Write-Host '         \' -ForegroundColor Cyan -NoNewline
 Write-Host ' #' -ForegroundColor Red -NoNewline
-Write-Host ' /' -ForegroundColor Blue
+Write-Host ' /' -ForegroundColor Cyan
 Write-Host '    LL:::::::LL' -ForegroundColor Yellow -NoNewline
 Write-Host '                     #' -ForegroundColor White -NoNewline
 Write-Host '               #' -ForegroundColor White -NoNewline

@@ -2,11 +2,10 @@
 ################################################## WINDOWS Logo Theme Script ####################################################
 #################################################################################################################################
 
-# Default title
+# Christmas title
 
 Write-Host
-Write-Host '    LLLLLLLLLLL' -ForegroundColor Red -NoNewLine
-Write-Host '                                                                          .-""-.' -ForegroundColor Red
+Write-Host '    LLLLLLLLLLL                                                                          .-""-.' -ForegroundColor Red
 Write-Host '    L:::::::::L' -ForegroundColor White -NoNewLine
 Write-Host '                                                                         /,..' -ForegroundColor Red -NoNewLine
 Write-Host '___' -ForegroundColor White -NoNewLine
