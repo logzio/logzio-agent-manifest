@@ -148,13 +148,9 @@ function get_agent_functions_scripts () {
 }
 
 function get_logo_theme () {
-    curl -fsSL $repo_url/scripts/mac/logo-theme/christmas.bash > $logzio_temp_dir/christmas.bash 2>$task_error_file
+    curl -fsSL $repo_url/scripts/mac/logo-themes/christmas.bash > $logzio_temp_dir/christmas.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] agent.bash (2): failed to get agnet logo theme script file from logzio-agent-manifest repo.\n  $err" >> $log_file
-        echo -e "\033[0;31magent.bash (2): failed to get agnet logo theme script file from logzio-agent-manifest repo.\n  $err\033[0;37m"
-        rm -R logzio-temp
-        exit 2
+        echo -e "\033[0;36mLogz.io Agent\033[0;37m"
     fi
 }
 
