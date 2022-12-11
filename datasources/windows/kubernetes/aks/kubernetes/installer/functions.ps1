@@ -447,11 +447,15 @@ function Build-EnableMetricsOrTracesHelmSet {
 
 # Builds metrics/traces environment tag Helm set
 # Input:
-#   ---
+#   FuncArgs - Hashtable {EnvId = $script:EnvId}
 # Output:
 #   LogHelmSets - Containt all the Helm sets for logging
 #   HelmSets - Contains all the Helm sets
 function Build-EnvironmentTagHelmSet {
+    param (
+        [hashtable]$FuncArgs
+    )
+
     $local:ExitCode = 6
     $local:FuncName = $MyInvocation.MyCommand.Name
 
@@ -459,7 +463,7 @@ function Build-EnvironmentTagHelmSet {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Get-JsonFileFieldValue $script:AgentJson '.id'
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('EnvId')
     if ($Err.Count -ne 0) {
         $Message = "installer.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
@@ -468,9 +472,9 @@ function Build-EnvironmentTagHelmSet {
         return $ExitCode
     }
 
-    $local:EnvTag = $script:JsonValue
+    $local:EnvId = $FuncArgs.EnvId
 
-    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$EnvTag"
+    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$EnvId"
     
     $Message = "Environment tag Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
