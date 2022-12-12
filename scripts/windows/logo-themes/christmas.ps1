@@ -28,7 +28,7 @@ Write-Host '    LLLLLLLLLLLLLLLLLLLLLLLL   ooooooooooo       gggggggg::::::g zzz
 Write-Host '                                                         g:::::g' -ForegroundColor Red
 Write-Host '                                             gggggg      g:::::g' -ForegroundColor White
 Write-Host '                                             g:::::gg   gg:::::g' -ForegroundColor Red -NoNewline
-Write-Host '               Agent $script:AgentVersion' -ForegroundColor Cyan
+Write-Host "               Agent $script:AgentVersion" -ForegroundColor Cyan
 Write-Host '                                              g::::::ggg:::::::g' -ForegroundColor White
 Write-Host '                                               gg:::::::::::::g' -ForegroundColor Red
 Write-Host '                                                 ggg::::::ggg' -ForegroundColor White
