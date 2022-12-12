@@ -136,16 +136,9 @@ function write_agent_support {
     echo
 }
 
-function get_logo_theme () {
-    curl -fsSL $repo_url/scripts/mac/logo-themes/christmas.bash > $logzio_temp_dir/christmas.bash 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        echo -e "\033[0;36mLogz.io Agent\033[0;37m"
-    fi
-}
-
 
 # Agent version
-AGENT_VERSION='v1.0.29'
+AGENT_VERSION='v1.0.35'
 
 # Settings
 tput civis -- invisible
@@ -161,11 +154,13 @@ IS_AGENT_FAILED=false
 IS_POSTREQUISITE_FAILED=false
 IS_AGENT_COMPLETED=false
 
-# Get logo theme script
-get_logo_theme
-
-# Print main title
-source ./logzio-temp/christmas.bash
+# Print main title - Christmas theme
+source '/tmp/logzio/logo-themes/christmas.bash' 2>'/tmp/logzio/task_error.txt'
+if [[ $? -ne 0 ]]; then
+    echo
+    echo -e "\033[0;36mLogz.io Agent\033[0;37m"
+    echo
+fi
 
 # Load consts
 source /tmp/logzio/consts.bash 2>/tmp/logzio/task_error.txt
