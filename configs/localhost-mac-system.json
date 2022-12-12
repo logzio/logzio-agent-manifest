@@ -22,9 +22,10 @@
               "params":
               [
                 {
-                  "type": "path-list",
+                  "type": "string-list",
                   "name": "logSources",
                   "label": "Location of your logs",
+                  "placeholder": "i.e. /var/log/*.log",
                   "required": true,
                   "description": "The paths of log files to collect.",
                   "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",

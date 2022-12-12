@@ -143,7 +143,7 @@ function Write-AgentSupport {
 
 
 # Agent version
-$script:AgentVersion = 'v1.0.34'
+$script:AgentVersion = 'v1.0.35'
 
 # Settings
 $ProgressPreference = 'SilentlyContinue'
@@ -164,10 +164,8 @@ try {
     . $env:TEMP\Logzio\logo-themes\christmas.ps1 -ErrorAction Stop
 }
 catch {
-    Write-Host $_
     Write-Host
     Write-Host "Logz.io Agent $AgentVersion" -ForegroundColor Cyan
-    Write-Host
     Write-Host
 }
 
