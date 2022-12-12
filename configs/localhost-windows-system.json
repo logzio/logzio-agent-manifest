@@ -29,7 +29,7 @@
                   "type": "string-list",
                   "name": "logSources",
                   "label": "Location of your logs",
-                  "placeholder": "i.e. C:\\Users\\example\\Documents\\*.txt",
+                  "placeholder": "i.e. C:\\Users\\my_example\\Documents\\*.txt",
                   "description": "The paths of log files to collect.",
                   "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
                   "value": []
