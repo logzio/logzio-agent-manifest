@@ -135,7 +135,7 @@ Write-Host '   ooooooooooo' -ForegroundColor Cyan
 Write-Host '                                                         g:::::g' -ForegroundColor Yellow
 Write-Host '                                             gggggg      g:::::g' -ForegroundColor Yellow
 Write-Host '                                             g:::::gg   gg:::::g' -ForegroundColor Yellow -NoNewline
-Write-Host '               Agent $script:AgentVersion' -ForegroundColor Cyan
+Write-Host "               Agent $script:AgentVersion" -ForegroundColor Cyan
 Write-Host '                                              g::::::ggg:::::::g' -ForegroundColor Yellow
 Write-Host '                                               gg:::::::::::::g' -ForegroundColor Yellow
 Write-Host '                                                 ggg::::::ggg' -ForegroundColor Yellow
