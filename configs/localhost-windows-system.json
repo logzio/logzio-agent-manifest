@@ -21,7 +21,7 @@
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your computer.",
               "otel": {
                 "receivers": ["filelog","windowseventlog_application","windowseventlog_security","windowseventlog_system"],
-                "processors": ["resourcedetection_system", "attributes_logzio_agent"]
+                "processors": ["resourcedetection_system"]
 				      },
               "params": 
               [
@@ -65,7 +65,7 @@
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your computer.",
               "otel": {
                 "receivers": ["hostmetrics"],
-                "processors": ["resourcedetection_system"]
+                "processors": ["resourcedetection_system", "attributes_logzio_agent"]
 				      },
               "params": [],
               "dashboards": [
