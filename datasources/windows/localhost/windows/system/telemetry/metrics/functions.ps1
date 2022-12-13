@@ -276,7 +276,7 @@ function Add-MetricsProcessorsToOtelConfig {
     $local:ExistProcessors = $null
     $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
-        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
@@ -289,7 +289,7 @@ function Add-MetricsProcessorsToOtelConfig {
     if ($null -eq $ExistProcessors) {
         $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors | keys'
         if ($Err.Count -ne 0) {
-            $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+            $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
@@ -369,7 +369,7 @@ function Add-MetricsExporterToOtelConfig {
     $local:ExistProcessors = $null
     $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
-        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
@@ -382,7 +382,7 @@ function Add-MetricsExporterToOtelConfig {
     if ($null -eq $ExistProcessors) {
         $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters | keys'
         if ($Err.Count -ne 0) {
-            $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+            $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 

@@ -1,4 +1,4 @@
 metrics:
   receivers: []
-  processors: [resourcedetection/system, resourcedetection/ec2]
+  processors: [resourcedetection/system, resourcedetection/ec2, attributes/logzio_agent]
   exporters: []
