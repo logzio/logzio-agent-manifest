@@ -9,7 +9,7 @@ processors:
     ec2:
       tags:
         - ^*$
-  attributes/logzio_agent:
+  attributes/agent:
     actions:
       - key: logzio_agent_version
         value: v1.0.36

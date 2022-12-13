@@ -4,7 +4,7 @@ processors:
     detectors: ["system"]
     system:
       hostname_sources: ["os"]
-  attributes/logzio_agent:
+  attributes/agent:
     actions:
       - key: logzio_agent_version
         value: v1.0.36
