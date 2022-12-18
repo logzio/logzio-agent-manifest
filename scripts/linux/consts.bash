@@ -16,7 +16,7 @@ LOGZIO_RESOURCES_DIR="$LOGZIO_TEMP_DIR/resources"
 
 ## OTEL Directories
 # Logz.io OTEL collector opt subdirectory
-LOGZIO_OTEL_COLLECTOR_DIR="$LOGZIO_OPT_DIR/Logzio-otel-collector"
+LOGZIO_OTEL_COLLECTOR_DIR="$LOGZIO_OPT_DIR/logzio-otel-collector"
 # Resources OTEL directory
 OTEL_RESOURCES_DIR="$LOGZIO_RESOURCES_DIR/otel"
 # OTEL receivers directory
@@ -76,7 +76,7 @@ LOGZIO_HELM_FILE="$LOGZIO_KUBERNETES_DIR/logzio_helm.txt"
 
 ## Service names
 # Logz.io OTEL collector service name
-LOGZIO_OTEL_COLLECTOR_SERVICE_NAME='LogzioOTELCollector'
+LOGZIO_OTEL_COLLECTOR_SERVICE_NAME='logzioOTELCollector'
 
 ## Script files
 AGENT_FUNCTIONS_FILE="$LOGZIO_TEMP_DIR/functions.bash"

@@ -237,3 +237,6 @@ execute_task 'download_sub_type_files' 'Downloading subtype files'
 
 # Run subtype prerequisites
 run_sub_type_prerequisites
+
+# Run subtype installer
+run_sub_type_installer
