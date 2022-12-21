@@ -55,14 +55,12 @@ function Remove-LogzioOtelCollectorService {
 
     sc.exe DELETE $script:LogzioOtelCollectorServiceName 2>$script:TaskErrorFile | Out-Null
     if ($LASTEXITCODE -ne 0) {
-        return
+        $Message = "installer.ps1 ($ExitCode): error deleting '$script:LogzioOtelCollectorServiceName' service: $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
     }
-
-    $Message = "installer.ps1 ($ExitCode): error deleting '$script:LogzioOtelCollectorServiceName' service: $(Get-TaskErrorMessage)"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
-    Write-TaskPostRun "Write-Error `"$Message`""
-
-    return $ExitCode
 }
 
 # Downloads OTEL collector exe
