@@ -55,18 +55,46 @@ function run_all_data_sources {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    for data_source in $DATA_SOURCES; do
-        message="Running $data_source datasource prerequisites ..."
+    for data_source in ${DATA_SOURCES[@]}; do
+        CURRENT_DATA_SOURCE="$data_source"
+
+        message="Loading $data_source datasource prerequisites functions ..."
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_log "$LOG_LEVEL_DEBUG" "$message"
 
-        CURRENT_DATA_SOURCE="$data_source"
+        source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$PREREQUISITES_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="installer.bash ($exit_code): error loading $data_source datasource prerequisites functions: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+            write_error "$message"
+
+            IS_AGENT_FAILED=true
+            exit $exit_code
+        fi
+
+        message="Running $data_source datasource prerequisites ..."
+        send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+        write_log "$LOG_LEVEL_DEBUG" "$message"
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$PREREQUISITES_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
             message="installer.bash ($exit_code): error running $data_source datasource prerequisites: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-            write_task_post_run "write_error \"$message\""
+            write_error "$message"
+
+            IS_AGENT_FAILED=true
+            exit $exit_code
+        fi
+
+        message="Loading $data_source datasource installer functions ..."
+        send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+        write_log "$LOG_LEVEL_DEBUG" "$message"
+
+        source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$INSTALLER_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="installer.bash ($exit_code): error loading $data_source datasource installer functions: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+            write_error "$message"
 
             IS_AGENT_FAILED=true
             exit $exit_code
@@ -80,7 +108,7 @@ function run_all_data_sources {
         if [[ $? -ne 0 ]]; then
             message="installer.bash ($exit_code): error running $data_source datasource installer: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-            write_task_post_run "write_error \"$message\""
+            write_error "$message"
 
             IS_AGENT_FAILED=true
             exit $exit_code
@@ -104,7 +132,7 @@ fi
 # Download OTEL collector exe
 execute_task 'download_otel_collector_binary' 'Downloading OTEL collector binary'
 # Run each datasource scripts
-#run_all_data_sources
+run_all_data_sources
 
 # # Print title
 # Write-Host
