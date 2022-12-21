@@ -144,7 +144,7 @@ AGENT_VERSION='v1.0.35'
 tput civis -- invisible
 
 # Agent args
-AGENT_ARGS="$@"
+AGENT_ARGS=("$@")
 
 # Agent status flags
 IS_SHOW_HELP=false

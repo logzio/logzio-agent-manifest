@@ -133,19 +133,19 @@ function get_json_str_field_value {
 
     local result=$(echo -e "$json_str" | $JQ_BIN -r "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)"
+        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
     if [[ -z "$result" ]]; then
-        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'"
+        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'" >"$TASK_ERROR_FILE"
         return 2
     fi
     if [[ "$result" == 'null' ]]; then
-        echo -e "'$json_path' does not exist in '${json_str/'"'/'\"'}'"
+        echo -e "'$json_path' does not exist in '${json_str/'"'/'\"'}'" >"$TASK_ERROR_FILE"
         return 3
     fi
 
-    echo -e "$result"
+    JSON_VALUE="$result"
 }
 
 # Gets json string field value list
@@ -161,15 +161,15 @@ function get_json_str_field_value_list {
 
     local result=$(echo -e "$json_str" | $JQ_BIN -c "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)"
+        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
     if [[ ${#result} -eq 0 ]]; then
-        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'"
+        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'" >"$TASK_ERROR_FILE"
         return 2
     fi
 
-    echo -e "${result[@]}"
+    readarray -t JSON_VALUE < <(echo -e "$result")
 }
 
 # Gets json file field value
@@ -185,19 +185,19 @@ function get_json_file_field_value {
 
     local result=$($JQ_BIN -r "$json_path" "$json_file" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        echo -e "error getting '$json_path' from '$json_file': $(get_task_error_message)"
+        echo -e "error getting '$json_path' from '$json_file': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
     if [[ -z "$result" ]]; then
-        echo -e "'$json_path' is empty in '$json_file'"
+        echo -e "'$json_path' is empty in '$json_file'" >"$TASK_ERROR_FILE"
         return 2
     fi
     if [[ "$result" == 'null' ]]; then
-        echo -e "'$json_path' does not exist in '$json_file'"
+        echo -e "'$json_path' does not exist in '$json_file'" >"$TASK_ERROR_FILE"
         return 3
     fi
 
-    echo -e "$result"
+    JSON_VALUE="$result"
 }
 
 # Gets json file field value list
@@ -213,15 +213,15 @@ function get_json_file_field_value_list {
 
     local result=$($JQ_BIN -c "$json_path" "$json_file" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        echo -e "error getting '$json_path' from '$json_file': $(get_task_error_message)"
+        echo -e "error getting '$json_path' from '$json_file': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
     if [[ ${#result} -eq 0 ]]; then
-        echo -e "'$json_path' is empty in '$json_file'"
+        echo -e "'$json_path' is empty in '$json_file'" >"$TASK_ERROR_FILE"
         return 2
     fi
 
-    echo -e "${result[@]}"
+    readarray -t JSON_VALUE < <(echo -e "$result")
 }
 
 # Adds yaml file field value
@@ -320,20 +320,18 @@ function add_yaml_file_field_value_to_another_yaml_file_field {
 
 # Converts list to string
 # Input:
-#   list - List of items
+#   ---
 # Output:
 #   List of items as string
 function convert_list_to_str {
-    local list=$1
-
-    if [[ ${#list} -eq 0 ]]; then
+    if [[ ${#LIST[@]} -eq 0 ]]; then
         echo -e '()'
         return
     fi
 
-    local str_list=''
-    for item in $list; do
-        if [[ $(echo -e $item | grep -o "^'.*'$") || $(echo -e $item | grep -o '^".*"$') ]]; then
+    local str_list='('
+    for item in "${LIST[@]}"; do
+        if [[ $(echo -e "$item" | grep -o "^'.*'$") || $(echo -e "$item" | grep -o '^".*"$') ]]; then
             str_list+="$item "
         else
             str_list+="'$item' "
@@ -341,7 +339,8 @@ function convert_list_to_str {
     done
 
     str_list=${str_list:0: ${#str_list}-1}
-    echo -e "($str_list)"
+    str_list+=')'
+    echo -e "$str_list"
 }
 
 # Gets param by name
@@ -352,26 +351,25 @@ function convert_list_to_str {
 #   TARGET_PARAM - The param json object. Only if got no error.
 #   If got error will output message with exit code.
 function get_param {
-    local params=$1
-    local param_name=$2
+    local param_name="$1"
 
-    for param in $params; do
-        local err=$(get_json_str_field_value $param '.name')
-        if [[ ${#err} -ne 0 ]]; then
-            echo -e $err[0]
+    for param in "${PARAMS[@]}"; do
+        get_json_str_field_value "$param" '.name'
+        if [[ $? -ne 0 ]]; then
             return 1
         fi
         
-        local name=$json_value
-        if [[ $name != $param_name ]]; then
+        local name="$JSON_VALUE"
+
+        if [[ "$name" != "$param_name" ]]; then
             continue
         fi
 
-        TARGET_PARAM=$param
+        TARGET_PARAM="$param"
         return
     done
 
-    echo -e "$param_name param was not found"
+    echo -e "$param_name param was not found" >"$TASK_ERROR_FILE"
     return 2
 }
 
@@ -383,27 +381,26 @@ function get_param {
 #   PARAM_VALUE - The value of the target param. Only if got no error.
 #   If got error will output message with exit code.
 function get_param_value {
-    local params=$1
-    local param_name=$2
+    local param_name="$1"
 
-    local err=$(get_param $params $param_name)
-    if [[ ${#err} -ne 0 ]]; then
-        echo -e $err[0]
-    fi
-
-    local param=$TARGET_PARAM
-
-    err=$(get_json_str_field_value $param '.value')
-    if [[ ${#err} -ne 0 && $err[1] -ne 2 ]]; then
-        echo -e $err[0]
+    get_param "$param_name"
+    if [[ $? -ne 0 ]]; then
         return 1
     fi
-    if [[ ${#err} -ne 0 ]]; then
+
+    local param="$TARGET_PARAM"
+
+    get_json_str_field_value "$param" '.value'
+    local func_status=$?
+    if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
+        return 2
+    fi
+    if [[ $func_status -ne 0 ]]; then
         PARAM_VALUE=''
         return
     fi
     
-    PARAM_VALUE=$JSON_VALUE
+    PARAM_VALUE="$JSON_VALUE"
 }
 
 # Gets param value list
@@ -414,27 +411,26 @@ function get_param_value {
 #   PARAM_VALUE - The value (list) of the target param. Only if got no error.
 #   If got error will output message with exit code.
 function get_param_value_list {
-    local params=$1
-    local param_name=$2
+    local param_name="$1"
 
-    local err=$(get_Param $params $param_name)
-    if [[ ${#err} -ne 0 ]]; then
-        echo -e $err[0]
-    fi
-
-    param=$TARGET_PARAM
-
-    err=$(get_json_str_field_value_list $param '.value[]')
-    if [[ ${#err} -ne 0 && $err[1] -eq 1 ]]; then
-        echo -e $err[0]
+    get_param "$param_name"
+    if [[ $? -ne 0 ]]; then
         return 1
     fi
-    if [[ ${#err} -ne 0 ]]; then
+
+    param="$TARGET_PARAM"
+
+    get_json_str_field_value_list "$param" '.value[]'
+    local func_status=$?
+    if [[ $func_status -ne 0 && $func_status -eq 1 ]]; then
+        return 2
+    fi
+    if [[ $func_status -ne 0 ]]; then
         PARAM_VALUE=()
         return
     fi
     
-    PARAM_VALUE=$JSON_VALUE
+    PARAM_VALUE=("${JSON_VALUE[@]}")
 }
 
 # Gets Logz.io region
