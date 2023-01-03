@@ -93,7 +93,7 @@ if $IS_LOGS_OPTION_WAS_SELECTED; then
     # Run logs script
     run_logs
 fi
-# if $IS_METRICS_OPTION_WAS_SELECTED; then
-#     # Run metrics script
-#     run_metrics
-# fi
+if $IS_METRICS_OPTION_WAS_SELECTED; then
+    # Run metrics script
+    run_metrics
+fi
