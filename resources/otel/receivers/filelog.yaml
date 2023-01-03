@@ -1,5 +1,20 @@
 mac_run:
-linux_run:
+linux_run: |
+  function create_otel_receiver {
+    for log_source in "${LOG_SOURCES[@]}"; do
+      add_yaml_file_field_value "$OTEL_RECEIVERS_DIR/filelog.yaml" '.receiver.filelog/NAME.include' "$log_source"
+      if [[ $? -ne 0 ]]; then
+        echo -e "error addinng log sources to filelog receiver: $(get_task_error_message)" >"$TASK_ERROR_FILE"
+        return 2
+      fi
+    done
+
+    set_yaml_file_field_value "$OTEL_RECEIVERS_DIR/filelog.yaml" '.receiver.filelog/NAME.attributes.type' "$LOGS_TYPE"
+    if [[ $? -ne 0 ]]; then
+      echo -e "error setting type to filelog receiver: $(get_task_error_message)" >"$TASK_ERROR_FILE"
+      return 3
+    fi
+  }
 windows_run: |
   function New-OtelReceiver {
     param (

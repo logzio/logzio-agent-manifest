@@ -1,5 +1,7 @@
 mac_run:
-linux_run:
+linux_run: |
+  function create_otel_receiver {
+  }
 windows_run: |
   function New-OtelReceiver {
     param (
