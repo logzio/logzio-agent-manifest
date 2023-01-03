@@ -191,7 +191,7 @@ source ./logzio-temp/utils_functions.bash
 get_logo_theme
 
 # Print main title
-source ./logzio-temp/christmas.bash
+source ./logzio-temp/default.bash
 
 # Run prerequisite installations
 echo -e "prerequisite installations:"
