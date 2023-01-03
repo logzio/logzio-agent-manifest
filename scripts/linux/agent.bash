@@ -138,7 +138,7 @@ function write_agent_support {
 
 
 # Agent version
-AGENT_VERSION='v1.0.35'
+AGENT_VERSION='v1.0.40'
 
 # Settings
 tput civis -- invisible
@@ -155,10 +155,10 @@ IS_POSTREQUISITE_FAILED=false
 IS_AGENT_COMPLETED=false
 
 # Print main title - Christmas theme
-source '/tmp/logzio/logo-themes/christmas.bash' 2>'/tmp/logzio/task_error.txt'
+source '/tmp/logzio/logo-themes/default.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     echo
-    echo -e "\033[0;36mLogz.io Agent\033[0;37m"
+    echo -e "\033[0;36mLogz.io Agent $AGENT_VERSION\033[0;37m"
     echo
 fi
 
