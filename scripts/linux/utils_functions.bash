@@ -59,7 +59,7 @@ function write_task_post_run {
 #   Task error file content
 function get_task_error_message {
     local err=$(cat "$TASK_ERROR_FILE")
-    err=${err//'"'/''}
+    err="${err//\"/\\\"}"
 
     echo -e "$err"
 }
@@ -88,8 +88,7 @@ function send_log_to_logzio {
     local sub_type="$8"
     local data_source="$9"
 
-    message=${message//'\'/'\\'}
-    message=${message//'"'/'\"'}
+    message="${message//\"/\\\"}"
 
     log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\",\"cpu_arch\":\"$CPU_ARCH\""
 
@@ -133,15 +132,15 @@ function get_json_str_field_value {
 
     local result=$(echo -e "$json_str" | $JQ_BIN -r "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)" >"$TASK_ERROR_FILE"
+        echo -e "error getting '$json_path' from '${json_str//\"/\\\"}': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
     if [[ -z "$result" ]]; then
-        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'" >"$TASK_ERROR_FILE"
+        echo -e "'$json_path' is empty in '${json_str//\"/\\\"}'" >"$TASK_ERROR_FILE"
         return 2
     fi
     if [[ "$result" == 'null' ]]; then
-        echo -e "'$json_path' does not exist in '${json_str/'"'/'\"'}'" >"$TASK_ERROR_FILE"
+        echo -e "'$json_path' does not exist in '${json_str//\"/\\\"}'" >"$TASK_ERROR_FILE"
         return 3
     fi
 
@@ -161,11 +160,11 @@ function get_json_str_field_value_list {
 
     local result=$(echo -e "$json_str" | $JQ_BIN -c "$json_path" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        echo -e "error getting '$json_path' from '${json_str/'"'/'\"'}': $(get_task_error_message)" >"$TASK_ERROR_FILE"
+        echo -e "error getting '$json_path' from '$json_str': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
     if [[ ${#result} -eq 0 ]]; then
-        echo -e "'$json_path' is empty in '${json_str/'"'/'\"'}'" >"$TASK_ERROR_FILE"
+        echo -e "'$json_path' is empty in '$json_str'" >"$TASK_ERROR_FILE"
         return 2
     fi
 
@@ -237,9 +236,9 @@ function add_yaml_file_field_value {
     local yaml_path="$2"
     local value="$3"
 
-    $YQ_BIN -i "$yaml_path += ""\"$value\"""" $yaml_file 2>"$TASK_ERROR_FILE"
+    $YQ_BIN -i "$yaml_path += \"$value\"" $yaml_file 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        echo -e "error adding '$value' to '$yaml_path in '$yaml_path': $(get_task_error_message)"
+        echo -e "error adding '$value' to '$yaml_path in '$yaml_path': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
 }
@@ -257,9 +256,9 @@ function set_yaml_file_field_value {
     local yaml_path="$2"
     local value="$3"
 
-    $YQ_BIN -i "$yaml_path = ""\"$value\"""" "$yaml_file" 2>"$TASK_ERROR_FILE"
+    $YQ_BIN -i "$yaml_path = \"$value\"" "$yaml_file" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        echo -e "error setting '$value' to '$yaml_path in '$yaml_file': $(get_task_error_message)"
+        echo -e "error setting '$value' to '$yaml_path in '$yaml_file': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
 }
@@ -271,25 +270,53 @@ function set_yaml_file_field_value {
 # Output:
 #   YAML_VALUE - The value of the field. Only if got no error.
 #   If got error will output message with exit code.
-function Get-YamlFileFieldValue {
+function get_yaml_file_field_value {
     local yaml_file="$1"
     local yaml_path="$2"
 
     local result=$($YQ_BIN "$yaml_path" "$yaml_file" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        echo -e "error getting '$yaml_path' from '$yaml_file': $(get_task_error_message)"
+        echo -e "error getting '$yaml_path' from '$yaml_file': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
     if [[ -z "$result" ]]; then
-        echo -e "'$yaml_path' is empty in '$yaml_file'"
+        echo -e "'$yaml_path' is empty in '$yaml_file'" >"$TASK_ERROR_FILE"
         return 2
     fi
     if [[ "$result" == 'null' ]]; then
-        echo -e "'$yaml_path' does not exist in '$yaml_file'"
+        echo -e "'$yaml_path' does not exist in '$yaml_file'" >"$TASK_ERROR_FILE"
         return 3
     fi
 
     YAML_VALUE="$result"
+}
+
+# Gets yaml file field value list
+# input:
+#   yaml_file - Yaml file path
+#   yaml_path - Yaml path
+# Output:
+#   YAML_VALUE - The value (list) of the field. Only if got no error.
+#   If got error will output message with exit code.
+function get_yaml_file_field_value_list {
+    local yaml_file="$1"
+    local yaml_path="$2"
+
+    local result=$($YQ_BIN "$yaml_path" "$yaml_file" 2>"$TASK_ERROR_FILE")
+    if [[ $? -ne 0 ]]; then
+        echo -e "error getting '$yaml_path' from '$yaml_file': $(get_task_error_message)" >"$TASK_ERROR_FILE"
+        return 1
+    fi
+    if [[ -z "$result" ]]; then
+        echo -e "'$yaml_path' is empty in '$yaml_file'" >"$TASK_ERROR_FILE"
+        return 2
+    fi
+    if [[ "$result" == 'null' ]]; then
+        echo -e "'$yaml_path' does not exist in '$yaml_file'" >"$TASK_ERROR_FILE"
+        return 3
+    fi
+
+    readarray -t YAML_VALUE < <(echo -e "$result")
 }
 
 # Adds yaml file field value to another yaml file field
@@ -302,18 +329,18 @@ function Get-YamlFileFieldValue {
 #   Retunrs nothing if everything is ok.
 #   If got error will output message with exit code.
 function add_yaml_file_field_value_to_another_yaml_file_field {
-    local yaml_file_source=$1
-    local yaml_file_dest=$2
-    local yaml_path_source=$3
-    local yaml_path_dest=$4
+    local yaml_file_source="$1"
+    local yaml_file_dest="$2"
+    local yaml_path_source="$3"
+    local yaml_path_dest="$4"
 
-    $YQ_BIN eval-all -i "select(fileIndex==0)$yaml_path_dest += select(fileIndex==1)$yaml_path_source | select(fileIndex==0)" $yaml_file_dest $yaml_file_source 2>$TASK_ERROR_FILE
+    $YQ_BIN eval-all -i "select(fileIndex==0)$yaml_path_dest += select(fileIndex==1)$yaml_path_source | select(fileIndex==0)" "$yaml_file_dest" "$yaml_file_source" 2>$TASK_ERROR_FILE
     if [[ $? -ne 0 ]]; then
         if [[ -z $yaml_path_source ]]; then
             yaml_path_source='.'
         fi
 
-        echo -e "error adding '$yaml_path_source' in '$yaml_file_source' to '$yaml_path_dest' in '$yaml_file_dest': $(get_task_error_message)"
+        echo -e "error adding '$yaml_path_source' in '$yaml_file_source' to '$yaml_path_dest' in '$yaml_file_dest': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
 }
@@ -501,8 +528,8 @@ function execute_task {
     if [[ $exit_code -ne 0 || $is_timeout ]]; then
         echo -ne "\r  [ $RED_COLOR_BOLD\xE2\x9C\x97$WHITE_COLOR ] $RED_COLOR_BOLD$description ...$WHITE_COLOR\n"
 
-        if [[ -f $TASK_POST_RUN_FILE ]]; then
-            source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE
+        if [[ -f "$TASK_POST_RUN_FILE" ]]; then
+            source "$TASK_POST_RUN_FILE" 2>"$TASK_ERROR_FILE"
             if [[ $? -ne 0 ]]; then
                 local message="utils.bash (2): error running task post run script: $(get_task_error_message)"
                 send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_UTILS_FUNCTIONS $func_name $AGENT_ID
@@ -513,7 +540,7 @@ function execute_task {
             fi
         fi
 
-        >$TASK_POST_RUN_FILE
+        >"$TASK_POST_RUN_FILE"
 
         if $is_timeout; then
             exit_code=1
@@ -530,8 +557,8 @@ function execute_task {
 
     echo -ne "\r  [ $GREEN_COLOR_BOLD\xE2\x9C\x94$WHITE_COLOR ] $GREEN_COLOR_BOLD$description ...$WHITE_COLOR\n"
 
-    if [[ -f $TASK_POST_RUN_FILE ]]; then
-        source $TASK_POST_RUN_FILE 2>$TASK_ERROR_FILE
+    if [[ -f "$TASK_POST_RUN_FILE" ]]; then
+        source "$TASK_POST_RUN_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
             local message="utils.bash (2): error running task post run script: $(get_task_error_message)"
             send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_UTILS_FUNCTIONS $func_name $AGENT_ID
@@ -542,5 +569,5 @@ function execute_task {
         fi
     fi
 
-    >$TASK_POST_RUN_FILE
+    >"$TASK_POST_RUN_FILE"
 }
