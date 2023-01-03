@@ -148,7 +148,7 @@ function get_agent_functions_scripts () {
 }
 
 function get_logo_theme () {
-    curl -fsSL $repo_url/scripts/mac/logo-themes/christmas.bash > $logzio_temp_dir/christmas.bash 2>$task_error_file
+    curl -fsSL $repo_url/scripts/mac/logo-themes/default.bash > $logzio_temp_dir/default.bash 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         echo -e "\033[0;36mLogz.io Agent\033[0;37m"
     fi
