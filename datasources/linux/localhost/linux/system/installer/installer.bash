@@ -19,8 +19,8 @@ function run_logs {
 
     source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$LOGS_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): error loading $CURRENT_DATA_SOURCE datasource logs functions: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        message="installer.bash ($exit_code): error loading $CURRENT_DATA_SOURCE datasource logs functions: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
@@ -33,8 +33,8 @@ function run_logs {
 
     source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$LOGS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): error running $CURRENT_DATA_SOURCE datasource logs: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        message="installer.bash ($exit_code): error running $CURRENT_DATA_SOURCE datasource logs: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
@@ -55,10 +55,10 @@ function run_metrics {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE}/$METRICS_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
+    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$METRICS_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): error loading $CURRENT_DATA_SOURCE datasource metrics functions: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        message="installer.bash ($exit_code): error loading $CURRENT_DATA_SOURCE datasource metrics functions: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
@@ -69,10 +69,10 @@ function run_metrics {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE}/$METRICS_FILE" 2>"$TASK_ERROR_FILE"
+    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$METRICS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="agent.bash ($exit_code): error running $CURRENT_DATA_SOURCE datasource metrics: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        message="installer.bash ($exit_code): error running $CURRENT_DATA_SOURCE datasource metrics: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true

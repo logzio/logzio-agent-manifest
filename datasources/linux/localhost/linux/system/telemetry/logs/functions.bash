@@ -339,7 +339,7 @@ function add_logs_exporter_to_otel_config {
     local exists_exporters
     local is_exists_exporters_empty=false
 
-    get-yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters'
+    get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
         message="logs.bash ($exit_code): $(get_task_error_message)"

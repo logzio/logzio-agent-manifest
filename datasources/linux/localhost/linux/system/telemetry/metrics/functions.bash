@@ -86,7 +86,7 @@ function get_metrics_otel_receivers {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    PARAMS=("${metrics_otel_receivers[@]}")
+    LIST=("${metrics_otel_receivers[@]}")
     local metrics_otel_receivers_str=$(convert_list_to_str)
     write_task_post_run "METRICS_OTEL_RECEIVERS=$metrics_otel_receivers_str"
 }
@@ -119,7 +119,7 @@ function add_metrics_receivers_to_otel_config {
         echo -e "$script_block" >"$OTEL_FUNCTION_FILE"
         source "$OTEL_FUNCTION_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="metrics.bash ($exit_code): error loading '$logs_otel_receiver' OTEL function script: $(get_task_error_message)"
+            message="metrics.bash ($exit_code): error loading '$metrics_otel_receiver' OTEL function script: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
     
@@ -154,7 +154,7 @@ function add_metrics_receivers_to_otel_config {
 
         local receiver_name="${metrics_otel_receiver//_//}"
 
-        add_yaml_file_field_value "$OTEL_RECEIVERS_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.metrics.receivers' "$receiver_name/NAME"
+        add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.metrics.receivers' "$receiver_name/NAME"
         if [[ $? -ne 0 ]]; then 
             message="metrics.bash ($exit_code): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -203,7 +203,7 @@ function get_metrics_otel_processors {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     LIST=("${metrics_otel_processors[@]}")
-    local metrics_otel_processorss_str=$(convert_list_to_str)
+    local metrics_otel_processors_str=$(convert_list_to_str)
     write_task_post_run "METRICS_OTEL_PROCESSORS=$metrics_otel_processors_str"
 }
 
@@ -249,11 +249,11 @@ function add_metrics_processors_to_otel_config {
 
         exists_processors=("${YAML_VALUE[@]}")
     fi
-
+    
     for metrics_otel_processor in "${METRICS_OTEL_PROCESSORS[@]}"; do
         local processor_name="${metrics_otel_processor//_//}"
 
-        add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.logs.processors' $processor_name
+        add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.metrics.processors' "$processor_name"
         if [[ $? -ne 0 ]]; then
             message="metrics.bash ($exit_code): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -264,7 +264,7 @@ function add_metrics_processors_to_otel_config {
 
         local is_processor_exists=false
 
-        for exists_processor in ${exists_processors[@]}; do
+        for exists_processor in "${exists_processors[@]}"; do
             exists_processor="${exists_processor////_}"
 
             if [[ "$metrics_otel_processor" == "- $exists_processor" ]]; then
@@ -277,7 +277,7 @@ function add_metrics_processors_to_otel_config {
             continue
         fi
 
-        add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/$logs_otel_processor.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
+        add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/$metrics_otel_processor.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
         if [[ $? -ne 0 ]]; then
             message="metrics.bash ($exit_code): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -304,7 +304,7 @@ function add_metrics_exporter_to_otel_config {
     local exists_exporters
     local is_exists_exporters_empty=false
 
-    get-yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters'
+    get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
         message="metrics.bash ($exit_code): $(get_task_error_message)"
@@ -379,28 +379,12 @@ function set_metrics_address_to_otel_config {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local port=8888
-    local result
-    result=$(lsof -i -n -P 2>"$TASK_ERROR_FILE" | grep "TCP" | grep "LISTEN" | grep "127.0.0.1:$port")
-    if [[ $? -ne 0 ]]; then
-        message="metrics.bash ($exit_code): error checking open ports: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-    
-        return $exit_code
-    fi
-    
+    local result=$(lsof -i -n -P | grep "TCP" | grep "LISTEN" | grep "127.0.0.1:$port")
+
     if [[ ! -z "$result" ]]; then
         while true; do
             ((port++))
-            result=$(lsof -i -n -P 2>"$TASK_ERROR_FILE" | grep "TCP" | grep "LISTEN" | grep "127.0.0.1:$port")
-            if [[ $? -ne 0 ]]; then
-                message="metrics.bash ($exit_code): error checking open ports: $(get_task_error_message)"
-                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-                write_task_post_run "write_error \"$message\""
-    
-                return $exit_code
-            fi
-
+            result=$(lsof -i -n -P | grep "TCP" | grep "LISTEN" | grep "127.0.0.1:$port")
             if [[ -z "$result" ]]; then
                 break
             fi
@@ -409,9 +393,9 @@ function set_metrics_address_to_otel_config {
 
     local address="localhost:$port"
 
-    set_yaml_file_field_value "$OTEK_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.telemetry.metrics.address' "$address"
+    set_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.telemetry.metrics.address' "$address"
     if [[ $? -ne 0 ]]; then
-        message="metrics.bash ($exit_code): error checking open ports: $(get_task_error_message)"
+        message="metrics.bash ($exit_code): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
     
