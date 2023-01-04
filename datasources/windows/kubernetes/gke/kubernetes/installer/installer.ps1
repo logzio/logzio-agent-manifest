@@ -106,15 +106,17 @@ Invoke-Task 'Get-SelectedProducts' @{} 'Getting the selected products' @($Instal
 Invoke-Task 'Get-GeneralParams' @{} 'Getting general params' @($InstallerFunctionsScript)
 # Get is Taints and Tolerations option was selected
 Invoke-Task 'Get-IsTaintsAndTolerationWasSelected' @{GeneralParams = $script:GeneralParams} 'Getting is Taints and Tolerations option was selected' @($InstallerFunctionsScript)
+if ($script:IsTaint) {
+    # Build tolerations Helm sets
+    Invoke-Task 'Build-TolerationsHelmSets' @{GeneralParams = $script:GeneralParams; IsLogsOptionSelected = $script:IsLogsOptionSelected; IsMetricsOptionSelected = $script:IsMetricsOptionSelected; IsTracesOptionSelected = $script:IsTracesOptionSelected} 'Building tolerations Helm sets' @($InstallerFunctionsScript)
+}
 # Get environment id
 Invoke-Task 'Get-EnvironmentID' @{GeneralParams = $script:GeneralParams} 'Getting environment id' @($InstallerFunctionsScript)
-# Build tolerations Helm sets
-Invoke-Task 'Build-TolerationsHelmSets' @{GeneralParams = $script:GeneralParams; IsLogsOptionSelected = $script:IsLogsOptionSelected; IsMetricsOptionSelected = $script:IsMetricsOptionSelected; IsTracesOptionSelected = $script:IsTracesOptionSelected} 'Building tolerations Helm sets' @($InstallerFunctionsScript)
 if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
     # Build enable metrics or traces Helm set
     Invoke-Task 'Build-EnableMetricsOrTracesHelmSet' @{} 'Building enable metrics or traces Helm set' @($InstallerFunctionsScript)
     # Build environment tag Helm set
-    Invoke-Task 'Build-EnvironmentTagHelmSet' @{} 'Building environment tag Helm set' @($InstallerFunctionsScript)
+    Invoke-Task 'Build-EnvironmentTagHelmSet' @{EnvId = $script:EnvId} 'Building environment tag Helm set' @($InstallerFunctionsScript)
     # Build environment id Helm set
     Invoke-Task 'Build-EnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building environment id Helm set' @($InstallerFunctionsScript)
 }

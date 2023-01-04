@@ -19,7 +19,7 @@ function Invoke-RemoveServiceOrExit {
     $local:Answer = ''
 
     while ($true) {
-        Write-Host "'$script:LogzioOtelServiceName' service is already exist. If you continue the service will be removed. Are you sure? (y/n) " -ForegroundColor Yellow -NoNewline
+        Write-Host "'$script:LogzioOtelCollectorServiceName' service is already exists. If you continue the service will be removed. Are you sure? (y/n) " -ForegroundColor Yellow -NoNewline
 
         $Answer = Read-Host
         $Answer = $Answer.ToLower()

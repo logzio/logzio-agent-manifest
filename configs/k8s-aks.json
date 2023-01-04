@@ -19,9 +19,12 @@
               "type": "text",
               "name": "envID",
               "label": "Environment Name",
+              "required": true,
               "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
-              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment. Default value will be used if empty.",
-              "value": ""
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+              "value": "my_environment",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "patternError": "Only letters, numbers, dashes and underscores are allowed"
             },
             {
               "type": "boolean",
@@ -44,18 +47,26 @@
               "params": [
                 {
                   "type": "boolean",
+                  "name": "isFilter",
+                  "label": "Collect only recommended metrics",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate Kubernetes 360 and prebuilt dashboards. In addition, we will also collect application metrics that are exposed by your pods.",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
                   "name": "isWindows",
-                  "label": "Using Windows nodes",
+                  "label": "My Kubernetes cluster is based on Windows nodes",
                   "description": "",
                   "hint": "Check this box if any of your Kubernetes pods are running on Windows nodes. As part of the installation process, you will need to provide the root user credentials to those Windows instances",
                   "value": false
                 }
               ],
               "dashboards": [
-                "5jMvBtrxQwMo0GuDO13kpb",
-                "5BjRR3NuNQb3XHVPhn3HQ0",
-                "2TRgFib4ICfKsrzS5oJwgC",
-                "1EcVjdr5c6heqbxpd6Zs8X"
+                "7nILXHYFZbThgTSMObUxkw",
+                "5TGD77ZKuTiZUXtiM51m6V",
+                "6pY6DKD0oQJL4sO7bW728",
+                "5kkUAuEwA0Ygvlgm9iXTHY"
               ]
             },
             {
