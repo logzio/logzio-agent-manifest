@@ -22,9 +22,12 @@
               "type": "text",
               "name": "envID",
               "label": "Environment Name",
+              "required": true,
               "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
-              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment. Default value will be used if empty.",
-              "value": ""
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+              "value": "my_environment",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "patternError": "Only letters, numbers, dashes and underscores are allowed"
             },
             {
               "type": "boolean",
@@ -46,12 +49,21 @@
               "type": "METRICS",
               "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your Kubernetes cluster, nodes and pods",
-              "params": [],
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "isFilter",
+                  "label": "Collect only recommended metrics",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate Kubernetes 360 and prebuilt dashboards. In addition, we will also collect application metrics that are exposed by your pods.",
+                  "value": true
+                }
+              ],
               "dashboards": [
-                "1aO3NWtPAtVwO5Ipmc3Deh",
-                "6KQUyksnNT2E40PifmCHR5",
-                "X6YYCFajD56zayxcQOG2H",
-                "M06b1BjTSGsSNZBWeiLnR"
+                "7nILXHYFZbThgTSMObUxkw",
+                "5TGD77ZKuTiZUXtiM51m6V",
+                "6pY6DKD0oQJL4sO7bW728",
+                "5kkUAuEwA0Ygvlgm9iXTHY"
               ]
             },
             {

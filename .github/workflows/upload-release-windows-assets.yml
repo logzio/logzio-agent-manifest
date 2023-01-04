@@ -1,0 +1,36 @@
+name: upload release windows assets
+on:
+  release:
+    types: [published]
+
+jobs:
+  upload_windows_assets:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3.0.2
+      - name: Compress Agent
+        run: |
+          tar -czvf agent_windows.tar.gz -C ${GITHUB_WORKSPACE}/scripts/windows .
+      - name: Compress Kubernetes AKS
+        run: |
+          tar -czvf windows_kubernetes_aks.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/aks -C ${GITHUB_WORKSPACE} resources
+      - name: Compress Kubernetes EKS
+        run: |
+          tar -czvf windows_kubernetes_eks.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/eks -C ${GITHUB_WORKSPACE} resources
+      - name: Compress Kubernetes GKE
+        run: |
+          tar -czvf windows_kubernetes_gke.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/gke -C ${GITHUB_WORKSPACE} resources
+      - name: Compress Localhost Windows
+        run: |
+          tar -czvf windows_localhost_windows.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows localhost/windows -C ${GITHUB_WORKSPACE} resources
+      - name: Upload Assets
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            agent_windows.tar.gz
+            windows_kubernetes_aks.tar.gz
+            windows_kubernetes_eks.tar.gz
+            windows_kubernetes_gke.tar.gz
+            windows_localhost_windows.tar.gz

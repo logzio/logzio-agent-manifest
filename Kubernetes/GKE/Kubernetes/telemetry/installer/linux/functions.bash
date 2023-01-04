@@ -12,7 +12,7 @@
 function get_general_params () {
     write_log "INFO" "Getting general params ..."
 
-    local general_params=$(jq -r '.configuration.subtypes[0].datasources[0].params[]' $app_json)
+    local general_params=$($jq_bin -r '.configuration.subtypes[0].datasources[0].params[]' $app_json)
     if [[ "$general_params" = null ]]; then
         write_run "print_error \"installer.bash (1): .configuration.subtypes[0].datasources[0].params[] was not found in application JSON\""
         return 1
@@ -39,7 +39,7 @@ function get_general_params () {
 function get_selected_products () {
     write_log "INFO" "Getting the selected products ..."
 
-    local telemetries=$(jq -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
+    local telemetries=$($jq_bin -c '.configuration.subtypes[0].datasources[0].telemetries[]' $app_json)
     if [[ "$telemetries" = null ]]; then
         write_run "print_error \"installer.bash (2): .configuration.subtypes[0].datasources[0].telemetries[] was not found in application JSON\""
         return 2
@@ -55,7 +55,7 @@ function get_selected_products () {
     local index=0
 
     while read -r telemetry; do
-        local type=$(echo "$telemetry" | jq -r '.type')
+        local type=$(echo "$telemetry" | $jq_bin -r '.type')
         if [[ "$type" = null ]]; then
             write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].type' was not found in application JSON\""
             return 2
@@ -65,7 +65,7 @@ function get_selected_products () {
             return 2
         fi
 
-        local params=$(echo -e "$telemetry" | jq -r '.params[]')
+        local params=$(echo -e "$telemetry" | $jq_bin -r '.params[]')
         if [[ "$params" = null ]]; then
             write_run "print_error \"installer.bash (2): '.configuration.subtypes[0].datasources[0].telemetries[$index].params[]' was not found in application JSON\""
             return 2
@@ -113,7 +113,7 @@ function build_tolerations_helm_sets () {
         return 3
     fi
 
-    local is_taint_value=$(echo -e "$is_taint_param" | jq -r '.value')
+    local is_taint_value=$(echo -e "$is_taint_param" | $jq_bin -r '.value')
     if [[ "$is_taint_value" = null ]]; then
         write_run "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isTaint}].value' was not found in application JSON\""
         return 3
@@ -128,7 +128,7 @@ function build_tolerations_helm_sets () {
         return
     fi
                     
-    local items=$(kubectl get nodes -o json 2>/dev/null | jq -r '.items')
+    local items=$(kubectl get nodes -o json 2>/dev/null | $jq_bin -r '.items')
     if [[ "$items" = null ]]; then
         write_run "print_error \"installer.bash (3): '.items[]' was not found in kubectl get nodes JSON\""
         return 3
@@ -142,20 +142,20 @@ function build_tolerations_helm_sets () {
     local index=0
 
     while read -r taint; do
-        local key=$(echo -e "$taint" | jq -r '.key')
+        local key=$(echo -e "$taint" | $jq_bin -r '.key')
         if [[ "$key" = null ]]; then
             write_run "print_error \"installer.bash (3): '.items[{item}].key' was not found in kubectl get nodes JSON\""
             return 3
         fi
 
-        local effect=$(echo -e "$taint" | jq -r '.effect')
+        local effect=$(echo -e "$taint" | $jq_bin -r '.effect')
         if [[ "$effect" = null ]]; then
             write_run "print_error \"installer.bash (3): '.items[{item}].effect' was not found in kubectl get nodes JSON\""
             return 3
         fi
 
         local operator="Exists"
-        local value=$(echo -e "$taint" | jq -r '.value')
+        local value=$(echo -e "$taint" | $jq_bin -r '.value')
         if [[ "$value" != null ]]; then
             operator="Equal"
 
@@ -191,7 +191,7 @@ function build_tolerations_helm_sets () {
         fi
 
         let "index++"
-    done < <(echo -e "$items" | jq -c '.[].spec | select(.taints!=null) | .taints[]')
+    done < <(echo -e "$items" | $jq_bin -c '.[].spec | select(.taints!=null) | .taints[]')
 
     write_log "INFO" "tolerations_sets = $tolerations_sets"
     write_run "log_helm_sets+='$tolerations_sets'"
@@ -237,22 +237,10 @@ function build_enable_metrics_or_traces_helm_set () {
 # Builds metrics/traces environment tag helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
-# Error:
-#   Exit Code 5
 function build_environment_tag_helm_set () {
     write_log "INFO" "Building environment tag Helm set ..."
 
-    local env_tag=$(jq -r '.id' $app_json)
-    if [[ "$env_tag" = null ]]; then
-        write_run "print_error \"installer.bash (5): '.id' was not found in application JSON\""
-        return 5
-    fi
-    if [[ -z "$env_tag" ]]; then
-        write_run "print_error \"installer.bash (5): '.id' is empty in application JSON\""
-        return 5
-    fi
-
-    local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_tag"
+    local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$env_id"
     write_log "INFO" "helm_set = $helm_set"
     write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"

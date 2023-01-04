@@ -1,0 +1,29 @@
+{
+  "name": "Installation",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "description": "",
+  "manifest": true,
+  "subtypes": [
+    {
+      "name": "single-os",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
+      "description": "",
+      "supportedOs": ["Mac"],
+      "datasources": [
+        {
+          "name": "datasource with only logs",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logzio Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
+              "params": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

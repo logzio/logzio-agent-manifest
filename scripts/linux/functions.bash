@@ -4,66 +4,22 @@
 ###################################################### Agent Linux Functions ####################################################
 #################################################################################################################################
 
-# Checks if one of the package managers (apt-get/yum) is installed
-# Error:
-#   Exit Code 3
-function is_package_manager_installed () {
-    write_log "INFO" "Checking if apt-get is installed ..."
-    which apt-get >/dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
-        write_log "INFO" "package_manager = apt-get"
-        write_run "package_manager=\"apt-get\""
-        return
-    fi
-
-    write_log "INFO" "Checking if yum is installed ..."
-    which yum >/dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "package_manager = yum"
-        write_run "package_manager=\"yum\""
-        return
-    fi
-
-    write_run "print_error \"agent.bash (3): did not find apt-get or yum package managers\""
-    return 3
-}
-
 # Installs jq
 # Error:
 #   Exit Code 3
 function install_jq () {
-    write_log "INFO" "Checking if jq is installed ..."
-    which jq >/dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
-        return
-    fi
-
     write_log "INFO" "Installing jq ..."
-    local result=0 
 
-    if [[ "$package_manager" = "apt-get" ]]; then
-        sudo apt-get install -y jq >/dev/null 2>$task_error_file
-        if [[ $? -eq 0 ]]; then
-            echo "success apt-get" >> test.txt
-            return
-        fi
-
+    jq_bin="$logzio_temp_dir/jq"
+    curl -fsSL https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64 > $jq_bin 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"agent.bash (3): failed to install jq.\n  $err\""
+        write_run "print_error \"agent.bash (3): failed to get jq binary file from Github.\n  $err\""
         return 3
     fi
 
-    if [[ "$package_manager" = "yum" ]]; then
-        sudo yum install -y jq >/dev/null 2>$task_error_file
-        if [[ $? -eq 0 ]]; then
-            echo "success yum" >> test.txt
-            return
-        fi
-
-        local err=$(cat $task_error_file)
-        write_run "print_error \"agent.bash (3): failed to install jq.\n  $err\""
-        return 3
-    fi
+    chmod +x $jq_bin
+    write_run "jq_bin=\"$jq_bin\""
 }
 
 # Gets the application JSON from the agent/local file into logzio-temp directory
@@ -88,7 +44,7 @@ function get_app_json () {
         return 4
     fi
 
-    local status_code=$(jq -r '.statusCode' $app_json)
+    local status_code=$($jq_bin -r '.statusCode' $app_json)
     if [[ "$status_code" = null ]]; then
         return
     fi
@@ -105,7 +61,7 @@ function get_app_json () {
 function build_repo_path () {
     write_log "INFO" "Building repo path ..."
     
-    local dir1=$(jq -r '.configuration.name' $app_json)
+    local dir1=$($jq_bin -r '.configuration.name' $app_json)
     if [[ "$dir1" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.name' was not found in application JSON\""
         return 5
@@ -115,7 +71,7 @@ function build_repo_path () {
         return 5
     fi
 
-    local dir2=$(jq -r '.configuration.subtypes[0].name' $app_json)
+    local dir2=$($jq_bin -r '.configuration.subtypes[0].name' $app_json)
     if [[ "$dir2" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].name' was not found in application JSON\""
         return 5
@@ -125,7 +81,7 @@ function build_repo_path () {
         return 5
     fi
 
-    local dir3=$(jq -r '.configuration.subtypes[0].datasources[0].name' $app_json)
+    local dir3=$($jq_bin -r '.configuration.subtypes[0].datasources[0].name' $app_json)
     if [[ "$dir3" = null ]]; then
         write_run "print_error \"agent.bash (5): '.configuration.subtypes[0].datasources[0].name' was not found in application JSON\""
         return 5

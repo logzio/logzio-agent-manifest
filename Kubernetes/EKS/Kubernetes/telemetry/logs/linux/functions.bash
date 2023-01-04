@@ -24,7 +24,7 @@ function build_enable_logs_helm_set () {
 function build_logzio_logs_listener_url_helm_set () {
     write_log "INFO" "Building Logz.io logs listener URL Helm set ..."
 
-    local listener_url=$(jq -r '.listenerUrl' $app_json)
+    local listener_url=$($jq_bin -r '.listenerUrl' $app_json)
     if [[ "$listener_url" = null ]]; then
         write_run "print_error \"logs.bash (1): '.listenerUrl' was not found in application JSON\""
         return 1
@@ -48,7 +48,7 @@ function build_logzio_logs_listener_url_helm_set () {
 function build_logzio_logs_token_helm_set () {
     write_log "INFO" "Building Logz.io logs token Helm set ..."
 
-    local shipping_token=$(jq -r '.shippingTokens.LOG_ANALYTICS' $app_json)
+    local shipping_token=$($jq_bin -r '.shippingTokens.LOG_ANALYTICS' $app_json)
     if [[ "$shipping_token" = null ]]; then
         write_run "print_error \"logs.bash (2): '.shippingTokens.LOG_ANALYTICS' was not found in application JSON\""
         return 2
@@ -81,6 +81,51 @@ function build_environment_id_helm_set () {
     write_run "helm_sets+='$helm_set'"
 }
 
+# Gets is Fargate was selected
+# Output:
+#   helm_sets - Contains all the Helm sets
+# Error:
+#   Exit Code 3
+function get_is_fargate_was_selected () {
+    write_log "INFO" "Getting is Fargate was selected ..."
+
+    local is_fargate_param=$(find_param "$logs_params" "isFargate")
+    if [[ -z "$is_fargate_param" ]]; then
+        write_run "print_error \"installer.bash (3): isFargate param was not found\""
+        return 3
+    fi
+
+    local is_fargate_value=$(echo -e "$is_fargate_param" | $jq_bin -r '.value')
+    if [[ "$is_fargate_value" = null ]]; then
+        write_run "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isFargate}].value' was not found in application JSON\""
+        return 3
+    fi
+    if [[ -z "$is_fargate_value" ]]; then
+        write_run "print_error \"installer.bash (3): '.configuration.subtypes[0].datasources[0].params[{name=isFargate}].value' is empty in application JSON\""
+        return 3
+    fi
+
+    if ! $is_fargate_value; then
+        write_log "INFO isFargate value = false"
+    else
+        write_log "INFO isFargate value = true"
+    fi
+
+    write_run "is_farget=$is_fargate_value"
+}
+
+# Builds enable Fargate Helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+function build_enable_fargate_helm_set () {
+    write_log "INFO" "Building enable Fargate Helm set ..."
+
+    local helm_set=" --set fargateLogRouter.enabled=true"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
+
 # Builds multiline Helm sets
 # Output:
 #   helm_sets - Contains all the Helm sets
@@ -95,7 +140,7 @@ function build_multiline_helm_sets () {
         return 3
     fi
 
-    local multiline_value=$(echo -e "$multiline_param" | jq -c '.value[]')
+    local multiline_value=$(echo -e "$multiline_param" | $jq_bin -c '.value[]')
     if [[ "$multiline_value" = null ]]; then
         write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[]' was not found in application JSON\""
         return 3
@@ -127,7 +172,7 @@ function build_multiline_helm_sets () {
         local filter=$(cat $logzio_temp_dir/multiline_filter.conf)
         local name="custom$index"
 
-        local path=$(echo -e "$obj" | jq -r '.source')
+        local path=$(echo -e "$obj" | $jq_bin -r '.source')
         if [[ "$path" = null ]]; then
             write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].source' was not found in application JSON\""
             return 3
@@ -139,7 +184,7 @@ function build_multiline_helm_sets () {
 
         paths+=",$path"
 
-        local regex=$(echo -e "$obj" | jq -r '.pattern')
+        local regex=$(echo -e "$obj" | $jq_bin -r '.pattern')
         if [[ "$regex" = null ]]; then
             write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOG_ANALYTICS}].params[{name=multiline}].value[{obj}].pattern' was not found in application JSON\""
             return 3

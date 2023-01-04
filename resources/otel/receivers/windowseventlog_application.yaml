@@ -1,0 +1,33 @@
+mac_run:
+linux_run:
+windows_run: |
+  function New-OtelReceiver {
+    param (
+      [hashtable]$FuncArgs
+    )
+
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('IsApplicationLog', 'LogsType')
+    if ($Err.Count -ne 0) {
+      Write-Output $Err[0]
+      return 2
+    }
+
+    $local:IsApplicationLog = $FuncArgs.IsApplicationLog
+    $local:LogsType = $FuncArgs.LogsType
+
+    if (-Not $IsApplicationLog) {
+      Write-Output 'Application log option was not selected'
+      return 1
+    }
+
+    $local:Err = Set-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\windowseventlog_application.yaml" '.receiver.windowseventlog/application/NAME.attributes.type' $LogsType
+    if ($Err.Count -ne 0) {
+      Write-Output "error setting type to windowseventlog/application receiver: $($Err[0])"
+      return 3
+    }
+  }
+receiver:
+  windowseventlog/application/NAME:
+    channel: Application
+    attributes:
+      type:

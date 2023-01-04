@@ -1,3 +1,4 @@
+name: update latest release
 on:
   push:
     branches:
