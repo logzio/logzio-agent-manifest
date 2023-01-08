@@ -1,5 +1,6 @@
 mac_run:
 linux_run: |
+  #!/bin/bash
   function create_otel_receiver {
     for log_source in "${LOG_SOURCES[@]}"; do
       add_yaml_file_field_value "$OTEL_RECEIVERS_DIR/filelog.yaml" '.receiver.filelog/NAME.include' "$log_source"
