@@ -49,6 +49,7 @@ function write_log {
 function write_task_post_run {
     local command="$1"
 
+    echo -e "#!/bin/bash" >>"$TASK_POST_RUN_FILE"
     echo -e "$command" >>"$TASK_POST_RUN_FILE"
 }
 
@@ -536,6 +537,7 @@ function execute_task {
                 write_error "$message"
 
                 IS_AGENT_FAILED=true
+                run_final
                 exit 2
             fi
         fi
@@ -552,6 +554,7 @@ function execute_task {
             IS_AGENT_FAILED=true
         fi
         
+        run_final
         exit $exit_code
     fi
 
@@ -565,6 +568,7 @@ function execute_task {
             write_error "$message"
 
             IS_AGENT_FAILED=true
+            run_final
             exit 2
         fi
     fi

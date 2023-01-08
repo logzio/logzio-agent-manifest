@@ -4,14 +4,26 @@
 ####################################################### LINUX Agent Script ######################################################
 #################################################################################################################################
 
+# Run final commands
+# Input:
+#   ---
+# Ouput:
+#   ---
+function run_final {
+    write_agent_final_messages
+    delete_temp_dir
+
+    tput cnorm -- normal 2>/dev/null
+}
+
 # Deletes Logz.io temp directory
 # Input:
 #   ---
 # Output:
 #   ---
 function delete_temp_dir {
-    rm -f -R $LOGZIO_TEMP_DIR 2>$TASK_ERROR_FILE
-    if [[$? -ne 0]]; then
+    rm -f -R "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
         write_warning "failed to delete Logz.io temp directory: $(get_task_error_message)"
     fi
 }
@@ -22,14 +34,14 @@ function delete_temp_dir {
 # Output:
 #   Agent final messages
 function write_agent_final_messages {
-    local func_name=$0
+    local func_name="${FUNCNAME[0]}"
 
     if $IS_SHOW_HELP; then
         return
     fi
     if $IS_LOADING_AGENT_SCRIPTS_FAILED; then
         local message='Agent Failed'
-        write_agent_status $message 'Red'
+        write_agent_status "$message" '\033[0;31m'
         write_agent_support
         return
     fi
@@ -38,31 +50,31 @@ function write_agent_final_messages {
         write_agent_support
         return
     fi
-    if $Is_AGENT_FAILED; then
+    if $IS_AGENT_FAILED; then
         local message='Agent Failed'
-        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
-        write_log $LOG_LEVEL_INFO $message
+        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_log "$LOG_LEVEL_INFO" "$message"
 
-        write_agent_status $message 'Red'
+        write_agent_status "$message" '\033[0;31m'
         write_agent_support
         return
     fi
     if $IS_POSTREQUISITE_FAILED; then
         local message='Agent Failed'
-        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
-        write_log $LOG_LEVEL_INFO $message
+        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_log "$LOG_LEVEL_INFO" "$message"
 
-        write_agent_status $message 'Red'
+        write_agent_status "$message" '\033[0;31m'
         write_agent_info
         write_agent_support
         return
     fi
     if $IS_AGENT_COMPLETED; then
         local message='Agent Completed Successfully'
-        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
-        write_log $LOG_LEVEL_INFO $message
+        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_log "$LOG_LEVEL_INFO" "$message"
 
-        write_agent_status $message 'Green'
+        write_agent_status "$message" '\033[0;32m'
         write_agent_info
         write_agent_support
         return
@@ -79,10 +91,11 @@ function write_agent_interruption_message {
     local message='Agent Stopped By User'
     
     if [[ $(type -t send_log_to_logzio) == function ]]; then
-        send_log_to_logzio $LOG_LEVEL_INFO $message $LOG_STEP_FINAL $LOG_SCRIPT_AGENT $func_name $AGENT_ID
+        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     fi
 
-    write_agent_status $message 'Yellow'
+    write_agent_status "$message" '\033[0;33m'
+    exit
 }
 
 # Prints agent status
@@ -91,8 +104,8 @@ function write_agent_interruption_message {
 # Ouput:
 #   Agent status
 function write_agent_status {
-    local $message=$1
-    local $color=$2
+    local message="$1"
+    local color="$2"
 
     echo
     echo
@@ -100,12 +113,12 @@ function write_agent_status {
     local repeat=5
     while [[ $repeat -ne 0 ]]; do
         if [[ $((repeat%2)) -eq 0 ]]; then
-            echo -e "\r##### $message #####"
+            echo -ne "\r##### $message #####"
         else
-            echo -e "\r$color##### $message #####$WHITE_COLOR"
+            echo -ne "\r$color##### $message #####\033[0;37m"
         fi
 
-        sleep 250
+        sleep 0.25
         ((repeat--))
     done
 
@@ -114,10 +127,10 @@ function write_agent_status {
 }
 
 function write_agent_info {
-    source "$LOGZIO_TEMP_DIR/$PLATFORM/$SUB_TYPE/$AGENT_INFO_FILE" 2>$TASK_ERROR_FILE
+    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/$AGENT_INFO_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         local message="failed to print agent info: $(get_task_error_message)"
-        write_warning $message
+        write_warning "$message"
     fi
 }
 
@@ -141,7 +154,8 @@ function write_agent_support {
 AGENT_VERSION='v1.0.40'
 
 # Settings
-tput civis -- invisible
+trap "write_agent_interruption_message" INT 
+tput civis -- invisible 2>/dev/null
 
 # Agent args
 AGENT_ARGS=("$@")
@@ -163,7 +177,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Load consts
-source /tmp/logzio/consts.bash 2>/tmp/logzio/task_error.txt
+source '/tmp/logzio/consts.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
     echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
@@ -171,7 +185,7 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 # Load agent functions
-source /tmp/logzio/functions.bash 2>/tmp/logzio/task_error.txt
+source '/tmp/logzio/functions.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
     echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
@@ -179,7 +193,7 @@ if [[ $? -ne 0 ]]; then
     exit 1
 fi
 # Load agent utils functions
-source /tmp/logzio/utils_functions.bash 2>/tmp/logzio/task_error.txt
+source '/tmp/logzio/utils_functions.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
     echo -e "${RED_COLOR}agent.bash (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)$WHITE_COLOR"
@@ -188,12 +202,12 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
-if [[ -f $TASK_POST_RUN_FILE ]]; then
-    >$TASK_POST_RUN_FILE
+if [[ -f "$TASK_POST_RUN_FILE" ]]; then
+    >"$TASK_POST_RUN_FILE"
 fi
 
 # Write agent running log
-write_log $LOG_LEVEL_INFO 'Start running Logz.io agent ...'
+write_log "$LOG_LEVEL_INFO" 'Start running Logz.io agent ...'
 
 # Print title
 echo -e '##########################'
@@ -240,3 +254,12 @@ run_sub_type_prerequisites
 
 # Run subtype installer
 run_sub_type_installer
+
+if ! $IS_REMOVE_LAST_RUN_ANSWER_NO; then
+    # Run subtype post-requisites
+    run_sub_type_postrequisites
+fi
+    
+IS_AGENT_COMPLETED=true
+
+run_final

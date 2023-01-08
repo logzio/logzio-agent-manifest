@@ -569,6 +569,7 @@ function run_sub_type_prerequisites {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 
@@ -583,6 +584,7 @@ function run_sub_type_prerequisites {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 }
@@ -607,6 +609,7 @@ function run_sub_type_installer {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 
@@ -621,6 +624,7 @@ function run_sub_type_installer {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 }
@@ -634,6 +638,21 @@ function run_sub_type_postrequisites {
     local exit_code=14
     local func_name="${FUNCNAME[0]}"
 
+    local message='Laoding subtype post-requisites functions ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/$POSTREQUISITES_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="agent.bash ($exit_code): error loading subtype post-requisites functions: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+        write_error "$message"
+
+        IS_AGENT_FAILED=true
+        run_final
+        exit $exit_code
+    fi
+
     local message='Running subtype post-requisites ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
@@ -645,6 +664,7 @@ function run_sub_type_postrequisites {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 }

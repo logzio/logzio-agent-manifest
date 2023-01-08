@@ -52,7 +52,7 @@ OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/rel
 # Url for AWS SQS
 SQS_URL='https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
 
-## Exe files
+## Bin files
 # Jq binary file path
 JQ_BIN="$LOGZIO_TEMP_DIR/jq"
 # Yq binary file path
@@ -62,7 +62,7 @@ YQ_BIN="$LOGZIO_TEMP_DIR/yq_linux_amd64"
 # OTEL function file
 OTEL_FUNCTION_FILE="$LOGZIO_TEMP_DIR/otel_function.bash"
 # OTEL collector binary file name
-OTEL_COLLECTOR_BIN_NAME='otelcol-logzio-windows_amd64.exe'
+OTEL_COLLECTOR_BIN_NAME='otelcol-logzio-linux_amd64'
 # OTEL collector binary file path
 OTEL_COLLECTOR_BIN="$LOGZIO_OTEL_COLLECTOR_DIR/$OTEL_COLLECTOR_BIN_NAME"
 # OTEL config file name
