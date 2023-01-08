@@ -24,6 +24,7 @@ function run_logs {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 
@@ -38,6 +39,7 @@ function run_logs {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 }
@@ -62,6 +64,7 @@ function run_metrics {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 
@@ -76,6 +79,7 @@ function run_metrics {
         write_error "$message"
 
         IS_AGENT_FAILED=true
+        run_final
         exit $exit_code
     fi
 }
