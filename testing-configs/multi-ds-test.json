@@ -30,7 +30,7 @@
               "params": [
                 {
                   "type": "boolean",
-                  "name": "datasource-1-logs-boolean-1",
+                  "name": "datasource--1-logs-boolean-1",
                   "label": "Datasource 1 Logs Bool 1",
                   "value": true
                 },
