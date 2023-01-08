@@ -143,7 +143,7 @@ function Write-AgentSupport {
 
 
 # Agent version
-$script:AgentVersion = 'v1.0.38'
+$script:AgentVersion = 'v1.0.39'
 
 # Settings
 $ProgressPreference = 'SilentlyContinue'
@@ -161,7 +161,7 @@ $script:IsAgentCompleted = $false
 # Print main title
 try {
     # Christmas theme
-    . $env:TEMP\Logzio\logo-themes\christmas.ps1 -ErrorAction Stop
+    . $env:TEMP\Logzio\logo-themes\default.ps1 -ErrorAction Stop
 }
 catch {
     Write-Host
