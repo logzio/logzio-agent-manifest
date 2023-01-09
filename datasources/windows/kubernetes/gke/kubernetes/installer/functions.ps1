@@ -358,7 +358,7 @@ function Build-TolerationsHelmSets {
 
         $local:Operator = 'Exists'
         $local:Value = $null
-        $Err = Get-JsonFileFieldValue $Taint '.value'
+        $Err = Get-JsonStrFieldValue $Taint '.value'
         if ($Err.Count -ne 0 -and $Err[1] -ne 3) {
             $Message = "installer.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
