@@ -90,6 +90,7 @@ function send_log_to_logzio {
     local data_source="$9"
 
     message="${message//\"/\\\"}"
+    message=$(echo -e "$message" | tr '\n' ' ')
 
     log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\",\"cpu_arch\":\"$CPU_ARCH\""
 

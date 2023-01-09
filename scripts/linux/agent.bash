@@ -79,6 +79,16 @@ function write_agent_final_messages {
         write_agent_support
         return
     fi
+    if $IS_AGENT_STOPPED; then
+        local message='Agent Stopped By User'
+    
+        if [[ $(type -t send_log_to_logzio) == function ]]; then
+            send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        fi
+
+        write_agent_status "$message" '\033[0;33m'
+        return
+    fi
 }
 
 # Prints agent interruption message
@@ -88,13 +98,10 @@ function write_agent_final_messages {
 #   Agent interruption message
 function write_agent_interruption_message {
     trap SIGINT
-    local message='Agent Stopped By User'
-    
-    if [[ $(type -t send_log_to_logzio) == function ]]; then
-        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-    fi
 
-    write_agent_status "$message" '\033[0;33m'
+    IS_AGENT_STOPPED=true
+    run_final
+
     exit
 }
 
@@ -164,6 +171,7 @@ AGENT_ARGS=("$@")
 IS_SHOW_HELP=false
 IS_LOADING_AGENT_SCRIPTS_FAILED=false
 IS_REMOVE_LAST_RUN_ANSWER_NO=false
+IS_AGENT_STOPPED=false
 IS_AGENT_FAILED=false
 IS_POSTREQUISITE_FAILED=false
 IS_AGENT_COMPLETED=false
