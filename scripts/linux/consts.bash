@@ -13,6 +13,8 @@ LOGZIO_OPT_DIR='/opt/logzio-agent'
 ## Resources Directory
 # Resources directory
 LOGZIO_RESOURCES_DIR="$LOGZIO_TEMP_DIR/resources"
+# Resources Linux directory
+LOGZIO_RESOURCES_LINUX_DIR="$LOGZIO_TEMP_DIR/resources_linux"
 
 ## OTEL Directories
 # Logz.io OTEL collector opt subdirectory
@@ -25,6 +27,10 @@ OTEL_RECEIVERS_DIR="$OTEL_RESOURCES_DIR/receivers"
 OTEL_PROCESSORS_DIR="$OTEL_RESOURCES_DIR/processors"
 # OTEL exporters directory
 OTEL_EXPORTERS_DIR="$OTEL_RESOURCES_DIR/exporters"
+
+## OTEL Logzio Directories
+# Resources Linux OTEL directory
+OTEL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/otel"
 
 ## Kubernetes Directories
 # Logz.io Kubernetes AppData subdirectory
@@ -68,7 +74,7 @@ OTEL_COLLECTOR_BIN="$LOGZIO_OTEL_COLLECTOR_DIR/$OTEL_COLLECTOR_BIN_NAME"
 # OTEL config file name
 OTEL_CONFIG_NAME='otel_config.yaml'
 # OTEL config file path
-OTEL_CONFIG="$LOGZIO_OTEL_COLLECTOR_DIR/OTEL_CONFIG_NAME"
+OTEL_CONFIG="$LOGZIO_OTEL_COLLECTOR_DIR/$OTEL_CONFIG_NAME"
 
 ## Kubernetes files
 # Logz.io Helm file path
