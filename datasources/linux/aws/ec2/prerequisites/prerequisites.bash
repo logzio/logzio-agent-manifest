@@ -13,7 +13,7 @@ echo -e '#####################'
 load_prerequisites_utils
 
 MACHINE_NAME='EC2'
-# Check if localhost can connect to Logz.io logs (port 8071)
-execute_task 'can_machine_connect_to_logzio_logs' 'Checking if localhost can connect to Logz.io logs'
-# Check if localhost can connect to Logz.io metrics (port 8053)
-execute_task 'can_machine_connect_to_logzio_metrics' 'Checking if localhost can connect to Logz.io metrics'
+# Check if EC2 can connect to Logz.io logs (port 8071)
+execute_task 'can_machine_connect_to_logzio_logs' 'Checking if EC2 can connect to Logz.io logs'
+# Check if EC2 can connect to Logz.io metrics (port 8053)
+execute_task 'can_machine_connect_to_logzio_metrics' 'Checking if EC2 can connect to Logz.io metrics'
