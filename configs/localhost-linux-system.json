@@ -20,7 +20,7 @@
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your computer.",
               "otel": {
-                "receivers": ["filelog","windowseventlog_application","windowseventlog_security","windowseventlog_system"],
+                "receivers": ["filelog"],
                 "processors": ["resourcedetection_system"]
 				      },
               "params":
