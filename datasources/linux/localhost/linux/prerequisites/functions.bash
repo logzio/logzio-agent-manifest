@@ -5,6 +5,9 @@
 #################################################################################################################################
 
 function load_prerequisites_utils {
+    local exit_code=1
+    local func_name="${FUNCNAME[0]}"
+
     local message='Laoding prerequisites utils functions ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
