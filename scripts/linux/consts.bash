@@ -16,6 +16,12 @@ LOGZIO_RESOURCES_DIR="$LOGZIO_TEMP_DIR/resources"
 # Resources Linux directory
 LOGZIO_RESOURCES_LINUX_DIR="$LOGZIO_TEMP_DIR/resources_linux"
 
+## Resources Linux Directories
+# Resources Linux OTEL directory
+OTEL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/otel"
+# Resources Linux all directory
+ALL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/all"
+
 ## OTEL Directories
 # Logz.io OTEL collector opt subdirectory
 LOGZIO_OTEL_COLLECTOR_DIR="$LOGZIO_OPT_DIR/logzio-otel-collector"
@@ -27,10 +33,6 @@ OTEL_RECEIVERS_DIR="$OTEL_RESOURCES_DIR/receivers"
 OTEL_PROCESSORS_DIR="$OTEL_RESOURCES_DIR/processors"
 # OTEL exporters directory
 OTEL_EXPORTERS_DIR="$OTEL_RESOURCES_DIR/exporters"
-
-## OTEL Logzio Directories
-# Resources Linux OTEL directory
-OTEL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/otel"
 
 ## Kubernetes Directories
 # Logz.io Kubernetes AppData subdirectory
