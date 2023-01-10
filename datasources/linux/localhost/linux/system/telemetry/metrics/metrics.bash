@@ -10,6 +10,8 @@ echo -e '###############'
 echo -e "###$PURPLE_COLOR Metrics $WHITE_COLOR###"
 echo -e '###############'
 
+load_metrics_utils
+
 # Get Logz.io metrics token
 execute_task 'get_logzio_metrics_token' 'Getting Logz.io metrics token'
 # Add metrics pipeline to OTEL confing
