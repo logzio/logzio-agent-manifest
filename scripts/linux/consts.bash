@@ -14,7 +14,7 @@ LOGZIO_OPT_DIR='/opt/logzio-agent'
 # Resources directory
 LOGZIO_RESOURCES_DIR="$LOGZIO_TEMP_DIR/resources"
 # Resources Linux directory
-LOGZIO_RESOURCES_LINUX_DIR="$LOGZIO_TEMP_DIR/resources_linux"
+LOGZIO_RESOURCES_LINUX_DIR="$LOGZIO_TEMP_DIR/resources-linux"
 
 ## Resources Linux Directories
 # Resources Linux OTEL directory
