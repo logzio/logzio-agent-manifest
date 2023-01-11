@@ -264,7 +264,6 @@ function populate_data_to_config (){
 function populate_filter_for_service_name(){
     all_services="all_services"
     local resource_type=""
-    write_log "[INFO] Populate data=> $resource_type_item ."
     while read -r resource_type_item; do
         if [[ ! -z "$resource_type_item" ]]; then
             array_filter_bulk_names=(${resource_type_item//,/ })
@@ -276,15 +275,21 @@ function populate_filter_for_service_name(){
                 array_filter_names=(${resource_bulk_type//,/ })
                 last_element=${#array_filter_names[@]}
 				write_log "[INFO] Populate data v2=> $array_filter_names"
+					write_log "[INFO] Populate filter v2=> $filter"
                 current_bulk=$((current_bulk + 1))
                 current=0
                 for name in "${array_filter_names[@]}"
                 do
 					write_log "[INFO] Populate data v3=> $name"
+					write_log "[INFO] Populate filter v3=> $filter"
                     current=$((current + 1))
                     if [ $current -eq $last_element ]; then
+					write_log "[INFO] Populate data v4=> $name"
+					write_log "[INFO] Populate filter v4=> $filter"
                         filter+=" resource.type=${name}"
                     else
+					write_log "[INFO] Populate data v5=> $name"
+					write_log "[INFO] Populate filter v5=> $filter"
                         filter+=" resource.type=${name} OR"
                     fi
                 done
