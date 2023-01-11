@@ -269,7 +269,7 @@ function populate_filter_for_service_name(){
         if [[ ! -z "$resource_type_item" ]]; then
 
             array_filter_bulk_names=(${resource_type_item//,/ })
-            last_bulk_element=${#array_filter_bulk_names[@]}
+            last_bulk_element=${#resource_type_item[@]}
             current_bulk=0
             for resource_bulk_type in "${array_filter_bulk_names[@]}"
             do
