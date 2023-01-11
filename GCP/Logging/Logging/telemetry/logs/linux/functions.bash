@@ -188,7 +188,14 @@ function get_gcloud_function_region_log () {
 #   Exit Code 3
 function download_cloud_funcion_to_temp_directory (){
     write_log "[INFO] Download from github cloud function..."
-    tmpfile=$(mktemp)
+
+	mkdir $logzio_temp_dir/function_cloud
+	if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to create folder for cloud function files.\n  $err\""
+        return 3
+    fi
+
     curl -fsSL $repo_path/telemetry/logs/function_cloud/function.go > $logzio_temp_dir/function_cloud/function.go 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
