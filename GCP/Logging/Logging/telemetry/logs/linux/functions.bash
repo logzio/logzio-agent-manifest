@@ -289,7 +289,7 @@ function populate_filter_for_service_name(){
                     fi
                 done
                 write_log "[INFO] current el of the services  $current_bulk"
-                write_log "[INFO] last el of the services  $current_bulk"
+                write_log "[INFO] last el of the services  $last_bulk_element"
                 if [ ! $current_bulk -eq $last_bulk_element ]; then
                     filter+=" OR"
                 fi	
