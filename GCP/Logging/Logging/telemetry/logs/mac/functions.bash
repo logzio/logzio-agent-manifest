@@ -189,8 +189,8 @@ function get_gcloud_function_region_log () {
 function download_cloud_funcion_to_temp_directory (){
     write_log "[INFO] Download from github cloud function..."
 
-	mkdir $logzio_temp_dir/function_cloud
-	if [[ $? -ne 0 ]]; then
+    mkdir $logzio_temp_dir/function_cloud
+    if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to create folder for cloud function files.\n  $err\""
         return 3
@@ -202,7 +202,7 @@ function download_cloud_funcion_to_temp_directory (){
         write_run "print_error \"prerequisites.bash (1): failed to get function.go file from Github.\n  $err\""
         return 3
     fi
-	 curl -fsSL $repo_path/telemetry/logs/function_cloud/go.mod > $logzio_temp_dir/function_cloud/go.mod 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/logs/function_cloud/go.mod > $logzio_temp_dir/function_cloud/go.mod 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"prerequisites.bash (1): failed to get go.mod file from Github.\n  $err\""
@@ -264,23 +264,24 @@ function populate_data_to_config (){
 function populate_filter_for_service_name(){
     all_services="all_services"
     local resource_type=""
-    write_log "[INFO] Populate data=> $resource_type_item ."
+    if [[ ! -z "$resource_type_item" ]]; then
+        filter=" AND"
+    fi
     while read -r resource_type_item; do
         if [[ ! -z "$resource_type_item" ]]; then
             array_filter_bulk_names=(${resource_type_item//,/ })
             last_bulk_element=${#array_filter_bulk_names[@]}
             current_bulk=0
-            filter=" AND"
             for resource_bulk_type in "${array_filter_bulk_names[@]}"
             do
                 array_filter_names=(${resource_bulk_type//,/ })
                 last_element=${#array_filter_names[@]}
-				write_log "[INFO] Populate data v2=> $array_filter_names ."
+
                 current_bulk=$((current_bulk + 1))
                 current=0
                 for name in "${array_filter_names[@]}"
                 do
-					write_log "[INFO] Populate data v3=> $name ."
+
                     current=$((current + 1))
                     if [ $current -eq $last_element ]; then
                         filter+=" resource.type=${name}"
