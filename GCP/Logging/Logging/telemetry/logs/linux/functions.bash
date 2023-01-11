@@ -282,17 +282,19 @@ function populate_filter_for_service_name(){
                 do
                     current=$((current + 1))
                     if [ $current -eq $last_element ]; then
+					    write_log "[INFO] current last resource  $name"
                         filter+=" resource.type=${name}"
                     else
+						write_log "[INFO] current resource  $name"
                         filter+=" resource.type=${name} OR"
                     fi
                 done
+            done
                 write_log "[INFO] current el of the services  $current_bulk"
                 write_log "[INFO] last el of the services  $last_bulk_element"
                 if [ ! $current_bulk -eq $last_bulk_element ]; then
                     filter+=" OR"
                 fi	
-            done
         resource_type=$filter
         fi
         if [[ $filter == *"all_services"* ]]; then
