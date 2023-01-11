@@ -273,13 +273,12 @@ function populate_filter_for_service_name(){
 
             current_bulk=$((current_bulk + 1))
             array_filter_bulk_names=(${resource_type_item//,/ })
-            for resource_bulk_type in "${array_filter_bulk_names[@]}"
-            do
-                array_filter_names=(${resource_bulk_type//,/ })
-                last_element=${#array_filter_names[@]}
-
+            # for resource_bulk_type in "${array_filter_bulk_names[@]}"
+            # do
+            #     array_filter_names=(${resource_bulk_type//,/ })
+                last_element=${#array_filter_bulk_names[@]}
                 current=0
-                for name in "${array_filter_names[@]}"
+                for name in "${array_filter_bulk_names[@]}"
                 do
                     current=$((current + 1))
 					    write_log "[INFO] current resource  $current"
@@ -289,9 +288,8 @@ function populate_filter_for_service_name(){
                     else
                         filter+=" resource.type=${name} OR"
                     fi
-                done
+                # done
             done
-
                 if [ ! $current_bulk -eq $last_bulk_element ]; then
                     filter+=" OR"
                 fi	
