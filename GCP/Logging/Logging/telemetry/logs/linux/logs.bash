@@ -37,6 +37,9 @@ execute_task "get_resources_type" "getting google cloud logging resource type"
 # Create Filter pattern 
 execute_task "populate_filter_for_service_name" "populate resource type to filter"
 
+# Downlaod  cloud function
+execute_task "download_cloud_funcion_to_temp_directory" "download cloud function files for deploy in next step"
+
 # Build configuration file
 execute_task "populate_data_to_config" "add data to config"
 

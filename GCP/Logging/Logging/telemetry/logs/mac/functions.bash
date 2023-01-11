@@ -326,6 +326,5 @@ function deploy_settings_to_gcp(){
         exit 1
     fi
 
-    write_log "$cmd_create_cloud_build"
     write_log "[INFO] Cloud Build Initialization is finished."
 }

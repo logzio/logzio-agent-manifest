@@ -181,6 +181,29 @@ function get_gcloud_function_region_log () {
     write_run "region=\"$region\""
 }
 
+# Download  cloud function to temp directory
+# Output:
+#   function cloud files
+# Error:
+#   Exit Code 3
+function download_cloud_funcion_to_temp_directory (){
+    write_log "[INFO] Download from github cloud function..."
+    tmpfile=$(mktemp)
+    curl -fsSL $repo_path/telemetry/logs/function_cloud/function.go > $logzio_temp_dir/function_cloud/function.go 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to get function.go file from Github.\n  $err\""
+        return 3
+    fi
+	 curl -fsSL $repo_path/telemetry/logs/function_cloud/go.mod > $logzio_temp_dir/function_cloud/go.mod 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"prerequisites.bash (1): failed to get go.mod file from Github.\n  $err\""
+        return 3
+    fi
+}
+
+
 # Populate data to config file
 # Output:
 #   config.json file with related data
@@ -195,43 +218,6 @@ function populate_data_to_config (){
         write_run "print_error \"prerequisites.bash (1): failed to get config.json file from Github.\n  $err\""
         return 3
     fi
-    jq --arg shipping_token "${shipping_token}" '.substitutions._LOGZIO_TOKEN = $shipping_token' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "_LOGZIO_TOKEN updated"
-    else
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write shipping_token to the config file.\n  $err\""
-        return 3
-    fi
-
-    jq --arg region "${region}" '.substitutions._REGION = $region' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json 
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "_REGION updated"
-    else
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write region to the config file.\n  $err\""
-        return 3
-    fi
-
-    jq --arg listener_url "${listener_url}" '.substitutions._LOGZIO_LISTENER = $listener_url' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "_LOGZIO_LISTENER updated"
-
-    else
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write listener_url to the config file.\n  $err\""
-        return 3
-    fi
-
-    jq --arg function_name "${function_name}" '.substitutions._FUNCTION_NAME = "f"+$function_name+"_func_logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "_FUNCTION_NAME updated"
-
-    else
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write function_name to the config file.\n  $err\""
-        return 3
-    fi   
 
     jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = "p"+$topic_prefix+"-topic-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
@@ -243,15 +229,7 @@ function populate_data_to_config (){
         return 3
     fi   
 
-    jq --arg subscription_prefix "${function_name}" '.substitutions._PUBSUB_SUBSCRIPTION_NAME = "s"+$subscription_prefix+"-subscription-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-	    write_log "INFO" "_PUBSUB_SUBSCRIPTION_NAME updated"
-    else
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_SUBSCRIPTION_NAME to the config file.\n  $err\""
-        return 3
-    fi   
-    
+      
     jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = "sink-"+$sink_prefix+"-sink-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
     if [ $? -eq 0 ]; then
         write_log "INFO" "_SINK_NAME updated"
@@ -339,6 +317,14 @@ function deploy_settings_to_gcp(){
     # Run project
     cmd_create_cloud_build="$(curl -X POST -T $logzio_temp_dir/config.json -H "Authorization: Bearer $access_token" https://cloudbuild.googleapis.com/v1/projects/$project_id/builds)"
 
-    write_log "$cmd_create_cloud_build"
+    function_name_sufix="f${function_name}_func_logzio"
+    topic_prefix="p$function_name-topic-logzio"
+
+    gcloud functions deploy $function_name_sufix --region=$region --trigger-topic=$topic_prefix --entry-point=LogzioHandler --runtime=go116  --source=$logzio_temp_dir/function_cloud  --no-allow-unauthenticated --set-env-vars=token=$shipping_token --set-env-vars=type=gcp_agent --set-env-vars=listener=$listener_url
+    if [[ $? -ne 0 ]]; then
+        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] Failed to create Cloud Function."
+        exit 1
+    fi
+
     write_log "[INFO] Cloud Build Initialization is finished."
 }
