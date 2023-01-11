@@ -317,7 +317,7 @@ function deploy_settings_to_gcp(){
     # Run project
     cmd_create_cloud_build="$(curl -X POST -T $logzio_temp_dir/config.json -H "Authorization: Bearer $access_token" https://cloudbuild.googleapis.com/v1/projects/$project_id/builds)"
 
-    function_name_sufix="${function_name}_func_logzio"
+    function_name_sufix="f${function_name}_func_logzio"
     topic_prefix="p$function_name-topic-logzio"
 
     gcloud functions deploy $function_name_sufix --region=$region --trigger-topic=$topic_prefix --entry-point=LogzioHandler --runtime=go116  --source=$logzio_temp_dir/function_cloud  --no-allow-unauthenticated --set-env-vars=token=$shipping_token --set-env-vars=type=gcp_agent --set-env-vars=listener=$listener_url
