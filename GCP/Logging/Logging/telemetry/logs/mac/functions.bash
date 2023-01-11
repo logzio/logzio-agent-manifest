@@ -320,7 +320,7 @@ function deploy_settings_to_gcp(){
     function_name_sufix="${function_name}_func_logzio"
     topic_prefix="p$function_name-topic-logzio"
 
-    gcloud functions deploy $function_name_sufix --region=$gcp_region --trigger-topic=$topic_prefix --entry-point=LogzioHandler --runtime=go116  --source=$logzio_temp_dir/function_cloud  --no-allow-unauthenticated --set-env-vars=token=$shipping_token --set-env-vars=type=$log_type --set-env-vars=listener=$listener_url
+    gcloud functions deploy $function_name_sufix --region=$region --trigger-topic=$topic_prefix --entry-point=LogzioHandler --runtime=go116  --source=$logzio_temp_dir/function_cloud  --no-allow-unauthenticated --set-env-vars=token=$shipping_token --set-env-vars=type=$log_type --set-env-vars=listener=$listener_url
     if [[ $? -ne 0 ]]; then
         echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] Failed to create Cloud Function."
         exit 1
