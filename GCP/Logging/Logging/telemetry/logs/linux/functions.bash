@@ -275,12 +275,12 @@ function populate_filter_for_service_name(){
             do
                 array_filter_names=(${resource_bulk_type//,/ })
                 last_element=${#array_filter_names[@]}
-				write_log "[INFO] Populate data v2=> $array_filter_names ."
+				write_log "[INFO] Populate data v2=> $array_filter_names"
                 current_bulk=$((current_bulk + 1))
                 current=0
                 for name in "${array_filter_names[@]}"
                 do
-					write_log "[INFO] Populate data v3=> $name ."
+					write_log "[INFO] Populate data v3=> $name"
                     current=$((current + 1))
                     if [ $current -eq $last_element ]; then
                         filter+=" resource.type=${name}"
