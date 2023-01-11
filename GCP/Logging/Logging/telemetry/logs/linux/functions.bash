@@ -266,29 +266,24 @@ function populate_filter_for_service_name(){
     local resource_type=""
     filter=" AND"
     current_bulk=0
-	last_bulk_element=$(echo "$resource_types" | wc -l)
+    last_bulk_element=$(echo "$resource_types" | wc -l)
 
     while read -r resource_type_item; do
         if [[ ! -z "$resource_type_item" ]]; then
 
             current_bulk=$((current_bulk + 1))
             array_filter_bulk_names=(${resource_type_item//,/ })
-            # for resource_bulk_type in "${array_filter_bulk_names[@]}"
-            # do
-            #     array_filter_names=(${resource_bulk_type//,/ })
+
                 last_element=${#array_filter_bulk_names[@]}
                 current=0
                 for name in "${array_filter_bulk_names[@]}"
                 do
                     current=$((current + 1))
-					    write_log "[INFO] current resource  $current"
-						write_log "[INFO] last resource  $last_element"
                     if [ $current -eq $last_element ]; then
                         filter+=" resource.type=${name}"
                     else
                         filter+=" resource.type=${name} OR"
                     fi
-                # done
             done
                 if [ ! $current_bulk -eq $last_bulk_element ]; then
                     filter+=" OR"
