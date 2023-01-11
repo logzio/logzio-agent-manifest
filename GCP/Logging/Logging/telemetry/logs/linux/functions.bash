@@ -266,7 +266,7 @@ function populate_filter_for_service_name(){
     local resource_type=""
     filter=" AND"
     current_bulk=0
-	readarray -t last_bulk_element <<<"${resource_types}"
+	last_bulk_element=$(echo "$resource_types" | wc -l)
 
     while read -r resource_type_item; do
         if [[ ! -z "$resource_type_item" ]]; then
@@ -279,22 +279,20 @@ function populate_filter_for_service_name(){
                 last_element=${#array_filter_names[@]}
 
                 current=0
-				write_log "[INFO] current last resource  $last_element"
                 for name in "${array_filter_names[@]}"
                 do
                     current=$((current + 1))
+					    write_log "[INFO] current resource  $current"
+						write_log "[INFO] last resource  $last_element"
                     if [ $current -eq $last_element ]; then
-					    write_log "[INFO] current last resource  $name"
                         filter+=" resource.type=${name}"
                     else
-						write_log "[INFO] current resource  $name"
                         filter+=" resource.type=${name} OR"
                     fi
                 done
             done
-                write_log "[INFO] current el of the services  $current_bulk"
-                write_log "[INFO] last el of the services  $last_bulk_element"
-                if [ $current_bulk -eq $last_bulk_element ]; then
+
+                if [ ! $current_bulk -eq $last_bulk_element ]; then
                     filter+=" OR"
                 fi	
         resource_type=$filter
