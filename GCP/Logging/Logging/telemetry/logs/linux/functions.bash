@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################################################################
-################################################## Prerequisites Linux Functions ###################################################
+################################################## Logs Linux Functions ###################################################
 #################################################################################################################################
 
 # Get Google project Id
@@ -192,20 +192,20 @@ function download_cloud_funcion_to_temp_directory (){
     mkdir $logzio_temp_dir/function_cloud
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to create folder for cloud function files.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to create folder for cloud function files.\n  $err\""
         return 3
     fi
 
     curl -fsSL $repo_path/telemetry/logs/function_cloud/function.go > $logzio_temp_dir/function_cloud/function.go 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to get function.go file from Github.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to get function.go file from Github.\n  $err\""
         return 3
     fi
     curl -fsSL $repo_path/telemetry/logs/function_cloud/go.mod > $logzio_temp_dir/function_cloud/go.mod 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to get go.mod file from Github.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to get go.mod file from Github.\n  $err\""
         return 3
     fi
 }
@@ -222,7 +222,7 @@ function populate_data_to_config (){
     curl -fsSL $repo_path/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to get config.json file from Github.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to get config.json file from Github.\n  $err\""
         return 3
     fi
 
@@ -232,7 +232,7 @@ function populate_data_to_config (){
 
     else
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_TOPIC_NAME to the config file.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to write _PUBSUB_TOPIC_NAME to the config file.\n  $err\""
         return 3
     fi   
 
@@ -242,7 +242,7 @@ function populate_data_to_config (){
         write_log "INFO" "_SINK_NAME updated"
     else
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write _SINK_NAME to the config file.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to write _SINK_NAME to the config file.\n  $err\""
         return 3
     fi   
     
@@ -251,7 +251,7 @@ function populate_data_to_config (){
         write_log "INFO" "_FILTER_LOG updated"
     else
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write _FILTER_LOG to the config file.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to write _FILTER_LOG to the config file.\n  $err\""
         return 3
     fi  
 
