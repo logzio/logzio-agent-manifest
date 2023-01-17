@@ -143,6 +143,650 @@
               ]
             }
           ]
+        },
+        {
+          "name": "datasource-4",
+          "label": "Datasource 4",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-4-general-text",
+              "label": "Datasource 4 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-3-tracing-boolean-1",
+                  "label": "Datasource 3 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-3-tracing-boolean-2",
+                  "label": "Datasource 3 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-5",
+          "label": "Datasource 5",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-3-general-text",
+              "label": "Datasource 3 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-3-tracing-boolean-1",
+                  "label": "Datasource 3 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-3-tracing-boolean-2",
+                  "label": "Datasource 3 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-6",
+          "label": "Datasource 6",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-6-general-text",
+              "label": "Datasource 6 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-6-tracing-boolean-1",
+                  "label": "Datasource 6 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-6-tracing-boolean-2",
+                  "label": "Datasource 6 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-7",
+          "label": "Datasource 7",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-7-general-text",
+              "label": "Datasource 7 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-7-tracing-boolean-1",
+                  "label": "Datasource 7 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-7-tracing-boolean-2",
+                  "label": "Datasource 7 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-8",
+          "label": "Datasource 8",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-8-general-text",
+              "label": "Datasource 8 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-8-tracing-boolean-1",
+                  "label": "Datasource 8 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-8-tracing-boolean-2",
+                  "label": "Datasource 8 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-9",
+          "label": "Datasource 9",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-9-general-text",
+              "label": "Datasource 9 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-9-tracing-boolean-1",
+                  "label": "Datasource 9 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-9-tracing-boolean-2",
+                  "label": "Datasource 9 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-10",
+          "label": "Datasource 10",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-10-general-text",
+              "label": "Datasource 10 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-10-tracing-boolean-1",
+                  "label": "Datasource 10 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-10-tracing-boolean-2",
+                  "label": "Datasource 10 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-11",
+          "label": "Datasource 11",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-11-general-text",
+              "label": "Datasource 11 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-11-tracing-boolean-1",
+                  "label": "Datasource 11 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-11-tracing-boolean-2",
+                  "label": "Datasource 11 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-12",
+          "label": "Datasource 12",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-12-general-text",
+              "label": "Datasource 12 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-12-tracing-boolean-1",
+                  "label": "Datasource 12 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-12-tracing-boolean-2",
+                  "label": "Datasource 12 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-13",
+          "label": "Datasource 13",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-13-general-text",
+              "label": "Datasource 13 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-13-tracing-boolean-1",
+                  "label": "Datasource 13 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-13-tracing-boolean-2",
+                  "label": "Datasource 13 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-14",
+          "label": "Datasource 14",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-14-general-text",
+              "label": "Datasource 14 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-14-tracing-boolean-1",
+                  "label": "Datasource 14 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-14-tracing-boolean-2",
+                  "label": "Datasource 14 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-15",
+          "label": "Datasource 15",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-15-general-text",
+              "label": "Datasource 15 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-15-tracing-boolean-1",
+                  "label": "Datasource 15 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-15-tracing-boolean-2",
+                  "label": "Datasource 15 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-16",
+          "label": "Datasource 16",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-16-general-text",
+              "label": "Datasource 16 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-16-tracing-boolean-1",
+                  "label": "Datasource 16 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-16-tracing-boolean-2",
+                  "label": "Datasource 16 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "datasource-17",
+          "label": "Datasource 17",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "datasource-17-general-text",
+              "label": "Datasource 17 general text param",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "METRICS",
+              "params": [
+
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "datasource-17-tracing-boolean-1",
+                  "label": "Datasource 17 Tracing Bool 1",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "datasource-17-tracing-boolean-2",
+                  "label": "Datasource 17 Tracing Bool 2",
+                  "value": false
+                }
+              ]
+            }
+          ]
         }
       ]
     }
