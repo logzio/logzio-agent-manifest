@@ -153,8 +153,9 @@
             {
               "type": "text",
               "name": "datasource-4-general-text",
-              "label": "Datasource 4 general text param",
-              "value": ""
+              "label": "Datasource 4 general text param (REQUIRED)",
+              "value": "",
+              "required": true
             }
           ],
           "telemetries": [
