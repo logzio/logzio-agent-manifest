@@ -90,24 +90,3 @@ function get_logs_scripts () {
         return 5
     fi
 }
-
-# Gets metrics scripts from logzio-agent-manifest repo
-# Error:
-#   Exit Code 6
-function get_metrics_scripts () {
-    write_log "INFO" "Getting metrics script file from logzio-agent-manifest repo ..."
-    curl -fsSL $repo_path/telemetry/metrics/linux/metrics.bash > $logzio_temp_dir/metrics.bash 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to get metrics script file from logzio-agent-manifest repo.\n  $err\""
-        return 6
-    fi
-
-    write_log "INFO" "Getting metrics functions script file from logzio-agent-manifest repo ..."
-    curl -fsSL $repo_path/telemetry/metrics/linux/functions.bash > $logzio_temp_dir/metrics_functions.bash 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"installer.bash (6): failed to get metrics functions script file from logzio-agent-manifest repo.\n  $err\""
-        return 6
-    fi
-}

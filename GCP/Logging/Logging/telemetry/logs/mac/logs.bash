@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################################################################
-################################################## Logs Mac Script ###################################################
+################################################## Logs Linux Script ###################################################
 #################################################################################################################################
 
 
@@ -11,7 +11,6 @@ source $logzio_temp_dir/logs_functions.bash
 
 # Get Google Cloud project id
 execute_task "get_project_id" "get google project id"
-
 
 # Set Google Cloud default project id
 execute_task "set_project_id" "set google project id as default"
@@ -40,9 +39,6 @@ execute_task "populate_filter_for_service_name" "populate resource type to filte
 # Downlaod  cloud function
 execute_task "download_cloud_funcion_to_temp_directory" "download cloud function files for deploy in next step"
 
-# Build configuration file
-execute_task "populate_data_to_config" "add data to config"
-
-# Deploy config file to Cloud Build service to start process
-execute_task "deploy_settings_to_gcp" "deploy config to Cloud Build to setup flow for sending logs"
+# Download and run service integration to deploy Google cloud logic for sending logs to logz.io
+execute_task "donwload_and_run_logzio_pubsub_integration" "download and run service integration to deploy Google cloud logic for sending logs to logz.io"
 

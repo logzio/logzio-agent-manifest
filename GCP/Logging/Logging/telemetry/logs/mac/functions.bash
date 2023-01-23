@@ -1,8 +1,10 @@
 #!/bin/bash
 
 #################################################################################################################################
-################################################## Logs Mac Functions ###################################################
+################################################## Logs Linux Functions ###################################################
 #################################################################################################################################
+$pubsub_repo_tag="v1.2.0"
+$pubsub_repo="https://github.com/logzio/logzio-google-pubsub/archive/refs/tags/${pubsub_repo_tag}.tar.gz"
 
 # Get Google project Id
 # Output:
@@ -181,81 +183,43 @@ function get_gcloud_function_region_log () {
     write_run "region=\"$region\""
 }
 
-# Download  cloud function to temp directory
-# Output:
-#   function cloud files
-# Error:
-#   Exit Code 3
-function download_cloud_funcion_to_temp_directory (){
-    write_log "[INFO] Download from github cloud function..."
-
-    mkdir $logzio_temp_dir/function_cloud
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to create folder for cloud function files.\n  $err\""
-        return 3
-    fi
-
-    curl -fsSL $repo_path/telemetry/logs/function_cloud/function.go > $logzio_temp_dir/function_cloud/function.go 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to get function.go file from Github.\n  $err\""
-        return 3
-    fi
-    curl -fsSL $repo_path/telemetry/logs/function_cloud/go.mod > $logzio_temp_dir/function_cloud/go.mod 2>$task_error_file
-    if [[ $? -ne 0 ]]; then
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to get go.mod file from Github.\n  $err\""
-        return 3
-    fi
-}
-
-
-# Populate data to config file
+# Download Last release of integration
 # Output:
 #   config.json file with related data
 # Error:
 #   Exit Code 3
-function populate_data_to_config (){
-    write_log "[INFO] Сreate build file..."
-    tmpfile=$(mktemp)
-    curl -fsSL $repo_path/telemetry/logs/config.json > $logzio_temp_dir/config.json 2>$task_error_file
+function donwload_and_run_logzio_pubsub_integration(){
+
+    write_log "[INFO] Download zip release..."
+    curl -fsSL pubsub_repo > $logzio_temp_dir/integration.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to get config.json file from Github.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to get last integration file from Github.\n  $err\""
         return 3
     fi
 
-    jq --arg topic_prefix "${function_name}" '.substitutions._PUBSUB_TOPIC_NAME = "p"+$topic_prefix+"-topic-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "_PUBSUB_TOPIC_NAME updated"
-
-    else
+    # Unzip Integration release file 
+    tar -zxf $logzio_temp_dir/integration.tar.gz --directory . 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write _PUBSUB_TOPIC_NAME to the config file.\n  $err\""
+        write_run "print_error \"logs.bash (1): Failed to unzip Integration release file.\n  $err\""
         return 3
-    fi   
+    fi
 
-      
-    jq --arg sink_prefix "${function_name}" '.substitutions._SINK_NAME = "sink-"+$sink_prefix+"-sink-logzio"' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "_SINK_NAME updated"
-    else
+    # Add permission to execute file for Telegraf
+    chmod +x $logzio_temp_dir/run.sh 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write _SINK_NAME to the config file.\n  $err\""
+        write_run "print_error \"logs.bash (1): Failed to add permission to execution file.\n  $err\""
         return 3
-    fi   
-    
-    jq --arg resource_type "${resource_type}" '.substitutions._FILTER_LOG = $resource_type' $logzio_temp_dir/config.json >"$tmpfile" && mv -- "$tmpfile" $logzio_temp_dir/config.json
-    if [ $? -eq 0 ]; then
-        write_log "INFO" "_FILTER_LOG updated"
-    else
-        local err=$(cat $task_error_file)
-        write_run "print_error \"prerequisites.bash (1): failed to write _FILTER_LOG to the config file.\n  $err\""
-        return 3
-    fi  
+    fi
 
-    write_log "[INFO] Populate data to json finished."
+    ./run.sh --listener_url=$listener_url --token=$token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_type=$resource_type 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"logs.bash (1): Failed to run command for creation function.\n  $err\""
+        return 3
+    fi
 }
 
 # Populate from resource type to filter by resource type pattern
@@ -264,35 +228,29 @@ function populate_data_to_config (){
 function populate_filter_for_service_name(){
     all_services="all_services"
     local resource_type=""
-    if [[ ! -z "$resource_type_item" ]]; then
-        filter=" AND"
-    fi
+    current_bulk=0
+    last_bulk_element=$(echo "$resource_types" | wc -l)
+
     while read -r resource_type_item; do
         if [[ ! -z "$resource_type_item" ]]; then
+
+            current_bulk=$((current_bulk + 1))
             array_filter_bulk_names=(${resource_type_item//,/ })
-            last_bulk_element=${#array_filter_bulk_names[@]}
-            current_bulk=0
-            for resource_bulk_type in "${array_filter_bulk_names[@]}"
-            do
-                array_filter_names=(${resource_bulk_type//,/ })
-                last_element=${#array_filter_names[@]}
 
-                current_bulk=$((current_bulk + 1))
+                last_element=${#array_filter_bulk_names[@]}
                 current=0
-                for name in "${array_filter_names[@]}"
+                for name in "${array_filter_bulk_names[@]}"
                 do
-
                     current=$((current + 1))
                     if [ $current -eq $last_element ]; then
-                        filter+=" resource.type=${name}"
+                        filter+="${name}"
                     else
-                        filter+=" resource.type=${name} OR"
+                        filter+="${name},"
                     fi
-                done
-                if [ ! $current_bulk -eq $last_bulk_element ]; then
-                    filter+=" OR"
-                fi	
             done
+                if [ ! $current_bulk -eq $last_bulk_element ]; then
+                    filter+=","
+                fi	
         resource_type=$filter
         fi
         if [[ $filter == *"all_services"* ]]; then
@@ -301,41 +259,4 @@ function populate_filter_for_service_name(){
     done < <(echo -e "$resource_types")
     write_log "INFO" "resource_type = $resource_type"
     write_run "resource_type=\"$resource_type\""
-}
-
-# Deploy
-# Output:
-#   filter_log - filter logs
-# Error:
-#   Exit Code 3
-function deploy_settings_to_gcp(){
-    write_log "[INFO] Initialize Cloud Build ..."
-    # Take project ID and project Number
-    project_number="$(gcloud projects list \
-    --filter="$(gcloud config get-value project)" \
-    --format="value(PROJECT_NUMBER)")"
- 
-    # Give permission for Cloud Build to assign proper roles
-    cmd_enable_cloudresourcemanager="$(gcloud services enable cloudresourcemanager.googleapis.com)"
-    cmd_enable_cloudbuild="$(gcloud services enable cloudbuild.googleapis.com)"
-    cmd_enable_cloudfunction="$(gcloud services enable cloudfunctions.googleapis.com)"
-
-    cmd_add_policy="$(gcloud projects add-iam-policy-binding $project_id --member serviceAccount:$project_number@cloudbuild.gserviceaccount.com --role roles/resourcemanager.projectIamAdmin)"
-    cmd_enable_policy_function="$(gcloud iam service-accounts add-iam-policy-binding $project_id@appspot.gserviceaccount.com --member serviceAccount:$project_number@cloudbuild.gserviceaccount.com --role roles/iam.serviceAccountUser)"
-
-    #Get Access Token for upload
-    access_token="$(gcloud config config-helper --format='value(credential.access_token)')"
-    # Run project
-    cmd_create_cloud_build="$(curl -X POST -T $logzio_temp_dir/config.json -H "Authorization: Bearer $access_token" https://cloudbuild.googleapis.com/v1/projects/$project_id/builds)"
-
-    function_name_sufix="f${function_name}_func_logzio"
-    topic_prefix="p$function_name-topic-logzio"
-
-    gcloud functions deploy $function_name_sufix --region=$region --trigger-topic=$topic_prefix --entry-point=LogzioHandler --runtime=go116  --source=$logzio_temp_dir/function_cloud  --no-allow-unauthenticated --set-env-vars=token=$shipping_token --set-env-vars=type=gcp_agent --set-env-vars=listener=$listener_url
-    if [[ $? -ne 0 ]]; then
-        echo -e "[ERROR] [$(date +"%Y-%m-%d %H:%M:%S")] Failed to create Cloud Function."
-        exit 1
-    fi
-
-    write_log "[INFO] Cloud Build Initialization is finished."
 }
