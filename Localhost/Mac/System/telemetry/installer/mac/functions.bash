@@ -152,7 +152,7 @@ function get_logzio_otel_collector_plist () {
         return 4
     fi
 
-    sudo cp $logzio_temp_dir/$service_name.plist $service_plit
+    sudo cp $logzio_temp_dir/$service_name.plist $service_plist
     write_run "service_name=\"$service_name\""
     write_run "service_plist=\"$service_plist\""
 }
