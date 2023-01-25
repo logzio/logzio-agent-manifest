@@ -240,7 +240,7 @@ function add_yaml_file_field_value {
 
     $YQ_BIN -i "$yaml_path += \"$value\"" $yaml_file 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        echo -e "error adding '$value' to '$yaml_path in '$yaml_path': $(get_task_error_message)" >"$TASK_ERROR_FILE"
+        echo -e "error adding '$value' to '$yaml_path in '$yaml_file': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
 }
