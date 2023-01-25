@@ -206,7 +206,7 @@ function run_logzio_otel_collector_service () {
     write_log "INFO" "Running Logz.io OTEL collector service ..."
     write_log "INFO" "OTEL config =\n$(cat $otel_config)"
 
-    launchctl load $service_plist >/dev/null 2>$task_error_file
+    sudo launchctl load $service_plist >/dev/null 2>$task_error_file
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
         write_run "print_error \"installer.bash (7): failed to load Logz.io OTEL collector plist file.\n  $err\""
@@ -219,7 +219,7 @@ function run_logzio_otel_collector_service () {
     fi
 
     status=$(launchctl list | grep $service_name | grep -oe '[0-9]\+')
-    launchctl unload $service_plist >/dev/null 2>&1
+    sudo launchctl unload $service_plist >/dev/null 2>&1
     write_run "print_error \"installer.bash (7): failed to run Logz.io OTEL collector plist file (status $status).\n  $err\""
     return 7
 }
