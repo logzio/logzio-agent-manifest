@@ -123,7 +123,7 @@ function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
     otel_config="$logzio_opt_dir/otel_config.yaml"
-    sudo curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file | sudo sh
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (3): failed to get OTEL config file from logzio-agent-manifest repo.\n  $err\""
