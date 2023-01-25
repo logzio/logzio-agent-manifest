@@ -10,7 +10,6 @@
 # Output:
 #   ---
 function is_kubectl_installed {
-    local exit_code=1
     local func_name="${FUNCNAME[0]}"
 
     local message='Checking if kubectl is installed ...'
@@ -19,12 +18,14 @@ function is_kubectl_installed {
 
     which kubectl >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): 'kubectl' is not installed. please install it and rerun the agent"
+        message="prerequisites.bash ($EXIT_CODE): 'kubectl' is not installed. please install it and rerun the agent"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Checks if kubectl is connected to an active Kubernetes cluster
@@ -33,7 +34,6 @@ function is_kubectl_installed {
 # Output:
 #   ---
 function is_kubectl_connected_to_kubernetes_cluster {
-    local exit_code=2
     local func_name="${FUNCNAME[0]}"
 
     local message='Checking if kubectl is connected to an active Kubernetes cluster ...'
@@ -43,11 +43,11 @@ function is_kubectl_connected_to_kubernetes_cluster {
     local cluster_info
     cluster_info=$(kubectl cluster-info 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): 'kubectl' is not connected to an active Kubernetes cluster. please configure your computer to access a Kubernetes cluster and rerun the agent: $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): 'kubectl' is not connected to an active Kubernetes cluster. please configure your computer to access a Kubernetes cluster and rerun the agent: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     cluster_info=$(echo -e "$cluster_info" | sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g' | head -n -2)
@@ -55,6 +55,8 @@ function is_kubectl_connected_to_kubernetes_cluster {
     message="Kubernetes cluster info: $cluster_info"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    ((EXIT_CODE++))
 }
 
 # Sets Logz.io listener url in test pod yamls
@@ -63,7 +65,6 @@ function is_kubectl_connected_to_kubernetes_cluster {
 # Output:
 #   ---
 function set_logzio_listener_url_in_test_pod_yamls {
-    local exit_code=3
     local func_name="${FUNCNAME[0]}"
 
     local message='Setting Logz.io listener url in test pod yamls ...'
@@ -72,21 +73,23 @@ function set_logzio_listener_url_in_test_pod_yamls {
 
     add_yaml_file_field_value "$KUBERNETES_RESOURCES_DIR/logzio_logs_connection_test_pod.yaml" '.spec.containers[0].command' "telnet $LISTENER_URL 8071"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     add_yaml_file_field_value "$KUBERNETES_RESOURCES_DIR/logzio_metrics_connection_test_pod.yaml" '.spec.containers[0].command' "telnet $LISTENER_URL 8053"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io logs (port 8071)
@@ -95,7 +98,6 @@ function set_logzio_listener_url_in_test_pod_yamls {
 # Output:
 #   ---
 function can_kubernetes_cluster_connect_to_logzio_logs {
-    local exit_code=4
     local func_name="${FUNCNAME[0]}"
 
     local message='Checking if Kubernetes cluster can connect to Logz.io logs (port 8071) ...'
@@ -104,20 +106,22 @@ function can_kubernetes_cluster_connect_to_logzio_logs {
 
     can_kubernetes_cluster_connect_to_logzio "logzio_logs_connection_test_pod.yaml" "logzio-logs-connection-test"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     if ! $IS_CONNECTED_TO_LOGZIO; then
-        message="prerequisites.bash ($exit_code): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for port 8071"
+        message="prerequisites.bash ($EXIT_CODE): Kubernetes cluster cannot connect to Logz.io logs. please check your Kubernetes cluster network for port 8071"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io metrics (port 8053)
@@ -126,7 +130,6 @@ function can_kubernetes_cluster_connect_to_logzio_logs {
 # Output:
 #   ---
 function can_kubernetes_cluster_connect_to_logzio_metrics {
-    local exit_code=5
     local func_name="${FUNCNAME[0]}"
 
     local message='Checking if Kubernetes cluster can connect to Logz.io metrics (port 8053) ...'
@@ -135,20 +138,22 @@ function can_kubernetes_cluster_connect_to_logzio_metrics {
 
     can_kubernetes_cluster_connect_to_logzio "logzio_metrics_connection_test_pod.yaml" "logzio-metrics-connection-test"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     if ! $IS_CONNECTED_TO_LOGZIO; then
-        message="prerequisites.bash ($exit_code): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for port 8053"
+        message="prerequisites.bash ($EXIT_CODE): Kubernetes cluster cannot connect to Logz.io metrics. please check your Kubernetes cluster network for port 8053"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Checks if Kubernetes cluster can connect to Logz.io
@@ -239,7 +244,6 @@ function delete_test_pod {
 # Output:
 #   ---
 function is_helm_installed {
-    local exit_code=6
     local func_name="${FUNCNAME[0]}"
 
     local message='Checking if Helm is installed ...'
@@ -261,12 +265,14 @@ function is_helm_installed {
 
     curl -sS 'https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3' | bash >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): error install Helm. please run 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash' and rerun the agent script: $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): error install Helm. please run 'curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash' and rerun the agent script: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Adds Logz.io Helm repo
@@ -275,7 +281,6 @@ function is_helm_installed {
 # Output:
 #   ---
 function add_logzio_helm_repo {
-    local exit_code=7
     local func_name="${FUNCNAME[0]}"
 
     local message='Adding Logz.io Helm repo ...'
@@ -284,12 +289,14 @@ function add_logzio_helm_repo {
 
     helm repo add logzio-helm https://logzio.github.io/logzio-helm >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): error adding Logz.io Helm repo: $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): error adding Logz.io Helm repo: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Updates Logz.io Helm repo
@@ -298,7 +305,6 @@ function add_logzio_helm_repo {
 # Output:
 #   ---
 function update_logzio_helm_repo {
-    local exit_code=8
     local func_name="${FUNCNAME[0]}"
 
     local message='Updating Logz.io Helm repo ...'
@@ -307,10 +313,12 @@ function update_logzio_helm_repo {
     
     helm repo update >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): error updating Logz.io Helm repo: $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): error updating Logz.io Helm repo: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
