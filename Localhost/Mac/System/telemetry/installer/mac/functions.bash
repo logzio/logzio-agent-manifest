@@ -145,13 +145,14 @@ function get_logzio_otel_collector_plist () {
 
     service_name="com.logzio.OTELCollector"
     service_plist="/Library/LaunchDaemons/$service_name.plist"
-    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $service_plist 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/installer/com.logzio.OTELCollector.plist > $logzio_temp_dir/$service_name.plist 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (4): failed to get Logz.io OTEL collector plist file from logzio-agent-manifest repo.\n  $err\""
         return 4
     fi
 
+    sudo cp $logzio_temp_dir/$service_name.plist $service_plit
     write_run "service_name=\"$service_name\""
     write_run "service_plist=\"$service_plist\""
 }
