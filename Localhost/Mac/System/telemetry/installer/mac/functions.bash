@@ -110,7 +110,7 @@ function get_otel_collector_binary () {
     fi
 
     otel_bin="$logzio_opt_dir/otelcol-logzio-darwin_amd64"
-    tar -zxf $logzio_temp_dir/otelcol-logzio.tar.gz --directory $logzio_opt_dir
+    sudo tar -zxf $logzio_temp_dir/otelcol-logzio.tar.gz --directory $logzio_opt_dir
     write_run "otel_bin=\"$otel_bin\""
 }
 
@@ -123,7 +123,7 @@ function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
     otel_config="$logzio_opt_dir/otel_config.yaml"
-    curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
+    sudo curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (3): failed to get OTEL config file from logzio-agent-manifest repo.\n  $err\""
