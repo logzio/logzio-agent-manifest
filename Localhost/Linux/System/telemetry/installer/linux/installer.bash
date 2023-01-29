@@ -29,6 +29,8 @@ fi
 # Get the selected products
 execute_task "get_selected_products" "getting the selected products"
 
+sudo -v
+
 # Create Logz.io opt directory
 execute_task "create_logzio_opt_dir" "creating Logz.io opt directory"
 
