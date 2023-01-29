@@ -169,7 +169,7 @@ function get_gcloud_function_region_log () {
 
     local region_param=$(find_param "$logs_params" "functionNameRegion")
     if [[ -z "$region_param" ]]; then
-        write_run "print_error \"logs.bash (3): region param was not found\""
+        write_run "print_error \"logs.bash (3): region param was not found.\""
         return 3
     fi
 
@@ -217,7 +217,7 @@ function donwload_and_run_logzio_pubsub_integration(){
     ./run.sh --listener_url=$listener_url --token=$token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_type=$resource_type 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (1): Failed to run command for creation function.\n  $err\""
+        write_run "print_error \"logs.bash (1): Failed to run command for create Google Cloud function.\n  $err\""
         return 3
     fi
 }
