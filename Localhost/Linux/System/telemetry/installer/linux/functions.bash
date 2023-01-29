@@ -150,7 +150,7 @@ function get_logzio_otel_collector_service_file () {
         return 4
     fi
 
-    sudo cp $logzio_temp_dir/$service_name.plist $service_plist
+    sudo cp $logzio_temp_dir/$service_name.service /etc/systemd/system/$service_name.service
     write_run "service_name=\"$service_name\""
 }
 
