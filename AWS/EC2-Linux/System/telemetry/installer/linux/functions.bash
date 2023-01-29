@@ -91,7 +91,7 @@ function create_logzio_opt_dir () {
     write_log "INFO" "Creating Logz.io opt directory ..."
 
     logzio_opt_dir="/opt/logzio-otel-collector"
-    mkdir -p $logzio_opt_dir
+    sudo mkdir -p $logzio_opt_dir
     write_run "logzio_opt_dir=\"$logzio_opt_dir\""
 }
 
@@ -110,7 +110,7 @@ function get_otel_collector_binary () {
     fi
 
     otel_bin="$logzio_opt_dir/otelcol-logzio-linux_amd64"
-    tar -zxf $logzio_temp_dir/otelcol-logzio.tar.gz --directory $logzio_opt_dir
+    sudo tar -zxf $logzio_temp_dir/otelcol-logzio.tar.gz --directory $logzio_opt_dir
     write_run "otel_bin=\"$otel_bin\""
 }
 
@@ -123,13 +123,14 @@ function get_otel_config () {
     write_log "INFO" "Getting OTEL config file from logzio-agent-manifest repo ..."
 
     otel_config="$logzio_opt_dir/otel_config.yaml"
-    curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $otel_config 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/installer/otel_config.yaml > $logzio_temp_dir/$otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (3): failed to get OTEL config file from logzio-agent-manifest repo.\n  $err\""
         return 3
     fi
 
+    sudo cp $logzio_temp_dir/otel_config.yaml $otel_config
     write_run "otel_config=\"$otel_config\""
 }
 
@@ -142,13 +143,14 @@ function get_logzio_otel_collector_service_file () {
     write_log "INFO" "Getting Logz.io OTEL collector service file ..."
 
     service_name="logzioOTELCollector"
-    curl -fsSL $repo_path/telemetry/installer/logzioOTELCollector.service > /etc/systemd/system/$service_name.service 2>$task_error_file
+    curl -fsSL $repo_path/telemetry/installer/logzioOTELCollector.service > $logzio_temp_dir/$service_name.service 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"installer.bash (4): failed to get Logz.io OTEL collector service file from logzio-agent-manifest repo.\n  $err\""
         return 4
     fi
 
+    sudo cp $logzio_temp_dir/$service_name.service /etc/systemd/system/$service_name.service
     write_run "service_name=\"$service_name\""
 }
 
@@ -201,14 +203,14 @@ function run_logzio_otel_collector_service () {
     write_log "INFO" "Running Logz.io OTEL collector service ..."
     write_log "INFO" "OTEL config =\n$(cat $otel_config)"
 
-    systemctl start $service_name >/dev/null 2>$task_error_file
+    sudo systemctl start $service_name >/dev/null 2>$task_error_file
     local err=$(cat $task_error_file)
     if [[ ! -z "$err" ]]; then
         write_run "print_error \"installer.bash (7): failed to start Logz.io OTEL collector service.\n  $err\""
         return 7
     fi
 
-    is_running=$(systemctl status $service_name | grep "$service_name.service failed")
+    is_running=$(sudo systemctl status $service_name | grep "$service_name.service failed")
     if [[ -z "$is_running" ]]; then
         return
     fi
