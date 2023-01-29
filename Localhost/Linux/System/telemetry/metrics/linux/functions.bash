@@ -62,7 +62,7 @@ function add_metrics_receivers_to_otel_config () {
         return 3
     fi
 
-    $yq_bin eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_receivers.yaml 2>$task_error_file
+    sudo $yq_bin eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_receivers.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (3): failed to add metrics receivers to OTEL config file.\n  $err\""
@@ -97,7 +97,7 @@ function add_metrics_exporter_to_otel_config () {
         return 4
     fi
 
-    $yq_bin eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
+    sudo $yq_bin eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (4): failed to add metrics exporter to OTEL config file.\n  $err\""
@@ -123,7 +123,7 @@ function add_metrics_address_to_otel_config () {
         done
     fi
 
-    $yq_bin -i ".service.telemetry.metrics.address = \"localhost:$port\"" $otel_config 2>$task_error_file
+    sudo $yq_bin -i ".service.telemetry.metrics.address = \"localhost:$port\"" $otel_config 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (5): failed to add service telemetry metrics address to OTEL config file.\n  $err\""
@@ -158,7 +158,7 @@ function add_metrics_service_pipeline_to_otel_config () {
         return 6
     fi
 
-    $yq_bin eval-all -i 'select(fileIndex==0).service.pipelines += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_service_pipeline.yaml 2>$task_error_file
+    sudo $yq_bin eval-all -i 'select(fileIndex==0).service.pipelines += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/metrics_otel_service_pipeline.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"metrics.bash (6): failed to add metrics service pipeline to OTEL config file.\n  $err\""
