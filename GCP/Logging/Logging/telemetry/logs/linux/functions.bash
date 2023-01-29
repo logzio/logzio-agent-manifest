@@ -169,7 +169,7 @@ function get_gcloud_function_region_log () {
 
     local region_param=$(find_param "$logs_params" "functionNameRegion")
     if [[ -z "$region_param" ]]; then
-        write_run "print_error \"logs.bash (3): region param was not found\""
+        write_run "print_error \"logs.bash (3): region param was not found.\""
         return 3
     fi
 
