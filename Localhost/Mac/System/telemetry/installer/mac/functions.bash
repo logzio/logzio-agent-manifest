@@ -213,12 +213,12 @@ function run_logzio_otel_collector_service () {
         return 7
     fi
 
-    is_running=$(launchctl list | grep $service_name | grep -e '^[0-9]')
+    is_running=$(sudo launchctl list | grep $service_name | grep -e '^[0-9]')
     if [[ ! -z "$is_running" ]]; then
         return
     fi
 
-    status=$(launchctl list | grep $service_name | grep -oe '[0-9]\+')
+    status=$(sudo launchctl list | grep $service_name | grep -oe '[0-9]\+')
     sudo launchctl unload $service_plist >/dev/null 2>&1
     write_run "print_error \"installer.bash (7): failed to run Logz.io OTEL collector plist file (status $status).\n  $err\""
     return 7
