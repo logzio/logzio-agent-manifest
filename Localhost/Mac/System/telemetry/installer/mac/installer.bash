@@ -29,18 +29,20 @@ fi
 # Get the selected products
 execute_task "get_selected_products" "getting the selected products"
 
-sudo -v
-
 # Create Logz.io opt directory
+sudo -v
 execute_task "create_logzio_opt_dir" "creating Logz.io opt directory"
 
 # Get OTEL collector binary
+sudo -v
 execute_task "get_otel_collector_binary" "getting OTEL collector binary"
 
 # Get OTEL config
+sudo -v
 execute_task "get_otel_config" "getting OTEL config"
 
 # Get Logz.io OTEL collector plist
+sudo -v
 execute_task "get_logzio_otel_collector_plist" "getting Logz.io OTEL collector plist"
 
 # Get logs scripts
@@ -69,6 +71,7 @@ fi
 
 # Run Logz.io OTEL collector service
 echo -e "\ninstaller:"
+sudo -v
 execute_task "run_logzio_otel_collector_service" "running Logz.io OTEL collector service"
 
 # Print success message
