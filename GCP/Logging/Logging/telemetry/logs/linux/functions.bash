@@ -208,6 +208,7 @@ function download_logzio_pubsub_integration(){
         write_run "print_error \"logs.bash (1): Failed to unzip Integration release file.\n  $err\""
         return 3
     fi
+    sleep 15
 
     # Add permission to execute file run.sh
     chmod +x $logzio_temp_dir/integration/run.sh 2>$task_error_file
