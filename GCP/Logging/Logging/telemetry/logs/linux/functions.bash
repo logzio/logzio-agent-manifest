@@ -212,7 +212,6 @@ function download_logzio_pubsub_integration(){
     fi
 }
 
-
 # Download Last release of integration
 # Output:
 #   config.json file with related data
