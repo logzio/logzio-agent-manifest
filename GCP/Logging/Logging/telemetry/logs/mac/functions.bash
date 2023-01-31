@@ -190,7 +190,7 @@ function download_logzio_pubsub_integration(){
     curl -fsSL $pubsub_repo > $logzio_temp_dir/logzio-google-pubsub.zip 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (1): failed to get last integration file from Github.\n  $err\""
+        write_run "print_error \"logs.bash (1): failed to get latest integration zip file from Github.\n  $err\""
         return 3
     fi
 
@@ -199,7 +199,7 @@ function download_logzio_pubsub_integration(){
     tar -zxf $logzio_temp_dir/logzio-google-pubsub.zip --directory $logzio_temp_dir 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
-        write_run "print_error \"logs.bash (1): Failed to unzip Integration release file.\n  $err\""
+        write_run "print_error \"logs.bash (1): Failed to unzip Integration latest file.\n  $err\""
         return 3
     fi
 
