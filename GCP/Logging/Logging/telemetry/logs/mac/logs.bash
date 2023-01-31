@@ -36,9 +36,6 @@ execute_task "get_resources_type" "getting google cloud logging resource type"
 # Create Filter pattern 
 execute_task "populate_filter_for_service_name" "populate resource type to filter"
 
-# Downlaod  cloud function
-execute_task "download_cloud_funcion_to_temp_directory" "download cloud function files for deploy in next step"
-
 # Download and run service integration to deploy Google cloud logic for sending logs to logz.io
 execute_task "donwload_and_run_logzio_pubsub_integration" "download and run service integration to deploy Google cloud logic for sending logs to logz.io"
 
