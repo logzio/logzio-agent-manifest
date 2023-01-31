@@ -186,7 +186,7 @@ function get_gcloud_function_region_log () {
 
 function download_logzio_pubsub_integration(){
 	
-    write_log "[INFO] Download zip release..."
+    write_log "INFO" "Download pubsub integration files from Github ..."
     curl -fsSL $pubsub_repo > $logzio_temp_dir/logzio-google-pubsub.zip 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
@@ -218,6 +218,7 @@ function download_logzio_pubsub_integration(){
 # Error:
 #   Exit Code 3
 function run_logzio_pubsub_integration(){
+    write_log "INFO" "Run execution command to deploy integration to GCP account  ..."
 
     $logzio_temp_dir/logzio-google-pubsub/run.sh --listener_url=$listener_url --token=$shipping_token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_type=$resource_type 2>$task_error_file
     if [[ $? -ne 0 ]]; then
