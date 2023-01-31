@@ -202,14 +202,14 @@ function download_logzio_pubsub_integration(){
     fi
 	
     # Unzip Integration release file 
-    tar -zxf $logzio_temp_dir/logzio-google-pubsub.zip --directory  $logzio_temp_dir/integration 2>$task_error_file
+    tar -zxf $logzio_temp_dir/logzio-google-pubsub.zip --directory $logzio_temp_dir/integration 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to unzip Integration release file.\n  $err\""
         return 3
     fi
 
-    # Add permission to execute file for Telegraf
+    # Add permission to execute file run.sh
     chmod +x $logzio_temp_dir/integration/run.sh 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
