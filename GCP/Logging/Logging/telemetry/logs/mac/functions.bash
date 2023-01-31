@@ -220,7 +220,7 @@ function download_logzio_pubsub_integration(){
 function run_logzio_pubsub_integration(){
     write_log "INFO" "Run execution command to deploy integration to GCP account  ..."
 
-    $logzio_temp_dir/logzio-google-pubsub/run.sh --listener_url=$listener_url --token=$shipping_token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_list=$resource_type 2>$task_error_file
+  cd $logzio_temp_dir && cd logzio-google-pubsub && ./run.sh --listener_url=$listener_url --token=$shipping_token --gcp_region=$region --log_type=gcp_agent --function_name="f$function_name" --resource_list=$resource_type 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to run command for create Google Cloud function.\n  $err\""
