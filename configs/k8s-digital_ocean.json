@@ -6,7 +6,7 @@
   "manifest": true,
   "subtypes": [
     {
-      "name": "Digital Ocean",
+      "name": "Digital-Ocean",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/digital_ocean.png",
       "description": "Digital Ocean Managed Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
