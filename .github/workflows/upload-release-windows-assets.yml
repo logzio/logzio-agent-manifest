@@ -23,7 +23,7 @@ jobs:
           tar -czvf windows_kubernetes_gke.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/gke -C ${GITHUB_WORKSPACE} resources
       - name: Compress Kubernetes DigitalOcean
         run: |
-          tar -czvf windows_kubernetes_digitalocean.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/digital-ocean -C ${GITHUB_WORKSPACE} resources
+          tar -czvf windows_kubernetes_digitalocean.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources
       - name: Compress Localhost Windows
         run: |
           tar -czvf windows_localhost_windows.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows localhost/windows -C ${GITHUB_WORKSPACE} resources
