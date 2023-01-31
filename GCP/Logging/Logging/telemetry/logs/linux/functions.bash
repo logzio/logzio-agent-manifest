@@ -3,8 +3,7 @@
 #################################################################################################################################
 ################################################## Logs Linux Functions ###################################################
 #################################################################################################################################
-$pubsub_repo_tag="v1.2.0"
-$pubsub_repo="https://github.com/logzio/logzio-google-pubsub/archive/refs/tags/${pubsub_repo_tag}.tar.gz"
+pubsub_repo="https://github.com/logzio/logzio-google-pubsub/releases/latest/download/logzio-google-pubsub.zip"
 
 # Get Google project Id
 # Output:
