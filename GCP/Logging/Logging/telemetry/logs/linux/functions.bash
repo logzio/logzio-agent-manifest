@@ -3,8 +3,9 @@
 #################################################################################################################################
 ################################################## Logs Linux Functions ###################################################
 #################################################################################################################################
-pubsub_repo_tag="v1.2.0"
-pubsub_repo="https://github.com/logzio/logzio-google-pubsub/archive/refs/tags/${pubsub_repo_tag}.tar.gz"
+
+pubsub_repo="https://github.com/logzio/logzio-google-pubsub/releases/latest/download/logzio-google-pubsub.zip"
+
 # Get Google project Id
 # Output:
 # project_id - Google Project Id
@@ -182,15 +183,11 @@ function get_gcloud_function_region_log () {
     write_run "region=\"$region\""
 }
 
-# Download Last release of integration
-# Output:
-#   config.json file with related data
-# Error:
-#   Exit Code 3
-function donwload_and_run_logzio_pubsub_integration(){
 
+function download_logzio_pubsub_integration(){
+	
     write_log "[INFO] Download zip release..."
-    curl -fsSL pubsub_repo > $logzio_temp_dir/integration.tar.gz 2>$task_error_file
+    curl -fsSL $pubsub_repo > $logzio_temp_dir/logzio-google-pubsub.zip 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): failed to get last integration file from Github.\n  $err\""
@@ -198,7 +195,7 @@ function donwload_and_run_logzio_pubsub_integration(){
     fi
 
     # Unzip Integration release file 
-    tar -zxf $logzio_temp_dir/integration.tar.gz --directory . 2>$task_error_file
+    tar -zxf $logzio_temp_dir/logzio-google-pubsub.zip --directory ./integration 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to unzip Integration release file.\n  $err\""
@@ -206,14 +203,24 @@ function donwload_and_run_logzio_pubsub_integration(){
     fi
 
     # Add permission to execute file for Telegraf
-    chmod +x $logzio_temp_dir/run.sh 2>$task_error_file
+    chmod +x $logzio_temp_dir/integration/run.sh 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to add permission to execution file.\n  $err\""
         return 3
     fi
+}
 
-    ./run.sh --listener_url=$listener_url --token=$token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_type=$resource_type 2>$task_error_file
+
+# Download Last release of integration
+# Output:
+#   config.json file with related data
+# Error:
+#   Exit Code 3
+function run_logzio_pubsub_integration(){
+
+
+    ./integration/run.sh --listener_url=$listener_url --token=$token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_type=$resource_type 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to run command for create Google Cloud function.\n  $err\""
