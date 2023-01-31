@@ -202,16 +202,15 @@ function download_logzio_pubsub_integration(){
     fi
 	
     # Unzip Integration release file 
-    tar -zxf $logzio_temp_dir/logzio-google-pubsub.zip --directory $logzio_temp_dir/integration 2>$task_error_file
+    tar -zxf $logzio_temp_dir/logzio-google-pubsub.zip --directory $logzio_temp_dir 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to unzip Integration release file.\n  $err\""
         return 3
     fi
-    sleep 15
-
+	
     # Add permission to execute file run.sh
-    chmod +x $logzio_temp_dir/integration/run.sh 2>$task_error_file
+    chmod +x $logzio_temp_dir/logzio-google-pubsub/run.sh 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to add permission to execution file.\n  $err\""
@@ -227,8 +226,7 @@ function download_logzio_pubsub_integration(){
 #   Exit Code 3
 function run_logzio_pubsub_integration(){
 
-
-    ./integration/run.sh --listener_url=$listener_url --token=$token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_type=$resource_type 2>$task_error_file
+    ./logzio-google-pubsub/run.sh --listener_url=$listener_url --token=$token --gcp_region=$region --log_type=gcp_agent --function_name=$function_name --resource_type=$resource_type 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (1): Failed to run command for create Google Cloud function.\n  $err\""
