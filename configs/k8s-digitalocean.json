@@ -8,7 +8,7 @@
     {
       "name": "DigitalOcean",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/digitalocean.png",
-      "description": "DigitalOcean Managed Kubernetes",
+      "description": "Managed Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
