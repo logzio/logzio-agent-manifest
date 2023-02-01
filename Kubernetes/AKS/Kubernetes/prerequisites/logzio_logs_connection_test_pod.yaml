@@ -11,9 +11,9 @@ spec:
             - key: "kubernetes.io/config.mirror"
               operator: DoesNotExist
   containers:
-  - name: logzio-logs-connection-test
-    image: busybox:latest
-    command: [ "/bin/sh", "-c", "telnet listener.logz.io 8071" ]
+    - name: logzio-logs-connection-test
+      image: busybox:latest
+      command: [ "/bin/sh", "-c", "telnet listener.logz.io 8071" ]
   nodeSelector:
     kubernetes.io/os: linux
   restartPolicy: OnFailure
