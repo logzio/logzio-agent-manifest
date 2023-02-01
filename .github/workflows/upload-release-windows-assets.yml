@@ -36,5 +36,5 @@ jobs:
             windows_kubernetes_aks.tar.gz
             windows_kubernetes_eks.tar.gz
             windows_kubernetes_gke.tar.gz
-            windows_kubernetes_digital-ocean.tar.gz
+            windows_kubernetes_digitalocean.tar.gz
             windows_localhost_windows.tar.gz
