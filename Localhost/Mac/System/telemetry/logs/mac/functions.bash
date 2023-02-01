@@ -104,7 +104,7 @@ function add_logs_receivers_to_otel_config () {
         fi
     done < <(echo -e "$log_sources")
 
-    $yq_bin eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
+    sudo $yq_bin eval-all -i 'select(fileIndex==0).receivers += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_receivers.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (4): failed to add logs receivers to OTEL config file.\n  $err\""
@@ -139,7 +139,7 @@ function add_logs_exporter_to_otel_config () {
         return 5
     fi
 
-    $yq_bin eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
+    sudo $yq_bin eval-all -i 'select(fileIndex==0).exporters += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_exporter.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (5): failed to add logs exporter to OTEL config file.\n  $err\""
@@ -174,7 +174,7 @@ function add_logs_service_pipeline_to_otel_config () {
         return 6
     fi
 
-    $yq_bin eval-all -i 'select(fileIndex==0).service.pipelines += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
+    sudo $yq_bin eval-all -i 'select(fileIndex==0).service.pipelines += select(fileIndex==1) | select(fileIndex==0)' $otel_config $logzio_temp_dir/logs_otel_service_pipeline.yaml 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"logs.bash (6): failed to add logs service pipeline to OTEL config file.\n  $err\""
