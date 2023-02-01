@@ -3,6 +3,13 @@ kind: Pod
 metadata:
   name: logzio-logs-connection-test
 spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: "kubernetes.io/config.mirror"
+              operator: DoesNotExist
   containers:
   - name: logzio-logs-connection-test
     image: busybox:latest
