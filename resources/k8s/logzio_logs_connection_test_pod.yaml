@@ -13,7 +13,7 @@ spec:
   containers:
     - name: logzio-logs-connection-test
       image: busybox:latest
-      command: [ "/bin/sh", "-c", "telnet listener.logz.io 8071" ]
+      command: ["/bin/sh", "-c"]
   nodeSelector:
     kubernetes.io/os: linux
   restartPolicy: OnFailure
