@@ -3,10 +3,17 @@ kind: Pod
 metadata:
   name: logzio-metrics-connection-test
 spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+            - key: "kubernetes.io/config.mirror"
+              operator: DoesNotExist
   containers:
-  - name: logzio-metrics-connection-test
-    image: busybox:latest
-    command: [ "/bin/sh", "-c", "telnet listener.logz.io 8053" ]
+    - name: logzio-metrics-connection-test
+      image: busybox:latest
+      command: [ "/bin/sh", "-c", "telnet listener.logz.io 8053" ]
   nodeSelector:
     kubernetes.io/os: linux
   restartPolicy: OnFailure
