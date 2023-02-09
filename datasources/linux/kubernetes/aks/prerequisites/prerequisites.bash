@@ -12,6 +12,8 @@ echo -e '#####################'
 echo -e "###$PURPLE_COLOR Prerequisites $WHITE_COLOR###"
 echo -e '#####################'
 
+load_prerequisites_utils
+
 # Check if kubectl is installed
 execute_task 'is_kubectl_installed' 'Checking if kubectl is installed'
 # Check if kubectl is connected to an active Kubernetes cluster

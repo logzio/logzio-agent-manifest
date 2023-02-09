@@ -158,7 +158,7 @@ function write_agent_support {
 
 
 # Agent version
-AGENT_VERSION='v1.0.40'
+AGENT_VERSION=$(cat '/tmp/logzio/version')
 
 # Settings
 trap "write_agent_interruption_message" INT 
@@ -166,6 +166,9 @@ tput civis -- invisible 2>/dev/null
 
 # Agent args
 AGENT_ARGS=("$@")
+
+# Exit code
+EXIT_CODE=1
 
 # Agent status flags
 IS_SHOW_HELP=false
@@ -224,8 +227,6 @@ echo -e '##########################'
 
 # Get Linux info
 execute_task 'get_linux_info' 'Getting Linux info'
-# Check if script was run as root
-execute_task 'check_is_elevated' 'Checking if script was run as root'
 # Get arguments
 execute_task 'get_arguments' 'Getting arguments'
 # Check arguments validation

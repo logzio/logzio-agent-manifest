@@ -574,5 +574,6 @@ function execute_task {
         fi
     fi
 
+    ((EXIT_CODE++))
     >"$TASK_POST_RUN_FILE"
 }

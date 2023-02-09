@@ -19,6 +19,8 @@ LOGZIO_RESOURCES_LINUX_DIR="$LOGZIO_TEMP_DIR/resources-linux"
 ## Resources Linux Directories
 # Resources Linux OTEL directory
 OTEL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/otel"
+# Resources Linux Kubernetes directory
+KUBERNETES_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/k8s"
 # Resources Linux all directory
 ALL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/all"
 
