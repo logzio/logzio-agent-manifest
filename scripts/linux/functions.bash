@@ -576,6 +576,8 @@ function run_sub_type_prerequisites {
         run_final
         exit $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Runs subtype installer
@@ -615,6 +617,8 @@ function run_sub_type_installer {
         run_final
         exit $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Runs subtype post-requisites
@@ -654,4 +658,6 @@ function run_sub_type_postrequisites {
         run_final
         exit $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
