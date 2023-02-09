@@ -16,7 +16,7 @@ function is_logzio_otel_collector_service_exists {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local service=$(systemctl | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" | grep "loaded")
+    local service=$(sudo systemctl | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" | grep "loaded")
     if [[ -z $service ]]; then
         message="'$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service does not exist"
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -45,7 +45,7 @@ function remove_logzio_otel_collector_service {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    systemctl stop "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
+    sudo systemctl stop "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error stopping '$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -54,7 +54,7 @@ function remove_logzio_otel_collector_service {
         return $EXIT_CODE
     fi
 
-    systemctl disable "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
+    sudo systemctl disable "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error disabling '$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -63,7 +63,7 @@ function remove_logzio_otel_collector_service {
         return $EXIT_CODE
     fi
 
-    systemctl reset-failed "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>/dev/null
+    sudo systemctl reset-failed "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>/dev/null
 
     rm "/etc/systemd/system/$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME.service" 2>/dev/null
     rm "/usr/lib/systemd/system/$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME.service" 2>/dev/null
@@ -115,7 +115,7 @@ function create_logzio_opt_sub_dir {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    mkdir -p "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
+    sudo mkdir -p "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error creating '$LOGZIO_OTEL_COLLECTOR_DIR' directory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -137,7 +137,7 @@ function copy_logzio_otel_files_to_opt_sub_dir {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    cp "$LOGZIO_TEMP_DIR/$OTEL_COLLECTOR_BIN_NAME" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
+    sudo cp "$LOGZIO_TEMP_DIR/$OTEL_COLLECTOR_BIN_NAME" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error copying OTEL files to opt subdirectory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -146,7 +146,7 @@ function copy_logzio_otel_files_to_opt_sub_dir {
         return $EXIT_CODE
     fi
 
-    cp "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
+    sudo cp "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error copying OTEL files to opt subdirectory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -186,7 +186,7 @@ function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
         return $EXIT_CODE
     fi
 
-    cp "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" "/etc/systemd/system" 2>"$TASK_ERROR_FILE"
+    sudo cp "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" "/etc/systemd/system" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error copying OTEL collector service file to systemd system directory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -217,7 +217,7 @@ function copy_delete_service_script_to_opt_sub_dir {
         return $EXIT_CODE
     fi
 
-    cp "$OTEL_RESOURCES_LINUX_DIR/delete_service.bash" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
+    sudo cp "$OTEL_RESOURCES_LINUX_DIR/delete_service.bash" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error copying delete service script file to opt subdirectory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -242,7 +242,7 @@ function run_logzio_otel_collector_service {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    systemctl start "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" >/dev/null 2>"$TASK_ERROR_FILE"
+    sudo systemctl start "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error starting Logz.io OTEL collector service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -251,7 +251,7 @@ function run_logzio_otel_collector_service {
         return $EXIT_CODE
     fi
 
-    systemctl enable "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
+    sudo systemctl enable "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error enabling Logz.io OTEL collector service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -261,10 +261,10 @@ function run_logzio_otel_collector_service {
     fi
 
     local is_service_running
-    is_service_running=$(systemctl status "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME.service failed")
+    is_service_running=$(sudo systemctl status "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME.service failed")
     if [[ ! -z "$is_service_running" ]]; then
-        local status=$(systemctl status -l "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE")
-        message="installer.bash ($EXIT_CODE): error running if Logz.io OTEL collector service. run 'sudo systemctl status -l \"$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME\"' to see the error"
+        local status=$(sudo systemctl status -l "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE")
+        message="installer.bash ($EXIT_CODE): error running Logz.io OTEL collector service. run 'sudo systemctl status -l \"$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME\"' to see the error"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
