@@ -39,7 +39,6 @@ function is_logzio_otel_collector_service_exists {
 # Output:
 #   ---
 function remove_logzio_otel_collector_service {
-    local exit_code=2
     local func_name="${FUNCNAME[0]}"
 
     local message='Removing Logz.io OTEL collector service ...'
@@ -48,20 +47,20 @@ function remove_logzio_otel_collector_service {
 
     systemctl stop "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error stopping '$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error stopping '$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     systemctl disable "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error disabling '$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error disabling '$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     systemctl reset-failed "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>/dev/null
@@ -79,7 +78,6 @@ function remove_logzio_otel_collector_service {
 # Output:
 #   OTEL collector exe in Logz.io temp directory
 function download_otel_collector_binary {
-    local exit_code=3
     local func_name="${FUNCNAME[0]}"
 
     local message='Downloading OTEL collector binary ...'
@@ -88,20 +86,20 @@ function download_otel_collector_binary {
 
     curl -fsSL "$OTEL_COLLECTOR_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/otelcol-logzio.tar.gz" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error downloading otelcol-logzio.tar.gz: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error downloading otelcol-logzio.tar.gz: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     tar -zxf "$LOGZIO_TEMP_DIR/otelcol-logzio.tar.gz" --directory "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error extracting files from otelcol-logzio.tar.gz: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error extracting files from otelcol-logzio.tar.gz: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 }
 
@@ -111,7 +109,6 @@ function download_otel_collector_binary {
 # Output:
 #   ---
 function create_logzio_opt_sub_dir {
-    local exit_code=4
     local func_name="${FUNCNAME[0]}"
 
     local message='Creating Logz.io opt subdirectory ...'
@@ -120,11 +117,11 @@ function create_logzio_opt_sub_dir {
 
     mkdir -p "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error creating '$LOGZIO_OTEL_COLLECTOR_DIR' directory: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error creating '$LOGZIO_OTEL_COLLECTOR_DIR' directory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 }
 
@@ -134,7 +131,6 @@ function create_logzio_opt_sub_dir {
 # Output:
 #   ---
 function copy_logzio_otel_files_to_opt_sub_dir {
-    local exit_code=5
     local func_name="${FUNCNAME[0]}"
 
     local message='Copying Logz.io OTEL files to opt subdirectory ...'
@@ -143,20 +139,20 @@ function copy_logzio_otel_files_to_opt_sub_dir {
 
     cp "$LOGZIO_TEMP_DIR/$OTEL_COLLECTOR_BIN_NAME" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error copying OTEL files to opt subdirectory: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error copying OTEL files to opt subdirectory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     cp "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error copying OTEL files to opt subdirectory: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error copying OTEL files to opt subdirectory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 }
 
@@ -166,7 +162,6 @@ function copy_logzio_otel_files_to_opt_sub_dir {
 # Output:
 #   ---
 function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
-    local exit_code=6
     local func_name="${FUNCNAME[0]}"
 
     local message='Copying Logz.io OTEL collector service file to systemd system directory ...'
@@ -175,29 +170,29 @@ function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
 
     sed -i "s@OTEL_COLLECTOR_BIN@$OTEL_COLLECTOR_BIN@g" "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
     
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     sed -i "s@OTEL_CONFIG@$OTEL_CONFIG@g" "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
     
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     cp "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" "/etc/systemd/system" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error copying OTEL collector service file to systemd system directory: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error copying OTEL collector service file to systemd system directory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 }
 
@@ -207,7 +202,6 @@ function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
 # Output:
 #   ---
 function copy_delete_service_script_to_opt_sub_dir {
-    local exit_code=7
     local func_name="${FUNCNAME[0]}"
 
     local message='Copying delete service script to opt subdirectory ...'
@@ -216,20 +210,20 @@ function copy_delete_service_script_to_opt_sub_dir {
 
     sed -i "s@LOGZIO_OTEL_COLLECTOR_SERVICE_NAME@$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME@g" "$OTEL_RESOURCES_LINUX_DIR/delete_service.bash" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
     
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     cp "$OTEL_RESOURCES_LINUX_DIR/delete_service.bash" "$LOGZIO_OTEL_COLLECTOR_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error copying delete service script file to opt subdirectory: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error copying delete service script file to opt subdirectory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 }
 
@@ -239,7 +233,6 @@ function copy_delete_service_script_to_opt_sub_dir {
 # Output:
 #   ---
 function run_logzio_otel_collector_service {
-    local exit_code=8
     local func_name="${FUNCNAME[0]}"
 
     local message='Running Logz.io OTEL collector service ...'
@@ -251,31 +244,31 @@ function run_logzio_otel_collector_service {
 
     systemctl start "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error starting Logz.io OTEL collector service: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error starting Logz.io OTEL collector service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     systemctl enable "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error enabling Logz.io OTEL collector service: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error enabling Logz.io OTEL collector service: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     local is_service_running
     is_service_running=$(systemctl status "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME.service failed")
     if [[ ! -z "$is_service_running" ]]; then
         local status=$(systemctl status -l "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>"$TASK_ERROR_FILE")
-        message="installer.bash ($exit_code): error running if Logz.io OTEL collector service. run 'sudo systemctl status -l \"$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME\"' to see the error"
+        message="installer.bash ($EXIT_CODE): error running if Logz.io OTEL collector service. run 'sudo systemctl status -l \"$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME\"' to see the error"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 }
 
@@ -325,7 +318,6 @@ function remove_service_or_exit {
 # Output:
 #   ---
 function run_all_data_sources {
-    local exit_code=9
     local func_name="${FUNCNAME[0]}"
 
     local message='Running all datasources scripts ...'
@@ -341,13 +333,13 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$PREREQUISITES_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($exit_code): error loading $data_source datasource prerequisites functions: $(get_task_error_message)"
+            message="installer.bash ($EXIT_CODE): error loading $data_source datasource prerequisites functions: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $exit_code
+            exit $EXIT_CODE
         fi
 
         message="Running $data_source datasource prerequisites ..."
@@ -356,13 +348,13 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$PREREQUISITES_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($exit_code): error running $data_source datasource prerequisites: $(get_task_error_message)"
+            message="installer.bash ($EXIT_CODE): error running $data_source datasource prerequisites: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $exit_code
+            exit $EXIT_CODE
         fi
 
         message="Loading $data_source datasource installer functions ..."
@@ -371,13 +363,13 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$INSTALLER_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($exit_code): error loading $data_source datasource installer functions: $(get_task_error_message)"
+            message="installer.bash ($EXIT_CODE): error loading $data_source datasource installer functions: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $exit_code
+            exit $EXIT_CODE
         fi
 
         message="Running $data_source datasource installer ..."
@@ -386,13 +378,15 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$INSTALLER_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($exit_code): error running $data_source datasource installer: $(get_task_error_message)"
+            message="installer.bash ($EXIT_CODE): error running $data_source datasource installer: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $exit_code
+            exit $EXIT_CODE
         fi
     done
+
+    ((EXIT_CODE++))
 }

@@ -4,12 +4,15 @@
 ############################################## LINUX Subtype Prerequisites Script ###############################################
 #################################################################################################################################
 
+EXIT_CODE=1
+
 # Print title
 echo
 echo -e '#####################'
 echo -e "###$PURPLE_COLOR Prerequisites $WHITE_COLOR###"
 echo -e '#####################'
 
+# Load subtype prerequisites utils scripts
 load_prerequisites_utils
 
 MACHINE_NAME='EC2'

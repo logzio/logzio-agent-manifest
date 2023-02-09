@@ -18,7 +18,6 @@
 #   TRACES_TELEMETRY - The traces telemetry if metrics option was selected
 #   TRACES_PARAMS - The traces params if metrics option was selected
 function get_selected_products {
-    local exit_code=2
     local func_name="${FUNCNAME[0]}"
 
     local message='Getting selected products ...'
@@ -36,11 +35,11 @@ function get_selected_products {
 
     get_json_file_field_value_list "$AGENT_JSON" ".configuration.subtypes[0].datasources[$data_source_index].telemetries[]"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     local telemetries=("${JSON_VALUE[@]}")
@@ -51,11 +50,11 @@ function get_selected_products {
     for telemetry in "${telemetries[@]}"; do
         get_json_str_field_value "$telemetry" '.type'
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($exit_code): $(get_task_error_message)"
+            message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
 
-            return $exit_code
+            return $EXIT_CODE
         fi
 
         local type="$JSON_VALUE"
@@ -64,11 +63,11 @@ function get_selected_products {
         get_json_str_field_value_list "$telemetry" '.params[]'
         local func_status=$?
         if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-            message="installer.bash ($exit_code): $result"
+            message="installer.bash ($EXIT_CODE): $result"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
 
-            return $exit_code
+            return $EXIT_CODE
         fi
         if [[ $func_status -ne 0 ]]; then
             params=()
@@ -122,11 +121,11 @@ function get_selected_products {
             write_task_post_run "TRACES_TELEMETRY='$telemetry'"
             write_task_post_run "TRACES_PARAMS=$params_str"
         else
-            message="installer.bash ($exit_code): unknown product name '$type'"
+            message="installer.bash ($EXIT_CODE): unknown product name '$type'"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
 
-            return $exit_code
+            return $EXIT_CODE
         fi
     done
 
@@ -141,7 +140,6 @@ function get_selected_products {
 # Output:
 #   ---
 function run_logs {
-    local exit_code=2
     local func_name="${FUNCNAME[0]}"
 
     local message="Loading $CURRENT_DATA_SOURCE datasource logs functions ..."
@@ -150,13 +148,13 @@ function run_logs {
 
     source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$LOGS_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error loading $CURRENT_DATA_SOURCE datasource logs functions: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error loading $CURRENT_DATA_SOURCE datasource logs functions: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
         run_final
-        exit $exit_code
+        exit $EXIT_CODE
     fi
 
     message="Running $CURRENT_DATA_SOURCE datasource logs ..."
@@ -165,14 +163,16 @@ function run_logs {
 
     source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$LOGS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error running $CURRENT_DATA_SOURCE datasource logs: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error running $CURRENT_DATA_SOURCE datasource logs: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
         run_final
-        exit $exit_code
+        exit $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
 
 # Runs metrics
@@ -181,7 +181,6 @@ function run_logs {
 # Output:
 #   ---
 function run_metrics {
-    local exit_code=3
     local func_name="${FUNCNAME[0]}"
 
     local message="Loading $CURRENT_DATA_SOURCE datasource metrics functions ..."
@@ -190,13 +189,13 @@ function run_metrics {
 
     source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$METRICS_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error loading $CURRENT_DATA_SOURCE datasource metrics functions: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error loading $CURRENT_DATA_SOURCE datasource metrics functions: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
         run_final
-        exit $exit_code
+        exit $EXIT_CODE
     fi
 
     message="Running $CURRENT_DATA_SOURCE datasource metrics ..."
@@ -205,12 +204,14 @@ function run_metrics {
 
     source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${CURRENT_DATA_SOURCE,,}/$METRICS_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($exit_code): error running $CURRENT_DATA_SOURCE datasource metrics: $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error running $CURRENT_DATA_SOURCE datasource metrics: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
         run_final
-        exit $exit_code
+        exit $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }

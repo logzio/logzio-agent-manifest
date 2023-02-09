@@ -4,12 +4,15 @@
 ################################################ LINUX Datasource Logs Script ###################################################
 #################################################################################################################################
 
+EXIT_CODE=1
+
 # Print title
 echo
 echo -e '############'
 echo -e "###$PURPLE_COLOR Logs $WHITE_COLOR###"
 echo -e '############'
 
+# Load datasource logs utils scripts
 load_logs_utils
 
 # Get Logz.io logs token

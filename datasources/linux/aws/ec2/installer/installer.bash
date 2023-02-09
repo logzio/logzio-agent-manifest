@@ -4,12 +4,15 @@
 ################################################ LINUX Subtype Installer Script #################################################
 #################################################################################################################################
 
+EXIT_CODE=1
+
 # Print title
 echo
 echo -e '########################'
 echo -e "###$PURPLE_COLOR Pre-Installation $WHITE_COLOR###"
 echo -e '########################'
 
+# Load subtype installer utils scripts
 load_installer_utils
 
 # Check if Logz.io OTEL collector service exists

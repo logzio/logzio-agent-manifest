@@ -10,7 +10,6 @@
 # Output:
 #   LOGS_TOKEN - Logz.io logs token
 function get_logzio_logs_token {
-    local exit_code=2
     local func_name="${FUNCNAME[0]}"
 
     local message='Getting Logz.io logs token ...'
@@ -19,11 +18,11 @@ function get_logzio_logs_token {
 
     get_json_file_field_value "$AGENT_JSON" '.shippingTokens.LOG_ANALYTICS'
     if [[ $? -ne 0 ]]; then
-        message="logs.bash ($ExitCode): $(get_task_error_message)"
+        message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
     
     shipping_token="$JSON_VALUE"
@@ -41,7 +40,6 @@ function get_logzio_logs_token {
 # Output:
 #   ---
 function add_logs_pipline_to_otel_config {
-    local exit_code=4
     local func_name="${FUNCNAME[0]}"
 
     local message='Adding logs pipeline to OTEL config ...'
@@ -50,11 +48,11 @@ function add_logs_pipline_to_otel_config {
 
     add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_RESOURCES_DIR/logs_pipeline.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.service.pipelines'
     if [[ $? -ne 0 ]]; then
-        message="logs.bash ($exit_code): $(get_task_error_message)"
+        message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 }
 
@@ -64,7 +62,6 @@ function add_logs_pipline_to_otel_config {
 # Ouput:
 #   LOGS_OTEL_RECEIVERS - List of Logs OTEL receiver names
 function get_logs_otel_receivers {
-    local exit_code=5
     local func_name="${FUNCNAME[0]}"
 
     local message='Getting logs OTEL receivers ...'
@@ -73,11 +70,11 @@ function get_logs_otel_receivers {
 
     get_json_str_field_value_list "$LOGS_TELEMETRY" '.otel.receivers[]'
     if [[ $? -ne 0 ]]; then
-        message="logs.bash ($exit_code): $(get_task_error_message)"
+        message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
 
-        return $exit_code
+        return $EXIT_CODE
     fi
 
     local logs_otel_receivers=("${JSON_VALUE[@]}")

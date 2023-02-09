@@ -4,8 +4,8 @@
 ############################################## LINUX Subtype Prerequisites Script ###############################################
 #################################################################################################################################
 
+# Loads subtype prerequisites utils scripts
 function load_prerequisites_utils {
-    local exit_code=1
     local func_name="${FUNCNAME[0]}"
 
     local message='Laoding prerequisites utils functions ...'
@@ -14,12 +14,14 @@ function load_prerequisites_utils {
 
     source "$OTEL_RESOURCES_LINUX_DIR/subtype_prerequisites_utils.bash" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="prerequisites.bash ($exit_code): error loading prerequisites utils functions: $(get_task_error_message)"
+        message="prerequisites.bash ($EXIT_CODE): error loading prerequisites utils functions: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_error "$message"
 
         IS_AGENT_FAILED=true
         run_final
-        exit $exit_code
+        exit $EXIT_CODE
     fi
+
+    ((EXIT_CODE++))
 }
