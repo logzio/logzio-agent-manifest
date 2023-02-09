@@ -57,30 +57,6 @@ function get_linux_info {
     write_task_post_run "CPU_ARCH=\"$cpu_arch\""
 }
 
-# Checks if script was run as root
-# Input:
-#   ---
-# Output:
-#   ---
-function check_is_elevated {
-    local func_name="${FUNCNAME[0]}"
-
-    local message='Checking if script was run as root ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
-    write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    local id=$(id -u)
-    if [[ $id -eq 0 ]]; then
-        return
-    fi
-
-    message="agent.bash ($EXIT_CODE): agent script was not run as root. please rerun the agent script with 'sudo' command"
-    send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
-    write_task_post_run "write_error \"$message\""
-
-    return $EXIT_CODE
-}
-
 # Prints usage
 # Input:
 #   ---

@@ -227,8 +227,6 @@ echo -e '##########################'
 
 # Get Linux info
 execute_task 'get_linux_info' 'Getting Linux info'
-# Check if script was run as root
-execute_task 'check_is_elevated' 'Checking if script was run as root'
 # Get arguments
 execute_task 'get_arguments' 'Getting arguments'
 # Check arguments validation
