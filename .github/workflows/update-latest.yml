@@ -36,7 +36,9 @@ jobs:
           script: |
             import os, json
             configs = []
-            for filename in os.scandir('configs'):
+            entries = os.scandir('configs')
+            sorted_entries = sorted(entries, key=lambda x: x.name)
+            for filename in sorted_entries:
               with open(filename, mode='r', encoding='utf-8') as file:
                 configs.append(json.load(file))
             with open("manifest.json", mode='w', encoding='utf-8') as f:
