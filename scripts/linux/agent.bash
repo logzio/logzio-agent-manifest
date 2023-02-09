@@ -271,4 +271,5 @@ fi
     
 IS_AGENT_COMPLETED=true
 
+# Run final commands
 run_final
