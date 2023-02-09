@@ -35,17 +35,13 @@ echo -e "###$PURPLE_COLOR Installation $WHITE_COLOR###"
 echo -e '####################'
 
 # Create Logz.io opt subdirectory
-sudo echo >/dev/null
 execute_task 'create_logzio_opt_sub_dir' 'Creating Logz.io opt subdirectory'
 # Copy Logz.io OTEL files to opt subdirectory
-sudo echo >/dev/null
 execute_task 'copy_logzio_otel_files_to_opt_sub_dir' 'Copying Logz.io OTEL files to opt subdirectory'
 # Copy Logz.io OTEL collector service file to systemd system directory
 sudo echo >/dev/null
 execute_task 'copy_logzio_otel_collector_service_file_to_systemd_system_dir' 'Copying Logz.io OTEL collector service file to systemd system directory'
 # Copy delete service script file to opt subdirectory
-sudo echo >/dev/null
 execute_task 'copy_delete_service_script_to_opt_sub_dir' 'Copying delete service script file to opt subdirectory'
 # Run Logz.io OTEL collector service
-sudo echo >/dev/null
 execute_task 'run_logzio_otel_collector_service' 'Running Logz.io OTEL collector service'
