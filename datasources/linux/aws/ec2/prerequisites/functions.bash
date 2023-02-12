@@ -5,6 +5,10 @@
 #################################################################################################################################
 
 # Loads subtype prerequisites utils scripts
+# Input:
+#   ---
+# Output:
+#   ---
 function load_prerequisites_utils {
     local func_name="${FUNCNAME[0]}"
 

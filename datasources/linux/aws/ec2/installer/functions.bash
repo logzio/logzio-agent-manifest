@@ -5,6 +5,10 @@
 #################################################################################################################################
 
 # Loads subtype installer utils scripts
+# Input:
+#   ---
+# Output:
+#   ---
 function load_installer_utils {
     local func_name="${FUNCNAME[0]}"
 
