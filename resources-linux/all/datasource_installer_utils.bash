@@ -134,6 +134,48 @@ function get_selected_products {
     write_task_post_run "IS_TRACES_OPTION_WAS_SELECTED=$is_traces_option_was_selected"
 }
 
+# Gets general params (params under datasource)
+# Input:
+#   ---
+# Output:
+#   GENERAL_PARAMS - The params under datasource
+function get_general_params {
+    local func_name="${FUNCNAME[0]}"
+
+    local message='Getting general params ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    local data_source_index=0
+    for datasource in "${DATA_SOURCES[@]}"; do
+        if [[ "$datasource" == "$CURRENT_DATA_SOURCE" ]]; then
+            break
+        fi
+
+        ((data_source_index++))
+    done
+
+    get_json_file_field_value_list "$AGENT_JSON" ".configuration.subtypes[0].datasources[$data_source_index].params[]"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+
+        return $EXIT_CODE
+    fi
+
+    local params=("${JSON_VALUE[@]}")
+
+    message="General params are '$params'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    LIST=("${params[@]}")
+    local params_str=$(convert_list_to_str)
+
+    write_task_post_run "GENERAL_PARAMS=$params_str"
+}
+
 # Runs logs
 # Input:
 #   ---
