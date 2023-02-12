@@ -4,7 +4,7 @@
 ############################################## LINUX Subtype Prerequisites Script ###############################################
 #################################################################################################################################
 
-# Loads subtype prerequisites utils scripts
+# Loads subtype prerequisites utils functions
 # Input:
 #   ---
 # Output:

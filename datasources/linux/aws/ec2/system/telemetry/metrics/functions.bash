@@ -4,7 +4,7 @@
 ############################################# LINUX Datasource Metrics Functions ################################################
 #################################################################################################################################
 
-# Loads datasource metrics utils scripts
+# Loads datasource metrics utils functions
 # Input:
 #   ---
 # Output:

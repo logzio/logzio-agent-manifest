@@ -4,7 +4,7 @@
 ############################################## LINUX Subtype Installer Functions ################################################
 #################################################################################################################################
 
-# Loads subtype installer utils scripts
+# Loads subtype installer utils functions
 # Input:
 #   ---
 # Output:
