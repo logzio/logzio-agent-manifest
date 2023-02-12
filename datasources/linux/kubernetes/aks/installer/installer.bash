@@ -22,7 +22,7 @@ if $IS_HELM_EXISTS; then
     uninstall_helm_or_exit
 fi
 # Run each datasource scripts
-INSTALLER_EXIT_CODE=$EXIT_CODE
+SUB_TYPE_INSTALLER_EXIT_CODE=$EXIT_CODE
 run_all_data_sources
 
 # Print title
@@ -31,7 +31,7 @@ echo -e '########################'
 echo -e "###$PURPLE_COLOR Installation $WHITE_COLOR###"
 echo -e '########################'
 
-EXIT_CODE=$INSTALLER_EXIT_CODE
+EXIT_CODE=$SUB_TYPE_INSTALLER_EXIT_CODE
 
 # Create Logz.io opt subdirectory
 execute_task 'create_logzio_opt_sub_dir' 'Creating Logz.io opt subdirectory'
