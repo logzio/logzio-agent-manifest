@@ -5,6 +5,10 @@
 #################################################################################################################################
 
 # Loads datasource logs utils functions
+# Input:
+#   ---
+# Output:
+#   ---
 function load_logs_utils {
     local func_name="${FUNCNAME[0]}"
 

@@ -5,6 +5,10 @@
 #################################################################################################################################
 
 # Loads datasource metrics utils scripts
+# Input:
+#   ---
+# Output:
+#   ---
 function load_metrics_utils {
     local func_name="${FUNCNAME[0]}"
 
