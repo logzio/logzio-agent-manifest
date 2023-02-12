@@ -58,7 +58,6 @@
           "name": "datasource-2",
           "label": "Datasource 2",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
-          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
           "params": [
             {
               "type": "text",
