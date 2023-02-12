@@ -603,7 +603,6 @@ function run_sub_type_installer {
 # Output:
 #   ---
 function run_sub_type_postrequisites {
-    EXIT_CODE=$AGENT_EXIT_CODE
     local func_name="${FUNCNAME[0]}"
 
     local message='Laoding subtype post-requisites functions ...'
