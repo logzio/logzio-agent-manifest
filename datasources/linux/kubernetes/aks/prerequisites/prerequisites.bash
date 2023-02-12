@@ -4,14 +4,15 @@
 ############################################## LINUX Subtype Prerequisites Script ###############################################
 #################################################################################################################################
 
-EXIT_CODE=1
-
 # Print title
 echo
 echo -e '#####################'
 echo -e "###$PURPLE_COLOR Prerequisites $WHITE_COLOR###"
 echo -e '#####################'
 
+EXIT_CODE=1
+
+# Load subtype prerequisites utils functions
 load_prerequisites_utils
 
 # Check if kubectl is installed
