@@ -258,6 +258,8 @@ execute_task 'get_logzio_listener_url' 'Getting Logz.io listener url'
 # Download subtype files
 execute_task 'download_sub_type_files' 'Downloading subtype files'
 
+AGENT_EXIT_CODE=$EXIT_CODE
+
 # Run subtype prerequisites
 run_sub_type_prerequisites
 

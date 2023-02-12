@@ -333,13 +333,13 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$PREREQUISITES_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($INSTALLER_EXIT_CODE): error loading $data_source datasource prerequisites functions: $(get_task_error_message)"
+            message="installer.bash ($SUB_TYPE_INSTALLER_EXIT_CODE): error loading $data_source datasource prerequisites functions: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $INSTALLER_EXIT_CODE
+            exit $SUB_TYPE_INSTALLER_EXIT_CODE
         fi
 
         message="Running $data_source datasource prerequisites ..."
@@ -348,13 +348,13 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$PREREQUISITES_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($INSTALLER_EXIT_CODE): error running $data_source datasource prerequisites: $(get_task_error_message)"
+            message="installer.bash ($SUB_TYPE_INSTALLER_EXIT_CODE): error running $data_source datasource prerequisites: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $INSTALLER_EXIT_CODE
+            exit $SUB_TYPE_INSTALLER_EXIT_CODE
         fi
 
         message="Loading $data_source datasource installer functions ..."
@@ -363,13 +363,13 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$INSTALLER_FUNCTIONS_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($INSTALLER_EXIT_CODE): error loading $data_source datasource installer functions: $(get_task_error_message)"
+            message="installer.bash ($SUB_TYPE_INSTALLER_EXIT_CODE): error loading $data_source datasource installer functions: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $INSTALLER_EXIT_CODE
+            exit $SUB_TYPE_INSTALLER_EXIT_CODE
         fi
 
         message="Running $data_source datasource installer ..."
@@ -378,15 +378,15 @@ function run_all_data_sources {
 
         source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/${data_source,,}/$INSTALLER_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="installer.bash ($INSTALLER_EXIT_CODE): error running $data_source datasource installer: $(get_task_error_message)"
+            message="installer.bash ($SUB_TYPE_INSTALLER_EXIT_CODE): error running $data_source datasource installer: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
             write_error "$message"
 
             IS_AGENT_FAILED=true
             run_final
-            exit $INSTALLER_EXIT_CODE
+            exit $SUB_TYPE_INSTALLER_EXIT_CODE
         fi
     done
 
-    ((INSTALLER_EXIT_CODE++))
+    ((SUB_TYPE_INSTALLER_EXIT_CODE++))
 }
