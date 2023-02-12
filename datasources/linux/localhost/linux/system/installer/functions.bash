@@ -4,7 +4,7 @@
 ############################################ LINUX Datasource Installer Functions ###############################################
 #################################################################################################################################
 
-# Loads datasource installer utils scripts
+# Loads datasource installer utils functions
 # Input:
 #   ---
 # Output:

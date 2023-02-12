@@ -4,15 +4,15 @@
 ################################################ LINUX Subtype Installer Script #################################################
 #################################################################################################################################
 
-EXIT_CODE=1
-
 # Print title
 echo
 echo -e '########################'
 echo -e "###$PURPLE_COLOR Pre-Installation $WHITE_COLOR###"
 echo -e '########################'
 
-# Load subtype installer utils scripts
+EXIT_CODE=1
+
+# Load subtype installer utils functions
 load_installer_utils
 
 # Check if Logz.io OTEL collector service exists
@@ -33,6 +33,8 @@ echo
 echo -e '####################'
 echo -e "###$PURPLE_COLOR Installation $WHITE_COLOR###"
 echo -e '####################'
+
+EXIT_CODE=1
 
 # Create Logz.io opt subdirectory
 execute_task 'create_logzio_opt_sub_dir' 'Creating Logz.io opt subdirectory'
