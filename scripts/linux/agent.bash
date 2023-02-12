@@ -191,25 +191,25 @@ fi
 source '/tmp/logzio/consts.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
 
-    exit 1
+    exit $EXIT_CODE
 fi
 # Load agent functions
 source '/tmp/logzio/functions.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
 
-    exit 1
+    exit $EXIT_CODE
 fi
 # Load agent utils functions
 source '/tmp/logzio/utils_functions.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "${RED_COLOR}agent.bash (1): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)$WHITE_COLOR"
+    echo -e "${RED_COLOR}agent.bash ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)$WHITE_COLOR"
 
-    exit 1
+    exit $EXIT_CODE
 fi
 
 # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
