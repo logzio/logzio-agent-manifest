@@ -4,15 +4,15 @@
 ############################################## LINUX Datasource Installer Script ################################################
 #################################################################################################################################
 
-EXIT_CODE=1
-
 # Print title
 echo
 echo -e '######################################'
 echo -e "###$PURPLE_COLOR System Datasource Installation $WHITE_COLOR###"
 echo -e '######################################'
 
-# Load datasource installer utils scripts
+EXIT_CODE=1
+
+# Load datasource installer utils functions
 load_installer_utils
 
 # Get the selected products

@@ -4,15 +4,15 @@
 ############################################### LINUX Datasource Metrics Script #################################################
 #################################################################################################################################
 
-EXIT_CODE=1
-
 # Print title
 echo
 echo -e '###############'
 echo -e "###$PURPLE_COLOR Metrics $WHITE_COLOR###"
 echo -e '###############'
 
-# Load datasource metrics utils scripts
+EXIT_CODE=1
+
+# Load datasource metrics utils functions
 load_metrics_utils
 
 # Get Logz.io metrics token
