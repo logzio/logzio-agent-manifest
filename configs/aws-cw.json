@@ -2,7 +2,7 @@
    "name": "AWS",
    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
    "description": "",
-   "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
+   "hint": "Select the environment where you want to deploy the  Logz.io Telemetry Collector.",
    "subtypes": [
      {
        "name": "Cloudwatch Logs",
