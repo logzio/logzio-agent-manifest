@@ -1,13 +1,13 @@
 {
    "name": "GCP",
-   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.svg",
+   "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-platform.svg",
    "description": "",
    "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
    "subtypes": [
      {
        "name": "gcp-logs-name",
        "label": "GCP Logs label",
-       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+       "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
        "description": "GCP Logs description",
        "hint": "GCP logs to ship to Logz.io",
        "supportedOs": ["GCP"],
@@ -16,7 +16,7 @@
          {
            "name": "gcp-logs-datasource-name",
            "label": "GCP Logs Datasource Label",
-           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+           "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
            "description": "Ship your Cloudwatch logs to Logz.io",
            "params": [
             {
