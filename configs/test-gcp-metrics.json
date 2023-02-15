@@ -54,16 +54,6 @@
                "params":
                [
                  {
-                 "type": "text",
-                 "name": "logType",
-                 "label": "Enter your log type",
-                 "required": true,
-                 "description": "The name of your GCP log type",
-                 "value": "logzio-cloudwatch-shipper",
-                 "pattern": "^[a-zA-Z0-9-]+$",
-                 "patternError": "Only letters, numbers and dashes are allowed"
-               },
-                 {
                    "type": "text",
                    "name": "functionName",
                    "label": "Enter your function name",
@@ -81,7 +71,6 @@
                    "placeholder": "Your log group /my/custom/log-group",
                    "actionText": "Add custom log group"
                  }
-
                ]
              }
            ]
