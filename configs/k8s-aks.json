@@ -73,6 +73,11 @@
               "type": "TRACING",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
               "params": []
+            },
+            {
+              "type": "SECURITY",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to search and collect security events from your Kubernetes cluster components and applications pods",
+              "params": []
             }
           ]
         }
