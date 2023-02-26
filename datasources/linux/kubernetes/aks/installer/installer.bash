@@ -16,7 +16,7 @@ EXIT_CODE=1
 load_installer_utils
 
 # Check if Logz.io Helm exists
-execute_task'is_logzio_helm_exists' 'Checking if Logz.io Helm exists'
+execute_task 'is_logzio_helm_exists' 'Checking if Logz.io Helm exists'
 if $IS_HELM_EXISTS; then
     # Get user answer about uninstalling the existed Logz.io Helm and run logic according the answer
     uninstall_helm_or_exit

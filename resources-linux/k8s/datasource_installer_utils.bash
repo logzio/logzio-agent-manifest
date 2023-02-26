@@ -9,7 +9,7 @@
 #   ---
 # Output:
 #   IS_TAINT - Tells if Taints and Tolerations option was selected (true/false)
-function is_taints_and_toleration_was_selected {
+function get_is_taints_and_toleration_was_selected {
     local func_name="${FUNCNAME[0]}"
 
     local message='Getting is Taints and Toleration was selected ...'
@@ -61,7 +61,7 @@ function get_environment_id {
         return $EXIT_CODE
     fi
 
-    local env_id="PARAM_VALUE"
+    local env_id="$PARAM_VALUE"
 
     message="Environment id is '$env_id'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -287,7 +287,7 @@ function build_enable_metrics_or_traces_helm_set {
 # Input:
 #   ---
 # Output:
-#   LOG_HELM_SETS - Containt all the Helm sets for logging
+#   LOG_HELM_SETS - Contains all the Helm sets for logging
 #   HELM_SETS - Contains all the Helm sets
 function build_environment_tag_helm_set {
     local func_name="${FUNCNAME[0]}"
@@ -321,7 +321,7 @@ function build_environment_id_helm_set {
 
     local helm_set=" --set logzio-k8s-telemetry.secrets.env_id=$ENV_ID"
 
-    message="Environment id Helm set is '$HelmSet'"
+    message="Environment id Helm set is '$helm_set'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 

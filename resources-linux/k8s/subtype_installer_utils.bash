@@ -17,14 +17,7 @@ function is_logzio_helm_exists {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local helm_status
-    helm_status=$(helm status -n monitoring logzio-monitoring 2>"TASK_ERROR_FILE")
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): error getting Logz.io Helm status: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
+    helm_status=$(helm status -n monitoring logzio-monitoring 2>/dev/null)
 
     if [[ -z "$helm_status" ]]; then
         message='Logz.io Helm does not exist'
