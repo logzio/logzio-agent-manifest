@@ -56,7 +56,7 @@
         },
         {
           "name": "datasource-2",
-          "label": "Datasource 2",
+          "label": "Datasource 2 no description",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
           "params": [
             {
