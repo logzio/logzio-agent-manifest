@@ -43,7 +43,16 @@
               "type": "LOG_ANALYTICS",
               "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
-              "params": []
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "isScanSecurityRisks",
+                  "label": "Scan cluster for security risks",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect security risks in your cluster.",
+                  "value": true
+                }
+              ]
             },
             {
               "type": "METRICS",
@@ -56,14 +65,6 @@
                   "label": "Collect only recommended metrics",
                   "description": "",
                   "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate Kubernetes 360 and prebuilt dashboards. In addition, we will also collect application metrics that are exposed by your pods.",
-                  "value": true
-                },
-                {
-                  "type": "boolean",
-                  "name": "isScanSecurityRisks",
-                  "label": "Scan cluster for security risks",
-                  "description": "",
-                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect security risks in your cluster.",
                   "value": true
                 }
               ],
