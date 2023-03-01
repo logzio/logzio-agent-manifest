@@ -126,6 +126,112 @@ function build_enable_fargate_helm_set () {
     write_run "helm_sets+='$helm_set'"
 }
 
+# Gets is scan security risks option was selected
+# Output:
+#   is_scan_security_risks_option_was_selected - Tells if scan security risks option was selected (true/false)
+# Error:
+#   Exit Code 3
+function get_is_scan_security_risks_option_was_selected () {
+    write_log "INFO" "Checking if scan security risks option was selected ..."
+    
+    local is_scan_security_risks_param=$(find_param "$logs_params" "isScanSecurityRisks")
+    if [[ -z "$is_scan_security_risks_param" ]]; then
+        write_run "print_error \"logs.bash (3): isScanSecurityRisks param was not found\""
+        return 3
+    fi
+
+    local is_scan_security_risks_value=$(echo -e "$is_scan_security_risks_param" | $jq_bin -r '.value')
+    if [[ "$is_scan_security_risks_value" = null ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOGS}].params[{name=isScanSecurityRisks}].value' was not found in application JSON\""
+        return 3
+    fi
+    if [[ -z "$is_scan_security_risks_value" ]]; then
+        write_run "print_error \"logs.bash (3): '.configuration.subtypes[0].datasources[0].telemetries[{type=LOGS}].params[{name=isScanSecurityRisks}].value' is empty in application JSON\""
+        return 3
+    fi
+
+    write_log "INFO" "is_scan_security_risks_option_was_selected = $is_scan_security_risks_value"
+    write_run "is_scan_security_risks_option_was_selected=$is_scan_security_risks_value"
+}
+
+# Builds enable security report Helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+function build_enable_security_report_helm_set () {
+    write_log "INFO" "Building enable security report Helm set ..."
+    
+    local helm_set=" --set securityReport.enabled=true"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
+
+# Builds Logz.io Trivy logs listener URL Helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+# Error:
+#   Exit Code 4
+function build_logzio_trivy_logs_listener_url_helm_set () {
+    write_log "INFO" "Building Logz.io Trivy logs listener URL Helm set ..."
+
+    local listener_url=$($jq_bin -r '.listenerUrl' $app_json)
+    if [[ "$listener_url" = null ]]; then
+        write_run "print_error \"logs.bash (4): '.listenerUrl' was not found in application JSON\""
+        return 4
+    fi
+    if [[ -z "$listener_url" ]]; then
+        write_run "print_error \"logs.bash (4): '.listenerUrl' is empty in application JSON\""
+        return 4
+    fi
+
+    local helm_set=" --set logzio-trivy.secrets.logzioListener=$listener_url"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
+
+# Builds Logz.io Trivy logs token Helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+# Error:
+#   Exit Code 5
+function build_logzio_trivy_logs_token_helm_set () {
+    write_log "INFO" "Building Logz.io Trivy logs token Helm set ..."
+
+    local shipping_token=$($jq_bin -r '.shippingTokens.LOG_ANALYTICS' $app_json)
+    if [[ "$shipping_token" = null ]]; then
+        write_run "print_error \"logs.bash (5): '.shippingTokens.LOG_ANALYTICS' was not found in application JSON\""
+        return 5
+    fi
+    if [[ -z "$shipping_token" ]]; then
+        write_run "print_error \"logs.bash (5): '.shippingTokens.LOG_ANALYTICS' is empty in application JSON\""
+        return 5
+    fi
+
+    local helm_set=" --set logzio-trivy.secrets.logzioShippingToken=$shipping_token"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
+
+# Builds Trivy environment id helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+function build_trivy_environment_id_helm_set () {
+    write_log "INFO" "Building Trivy environment id Helm set ..."
+
+    if [[ -z "$env_id" ]]; then
+        write_log "INFO" "env_id is empty. Default value will be used."
+        return
+    fi
+
+    local helm_set=" --set logzio-trivy.env_id=$env_id"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}
+
+
 # Builds multiline Helm sets
 # Output:
 #   helm_sets - Contains all the Helm sets
