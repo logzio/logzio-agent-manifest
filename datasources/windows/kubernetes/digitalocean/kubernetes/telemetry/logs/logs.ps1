@@ -22,6 +22,18 @@ Invoke-Task 'Build-LogzioLogsListenerUrlHelmSet' @{ListenerUrl = $script:Listene
 Invoke-Task 'Build-LogzioLogsTokenHelmSet' @{LogsToken = $script:LogsToken} 'Building Logz.io logs token Helm set' @($LogsFunctionsScript)
 # Build environment id Helm set
 Invoke-Task 'Build-EnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building environment id Helm set' @($LogsFunctionsScript)
+# Get is scan security risks option was selected
+Invoke-Task 'Get-IsScanSecurityRisksOptionWasSelected'  @{LogsParams = $script:LogsParams} 'Getting is scan security risks option was selected' @($LogsFunctionsScript)
+if ($script:IsScanSecurityRisks) {
+    # Build enable security report Helm set
+    Invoke-Task 'Build-EnableSecurityReportHelmSet' @{} 'Building enable security report Helm set' @($LogsFunctionsScript)
+    # Build Logz.io Trivy logs listener url Helm set
+    Invoke-Task 'Build-LogzioTrivyLogsListenerUrlHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io Trivy logs listener url Helm set' @($LogsFunctionsScript)
+    # Build Logz.io Trivy logs token Helm set
+    Invoke-Task 'Build-LogzioTrivyLogsTokenHelmSet' @{LogsToken = $script:LogsToken} 'Building Logz.io Trivy logs token Helm set' @($LogsFunctionsScript)
+    # Build Trivy environment id Helm set
+    Invoke-Task 'Build-TrivyEnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building Trivy environment id Helm set' @($LogsFunctionsScript)
+}
 
 # Finished successfully
 Exit 0
