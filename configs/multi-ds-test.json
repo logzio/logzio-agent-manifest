@@ -6,7 +6,7 @@
   "subtypes": [
     {
       "name": "multi-ds-subtype",
-      "label": "Multi DS  Subtype",
+      "label": "Multi DS Subtype",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
       "description": "this has multipl e ds",
       "supportedOs": ["Mac", "Windows", "Linux"],
