@@ -17,7 +17,8 @@
           "params": [],
           "telemetries": [
             {
-              "type": "LOG_ANALYTICS",
+              "type": "MATRICS",
+              "dashboards": ["datasource1-logs-dashboard-1", "datasource1-logs-dashboard-2"],
               "hint": "Switch the toggle on if you want Logzio Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
               "params": []
             }
