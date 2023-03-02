@@ -49,7 +49,7 @@
                   "name": "isScanSecurityRisks",
                   "label": "Scan cluster for security risks",
                   "description": "",
-                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect security risks in your cluster.",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to scan and inform about security risks in your cluster.",
                   "value": true
                 }
               ]
