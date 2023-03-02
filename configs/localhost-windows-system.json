@@ -1,7 +1,7 @@
 {
   "name": "Localhost",
   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
-  "label": "localhost",
+  "label": "Localhost",
   "description": "",
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "subtypes": [
