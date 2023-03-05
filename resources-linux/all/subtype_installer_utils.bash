@@ -16,7 +16,7 @@ function run_all_data_sources {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    for data_source in ${DATA_SOURCES[@]}; do
+    for data_source in "${DATA_SOURCES[@]}"; do
         CURRENT_DATA_SOURCE="$data_source"
 
         message="Loading $data_source datasource prerequisites functions ..."

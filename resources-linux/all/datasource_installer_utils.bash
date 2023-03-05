@@ -44,8 +44,9 @@ function get_selected_products {
 
     local telemetries=("${JSON_VALUE[@]}")
     
-    local is_logs_option_selected=false
-    local is_metrics_option_selected=false
+    local is_logs_option_was_selected=false
+    local is_metrics_option_was_selected=false
+    local is_traces_option_was_selected=false
     
     for telemetry in "${telemetries[@]}"; do
         get_json_str_field_value "$telemetry" '.type'

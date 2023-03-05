@@ -18,7 +18,6 @@ function is_logzio_helm_exists {
 
     local helm_status
     helm_status=$(helm status -n monitoring logzio-monitoring 2>/dev/null)
-
     if [[ -z "$helm_status" ]]; then
         message='Logz.io Helm does not exist'
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -69,7 +68,7 @@ function create_logzio_opt_sub_dir {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    mkdir -p "$LOGZIO_KUBERNETES_DIR" 2>"$TASK_ERROR_MESSAGE"
+    mkdir -p "$LOGZIO_KUBERNETES_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error creating Logz.io Kubernetes directory: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -112,7 +111,7 @@ function run_helm_install {
 
     local retries=3
     while [[ $retries -ne 0 ]]; do
-        helm install -n monitoring $HELMN_SETS --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >/dev/null 2>"$TASK_ERROR_FILE"
+        helm install -n monitoring $HELM_SETS --create-namespace logzio-monitoring logzio-helm/logzio-monitoring >/dev/null 2>"$TASK_ERROR_FILE"
         if [[ $? -eq 0 ]]; then
             return
         fi
