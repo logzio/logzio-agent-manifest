@@ -57,6 +57,31 @@ function get_linux_info {
     write_task_post_run "CPU_ARCH=\"$cpu_arch\""
 }
 
+# Checks if bash version is 4.0 or above
+# Input:
+#   ---
+# Output:
+#   LINUX_NAME - Linux name
+#   LINUX_VERSION - Linux version
+#   CPU_ARCH - Linux cpu architecture
+function is_bash_version_4_or_above {
+    local func_name="${FUNCNAME[0]}"
+
+    local message='Checking if bash version is 4.0 or above ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    local bash_major_version=$(echo -e "$BASH_VERSION" | cut -d. -f1)
+    if [[ $bash_major_version -lt 4 ]]; then
+        message="agent.bash ($EXIT_CODE): your bash version must be 4.0 or above"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
+
+        return $EXIT_CODE
+    fi
+}
+
+
 # Prints usage
 # Input:
 #   ---

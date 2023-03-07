@@ -237,6 +237,8 @@ echo -e '##########################'
 
 # Get Linux info
 execute_task 'get_linux_info' 'Getting Linux info'
+# Check if bash version is 4.0 or above
+execute_task 'is_bash_version_4_or_above' 'Checking if bash version is 4.0 or above'
 # Get arguments
 execute_task 'get_arguments' 'Getting arguments'
 # Check arguments validation
