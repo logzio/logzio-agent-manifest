@@ -50,16 +50,7 @@ function write_agent_final_messages {
         write_agent_support
         return
     fi
-    if $IS_AGENT_FAILED; then
-        local message='Agent Failed'
-        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_log "$LOG_LEVEL_INFO" "$message"
-
-        write_agent_status "$message" '\033[0;31m'
-        write_agent_support
-        return
-    fi
-    if $IS_POSTREQUISITE_FAILED; then
+    if $IS_POSTREQUISITES_FAILED; then
         local message='Agent Failed'
         send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_log "$LOG_LEVEL_INFO" "$message"
@@ -69,12 +60,21 @@ function write_agent_final_messages {
         write_agent_support
         return
     fi
-    if $IS_AGENT_COMPLETED; then
-        local message='Agent Completed Successfully'
+    if $IS_AGENT_FAILED; then
+        local message='Agent Failed'
         send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_log "$LOG_LEVEL_INFO" "$message"
 
-        write_agent_status "$message" '\033[0;32m'
+        write_agent_status "$message" '\033[0;31m'
+        write_agent_support
+        return
+    fi
+    if $IS_POSTREQUISITES_FAILED; then
+        local message='Agent Failed'
+        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_log "$LOG_LEVEL_INFO" "$message"
+
+        write_agent_status "$message" '\033[0;31m'
         write_agent_info
         write_agent_support
         return
@@ -89,6 +89,14 @@ function write_agent_final_messages {
         write_agent_status "$message" '\033[0;33m'
         return
     fi
+
+    local message='Agent Completed Successfully'
+    send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+    write_log "$LOG_LEVEL_INFO" "$message"
+    
+    write_agent_status "$message" '\033[0;32m'
+    write_agent_info
+    write_agent_support
 }
 
 # Prints agent interruption message
@@ -176,7 +184,9 @@ IS_LOADING_AGENT_SCRIPTS_FAILED=false
 IS_REMOVE_LAST_RUN_ANSWER_NO=false
 IS_AGENT_STOPPED=false
 IS_AGENT_FAILED=false
-IS_POSTREQUISITE_FAILED=false
+IS_POSTREQUISITEs_STEP=false
+IS_POSTREQUISITES_FAILED=false
+CONTINUE_IF_FAILED=false
 IS_AGENT_COMPLETED=false
 
 # Print main title - Christmas theme
@@ -270,8 +280,6 @@ if ! $IS_REMOVE_LAST_RUN_ANSWER_NO; then
     # Run subtype post-requisites
     run_sub_type_postrequisites
 fi
-    
-IS_AGENT_COMPLETED=true
 
 # Run final commands
 run_final

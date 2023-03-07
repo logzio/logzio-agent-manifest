@@ -549,8 +549,10 @@ function execute_task {
             exit_code=1
         fi
 
-        if $IS_POSTREQUISITE_FAILED; then
+        if $CONTINUE_IF_FAILED; then
             return
+        elif $IS_POSTREQUISITEs_STEP; then
+            IS_POSTREQUISITES_FAILED=true
         else
             IS_AGENT_FAILED=true
         fi
