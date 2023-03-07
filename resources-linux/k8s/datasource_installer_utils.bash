@@ -86,11 +86,14 @@ function build_tolerations_helm_sets {
     local nodes
     nodes=$(kubectl get nodes -o json 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): error getting nodes: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
+        local err=$(get_task_error_message)
+        if [[ "$err" == *"ERROR"* ]]; then
+            message="installer.bash ($EXIT_CODE): error getting nodes: $err"
+            send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+            write_task_post_run "write_error \"$message\""
 
-        return $EXIT_CODE
+            return $EXIT_CODE
+        fi
     fi
     
     get_json_str_field_value_list "$nodes" '.items[].spec | select(.taints!=null) | .taints[]'
