@@ -73,7 +73,7 @@ function is_bash_version_4_or_above {
 
     local bash_major_version=$(echo -e "$BASH_VERSION" | cut -d. -f1)
     if [[ $bash_major_version -lt 4 ]]; then
-        message="agent.bash ($EXIT_CODE): your bash version must be 4.0 or above"
+        message="agent.bash ($EXIT_CODE): bash version must be 4.0 or above"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
         write_task_post_run "write_error \"$message\""
 
