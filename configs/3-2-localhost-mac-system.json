@@ -2,10 +2,12 @@
   "name": "Localhost",
   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
   "description": "",
+  "label": "Localhost",
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "subtypes": [
     {
       "name": "Mac",
+      "label": "Mac",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac_machine.png",
       "description": "Mac Machine",
       "hint": "Select your localhost OS.",
