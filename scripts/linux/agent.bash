@@ -141,6 +141,11 @@ function write_agent_status {
     echo
 }
 
+# Prints agent info
+# Input:
+#   ---
+# Ouput:
+#   Agent info message
 function write_agent_info {
     source "$LOGZIO_TEMP_DIR/${PLATFORM,,}/${SUB_TYPE,,}/$AGENT_INFO_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
