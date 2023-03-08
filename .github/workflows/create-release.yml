@@ -75,7 +75,7 @@ jobs:
           tar -czvf ${GITHUB_WORKSPACE}/tars/linux_kubernetes_gke.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux kubernetes/gke -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
           tar -czvf ${GITHUB_WORKSPACE}/tars/linux_kubernetes_digitalocean.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
           tar -czvf ${GITHUB_WORKSPACE}/tars/linux_aws_ec2.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux aws/ec2 -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_localhost_windows.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux localhost/windows -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_localhost_linux.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux localhost/linux -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:

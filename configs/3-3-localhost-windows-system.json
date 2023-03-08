@@ -7,7 +7,7 @@
     {
       "name": "Windows",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/windows_machine.png",
-      "description": "Windows machine",
+      "description": "Windows Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Windows"],
       "datasources": [

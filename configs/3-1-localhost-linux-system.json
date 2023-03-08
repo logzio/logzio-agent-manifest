@@ -7,7 +7,7 @@
     {
       "name": "Linux",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/linux_machine.png",
-      "description": "Linux machine",
+      "description": "Linux Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Linux"],
       "datasources": [

@@ -7,7 +7,7 @@
     {
       "name": "Mac",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac_machine.png",
-      "description": "Mac machine",
+      "description": "Mac Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Mac"],
       "datasources": [
