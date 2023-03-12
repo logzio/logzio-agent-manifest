@@ -2,20 +2,6 @@
 #################################################### WINDOWS Utils Functions ####################################################
 #################################################################################################################################
 
-# Prints info message in green
-# Input:
-#   Message - Message text
-# Output:
-#   The message
-function Write-Info {
-    param (
-        [string]$Message
-    )
-
-    Write-Log 'INFO' $Message
-    Write-Host $Message -ForegroundColor Green
-}
-
 # Prints error message in red
 # Input:
 #   Message - Message text
@@ -112,7 +98,7 @@ function Send-LogToLogzio {
 
     $Message = $Message.Replace('\', '\\').Replace('"', '\"')
 
-    $local:Log = "{`"@timestamp`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"os_name`":`"$script:WindowsName`",`"os_version`":`"$script:WindowsVersion`",`"shell_version`":`"$script:PowerShellVersion`""
+    $local:Log = "{`"datetime`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"os_name`":`"$script:WindowsName`",`"os_version`":`"$script:WindowsVersion`",`"shell_version`":`"$script:PowerShellVersion`",`"cpu_arch`":`"$env:PROCESSOR_ARCHITECTURE`""
 
     if ($Level.Equals($LogLevelError)) {
         $local:ErrorIdPartMatch = $Message | Select-String -Pattern '\([0-9]+\)'
@@ -163,13 +149,13 @@ function Test-AreFuncArgsExist {
     )
 
     if ($FuncArgs.Count -eq 0) {
-        Write-Output "function hashtable argument is empty"
+        "function hashtable argument is empty" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
 
     foreach ($ArgName in $ArgNames) {
         if (-Not $FuncArgs.ContainsKey($ArgName)) {
-            Write-Output "function hashtable argument does not have '$ArgName' key"
+            "function hashtable argument does not have '$ArgName' key" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
             return 2
         }
     }
@@ -191,15 +177,15 @@ function Get-JsonStrFieldValue {
     $local:Result = $JsonStr | &$script:JqExe -r $JsonPath 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         $JsonStr = $JsonStr.Replace('"', '`"')
-        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)"
+        "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
-        Write-Output "'$JsonPath' is empty in '$JsonStr'"
+        "'$JsonPath' is empty in '$JsonStr'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 2
     }
     if ($Result.Equals('null')) {
-        Write-Output "'$JsonPath' does not exist in '$JsonStr'"
+        "'$JsonPath' does not exist in '$JsonStr'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 3
     }
 
@@ -222,11 +208,11 @@ function Get-JsonStrFieldValueList {
     $local:Result = $JsonStr | &$script:JqExe -c $JsonPath 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         $JsonStr = $JsonStr.Replace('"', '`"')
-        Write-Output "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)"
+        "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ($Result.Count -eq 0) {
-        Write-Output "'$JsonPath' is empty in '$JsonStr'"
+        "'$JsonPath' is empty in '$JsonStr'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 2
     }
 
@@ -248,15 +234,15 @@ function Get-JsonFileFieldValue {
 
     $local:Result = &$script:JqExe -r $JsonPath $JsonFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)"
+        "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
-        Write-Output "'$JsonPath' is empty in '$JsonFile'"
+        "'$JsonPath' is empty in '$JsonFile'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 2
     }
     if ($Result.Equals('null')) {
-        Write-Output "'$JsonPath' does not exist in '$JsonFile'"
+        "'$JsonPath' does not exist in '$JsonFile'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 3
     }
 
@@ -278,11 +264,11 @@ function Get-JsonFileFieldValueList {
 
     $local:Result = &$script:JqExe -c $JsonPath $JsonFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)"
+        "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ($Result.Count -eq 0) {
-        Write-Output "'$JsonPath' is empty in '$JsonFile'"
+        "'$JsonPath' is empty in '$JsonFile'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 2
     }
 
@@ -306,7 +292,7 @@ function Add-YamlFileFieldValue {
 
     &$script:YqExe -i "$YamlPath += ""`"`"$Value`"`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error adding '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)"
+        "error adding '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
 }
@@ -328,7 +314,7 @@ function Set-YamlFileFieldValue {
 
     &$script:YqExe -i "$YamlPath = ""`"$Value`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error setting '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)"
+        "error setting '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
 }
@@ -348,15 +334,15 @@ function Get-YamlFileFieldValue {
 
     $local:Result = &$script:YqExe $YamlPath $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error getting '$YamlPath' from '$YamlFile': $(Get-TaskErrorMessage)"
+        "error getting '$YamlPath' from '$YamlFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
-        Write-Output "'$YamlPath' is empty in '$YamlFile'"
+        "'$YamlPath' is empty in '$YamlFile'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 2
     }
     if ($Result.Equals('null')) {
-        Write-Output "'$YamlPath' does not exist in '$YamlFile'"
+        "'$YamlPath' does not exist in '$YamlFile'" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 3
     }
 
@@ -386,7 +372,7 @@ function Add-YamlFileFieldValueToAnotherYamlFileField {
             $YamlPathSource = '.'
         }
 
-        Write-Output "error adding '$YamlPathSource' in '$YamlFileSource' to '$YamlPathDest' in '$YamlFileDest': $(Get-TaskErrorMessage)"
+        "error adding '$YamlPathSource' in '$YamlFileSource' to '$YamlPathDest' in '$YamlFileDest': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
 }
@@ -434,13 +420,12 @@ function Get-Param {
     )
 
     foreach ($Param in $Params) {
-        $Err = Get-JsonStrFieldValue $Param '.name'
-        if ($Err.Count -ne 0) {
-            Write-Output $Err[0]
+        Get-JsonStrFieldValue $Param '.name'
+        if ($LASTEXITCODE -ne 0) {
             return 1
         }
         
-        $local:Name = $JsonValue
+        $local:Name = $script:JsonValue
         if (-Not $Name.Equals($ParamName)) {
             continue
         }
@@ -449,7 +434,7 @@ function Get-Param {
         return
     }
 
-    Write-Output "$ParamName param was not found"
+    "$ParamName param was not found" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
     return 2
 }
 
@@ -466,24 +451,24 @@ function Get-ParamValue {
         [string]$ParamName
     )
 
-    $local:Err = Get-Param $Params $ParamName
-    if ($Err.Count -ne 0) {
-        Write-Output $Err[0]
-    }
-
-    $local:Param = $TargetParam
-
-    $Err = Get-JsonStrFieldValue $TargetParam '.value'
-    if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
-        Write-Output $Err[0]
+    Get-Param $Params $ParamName
+    if ($LASTEXITCODE -ne 0) {
         return 1
     }
-    if ($Err.Count -ne 0) {
+
+    $local:Param = $script:TargetParam
+
+    Get-JsonStrFieldValue $Param '.value'
+    $local:FuncStatus = $LASTEXITCODE
+    if ($FuncStatus -ne 0 -and $FuncStatus -ne 2) {
+        return 2
+    }
+    if ($FuncStatus -ne 0) {
         $script:ParamValue = ''
         return
     }
     
-    $script:ParamValue = $JsonValue
+    $script:ParamValue = $script:JsonValue
 }
 
 # Gets param value list
@@ -499,24 +484,24 @@ function Get-ParamValueList {
         [string]$ParamName
     )
 
-    $local:Err = Get-Param $Params $ParamName
-    if ($Err.Count -ne 0) {
-        Write-Output $Err[0]
-    }
-
-    $local:Param = $TargetParam
-
-    $Err = Get-JsonStrFieldValueList $TargetParam '.value[]'
-    if ($Err.Count -ne 0 -and $Err[1] -eq 1) {
-        Write-Output $Err[0]
+    Get-Param $Params $ParamName
+    if ($LASTEXITCODE -ne 0) {
         return 1
     }
-    if ($Err.Count -ne 0) {
+
+    $local:Param = $script:TargetParam
+
+    Get-JsonStrFieldValueList $Param '.value[]'
+    $local:FuncStatus = $LASTEXITCODE
+    if ($FuncStatus -eq 1) {
+        return 1
+    }
+    if ($FuncStatus -ne 0) {
         $script:ParamValue = @()
         return
     }
     
-    $script:ParamValue = $JsonValue
+    $script:ParamValue = $script:JsonValue
 }
 
 # Gets Logz.io region
@@ -564,7 +549,7 @@ function Install-Chocolatey {
             Get-Command choco -ErrorAction Stop | Out-Null
         }
         catch {
-            Write-Output "error installing Chocolatey. please run 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))', open a new PowerShell and rerun Logz.io agent"
+            "error installing Chocolatey. please run 'Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))', open a new PowerShell and rerun Logz.io agent" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
             return 1
         }
     }

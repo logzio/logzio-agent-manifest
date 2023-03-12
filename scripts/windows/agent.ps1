@@ -114,6 +114,11 @@ function Write-AgentStatus {
     Write-Host
 }
 
+# Prints agent info
+# Input:
+#   ---
+# Ouput:
+#   Agent info
 function Write-AgentInfo {
     try {
         . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:AgentInfoFile" -ErrorAction Stop
@@ -243,8 +248,6 @@ try {
     Invoke-Task 'Set-AgentJsonConsts' @{} 'Setting agent json consts' @($script:AgentFunctionsFile)
     # Get Logz.io listener url
     Invoke-Task 'Get-LogzioListenerUrl' @{} 'Getting Logz.io listener url' @($script:AgentFunctionsFile)
-    # Get Logz.io region
-    Invoke-Task 'Get-LogzioRegion' @{ListenerUrl = $script:ListenerUrl} 'Getting Logz.io region' @($script:AgentFunctionsFile)
     # Download subtype files
     Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $script:RepoRelease} 'Donwloading subtype files' @($script:AgentFunctionsFile)
 
