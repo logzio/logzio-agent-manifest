@@ -65,7 +65,7 @@ function Write-TaskPostRun {
 #   Task error file content
 function Get-TaskErrorMessage {
     $local:Err = Get-Content -Path $script:TaskErrorFile
-    $Err = $Err.Replace('"', '')
+    $Err = $Err.Replace('"', '`"')
 
     Write-Output $Err
 }
@@ -176,8 +176,7 @@ function Get-JsonStrFieldValue {
 
     $local:Result = $JsonStr | &$script:JqExe -r $JsonPath 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        $JsonStr = $JsonStr.Replace('"', '`"')
-        "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $script:TaskErrorFile))" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
@@ -207,8 +206,7 @@ function Get-JsonStrFieldValueList {
 
     $local:Result = $JsonStr | &$script:JqExe -c $JsonPath 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        $JsonStr = $JsonStr.Replace('"', '`"')
-        "error getting '$JsonPath' from '$JsonStr': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error getting '$JsonPath' from '$JsonStr': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ($Result.Count -eq 0) {
@@ -234,7 +232,7 @@ function Get-JsonFileFieldValue {
 
     $local:Result = &$script:JqExe -r $JsonPath $JsonFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error getting '$JsonPath' from '$JsonFile': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
@@ -264,7 +262,7 @@ function Get-JsonFileFieldValueList {
 
     $local:Result = &$script:JqExe -c $JsonPath $JsonFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        "error getting '$JsonPath' from '$JsonFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error getting '$JsonPath' from '$JsonFile': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ($Result.Count -eq 0) {
@@ -292,7 +290,7 @@ function Add-YamlFileFieldValue {
 
     &$script:YqExe -i "$YamlPath += ""`"`"$Value`"`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        "error adding '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error adding '$Value' to '$YamlPath in '$YamlFile': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
 }
@@ -314,7 +312,7 @@ function Set-YamlFileFieldValue {
 
     &$script:YqExe -i "$YamlPath = ""`"$Value`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        "error setting '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error setting '$Value' to '$YamlPath in '$YamlFile': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
 }
@@ -334,7 +332,7 @@ function Get-YamlFileFieldValue {
 
     $local:Result = &$script:YqExe $YamlPath $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        "error getting '$YamlPath' from '$YamlFile': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error getting '$YamlPath' from '$YamlFile': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
     if ([string]::IsNullOrEmpty($Result)) {
@@ -372,7 +370,7 @@ function Add-YamlFileFieldValueToAnotherYamlFileField {
             $YamlPathSource = '.'
         }
 
-        "error adding '$YamlPathSource' in '$YamlFileSource' to '$YamlPathDest' in '$YamlFileDest': $(Get-TaskErrorMessage)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
+        "error adding '$YamlPathSource' in '$YamlFileSource' to '$YamlPathDest' in '$YamlFileDest': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1
     }
 }
@@ -671,9 +669,9 @@ function Invoke-Task {
                 $script:IsAgentFailed = $true
                 Exit 4
             }
-        }
 
-        Clear-Content $script:TaskPostRunFile
+            Clear-Content -Path $script:TaskPostRunFile
+        }
 
         if ($script:IsPostrequisiteFailed) {
             return
@@ -703,6 +701,8 @@ function Invoke-Task {
             Exit 4
         }
 
-        Clear-Content $script:TaskPostRunFile
+        Clear-Content -Path $script:TaskPostRunFile
     }
+
+    $script:ExitCode++
 }

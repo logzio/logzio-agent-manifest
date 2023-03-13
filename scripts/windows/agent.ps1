@@ -155,6 +155,9 @@ $ProgressPreference = 'SilentlyContinue'
 $WarningPreference = 'SilentlyContinue'
 [Console]::CursorVisible = $false
 
+# Exit code
+$script:ExitCode = 1
+
 # Agent status flags
 $script:IsShowHelp = $false
 $script:IsLoadingAgentScriptsFailed = $false
@@ -185,16 +188,17 @@ try {
         . $env:TEMP\Logzio\utils_functions.ps1 -ErrorAction Stop
     }
     catch {
-        $local:ExitCode = 1
         $script:IsLoadingAgentScriptsFailed = $true
-        Write-Host "agent.ps1 ($ExitCode): error loading agent scripts: $_" -ForegroundColor Red
+        Write-Host "agent.ps1 ($script:ExitCode): error loading agent scripts: $_" -ForegroundColor Red
 
-        Exit $ExitCode
+        Exit $script:ExitCode
     }
+
+    $script:ExitCode++
 
     # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
     if (Test-Path -Path $script:TaskPostRunFile -PathType Leaf) {
-        Clear-Content $script:TaskPostRunFile -Force
+        Clear-Content -Path $script:TaskPostRunFile -Force
     }
 
     # Write agent running log
