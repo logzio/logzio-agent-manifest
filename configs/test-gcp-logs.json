@@ -2,7 +2,7 @@
    "name": "GCP",
    "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-platform.svg",
    "description": "",
-   "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
+   "hint": "Select the environment where you want to deploy the  Logz.io Telemetry Collector.",
    "subtypes": [
      {
        "name": "gcp-logs-name",
