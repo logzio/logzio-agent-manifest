@@ -246,7 +246,7 @@ function Build-EnableFargateHelmSet {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:HelmSet = " --set fargateLogRouter.enabled=true"
+    $local:HelmSet = " --set logzio-fluentd.fargateLogRouter.enabled=true"
 
     $Message = "Enable Fargate Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
