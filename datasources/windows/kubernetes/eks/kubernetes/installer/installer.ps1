@@ -121,7 +121,7 @@ if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
     Invoke-Task 'Build-EnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building environment id Helm set' @($InstallerFunctionsScript)
 }
 # Get is Fargate option was selected
-Invoke-Task 'Get-IsFargateWasSelected' @{LogsParams = $script:GeneralParams} 'Getting is Fargate was selected' @($InstallerFunctionsScript)
+Invoke-Task 'Get-IsFargateWasSelected' @{GeneralParams = $script:GeneralParams} 'Getting is Fargate was selected' @($InstallerFunctionsScript)
 if ($script:IsLogsOptionSelected) {
     # Run logs script
     Invoke-Logs

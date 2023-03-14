@@ -529,7 +529,7 @@ function Build-EnvironmentIdHelmSet {
 
 # Gets is Fargate option was selected
 # Input:
-#   FuncArgs - Hashtable {LogsParams = $script:GeneralParams}
+#   FuncArgs - Hashtable {GeneralParams = $script:GeneralParams}
 # Output:
 #   IsFargate - Tells if Fargate option was selected
 function Get-IsFargateWasSelected {

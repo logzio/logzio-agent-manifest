@@ -230,7 +230,7 @@ function get_environment_id () {
 function get_is_fargate_was_selected () {
     write_log "INFO" "Getting is Fargate was selected ..."
 
-    local is_fargate_param=$(find_param "$logs_params" "isFargate")
+    local is_fargate_param=$(find_param "$general_params" "isFargate")
     if [[ -z "$is_fargate_param" ]]; then
         write_run "print_error \"installer.bash (11): isFargate param was not found\""
         return 11
