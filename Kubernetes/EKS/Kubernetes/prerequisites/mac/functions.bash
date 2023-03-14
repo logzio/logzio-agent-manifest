@@ -82,7 +82,7 @@ function can_k8s_cluster_connect_to_logzio_logs () {
             break
         fi
 
-        sleep 10
+        sleep 20
         ((retries--))
     done
 
@@ -148,7 +148,7 @@ function can_k8s_cluster_connect_to_logzio_metrics () {
             break
         fi
 
-        sleep 10
+        sleep 20
         ((retries--))
     done
 
