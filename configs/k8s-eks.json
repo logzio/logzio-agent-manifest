@@ -36,6 +36,14 @@
               "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
               "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
               "value": true
+            },
+            {
+              "type": "boolean",
+              "name": "isFargate",
+              "label": "AWS Fargate",
+              "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable this if your EKS is based on Fargate.",
+              "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on EKS based on Fargate.",
+              "value": false
             }
           ],
           "telemetries": [
@@ -44,14 +52,6 @@
               "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
               "params": [
-                {
-                  "type": "boolean",
-                  "name": "isFargate",
-                  "label": "AWS Fargate",
-                  "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable this if your EKS is based on Fargate.",
-                  "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on EKS based on Fargate.",
-                  "value": false
-                }
               ]
             },
             {
