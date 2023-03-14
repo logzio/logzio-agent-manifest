@@ -222,6 +222,39 @@ function get_environment_id () {
     write_run "env_id='$env_id_value'"
 }
 
+# Gets is Fargate was selected
+# Output:
+#   is_fargate - Tells is Fargate option was selected (true/false)
+# Error:
+#   Exit Code 11
+function get_is_fargate_was_selected () {
+    write_log "INFO" "Getting is Fargate was selected ..."
+
+    local is_fargate_param=$(find_param "$logs_params" "isFargate")
+    if [[ -z "$is_fargate_param" ]]; then
+        write_run "print_error \"installer.bash (11): isFargate param was not found\""
+        return 11
+    fi
+
+    local is_fargate_value=$(echo -e "$is_fargate_param" | $jq_bin -r '.value')
+    if [[ "$is_fargate_value" = null ]]; then
+        write_run "print_error \"installer.bash (11): '.configuration.subtypes[0].datasources[0].params[{name=isFargate}].value' was not found in application JSON\""
+        return 11
+    fi
+    if [[ -z "$is_fargate_value" ]]; then
+        write_run "print_error \"installer.bash (11): '.configuration.subtypes[0].datasources[0].params[{name=isFargate}].value' is empty in application JSON\""
+        return 11
+    fi
+
+    if ! $is_fargate_value; then
+        write_log "INFO isFargate value = false"
+    else
+        write_log "INFO isFargate value = true"
+    fi
+
+    write_run "is_farget=$is_fargate_value"
+}
+
 # Builds enable metrics or traces Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets

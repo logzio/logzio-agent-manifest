@@ -20,8 +20,6 @@ execute_task "build_logzio_logs_token_helm_set" "building Logz.io logs token Hel
 # Build environment ID Helm set
 execute_task "build_environment_id_helm_set" "building environment ID Helm set"
 
-# Get is Fargate was selected
-execute_task "get_is_fargate_was_selected" "getting is Farget was selceted"
 if $is_farget; then
     # Build enable Fargate Helm set
     execute_task "build_enable_fargate_helm_set" "building enable Fargate Helm set"

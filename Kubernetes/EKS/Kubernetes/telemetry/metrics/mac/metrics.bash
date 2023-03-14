@@ -23,3 +23,7 @@ if $is_filter; then
     # Build enable metrics filter Helm set
     execute_task "build_enable_metrics_filter_helm_set" "building enable metrics filter Helm set"
 fi
+
+if $is_fargate; then
+    execute_task "build_fargate_collector_mode_standalone_helm_set" "building Fargate collector mode standalone Helm set"
+fi

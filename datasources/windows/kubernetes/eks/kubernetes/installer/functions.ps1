@@ -526,3 +526,54 @@ function Build-EnvironmentIdHelmSet {
     Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
+
+# Gets is Fargate option was selected
+# Input:
+#   FuncArgs - Hashtable {LogsParams = $script:GeneralParams}
+# Output:
+#   IsFargate - Tells if Fargate option was selected
+function Get-IsFargateWasSelected {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:ExitCode = 8
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Getting is Fargate option was selected ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('GeneralParams')
+    if ($Err.Count -ne 0) {
+        $Message = "installer.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:GeneralParams = $FuncArgs.GeneralParams
+
+    $Err = Get-ParamValue $GeneralParams 'isFargate'
+    if ($Err.Count -ne 0) {
+        $Message = "installer.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:IsFargate = $script:ParamValue
+
+    if ($IsFargate) {
+        $Message = "AWS Fargate option was selected"
+    }
+    else {
+        $Message = "AWS Fargate option was not selected"
+    }
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:IsFargate = `$$IsFargate"
+}

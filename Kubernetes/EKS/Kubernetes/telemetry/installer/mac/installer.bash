@@ -20,6 +20,9 @@ execute_task "build_tolerations_helm_sets" "building tolerations Helm sets"
 # Get environment ID
 execute_task "get_environment_id" "getting environment ID"
 
+# Get is Fargate option was selected
+execute_task "get_is_fargate_was_selected" "getting is Fargate was selected"
+
 # Build enable metrics or traces helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then
     execute_task "build_enable_metrics_or_traces_helm_set" "building enable metrics or traces Helm set"
