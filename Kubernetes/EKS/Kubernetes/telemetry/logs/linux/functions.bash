@@ -87,7 +87,7 @@ function build_environment_id_helm_set () {
 function build_enable_fargate_helm_set () {
     write_log "INFO" "Building enable Fargate Helm set ..."
 
-    local helm_set=" --set fargateLogRouter.enabled=true"
+    local helm_set=" --set logzio-fluentd.fargateLogRouter.enabled=true"
     write_log "INFO" "helm_set = $helm_set"
     write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
