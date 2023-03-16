@@ -123,6 +123,8 @@ if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
 # Get is Fargate option was selected
 Invoke-Task 'Get-IsFargateWasSelected' @{GeneralParams = $script:GeneralParams} 'Getting is Fargate was selected' @($InstallerFunctionsScript)
 if ($script:IsFargate) {
+    # Download eksctl
+    Invoke-Task 'Get-Eksctl' @{} 'Downloading eksctl' @($InstallerFunctionsScript)
     # Create Fargate profile with monitoring namespace on Kubernetes cluster
     Invoke-Task 'New-FargateProfile' @{} 'Creating Fargate profile with monitoring namespace on Kubernetes cluster' @($InstallerFunctionsScript)
 }

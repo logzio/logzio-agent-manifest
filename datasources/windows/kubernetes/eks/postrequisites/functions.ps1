@@ -15,7 +15,7 @@ function Test-AreAllPodsRunningOrCompleted {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Retries = 3
+    $local:Retries = 18
     while ($Retries -ne 0) {
         $local:PodStatuses = kubectl get pods -n monitoring --no-headers -o custom-columns=":.status.phase" 2>$script:TaskErrorFile
         if ($LASTEXITCODE -ne 0) {
