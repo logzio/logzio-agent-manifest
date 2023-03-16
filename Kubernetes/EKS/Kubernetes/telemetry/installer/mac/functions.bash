@@ -305,7 +305,7 @@ function create_fargate_profile () {
         return
     fi
 
-    $eksctl_bin create fargateprofile --region $cluster_region --namespace monitoring --cluster $cluster_name --name 'fp-monitoring' 2>$task_error_file
+    $eksctl_bin create fargateprofile --region $cluster_region --namespace monitoring --cluster $cluster_name --name 'fp-monitoring' >/dev/null 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"instalelr.bash (13): error creating Fargate profile 'fp-monitoring' in region '$cluster_region' with namespace 'monitoring' on Kubernetes cluster '$cluster_name'.\n  $err\""
