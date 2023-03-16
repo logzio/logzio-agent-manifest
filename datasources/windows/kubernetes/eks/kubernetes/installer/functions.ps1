@@ -577,3 +577,90 @@ function Get-IsFargateWasSelected {
 
     Write-TaskPostRun "`$script:IsFargate = `$$IsFargate"
 }
+
+# Downloads eksctl
+# Input:
+#   ---
+# Output:
+#   eksctl exe file in Logz.io temp directory
+function Get-Eksctl {
+    $local:ExitCode = 9
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Downloading eksctl ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    try {
+        Invoke-WebRequest -Uri $script:EksctlUrlDownload -OutFile "$script:LogzioTempDir\eksctl.tar.gz" | Out-Null
+    }
+    catch {
+        $Message = "installer.ps1 ($ExitCode): error downloading eksctl tar.gz: $_"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    tar -zxf "$script:LogzioTempDir\eksctl.tar.gz" --directory $script:LogzioTempDir 2>$script:TaskErrorFile | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        return
+    }
+
+    $Message = "installer.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-TaskErrorMessage)"
+    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-TaskPostRun "Write-Error `"$Message`""
+
+    return $ExitCode
+}
+
+# Creates Fargate profile with monitoring namespace on Kubernetes cluster
+# Input:
+#   ---
+# Output:
+#   ---
+function New-FargateProfile {
+    $local:ExitCode = 10
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Creating Fargate profile in monitoring namespace on Kubernetes cluster ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    $local:KubectlContext = kubectl config current-context 2>$script:TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "installer.ps1 ($ExitCode): error getting kubectl current context: $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:ClusterName = $KubectlContext.Split('/')[1]
+    $local:ClusterRegion = $KubectlContext.Split(':')[3]
+
+    $local:FargateProfile = &$script:EksctlExe get fargateprofile --name 'fp-monitoring' --region $ClusterRegion --cluster $ClusterName 2>$script:TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "installer.ps1 ($ExitCode): error checking if Fargate profile 'fp-monitoring' in region '$ClusterRegion' on Kubernetes cluster '$ClusterName' exists: $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+    if (-Not [String]::IsNullOrEmpty($FargateProfile)) {
+        $local:Message = "Fargate profile 'fp-monitoring' in region '$ClusterRegion' on Kubernetes cluster '$ClusterName' already exists"
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-Log $script:LogLevelDebug $Message
+
+        return
+    }
+
+    &$script:EksctlExe create fargateprofile --region $ClusterRegion --namespace monitoring --cluster $ClusterName --name 'fp-monitoring' 2>$script:TaskErrorFile
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "installer.ps1 ($ExitCode): error creating Fargate profile 'fp-monitoring' in region '$ClusterRegion' with namespace 'monitoring' on Kubernetes cluster '$ClusterName': $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platfrom $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+}
