@@ -648,9 +648,9 @@ function New-FargateProfile {
         return $ExitCode
     }
 
-    $local:MonigotingFargateProfile = $FargateProfiles | Select-String -Pattern '\s(?=[^,]*,)monitoring'
-    if (-Not [String]::IsNullOrEmpty($MonigotingFargateProfile)) {
-        $local:Message = "Fargate profile 'fp-monitoring' in region '$ClusterRegion' on Kubernetes cluster '$ClusterName' already exists"
+    $local:MonitoringFargateProfile = $FargateProfiles | Select-String -Pattern '\s(?=[^,]*,)monitoring'
+    if (-Not [String]::IsNullOrEmpty($MonitoringFargateProfile)) {
+        $local:Message = "Fargate profile 'fp-monitoring' in region '$ClusterRegion' on Kubernetes cluster '$ClusterName' is already exists"
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-Log $script:LogLevelDebug $Message
 
