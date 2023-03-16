@@ -22,6 +22,10 @@ execute_task "get_environment_id" "getting environment ID"
 
 # Get is Fargate option was selected
 execute_task "get_is_fargate_was_selected" "getting is Fargate was selected"
+if $is_fargate; then
+    execute_task 'download_eksctl' 'downloading eksctl binary file'
+    execute_task 'create_fargate_profile' 'creating Fargate profile with monitoring namespace on Kubernetes cluster'
+fi
 
 # Build enable metrics or traces helm set
 if $is_metrics_option_selected || $is_traces_option_selected; then

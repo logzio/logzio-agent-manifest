@@ -255,6 +255,64 @@ function get_is_fargate_was_selected () {
     write_run "is_farget=$is_fargate_value"
 }
 
+# Downloads eksctl
+# Output:
+#   eksctl_bin - eksctl bin file in temp directory
+# Error:
+#   Exit Code 12
+function download_eksctl () {
+    write_log "INFO" "Downloading eksctl ..."
+
+    curl -fsSL https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Darwin_amd64.tar.gz > $logzio_temp_dir/eksctl.tar.gz 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"instalelr.bash (12): failed to download eksctl.\n  $err\""
+        return 12
+    fi
+
+    tar -zxf $logzio_temp_dir/eksctl.tar.gz --directory $logzio_temp_dir
+    write_run "eksctl_bin=\"$logzio_temp_dir/eksctl\""
+}
+
+# Creates Fargate profile with monitoring namespace on Kubernetes cluster
+# Error:
+#   Exit Code 13
+function create_fargate_profile () {
+    write_log "INFO" "Creating Fargate profile with monitoring namespace on Kubernetes cluster ..."
+
+    local kubectl_context
+    kubectl_context=$(kubectl config current-context 2>$task_error_file)
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"instalelr.bash (13): error getting kubectl current context.\n  $err\""
+        return 13
+    fi
+
+    local cluster_name=$(echo -e "$kubectl_context" | cut -d'/' -f2)
+    local cluster_region=$(echo -e "$kubectl_context" | cut -d':' -f4)
+
+    local fargate_profiles
+    fargate_profiles=$($eksctl_bin get fargateprofile --region "$cluster_region" --cluster "$cluster_name" 2>$task_error_file)
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"instalelr.bash (13): error checking if Fargate profile 'fp-monitoring' in region '$cluster_region' on Kubernetes cluster '$cluster_name' exists.\n  $err\""
+        return 13
+    fi
+
+    local monitoringFargateProfile=$(echo -e "$fargate_profiles" | grep -e '\s(?=[^,]*,)monitoring')
+    if [[ -z "$monitoringFargateProfile" ]]; then
+        write_log "INFO" "Fargate profile 'fp-monitoring' in region '$cluster_region' on Kubernetes cluster '$cluster_name' is already exists"
+        return
+    fi
+
+    $eksctl_bin create fargateprofile --region $cluster_region --namespace monitoring --cluster $cluster_name --name 'fp-monitoring' 2>$task_error_file
+    if [[ $? -ne 0 ]]; then
+        local err=$(cat $task_error_file)
+        write_run "print_error \"instalelr.bash (13): error creating Fargate profile 'fp-monitoring' in region '$cluster_region' with namespace 'monitoring' on Kubernetes cluster '$cluster_name'.\n  $err\""
+        return 13
+    fi
+}
+
 # Builds enable metrics or traces Helm set
 # Output:
 #   helm_sets - Contains all the Helm sets
