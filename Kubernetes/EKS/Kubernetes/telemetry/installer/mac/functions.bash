@@ -300,7 +300,7 @@ function create_fargate_profile () {
     fi
 
     local monitoringFargateProfile=$(echo -e "$fargate_profiles" | grep -e '\smonitoring')
-    if [[ -z "$monitoringFargateProfile" ]]; then
+    if [[ ! -z "$monitoringFargateProfile" ]]; then
         write_log "INFO" "Fargate profile 'fp-monitoring' in region '$cluster_region' on Kubernetes cluster '$cluster_name' is already exists"
         return
     fi
