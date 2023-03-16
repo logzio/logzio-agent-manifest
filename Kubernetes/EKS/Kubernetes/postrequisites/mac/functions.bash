@@ -9,7 +9,7 @@
 #   are_all_pods_running_or_completed - Tells if all pods are running or completed (true/false)
 function are_all_pods_running_or_completed () {
     retries=0
-    while [ $retries -lt 3 ]; do
+    while [ $retries -lt 18 ]; do
         let "retries++"
         local pod_statuses=$(kubectl -n monitoring get pods --no-headers -o custom-columns=":.status.phase")
         local bad_statusses=$(echo -e "$pod_statuses" | grep -v -e Running -e Completed -e Succeeded)
