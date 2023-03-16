@@ -263,7 +263,7 @@ function get_is_fargate_was_selected () {
 function download_eksctl () {
     write_log "INFO" "Downloading eksctl ..."
 
-    curl -fsSL https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Darwin_amd64.tar.gz > $logzio_temp_dir/eksctl.tar.gz 2>$task_error_file
+    curl -fsSL https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Linux_amd64.tar.gz > $logzio_temp_dir/eksctl.tar.gz 2>$task_error_file
     if [[ $? -ne 0 ]]; then
         local err=$(cat $task_error_file)
         write_run "print_error \"instalelr.bash (12): failed to download eksctl.\n  $err\""
