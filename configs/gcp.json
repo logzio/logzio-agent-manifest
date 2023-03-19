@@ -8,7 +8,9 @@
             "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
             "description": "Logging from GCP services.",
             "hint": "Logging from GCP services.",
-            "supportedOs": ["Linux", "Mac"],
+            "label": "GCP Logs label",
+            "supportedOs": ["GCP"],
+            "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub&shellonly=true&cloudshell_image=gcr.io/ds-artifacts-cloudshell/deploystack_custom_image",
             "datasources": [
                 {
                     "name": "Logging",
@@ -119,14 +121,6 @@
                                         }
                                     ],
                                     "value": "us-central1"
-                                },
-                                {
-                                    "type": "text",
-                                    "name": "projectName",
-                                    "label": "Primary project name",
-                                    "required": true,
-                                    "description": "ID of Google Cloud project from where to send logs to logz.io.",
-                                    "value": "Google project name"
                                 },
                                 {
                                     "type": "multi-select",
