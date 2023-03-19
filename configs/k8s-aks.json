@@ -111,16 +111,7 @@
             {
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect security risks reports from your Kubernetes cluster components and applications pods",
-              "params": [
-                {
-                  "type": "boolean",
-                  "name": "isScanSecurityRisks",
-                  "label": "Scan cluster for security risks",
-                  "description": "",
-                  "hint": "Check this box if you want Logz.io Telemetry Collector to scan and inform about security risks in your cluster.",
-                  "value": true
-                }
-              ]
+              "params": []
             }
           ]
         }

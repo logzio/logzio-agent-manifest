@@ -33,22 +33,22 @@ function Get-LogzioLogsToken {
     Write-TaskPostRun "`$script:LogsToken = '$ShippingToken'"
 }
 
-# Builds enable logs Helm set
+# Builds enable security report Helm set
 # Input:
 #   ---
 # Output:
 #   LogHelmSets - Containt all the Helm sets for logging
 #   helmSets - Contains all the Helm sets
-function Build-EnableLogsHelmSet {
+function Build-EnableSecurityReportHelmSet {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Building enable logs Helm set ...'
+    $local:Message = 'Building enable security report Helm set ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
     
-    $local:HelmSet = " --set logs.enabled=true"
+    $local:HelmSet = " --set securityReport.enabled=true"
 
-    $Message = "Enable logs Helm set is '$HelmSet'"
+    $Message = "Enable security report Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -56,21 +56,21 @@ function Build-EnableLogsHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Builds Logz.io logs listener url Helm set
+# Builds Logz.io Trivy logs listener url Helm set
 # Input:
 #   FuncArgs - Hashtable {ListenerUrl = $script:ListenerUrl}
 # Output:
 #   LogHelmSets - Containt all the Helm sets for logging
 #   HelmSets - Contains all the Helm sets
-function Build-LogzioLogsListenerUrlHelmSet {
+function Build-LogzioTrivyLogsListenerUrlHelmSet {
     param (
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 2
+    $local:ExitCode = 6
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Building Logz.io logs listener URL Helm set ...'
+    $local:Message = 'Building Logz.io Trivy logs listener URL Helm set ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -85,9 +85,9 @@ function Build-LogzioLogsListenerUrlHelmSet {
 
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
-    $local:HelmSet = " --set logzio-fluentd.secrets.logzioListener=$ListenerUrl"
+    $local:HelmSet = " --set logzio-trivy.secrets.logzioListener=$ListenerUrl"
 
-    $Message = "Logz.io logs listener url Helm set is '$HelmSet'"
+    $Message = "Logz.io Trivy logs listener url Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -95,21 +95,21 @@ function Build-LogzioLogsListenerUrlHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Builds Logz.io logs token Helm set
+# Builds Logz.io Trivy logs token Helm set
 # Input:
 #   FuncArgs - Hashtable {LogsToken = $script:LogsToken}
 # Output:
 #   LogHelmSets - Containt all the Helm sets for logging
 #   helmSets - Contains all the Helm sets
-function Build-LogzioLogsTokenHelmSet {
+function Build-LogzioTrivyLogsTokenHelmSet {
     param (
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 3
+    $local:ExitCode = 7
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Building Logz.io logs token Helm set ...'
+    $local:Message = 'Building Logz.io Trivy logs token Helm set ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -124,9 +124,9 @@ function Build-LogzioLogsTokenHelmSet {
 
     $local:LogsToken = $FuncArgs.LogsToken
 
-    $local:HelmSet = " --set logzio-fluentd.secrets.logzioShippingToken=$LogsToken"
+    $local:HelmSet = " --set logzio-trivy.secrets.logzioShippingToken=$LogsToken"
     
-    $Message = "Logz.io logs token Helm set is '$HelmSet'"
+    $Message = "Logz.io Trivy logs token Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -134,21 +134,21 @@ function Build-LogzioLogsTokenHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Builds environment id Helm set
+# Builds Trivy environment id Helm set
 # Input:
 #   FuncArgs - Hashtable {EnvId = $script:EnvId}
 # Output:
 #   LogHelmSets - Containt all the Helm sets for logging
 #   helmSets - Contains all the Helm sets
-function Build-EnvironmentIdHelmSet {
+function Build-TrivyEnvironmentIdHelmSet {
     param (
         [hashtable]$FuncArgs
     )
     
-    $local:ExitCode = 4
+    $local:ExitCode = 8
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Building environment id Helm set ...'
+    $local:Message = 'Building Trivy environment id Helm set ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -171,9 +171,9 @@ function Build-EnvironmentIdHelmSet {
         return
     }
 
-    $local:HelmSet = " --set logzio-fluentd.env_id=$EnvId"
+    $local:HelmSet = " --set logzio-trivy.env_id=$EnvId"
 
-    $Message = "Environment id Helm set is '$HelmSet'"
+    $Message = "Trivy Environment id Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
