@@ -304,9 +304,9 @@ function Add-YamlFileFieldValue {
         [string]$Value
     )
 
-    &$script:YqExe -i "$YamlPath += ""`"$Value`"""" $YamlFile 2>$script:TaskErrorFile
+    &$script:YqExe -i "$YamlPath += ""`"`"$Value`"`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
-        Write-Output "error adding '$Value' to '$YamlPath in '$YamlPath': $(Get-TaskErrorMessage)"
+        Write-Output "error adding '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)"
         return 1
     }
 }
