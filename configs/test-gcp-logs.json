@@ -11,7 +11,7 @@
        "description": "GCP Logs description",
        "hint": "GCP logs to ship to Logz.io",
        "supportedOs": ["GCP"],
-       "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub&shellonly=true&cloudshell_image=gcr.io/ds-artifacts-cloudshell/deploystack_custom_image",
+       "integrationTemplate": "https://shell.cloud.google.com/?project=show=terminal&cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
        "datasources": [
          {
            "name": "gcp-logs-datasource-name",
