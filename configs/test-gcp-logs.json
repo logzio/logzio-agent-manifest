@@ -54,24 +54,13 @@
                "params":
                [
                  {
-                   "type": "text",
-                   "name": "functionName",
-                   "label": "Enter your function name",
-                   "required": true,
-                   "description": "The name of your GCP f.name",
-                   "value": "logzio-cloudwatch-shipper",
-                   "pattern": "^[a-zA-Z0-9-]+$",
-                   "patternError": "Only letters, numbers and dashes are allowed"
-                 },
-                 {
                    "type": "string-list",
-                   "name": "resourceList",
+                   "name": "telemetryList",
                    "label": "Custom Log Groups",
                    "description": "Custom log groups that you need to collect logs from.",
                    "placeholder": "Your log group /my/custom/log-group",
                    "actionText": "Add custom log group"
                  }
-
                ]
              }
            ]
