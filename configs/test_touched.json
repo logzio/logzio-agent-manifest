@@ -14,13 +14,21 @@
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
           "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
           "params": [
+             {
+              "type": "text",
+              "name": "envID",
+              "label": "Environment Name",
+              "required": true,
+              "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+              "value": "my_environment"
+            },
             {
               "type": "boolean",
               "name": "isTaint",
               "label": "Taints and Tolerations",
               "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
               "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
-              "required": true,
               "value": false
             }
           ],
