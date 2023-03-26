@@ -25,7 +25,7 @@
               "label": "BOOLEAN",
               "description": "GCP Region",
               "required": true,
-              "value": false,
+              "value": false
             }
            ]
          }
