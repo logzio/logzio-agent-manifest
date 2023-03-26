@@ -29,7 +29,24 @@
             }
            ]
          }
-       ]
+       ],
+        "telemetries": [
+             {
+               "type": "LOG_ANALYTICS",
+               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your Cloudwatch.",
+               "params":
+               [
+                 {
+                   "type": "string-list",
+                   "name": "telemetryList",
+                   "label": "Metric types",
+                   "description": "Custom log groups that you need to collect metrics from.",
+                   "placeholder": "Your metric-types",
+                   "actionText": "Add custom metrics types"
+                 }
+               ]
+             }
+           ]
      }
    ]
  }
