@@ -23,7 +23,7 @@
               "params": [
                 {
                   "type": "single-select",
-                  "name": "functionNameRegion",
+                  "name": "gcpRegion",
                   "label": " Google Cloud Function Region",
                   "description": "GCP region where you will deploy Google Cloud Function",
                   "options": [
@@ -124,7 +124,7 @@
                 },
                 {
                   "type": "multi-select",
-                  "name": "resourceType",
+                  "name": "telemetryList",
                   "label": "Google Cloud Resources",
                   "description": "Send logs that include any of these resource types.",
                   "required": true,
