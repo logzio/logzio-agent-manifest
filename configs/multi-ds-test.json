@@ -1,0 +1,143 @@
+{
+  "name": "Kubernetes-mutli-ds",
+  "label": "Kubernetes - Multi DS",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "description": "",
+  "manifest": true,
+  "subtypes": [
+    {
+      "name": "Multi DS",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
+      "description": "Azure Kubernetes Service",
+      "supportedOs": ["Mac", "Windows", "Linux"],
+      "datasources": [
+        {
+          "name": "System",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "envID",
+              "label": "Environment Name",
+              "required": true,
+              "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+              "value": "my_environment",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "patternError": "Only letters, numbers, dashes and underscores are allowed"
+            },
+            {
+              "type": "boolean",
+              "name": "isTaint",
+              "label": "Taints and Tolerations",
+              "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
+              "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
+              "value": true
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
+              "params": [
+                {
+                  "type": "text",
+                  "name": "envID",
+                  "label": "Logs Param required",
+                  "required": true,
+                  "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+                  "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment."
+                }
+              ]
+            },
+            {
+              "type": "METRICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your Kubernetes cluster, nodes and pods",
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "isFilter",
+                  "label": "Collect only recommended metrics",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate Kubernetes 360 and prebuilt dashboards. In addition, we will also collect application metrics that are exposed by your pods.",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "isWindows",
+                  "label": "My Kubernetes cluster is based on Windows nodes",
+                  "description": "",
+                  "hint": "Check this box if any of your Kubernetes pods are running on Windows nodes. As part of the installation process, you will need to provide the root user credentials to those Windows instances",
+                  "value": false
+                }
+              ],
+              "dashboards": [
+                "7nILXHYFZbThgTSMObUxkw",
+                "5TGD77ZKuTiZUXtiM51m6V",
+                "6pY6DKD0oQJL4sO7bW728",
+                "5kkUAuEwA0Ygvlgm9iXTHY",
+                "53g5kSILqoj1T10U1jnvKV",
+                "5e1xRaDdQnOvs5LCuwKCh5",
+                "7Cy6DUN78jlKUtMCsbt6GC",
+                "29HGYsE3kgFEdgJbalTqeY",
+                "1Hij49FKdnAKVJTjOmpDbH"
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": []
+            }
+          ]
+        },
+        {
+          "name": "security",
+          "label": "Security",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [
+            {
+              "type": "text",
+              "name": "envID",
+              "label": "siem general Param required",
+              "required": true,
+              "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment."
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io to collect security vlrnabralises",
+              "params": []
+            }
+          ]
+        },
+        {
+          "name": "fin-ops",
+          "label": "FinOps",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "params": [],
+          "telemetries": [
+            {
+              "type": "METRICS",
+              "hint": "Switch the toggle on if you want Logz.io to collect finops data from your k8s",
+              "params": [
+                {
+                  "type": "text",
+                  "name": "envID",
+                  "label": "fin ops metrics Param required",
+                  "required": true,
+                  "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+                  "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
