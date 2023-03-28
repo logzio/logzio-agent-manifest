@@ -1,0 +1,477 @@
+{
+  "name": "all-params",
+  "description": "this integration has all possible agent param types",
+  "subtypes": [
+    {
+      "name": "all-params-subtype",
+      "label": "All params",
+      "description": "repellendus aut sed",
+      "required": false,
+      "datasources": [
+        {
+          "name": "datasource-1",
+          "label": "All params in general",
+          "description": "suscipit consequatur atque",
+          "required": false,
+          "params": [
+            {
+              "name": "Carmelo",
+              "label": "boolean",
+              "description": "adipisci qui tenetur",
+              "required": false,
+              "type": "boolean",
+              "value": false,
+              "params": []
+            },
+            {
+              "name": "Manuela",
+              "label": "multiline-pattern",
+              "description": "ea voluptate et",
+              "required": true,
+              "type": "multiline-pattern",
+              "value": []
+            },
+            {
+              "name": "Javon",
+              "label": "path-list",
+              "description": "corporis qui quisquam",
+              "required": true,
+              "type": "path-list",
+              "value": []
+            },
+            {
+              "name": "Cora",
+              "label": "string-list",
+              "description": "harum nihil ut",
+              "required": true,
+              "type": "string-list",
+              "value": [],
+              "placeholder": "",
+              "actionText": "Add a file"
+            },
+            {
+              "name": "German",
+              "label": "single-select",
+              "description": "ut quidem rem",
+              "required": true,
+              "type": "single-select",
+              "options": [
+                {
+                  "label": "default_option1",
+                  "value": "default_option1"
+                },
+                {
+                  "label": "default_option2",
+                  "value": "default_option2"
+                }
+              ],
+              "value": "default_option1"
+            },
+            {
+              "name": "Kory",
+              "label": "multi-select",
+              "description": "enim nam sequi",
+              "required": true,
+              "type": "multi-select",
+              "options": [
+                {
+                  "label": "default_option1",
+                  "value": "default_option1"
+                },
+                {
+                  "label": "default_option2",
+                  "value": "default_option2"
+                }
+              ],
+              "value": []
+            },
+            {
+              "name": "Matteo",
+              "label": "text",
+              "description": "dolore veritatis sit",
+              "required": true,
+              "type": "text",
+              "value": "default_text_value"
+            },
+            {
+              "name": "Vesta",
+              "label": "number",
+              "description": "natus voluptate quis",
+              "required": true,
+              "type": "number"
+            },
+            {
+              "name": "Emilio",
+              "label": "key-value",
+              "description": "adipisci in aut",
+              "required": true,
+              "type": "key-value",
+              "value": []
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "description": "totam numquam qui",
+              "params": [],
+              "dashboards": []
+            },
+            {
+              "type": "METRICS",
+              "description": "est quisquam excepturi",
+              "params": [],
+              "dashboards": []
+            },
+            {
+              "type": "TRACING",
+              "description": "reprehenderit consectetur ducimus",
+              "params": [],
+              "dashboards": []
+            }
+          ]
+        },
+        {
+          "name": "datasource-2",
+          "label": "All params in telemetries",
+          "description": "est voluptate autem",
+          "required": false,
+          "params": [],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "description": "voluptates sed rerum",
+              "params": [
+                {
+                  "name": "Theodore",
+                  "label": "boolean",
+                  "description": "ipsam tempore nam",
+                  "required": false,
+                  "type": "boolean",
+                  "value": false,
+                  "params": []
+                },
+                {
+                  "name": "Louisa",
+                  "label": "multiline-pattern",
+                  "description": "error id aut",
+                  "required": true,
+                  "type": "multiline-pattern",
+                  "value": []
+                },
+                {
+                  "name": "Shyann",
+                  "label": "path-list",
+                  "description": "qui impedit tempore",
+                  "required": true,
+                  "type": "path-list",
+                  "value": []
+                },
+                {
+                  "name": "Hortense",
+                  "label": "string-list",
+                  "description": "quidem assumenda ad",
+                  "required": true,
+                  "type": "string-list",
+                  "value": [],
+                  "placeholder": "",
+                  "actionText": "Add a file"
+                },
+                {
+                  "name": "Zetta",
+                  "label": "single-select",
+                  "description": "cumque in ut",
+                  "required": true,
+                  "type": "single-select",
+                  "options": [
+                    {
+                      "label": "default_option1",
+                      "value": "default_option1"
+                    },
+                    {
+                      "label": "default_option2",
+                      "value": "default_option2"
+                    }
+                  ],
+                  "value": "default_option1"
+                },
+                {
+                  "name": "Diamond",
+                  "label": "multi-select",
+                  "description": "amet ducimus modi",
+                  "required": true,
+                  "type": "multi-select",
+                  "options": [
+                    {
+                      "label": "default_option1",
+                      "value": "default_option1"
+                    },
+                    {
+                      "label": "default_option2",
+                      "value": "default_option2"
+                    }
+                  ],
+                  "value": []
+                },
+                {
+                  "name": "Willis",
+                  "label": "text",
+                  "description": "ipsam dignissimos omnis",
+                  "required": true,
+                  "type": "text",
+                  "value": "default_text_value"
+                },
+                {
+                  "name": "Mara",
+                  "label": "number",
+                  "description": "ipsum consectetur aut",
+                  "required": true,
+                  "type": "number"
+                },
+                {
+                  "name": "Porter",
+                  "label": "key-value",
+                  "description": "nulla veritatis vel",
+                  "required": true,
+                  "type": "key-value",
+                  "value": []
+                }
+              ],
+              "dashboards": []
+            },
+            {
+              "type": "METRICS",
+              "description": "ut non animi",
+              "params": [
+                {
+                  "name": "Issac",
+                  "label": "boolean",
+                  "description": "iure et quis",
+                  "required": false,
+                  "type": "boolean",
+                  "value": false,
+                  "params": [
+                    {
+                      "name": "Kole",
+                      "label": "Kole",
+                      "description": "qui quibusdam ipsa",
+                      "required": false,
+                      "type": "multiline-pattern",
+                      "value": [
+                        {
+                          "pattern": "omnis",
+                          "source": "omnis"
+                        },
+                        {
+                          "pattern": "voluptate",
+                          "source": "voluptate"
+                        },
+                        {
+                          "pattern": "aut",
+                          "source": "aut"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "Reece",
+                  "label": "multiline-pattern",
+                  "description": "totam quidem aliquid",
+                  "required": true,
+                  "type": "multiline-pattern",
+                  "value": []
+                },
+                {
+                  "name": "Erwin",
+                  "label": "path-list",
+                  "description": "qui et inventore",
+                  "required": true,
+                  "type": "path-list",
+                  "value": []
+                },
+                {
+                  "name": "Halie",
+                  "label": "string-list",
+                  "description": "ab omnis aliquid",
+                  "required": true,
+                  "type": "string-list",
+                  "value": [],
+                  "placeholder": "",
+                  "actionText": "Add a file"
+                },
+                {
+                  "name": "Nickolas",
+                  "label": "single-select",
+                  "description": "iste est quia",
+                  "required": true,
+                  "type": "single-select",
+                  "options": [
+                    {
+                      "label": "default_option1",
+                      "value": "default_option1"
+                    },
+                    {
+                      "label": "default_option2",
+                      "value": "default_option2"
+                    }
+                  ],
+                  "value": "default_option1"
+                },
+                {
+                  "name": "Billy",
+                  "label": "multi-select",
+                  "description": "quasi vitae rerum",
+                  "required": true,
+                  "type": "multi-select",
+                  "options": [
+                    {
+                      "label": "default_option1",
+                      "value": "default_option1"
+                    },
+                    {
+                      "label": "default_option2",
+                      "value": "default_option2"
+                    }
+                  ],
+                  "value": []
+                },
+                {
+                  "name": "Norma",
+                  "label": "text",
+                  "description": "hic aut et",
+                  "required": true,
+                  "type": "text",
+                  "value": "default_text_value"
+                },
+                {
+                  "name": "Kole",
+                  "label": "number",
+                  "description": "alias temporibus quo",
+                  "required": true,
+                  "type": "number"
+                },
+                {
+                  "name": "Lane",
+                  "label": "key-value",
+                  "description": "dolor maxime et",
+                  "required": true,
+                  "type": "key-value",
+                  "value": []
+                }
+              ],
+              "dashboards": []
+            },
+            {
+              "type": "TRACING",
+              "description": "at fugit a",
+              "params": [
+                {
+                  "name": "Percival",
+                  "label": "boolean",
+                  "description": "officia sequi aperiam",
+                  "required": false,
+                  "type": "boolean",
+                  "value": false,
+                  "params": []
+                },
+                {
+                  "name": "Fermin",
+                  "label": "multiline-pattern",
+                  "description": "pariatur provident est",
+                  "required": true,
+                  "type": "multiline-pattern",
+                  "value": []
+                },
+                {
+                  "name": "Lila",
+                  "label": "path-list",
+                  "description": "qui doloremque atque",
+                  "required": true,
+                  "type": "path-list",
+                  "value": []
+                },
+                {
+                  "name": "Myles",
+                  "label": "string-list",
+                  "description": "placeat magnam ex",
+                  "required": true,
+                  "type": "string-list",
+                  "value": [],
+                  "placeholder": "",
+                  "actionText": "Add a file"
+                },
+                {
+                  "name": "Madie",
+                  "label": "single-select",
+                  "description": "nihil ab mollitia",
+                  "required": true,
+                  "type": "single-select",
+                  "options": [
+                    {
+                      "label": "default_option1",
+                      "value": "default_option1"
+                    },
+                    {
+                      "label": "default_option2",
+                      "value": "default_option2"
+                    }
+                  ],
+                  "value": "default_option1"
+                },
+                {
+                  "name": "Josiah",
+                  "label": "multi-select",
+                  "description": "fugit ea amet",
+                  "required": true,
+                  "type": "multi-select",
+                  "options": [
+                    {
+                      "label": "default_option1",
+                      "value": "default_option1"
+                    },
+                    {
+                      "label": "default_option2",
+                      "value": "default_option2"
+                    }
+                  ],
+                  "value": []
+                },
+                {
+                  "name": "Casper",
+                  "label": "text",
+                  "description": "quod voluptatibus consequatur",
+                  "required": true,
+                  "type": "text",
+                  "value": "default_text_value"
+                },
+                {
+                  "name": "Allison",
+                  "label": "number",
+                  "description": "quas iusto dolorum",
+                  "required": true,
+                  "type": "number"
+                },
+                {
+                  "name": "Rowena",
+                  "label": "key-value",
+                  "description": "dicta ad commodi",
+                  "required": true,
+                  "type": "key-value",
+                  "value": []
+                }
+              ],
+              "dashboards": []
+            }
+          ]
+        }
+      ],
+      "supportedOs": [
+        "Mac",
+        "Linux",
+        "Windows",
+        "AWS_Cloudformation",
+        "GCP"
+      ]
+    }
+  ]
+}
