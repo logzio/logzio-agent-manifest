@@ -5,7 +5,7 @@
    "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
    "subtypes": [
      {
-       "name": "Cloudwatch Logs",
+       "name": "Infrastructure Logs",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
        "description": "AWS Cloudwatch",
        "hint": "Cloudwatch logs to ship to Logz.io",
@@ -13,7 +13,7 @@
        "integrationTemplate": "cloudwatch-shipper-trigger/1.1.0/sam-template.yaml&param_logzioType=agent-aws-cloudwatch&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8071",
        "datasources": [
          {
-           "name": "Cloudwatch Logs",
+           "name": "Infrastructure Logs",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
            "description": "Ship your Cloudwatch logs to Logz.io",
            "params": [

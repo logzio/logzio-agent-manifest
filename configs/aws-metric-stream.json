@@ -5,7 +5,7 @@
    "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
    "subtypes": [
      {
-       "name": "Cloudwatch Metrics",
+       "name": "Infrastructure Metrics",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
        "description": "AWS Cloudwatch",
        "hint": "AWS metrics to ship to Logz.io",
@@ -13,7 +13,7 @@
        "integrationTemplate": "metric-stream-helpers/aws/1.2.4/sam-template.yaml&param_logzioDestination=https://listener-aws-metrics-stream-<<LOGZIO_ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
        "datasources": [
          {
-           "name": "Cloudwatch Metrics",
+           "name": "Infrastructure Metrics",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
            "description": "Ship your AWS metrics to logz.io",
            "params": [
