@@ -1,11 +1,12 @@
 {
   "name": "all-params",
+  "label": "All Params Platform Label",
   "description": "this integration has all possible agent param types",
   "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-platform.svg",
   "subtypes": [
     {
       "name": "all-params-subtype",
-      "label": "All params",
+      "label": "All Params Subtype Label",
       "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-platform.svg",
       "description": "repellendus aut sed",
       "required": false,
