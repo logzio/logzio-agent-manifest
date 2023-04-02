@@ -19,6 +19,8 @@ LOGZIO_RESOURCES_LINUX_DIR="$LOGZIO_TEMP_DIR/resources-linux"
 ## Resources Linux Directories
 # Resources Linux OTEL directory
 OTEL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/otel"
+# Resources Linux Kubernetes directory
+KUBERNETES_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/k8s"
 # Resources Linux all directory
 ALL_RESOURCES_LINUX_DIR="$LOGZIO_RESOURCES_LINUX_DIR/all"
 
@@ -35,7 +37,7 @@ OTEL_PROCESSORS_DIR="$OTEL_RESOURCES_DIR/processors"
 OTEL_EXPORTERS_DIR="$OTEL_RESOURCES_DIR/exporters"
 
 ## Kubernetes Directories
-# Logz.io Kubernetes AppData subdirectory
+# Logz.io Kubernetes opt subdirectory
 LOGZIO_KUBERNETES_DIR="$LOGZIO_OPT_DIR/logzio-kubernetes"
 # Resources Kubernetes directory
 KUBERNETES_RESOURCES_DIR="$LOGZIO_RESOURCES_DIR/k8s"
@@ -51,10 +53,10 @@ TASK_ERROR_FILE="$LOGZIO_TEMP_DIR/task_error.txt"
 AGENT_JSON="$LOGZIO_TEMP_DIR/agent.json"
 
 ## Urls
-# Url for downloading jq exe
+# Url for downloading jq binary
 JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64'
-# Url for downloading yq exe
-YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.27.2/yq_linux_amd64.tar.gz'
+# Url for downloading yq binary
+YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.33.2/yq_linux_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
 OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-linux_amd64.tar.gz'
 # Url for AWS SQS
