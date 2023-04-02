@@ -46,7 +46,6 @@ jobs:
           echo "VERSION=$version" >> $GITHUB_OUTPUT
       - name: Push Change
         run: |
-          git pull origin master
           git config --global user.name ShiranAvidov
           git config --global user.email shiran.avidov@logz.io
           git add ./version
