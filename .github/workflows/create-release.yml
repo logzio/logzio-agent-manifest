@@ -1,3 +1,4 @@
+name: update version and create a new release
 on:
   push:
     branches:
