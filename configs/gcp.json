@@ -10,7 +10,7 @@
             "hint": "Logging from GCP services.",
             "label": "GCP Logs",
             "supportedOs": ["GCP"],
-            "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub&shellonly=true&cloudshell_image=gcr.io/ds-artifacts-cloudshell/deploystack_custom_image",
+            "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
             "datasources": [
                 {
                     "name": "Logging",
@@ -23,7 +23,7 @@
                             "params": [
                                 {
                                     "type": "single-select",
-                                    "name": "functionNameRegion",
+                                    "name": "gcpRegion",
                                     "label": " Google Cloud Function Region",
                                     "description": "GCP region where you will deploy Google Cloud Function",
                                     "options": [
@@ -124,7 +124,7 @@
                                 },
                                 {
                                     "type": "multi-select",
-                                    "name": "resourceType",
+                                    "name": "telemetryList",
                                     "label": "Google Cloud Resources",
                                     "description": "Send logs that include any of these resource types.",
                                     "required": true,
