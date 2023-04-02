@@ -57,6 +57,31 @@ function get_linux_info {
     write_task_post_run "CPU_ARCH=\"$cpu_arch\""
 }
 
+# Checks if bash version is 4.0 or above
+# Input:
+#   ---
+# Output:
+#   LINUX_NAME - Linux name
+#   LINUX_VERSION - Linux version
+#   CPU_ARCH - Linux cpu architecture
+function is_bash_version_4_or_above {
+    local func_name="${FUNCNAME[0]}"
+
+    local message='Checking if bash version is 4.0 or above ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    local bash_major_version=$(echo -e "$BASH_VERSION" | cut -d. -f1)
+    if [[ $bash_major_version -lt 4 ]]; then
+        message="agent.bash ($EXIT_CODE): bash version must be 4.0 or above"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        write_task_post_run "write_error \"$message\""
+
+        return $EXIT_CODE
+    fi
+}
+
+
 # Prints usage
 # Input:
 #   ---
@@ -486,7 +511,7 @@ function download_sub_type_files {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     if [[ -z "$REPO_RELEASE" ]]; then
-        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/download/$AGENT_VERSION/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
             message="agent.bash ($EXIT_CODE): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"

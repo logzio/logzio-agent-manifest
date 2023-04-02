@@ -240,7 +240,7 @@ function add_yaml_file_field_value {
 
     $YQ_BIN -i "$yaml_path += \"$value\"" $yaml_file 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        echo -e "error adding '$value' to '$yaml_path in '$yaml_path': $(get_task_error_message)" >"$TASK_ERROR_FILE"
+        echo -e "error adding '$value' to '$yaml_path in '$yaml_file': $(get_task_error_message)" >"$TASK_ERROR_FILE"
         return 1
     fi
 }
@@ -518,7 +518,7 @@ function execute_task {
             is_timeout=true
 
             local message='utils.bash (1): timeout error: the task was not completed in time'
-            send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_AGENT $func_name $AGENT_ID
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" '' "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
             write_task_post_run "write_error \"$message\""
             break
         fi
@@ -534,7 +534,7 @@ function execute_task {
             source "$TASK_POST_RUN_FILE" 2>"$TASK_ERROR_FILE"
             if [[ $? -ne 0 ]]; then
                 local message="utils.bash (2): error running task post run script: $(get_task_error_message)"
-                send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_UTILS_FUNCTIONS $func_name $AGENT_ID
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" '' "$LOG_SCRIPT_UTILS_FUNCTIONS" "$func_name" "$AGENT_ID"
                 write_error "$message"
 
                 IS_AGENT_FAILED=true
@@ -549,8 +549,10 @@ function execute_task {
             exit_code=1
         fi
 
-        if $IS_POSTREQUISITE_FAILED; then
+        if $CONTINUE_IF_FAILED; then
             return
+        elif $IS_POSTREQUISITES_STEP; then
+            IS_POSTREQUISITES_FAILED=true
         else
             IS_AGENT_FAILED=true
         fi
@@ -565,7 +567,7 @@ function execute_task {
         source "$TASK_POST_RUN_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
             local message="utils.bash (2): error running task post run script: $(get_task_error_message)"
-            send_log_to_logzio $LOG_LEVEL_ERROR $message '' $LOG_SCRIPT_UTILS_FUNCTIONS $func_name $AGENT_ID
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" '' "$LOG_SCRIPT_UTILS_FUNCTIONS" "$func_name" "$AGENT_ID"
             write_error "$message"
 
             IS_AGENT_FAILED=true
