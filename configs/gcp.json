@@ -19,7 +19,7 @@
                     "telemetries": [
                         {
                             "type": "LOG_ANALYTICS",
-                            "hint": "Switch the toggle on if you want send logs to logz.io though Google Cloud Sink and Google Cloud Pubsub",
+                            "hint": "Switch the toggle on if you want send logs to logz.io though Google Cloud Sink and Google Cloud Pubsub.",
                             "params": [
                                 {
                                     "type": "single-select",
