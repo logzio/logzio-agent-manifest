@@ -2,30 +2,6 @@
 ##################################################### WINDOWS Agent Functions ###################################################
 #################################################################################################################################
 
-# Gets agent id
-# Input:
-#   ---
-# Output:
-#   AgentId - The agent id argument
-function Get-AgentId {
-    $local:AgentId = 'none'
-
-    foreach ($Arg in $AgentArgs) {
-        switch -Regex ($Arg) {
-            --id=* {
-                $AgentId = $Arg.Split('=', 2)[1]
-                continue
-            }
-            --debug=* {
-                Write-TaskPostRun "`$script:AgentId = 'debug'"
-                return
-            }
-        }
-    }
-
-    Write-TaskPostRun "`$script:AgentId = '$AgentId'"
-}
-
 # Sets Windows and PowerShell info consts
 # Input:
 #   ---
@@ -162,18 +138,18 @@ function Get-Arguments {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
     Write-Log $script:LogLevelDebug $Message
 
-    Test-AreFuncArgsExist $FuncArgs @('AgentArgs')
-    if ($LASTEXITCODE -ne 0) {
-        $Message = "agent.ps1 ($script:ExitCode): $(Get-TaskErrorMessage)"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
-        Write-TaskPostRun "Write-Error `"$Message`""
+    # Test-AreFuncArgsExist $FuncArgs @('AgentArgs')
+    # if ($LASTEXITCODE -ne 0) {
+    #     $Message = "agent.ps1 ($script:ExitCode): $(Get-TaskErrorMessage)"
+    #     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    #     Write-TaskPostRun "Write-Error `"$Message`""
 
-        return $script:ExitCode
-    }
+    #     return $script:ExitCode
+    # }
 
-    $local:AgentArgs = $FuncArgs.AgentArgs
+    #$local:AgentArgs = $FuncArgs.AgentArgs
 
-    foreach ($Arg in $AgentArgs) {
+    foreach ($Arg in $using:AgentArgs) {
         switch -Regex ($Arg) {
             --help {
                 Show-Help
@@ -372,7 +348,7 @@ function Get-JQ {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Downloading jq ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName
     Write-Log $script:LogLevelDebug $Message
 
     try {
@@ -380,7 +356,7 @@ function Get-JQ {
     }
     catch {
         $Message = "agent.ps1 ($script:ExitCode): error downloading jq exe: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $script:ExitCode
@@ -396,7 +372,7 @@ function Get-Yq {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Downloading yq ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName
     Write-Log $script:LogLevelDebug $Message
 
     try {
@@ -404,7 +380,7 @@ function Get-Yq {
     }
     catch {
         $Message = "agent.ps1 ($script:ExitCode): error downloading yq exe: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepDownloads $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $script:ExitCode
@@ -424,13 +400,13 @@ function Get-AgentJson {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting agent json ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName
     Write-Log $script:LogLevelDebug $Message
 
     Test-AreFuncArgsExist $FuncArgs @('AppUrl', 'AgentJsonFile')
-    if ($Err.Count -ne 0) {
+    if ($LASTEXITCODE -ne 0) {
         $Message = "agent.ps1 ($script:ExitCode): $(Get-TaskErrorMessage)"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $script:ExitCode
@@ -442,7 +418,7 @@ function Get-AgentJson {
     if (-Not [string]::IsNullOrEmpty($AgentJsonFile)) {
         # Using local app json file
         $Message = 'Using local agent json file ...'
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-Log $script:LogLevelDebug $Message
 
         try {
@@ -450,7 +426,7 @@ function Get-AgentJson {
         }
         catch {
             $Message = "agent.ps1 ($script:ExitCode): error copying '$AgentJsonFile' to '$script:AgentJson': $_"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $script:ExitCode
@@ -461,7 +437,7 @@ function Get-AgentJson {
 
     # Getting agent json from agent
     $Message = 'Getting agent json from agent ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName
     Write-Log $LogLevelDebug $Message
 
     try {
@@ -469,7 +445,7 @@ function Get-AgentJson {
     }
     catch {
         $Message = "agent.ps1 ($script:ExitCode): error getting Logz.io agent json from agent. make sure your url is valid: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $script:ExitCode
@@ -479,7 +455,7 @@ function Get-AgentJson {
     $local:FuncStatus = $LASTEXITCODE
     if ($FuncStatus -eq 1) {
         $Message = "agent.ps1 ($script:ExitCode): $(Get-TaskErrorMessage)"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $script:ExitCode
@@ -491,7 +467,7 @@ function Get-AgentJson {
     $local:StatusCode = $script:JsonValue
 
     $Message = "agent.ps1 ($script:ExitCode): error getting Logz.io agent json from agent (statusCode '$StatusCode'). make sure your id is valid."
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
     Write-TaskPostRun "Write-Error `"$Message`""
 
     return $script:ExitCode
@@ -509,13 +485,13 @@ function Set-AgentJsonConsts {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Setting agent json consts ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName
     Write-Log $script:LogLevelDebug $Message
     
-    $local:Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.name'
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Get-JsonFileFieldValue $script:AgentJson '.configuration.name'
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -524,17 +500,17 @@ function Set-AgentJsonConsts {
     $local:Platform = $script:JsonValue
 
     $Message = "Platform is '$Platform'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName
     Write-Log $script:LogLevelDebug $Message
 
     $local:Command = "`$script:Platform = '$Platform'"
     Write-TaskPostRun $Command
     $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
 
-    $Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.subtypes[0].name'
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Get-JsonFileFieldValue $script:AgentJson '.configuration.subtypes[0].name'
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -543,17 +519,17 @@ function Set-AgentJsonConsts {
     $local:SubType = $script:JsonValue
 
     $Message = "Subtype is '$SubType'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName
     Write-Log $script:LogLevelDebug $Message
 
     $Command = "`$script:SubType = '$SubType'"
     Write-TaskPostRun $Command
     $Command | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
     
-    $local:Err = Get-JsonFileFieldValueList $script:AgentJson '.configuration.subtypes[0].datasources[]'
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+    Get-JsonFileFieldValueList $script:AgentJson '.configuration.subtypes[0].datasources[]'
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -564,10 +540,10 @@ function Set-AgentJsonConsts {
     $local:Index = 0
     $local:DataSourceNames = @()
     foreach ($DataSource in $DataSources) {
-        $Err = Get-JsonStrFieldValue $Datasource '.name'
-        if ($Err.Count -ne 0) {
-            $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Get-JsonStrFieldValue $Datasource '.name'
+        if ($LASTEXITCODE -ne 0) {
+            $Message = "agent.ps1 ($ExitCode): $(Get-TaskErrorMessage)"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName
             Write-TaskPostRun "Write-Error `"$Message`""
     
             return $ExitCode
@@ -576,7 +552,7 @@ function Set-AgentJsonConsts {
         $local:DataSourceName = $script:JsonValue
 
         $Message = "DataSource #$($Index+1) is '$DataSourceName'"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName
         Write-Log $script:LogLevelDebug $Message
 
         $DataSourceNames += $DataSourceName
@@ -600,13 +576,13 @@ function Get-LogzioListenerUrl {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting Logz.io listener url ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Get-JsonFileFieldValue $script:AgentJson '.listenerUrl'
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Get-JsonFileFieldValue $script:AgentJson '.listenerUrl'
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -615,7 +591,7 @@ function Get-LogzioListenerUrl {
     $local:ListenerUrl = $script:JsonValue
 
     $Message = "Logz.io listener url is '$ListenerUrl'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:ListenerUrl = '$ListenerUrl'"
@@ -635,13 +611,13 @@ function Get-SubTypeFiles {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Donwloading subtype files ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('RepoRelease')
-    if ($Err.Count -ne 0) {
-        $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Test-AreFuncArgsExist $FuncArgs @('RepoRelease')
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -659,22 +635,20 @@ function Get-SubTypeFiles {
     }
     catch {
         $Message = "agent.ps1 ($ExitCode): error downloading subtype tar.gz file from Logz.io repo: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     
-    tar -zxf $script:LogzioTempDir\windows_$script:Platform`_$script:SubType.tar.gz --directory $script:LogzioTempDir 2>$script:TaskErrorFile | Out-Null
-    if ($LASTEXITCODE -eq 0) {
-        return
+    tar -zxf "$script:LogzioTempDir\windows_$($script:Platform.ToLower())`_$($script:SubType.ToLower()).tar.gz" --directory $script:LogzioTempDir 2>$script:TaskErrorFile | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        $Message = "agent.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-TaskErrorMessage)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
     }
-
-    $Message = "agent.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-TaskErrorMessage)"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-    Write-TaskPostRun "Write-Error `"$Message`""
-
-    return $ExitCode
 }
 
 # Runs subtype prerequisites
@@ -687,18 +661,18 @@ function Invoke-SubTypePrerequisites {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Running subtype prerequisites ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
     Write-Log $LogLevelDebug $Message
 
     try {
-        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:PrerequisitesFile" -ErrorAction Stop
+        . "$script:LogzioTempDir\$($script:Platform.ToLower())\$($script:SubType.ToLower())\$script:PrerequisitesFile" -ErrorAction Stop
         if ($LASTEXITCODE -ne 0) {
             Exit $LASTEXITCODE
         }
     }
     catch {
         $Message = "agent.ps1 ($ExitCode): error running subtype prerequisites: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
         Write-Error $Message
 
         $script:IsAgentFailed = $true
@@ -716,18 +690,18 @@ function Invoke-SubTypeInstaller {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Running subtype installer ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
     Write-Log $script:LogLevelDebug $Message
 
     try {
-        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:InstallerFile" -ErrorAction Stop
+        . "$script:LogzioTempDir\$($script:Platform.ToLower())\$($script:SubType.ToLower())\$script:InstallerFile" -ErrorAction Stop
         if ($LASTEXITCODE -ne 0) {
             Exit $LASTEXITCODE
         }
     }
     catch {
         $Message = "agent.ps1 ($ExitCode): error running subtype installer: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
         Write-Error $Message
 
         $script:IsAgentFailed = $true
@@ -745,18 +719,18 @@ function Invoke-SubTypePostrequisites {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Running subtype post-requisites ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
     Write-Log $script:LogLevelDebug $Message
 
     try {
-        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:PostrequisitesFile" -ErrorAction Stop
+        . "$script:LogzioTempDir\$($script:Platform.ToLower())\$($script:SubType.ToLower())\$script:PostrequisitesFile" -ErrorAction Stop
         if ($LASTEXITCODE -ne 0) {
             Exit $LASTEXITCODE
         }
     }
     catch {
         $Message = "agent.ps1 ($ExitCode): error running subtype post-requisites: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:Platform $script:SubType
         Write-Error $Message
 
         $script:IsAgentFailed = $true

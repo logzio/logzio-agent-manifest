@@ -90,7 +90,6 @@ function Send-LogToLogzio {
         [string]$Step,
         [string]$ScriptName,
         [string]$FuncName,
-        [string]$AgentId = '',
         [string]$Platform = '',
         [string]$SubType = '',
         [string]$DataSource = ''
@@ -98,7 +97,8 @@ function Send-LogToLogzio {
 
     $Message = $Message.Replace('\', '\\').Replace('"', '\"')
 
-    $local:Log = "{`"datetime`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"os_name`":`"$script:WindowsName`",`"os_version`":`"$script:WindowsVersion`",`"shell_version`":`"$script:PowerShellVersion`",`"cpu_arch`":`"$env:PROCESSOR_ARCHITECTURE`""
+    $local:Log = ''
+    $Log = "{`"datetime`":`"$(Get-Date -Format 'o')`",`"level`":`"$Level`",`"message`":`"$Message`",`"step`":`"$Step`",`"script`":`"$ScriptName`",`"func`":`"$FuncName`",`"os`":`"Windows`",`"os_name`":`"$script:WindowsName`",`"os_version`":`"$script:WindowsVersion`",`"shell_version`":`"$script:PowerShellVersion`",`"cpu_arch`":`"$env:PROCESSOR_ARCHITECTURE`",`"agent_id`":`"$script:AgentId`""
 
     if ($Level.Equals($LogLevelError)) {
         $local:ErrorIdPartMatch = $Message | Select-String -Pattern '\([0-9]+\)'
@@ -106,9 +106,6 @@ function Send-LogToLogzio {
         $local:ErrorId = $ErrorIdMatch.Matches.Value
         
         $Log += ",`"error_id`":`"$ErrorId`""
-    }
-    if (-Not [string]::IsNullOrEmpty($AgentId)) {
-        $Log += ",`"agent_id`":`"$AgentId`""
     }
     if (-Not [string]::IsNullOrEmpty($Platform)) {
         $Log += ",`"platform`":`"$Platform`""
@@ -131,7 +128,12 @@ function Send-LogToLogzio {
         Invoke-WebRequest -Uri $script:SqsUrl -Body $Parameters -Method Get -UseBasicParsing | Out-Null
     }
     catch {
-        Write-TaskPostRun "Write-Warning `"failed to send a request with log message to Logz.io agent SQS: $_`""
+        if ($IsFromProcess) {
+            Write-TaskPostRun "Write-Warning `"failed to send a request with log message to Logz.io agent SQS: $_`""
+        }
+        else {
+            Write-Warning "failed to send a request with log message to Logz.io agent SQS: $_"
+        }
     }
 }
 
@@ -310,7 +312,7 @@ function Set-YamlFileFieldValue {
         [string]$Value
     )
 
-    &$script:YqExe -i "$YamlPath = ""`"$Value`"""" $YamlFile 2>$script:TaskErrorFile
+    &$script:YqExe -i "$YamlPath = ""`"`"$Value`"`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         "error setting '$Value' to '$YamlPath in '$YamlFile': $(Get-Content -Path $script:TaskErrorFile)" | Out-File -FilePath $script:TaskErrorFile -Encoding utf8
         return 1

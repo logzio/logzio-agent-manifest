@@ -102,6 +102,7 @@ $script:LogLevelError = 'ERROR'
 $script:LogLevelWarn = 'WARN'
 
 ## Log steps
+$script:LogStepStartAgent = 'Start Agent'
 $script:LogStepPreInit = 'Pre-Init'
 $script:LogStepDownloads = 'Downloads'
 $script:LogStepInit = 'Init'

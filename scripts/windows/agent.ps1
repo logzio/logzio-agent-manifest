@@ -2,6 +2,43 @@
 ###################################################### WINDOWS Agent Script #####################################################
 #################################################################################################################################
 
+# Gets agent id
+# Input:
+#   AgentArgs - Script arguments ($args)
+# Output:
+#   AgentId - The agent id argument
+function Get-AgentId {
+    $local:AgentId = 'none'
+
+    foreach ($Arg in $script:AgentArgs) {
+        switch -Regex ($Arg) {
+            --id=* {
+                $AgentId = $Arg.Split('=', 2)[1]
+                continue
+            }
+            --debug=* {
+                $AgentId = 'debug'
+                break
+            }
+        }
+    }
+
+    $script:AgentId = $AgentId
+}
+
+# Writes start agent message
+# Input:
+#   ---
+# Output:
+#   The message
+function Write-StartAgentMessage {
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = "Start running Logz.io agent $script:AgentVersion ..."
+    Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepStartAgent $script:LogScriptAgent $FuncName
+    Write-Log $script:LogLevelInfo $Message
+}
+
 # Deletes Logz.io temp directory
 # Input:
 #   ---
@@ -24,7 +61,7 @@ function Remove-TempDir {
 function Write-AgentFinalMessages {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    if ($IsShowHelp) {
+    if ($script:IsShowHelp) {
         return
     }
     if ($script:IsLoadingAgentScriptsFailed) {
@@ -40,7 +77,7 @@ function Write-AgentFinalMessages {
     }
     if ($script:IsAgentFailed) {
         $local:Message = 'Agent Failed'
-        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName
         Write-Log $script:LogLevelInfo $Message
 
         Write-AgentStatus $Message 'Red'
@@ -49,7 +86,7 @@ function Write-AgentFinalMessages {
     }
     if ($script:IsPostrequisiteFailed) {
         $local:Message = 'Agent Failed'
-        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName
         Write-Log $script:LogLevelInfo $Message
 
         Write-AgentStatus $Message 'Red'
@@ -59,7 +96,7 @@ function Write-AgentFinalMessages {
     }
     if ($script:IsAgentCompleted) {
         $local:Message = 'Agent Completed Successfully'
-        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName
         Write-Log $script:LogLevelInfo $Message
 
         Write-AgentStatus $Message 'Green'
@@ -72,7 +109,7 @@ function Write-AgentFinalMessages {
     $local:Message = 'Agent Stopped By User'
     $local:Command = Get-Command -Name Send-LogToLogzio
     if (-Not [string]::IsNullOrEmpty($Command)) {
-        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName $script:AgentId
+        Send-LogToLogzio $script:LogLevelInfo $Message $script:LogStepFinal $script:LogScriptAgent $FuncName
     }
     
     $Command = Get-Command -Name Write-Log
@@ -121,10 +158,11 @@ function Write-AgentStatus {
 #   Agent info
 function Write-AgentInfo {
     try {
-        . "$script:LogzioTempDir\$script:Platform\$script:SubType\$script:AgentInfoFile" -ErrorAction Stop
+        . "$script:LogzioTempDir\$($script:Platform.ToLower())\$($script:SubType.ToLower())\$script:AgentInfoFile" -ErrorAction Stop
     }
     catch {
         $local:Message = "failed to print agent info: $_"
+        Send-LogToLogzio $script:LogLevelWarn $Message $script:LogStepStartAgent $script:LogScriptAgent $FuncName
         Write-Warning $Message
     }
 }
@@ -155,6 +193,9 @@ $ProgressPreference = 'SilentlyContinue'
 $WarningPreference = 'SilentlyContinue'
 [Console]::CursorVisible = $false
 
+# Agent args
+$script:AgentArgs = $args
+
 # Exit code
 $script:ExitCode = 1
 
@@ -169,28 +210,47 @@ $script:IsAgentCompleted = $false
 # Print main title
 try {
     # Christmas theme
-    . $env:TEMP\Logzio\logo-themes\default.ps1 -ErrorAction Stop
+    . "$env:TEMP\Logzio\logo-themes\default.ps1" -ErrorAction Stop
 }
 catch {
     Write-Host
-    Write-Host "Logz.io Agent $AgentVersion" -ForegroundColor Cyan
+    Write-Host "Logz.io Agent $script:AgentVersion" -ForegroundColor Cyan
     Write-Host
 }
 
 try {
+    # Get agent id
+    Get-AgentId
+
     # Load agent scripts
     try {
         # Load consts
-        . $env:TEMP\Logzio\consts.ps1 -ErrorAction Stop
+        . "$env:TEMP\Logzio\consts.ps1" -ErrorAction Stop
         # Load agent functions
-        . $env:TEMP\Logzio\functions.ps1 -ErrorAction Stop
+        . "$env:TEMP\Logzio\functions.ps1" -ErrorAction Stop
         # Load agent utils functions
-        . $env:TEMP\Logzio\utils_functions.ps1 -ErrorAction Stop
+        . "$env:TEMP\Logzio\utils_functions.ps1" -ErrorAction Stop
     }
     catch {
         $script:IsLoadingAgentScriptsFailed = $true
-        Write-Host "agent.ps1 ($script:ExitCode): error loading agent scripts: $_" -ForegroundColor Red
 
+        $local:Message = "agent.ps1 ($script:ExitCode): error loading agent scripts: $_"
+        $Message = $Message.Replace('\', '\\').Replace('"', '\"')
+        $local:Log = "{`"datetime`":`"$(Get-Date -Format 'o')`",`"level`":`"ERROR`",`"message`":`"$Message`",`"step`":`"Start Agent`",`"script`":`"agent.ps1`",`"func`":`"main`",`"os`":`"Windows`",`"cpu_arch`":`"$env:PROCESSOR_ARCHITECTURE`",`"agent_id`":`"$script:AgentId`"}"
+        $local:Parameters = @{
+            Action = 'SendMessage'
+            MessageBody = $Log
+        }
+    
+        try {
+            Invoke-WebRequest -Uri 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -Body $Parameters -Method Get -UseBasicParsing | Out-Null
+        }
+        catch {
+            Write-Host "failed to send a request with log message to Logz.io agent SQS: $_" -ForegroundColor Yellow
+        }
+
+        "[ERROR] [$(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')] $Message" | Out-File -FilePath "$env:APPDATA\LogzioAgent\logzio_agent.log" -Append -Encoding utf8
+        Write-Host "agent.ps1 ($script:ExitCode): error loading agent scripts: $_" -ForegroundColor Red
         Exit $script:ExitCode
     }
 
@@ -201,8 +261,8 @@ try {
         Clear-Content -Path $script:TaskPostRunFile -Force
     }
 
-    # Write agent running log
-    Write-Log $script:LogLevelInfo 'Start running Logz.io agent ...'
+    # Write start agent message
+    Write-StartAgentMessage
 
     # Print title
     Write-Host '##########################'
@@ -211,19 +271,19 @@ try {
     Write-Host ' ###'
     Write-Host '##########################'
 
+    # Set agent id const
+    Invoke-Task 'Set-AgentIdConst' @{AgentId = $script:AgentId} 'Setting agent id const' @($script:AgentFunctionsFile)
     # Set Windows and PowerShell info consts
     Invoke-Task 'Set-WindowsAndPowerShellInfoConsts' @{} 'Setting Windows and PowerShell info consts' @($script:AgentFunctionsFile)
     # Check if PowerShell was run as Administrator
     Invoke-Task 'Test-IsElevated' @{} 'Checking if PowerShell was run as Administrator' @($script:AgentFunctionsFile)
     # Get arguments
-    Invoke-Task 'Get-Arguments' @{AgentArgs = $args} 'Getting arguments' @($script:AgentFunctionsFile)
+    Invoke-Task 'Get-Arguments' @{} 'Getting arguments' @($script:AgentFunctionsFile)
     if ($script:IsShowHelp) {
         Exit 0
     }
     # Check arguments validation
     Invoke-Task 'Test-ArgumentsValidation' @{AppUrl = $script:AppUrl; AgentId = $script:AgentId; AgentJsonFile = $script:AgentJsonFile} 'Checking arguments validation' @($script:AgentFunctionsFile)
-    # Set agent id const
-    Invoke-Task 'Set-AgentIdConst' @{AgentId = $script:AgentId} 'Setting agent id const' @($script:AgentFunctionsFile)
 
     # Print title
     Write-Host
@@ -254,6 +314,7 @@ try {
     Invoke-Task 'Get-LogzioListenerUrl' @{} 'Getting Logz.io listener url' @($script:AgentFunctionsFile)
     # Download subtype files
     Invoke-Task 'Get-SubTypeFiles' @{RepoRelease = $script:RepoRelease} 'Donwloading subtype files' @($script:AgentFunctionsFile)
+    Exit
 
     # Run subtype prerequisites
     Invoke-SubTypePrerequisites
