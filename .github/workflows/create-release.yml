@@ -38,7 +38,7 @@ jobs:
       - name: Push Change
         run: |
           git config --global user.name ShiranAvidov
-          git config --global user.email shiran.avidov@logz.io
+          git config --global user.email shiranavidov@gmail.com
           git add ./version
           git commit -m "update version"
           git push
