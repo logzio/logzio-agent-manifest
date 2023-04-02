@@ -143,7 +143,7 @@ function Write-AgentSupport {
 
 
 # Agent version
-$script:AgentVersion = 'v1.0.44'
+$script:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
 
 # Settings
 $ProgressPreference = 'SilentlyContinue'

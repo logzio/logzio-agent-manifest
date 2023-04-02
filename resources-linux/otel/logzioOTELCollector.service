@@ -1,0 +1,8 @@
+[Unit]
+Description=OTEL collector for collecting logs/metrics and exporting them to Logz.io.
+
+[Service]
+ExecStart=OTEL_COLLECTOR_BIN --config OTEL_CONFIG
+
+[Install]
+WantedBy=multi-user.target
