@@ -16,7 +16,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
       - name: Increase Version
         run: |
-          version=$(cat "${GITHUB_WORKSPACE}/version" | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
+          version=$(cat 'version' | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
           major=$(echo "$version" | cut -d'.' -f1)
           minor=$(echo "$version" | cut -d'.' -f2)
           patch=$(echo "$version" | cut -d'.' -f3)
@@ -33,11 +33,11 @@ jobs:
           fi
           
           next_version="v$major.$minor.$patch"
-          echo "$next_version" > "${GITHUB_WORKSPACE}/version"
+          echo "$next_version" >'version'
       - name: Create Github Output Env
         id: version
         run: |
-          version=$(cat "${GITHUB_WORKSPACE}/version")
+          version=$(cat 'version')
           echo "VERSION=$version" >> $GITHUB_OUTPUT
       - name: Push Change
         run: |
@@ -62,30 +62,30 @@ jobs:
           git push origin "${{ needs.update_version.outputs.VERSION }}"
       - name: Create directory
         run : |
-          mkdir ${GITHUB_WORKSPACE}/tars
+          mkdir 'tars'
       - name: Compress Windows Files
         run: |
-          tar -czvf ${GITHUB_WORKSPACE}/tars/agent_windows.tar.gz -C ${GITHUB_WORKSPACE}/scripts/windows . -C ${GITHUB_WORKSPACE} version
-          tar -czvf ${GITHUB_WORKSPACE}/tars/windows_kubernetes_aks.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/aks -C ${GITHUB_WORKSPACE} resources
-          tar -czvf ${GITHUB_WORKSPACE}/tars/windows_kubernetes_eks.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/eks -C ${GITHUB_WORKSPACE} resources
-          tar -czvf ${GITHUB_WORKSPACE}/tars/windows_kubernetes_gke.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/gke -C ${GITHUB_WORKSPACE} resources
-          tar -czvf ${GITHUB_WORKSPACE}/tars/windows_kubernetes_digitalocean.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources
-          tar -czvf ${GITHUB_WORKSPACE}/tars/windows_localhost_windows.tar.gz -C ${GITHUB_WORKSPACE}/datasources/windows localhost/windows -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/agent_windows.tar.gz' -C 'scripts/windows' . -C ${GITHUB_WORKSPACE} version
+          tar -czvf 'tars/windows_kubernetes_aks.tar.gz' -C 'datasources/windows' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_kubernetes_eks.tar.gz' -C 'datasources/windows' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_kubernetes_gke.tar.gz' -C 'datasources/windows' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_kubernetes_digitalocean.tar.gz' -C 'datasources/windows' 'kubernetes/digitalocean' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_localhost_windows.tar.gz' -C 'datasources/windows' 'localhost/windows' -C ${GITHUB_WORKSPACE} resources
       - name: Compress Linux Files
         run: |
-          tar -czvf ${GITHUB_WORKSPACE}/tars/agent_linux.tar.gz -C ${GITHUB_WORKSPACE}/scripts/linux . -C ${GITHUB_WORKSPACE} version
-          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_kubernetes_aks.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux kubernetes/aks -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_kubernetes_eks.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux kubernetes/eks -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_kubernetes_gke.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux kubernetes/gke -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_kubernetes_digitalocean.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_aws_ec2.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux aws/ec2 -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf ${GITHUB_WORKSPACE}/tars/linux_localhost_linux.tar.gz -C ${GITHUB_WORKSPACE}/datasources/linux localhost/linux -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/agent_linux.tar.gz" -C 'scripts/linux' . -C ${GITHUB_WORKSPACE} version
+          tar -czvf 'tars/linux_kubernetes_aks.tar.gz' -C 'datasources/linux' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_kubernetes_eks.tar.gz' -C 'datasources/linux' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_kubernetes_gke.tar.gz' -C 'datasources/linux' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_kubernetes_digitalocean.tar.gz' -C 'datasources/linux' 'kubernetes/digitalocean' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_aws_ec2.tar.gz' -C 'datasources/linux' 'aws/ec2' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_localhost_linux.tar.gz' -C 'datasources/linux' 'localhost/linux' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.update_version.outputs.VERSION }}
-          release: ${{ needs.update_version.outputs.VERSION }}
+          name: ${{ needs.update_version.outputs.VERSION }}
           body: |
             New Release ${{ needs.update_version.outputs.VERSION }}
-          artifacts: "${GITHUB_WORKSPACE}/tars/*.tar.gz"
+          artifacts: "tars/*.tar.gz"
