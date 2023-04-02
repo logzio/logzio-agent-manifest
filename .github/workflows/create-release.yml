@@ -3,6 +3,11 @@ on:
     branches:
       - master
     paths-ignore:
+      - '.github/**'
+      - 'testing-configs/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
       - 'version'
 
 jobs:
@@ -73,7 +78,7 @@ jobs:
           tar -czvf 'tars/windows_localhost_windows.tar.gz' -C 'datasources/windows' 'localhost/windows' -C ${GITHUB_WORKSPACE} resources
       - name: Compress Linux Files
         run: |
-          tar -czvf 'tars/agent_linux.tar.gz" -C 'scripts/linux' . -C ${GITHUB_WORKSPACE} version
+          tar -czvf 'tars/agent_linux.tar.gz' -C 'scripts/linux' . -C ${GITHUB_WORKSPACE} version
           tar -czvf 'tars/linux_kubernetes_aks.tar.gz' -C 'datasources/linux' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
           tar -czvf 'tars/linux_kubernetes_eks.tar.gz' -C 'datasources/linux' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
           tar -czvf 'tars/linux_kubernetes_gke.tar.gz' -C 'datasources/linux' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
