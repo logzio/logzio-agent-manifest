@@ -551,7 +551,7 @@ function execute_task {
 
         if $CONTINUE_IF_FAILED; then
             return
-        elif $IS_POSTREQUISITEs_STEP; then
+        elif $IS_POSTREQUISITES_STEP; then
             IS_POSTREQUISITES_FAILED=true
         else
             IS_AGENT_FAILED=true

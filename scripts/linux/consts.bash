@@ -56,7 +56,7 @@ AGENT_JSON="$LOGZIO_TEMP_DIR/agent.json"
 # Url for downloading jq binary
 JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64'
 # Url for downloading yq binary
-YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.27.2/yq_linux_amd64.tar.gz'
+YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.33.2/yq_linux_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
 OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-linux_amd64.tar.gz'
 # Url for AWS SQS

@@ -69,16 +69,6 @@ function write_agent_final_messages {
         write_agent_support
         return
     fi
-    if $IS_POSTREQUISITES_FAILED; then
-        local message='Agent Failed'
-        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_FINAL" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_log "$LOG_LEVEL_INFO" "$message"
-
-        write_agent_status "$message" '\033[0;31m'
-        write_agent_info
-        write_agent_support
-        return
-    fi
     if $IS_AGENT_STOPPED; then
         local message='Agent Stopped By User'
     
