@@ -41,23 +41,23 @@ function load_metrics_utils {
     ((EXIT_CODE++))
 }
 
-# Builds enable Fargate Helm set
+# Builds Fargate collector mode standalone Helm set
 # Input:
 #   ---
 # Output:
 #   LOG_HELM_SETS - Contains all the Helm sets for logging
 #   HELM_SETS - Contains all the Helm sets
-function build_enable_fargate_helm_set {    
+function build_fargate_collector_mode_standalone_helm_set {   
     local func_name="${FUNCNAME[0]}"
 
-    local message='Building enable Fargate Helm set ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    local message='Building Fargate collector mode standalone Helm set ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local helm_set=" --set logzio-fluentd.fargateLogRouter.enabled=true"
+    local helm_set=" --set logzio-k8s-telemetry.collector.mode=standalone"
 
-    message="Enable Fargate Helm set is '$helm_set'"
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    message="Fargate collector mode standalone Helm set is '$helm_set'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     write_task_post_run "LOG_HELM_SETS+='$helm_set'"
