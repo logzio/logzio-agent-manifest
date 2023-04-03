@@ -111,7 +111,7 @@ function get_arguments {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    for arg in "${AGENT_ARGS[@]]}"; do
+    for arg in "${AGENT_ARGS[@]}"; do
         case "$arg" in
             --help)
                 show_help
