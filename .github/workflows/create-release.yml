@@ -4,7 +4,6 @@ on:
     branches:
       - master
     paths-ignore:
-      - '.github/**'
       - 'testing-configs/**'
       - '.gitignore'
       - 'LICENSE'
@@ -22,7 +21,7 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
       - name: Increase Version
         run: |
-          version=$(cat 'version' | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
+          version=$(cat ./version | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
           major=$(echo "$version" | cut -d'.' -f1)
           minor=$(echo "$version" | cut -d'.' -f2)
           patch=$(echo "$version" | cut -d'.' -f3)
@@ -39,11 +38,11 @@ jobs:
           fi
           
           next_version="v$major.$minor.$patch"
-          echo "$next_version" >'version'
+          echo "$next_version" >./version
       - name: Create Github Output Env
         id: version
         run: |
-          version=$(cat 'version')
+          version=$(cat ./version)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
       - name: Push Change
         run: |
@@ -62,13 +61,16 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Update version file
+        run: |
+          echo "${{ needs.update_version.outputs.VERSION }}" >./version
       - name: Push tag
         run: |
           git tag "${{ needs.update_version.outputs.VERSION }}"
           git push origin "${{ needs.update_version.outputs.VERSION }}"
       - name: Create directory
         run : |
-          mkdir 'tars'
+          mkdir ./tars
       - name: Compress Windows Files
         run: |
           tar -czvf 'tars/agent_windows.tar.gz' -C 'scripts/windows' . -C ${GITHUB_WORKSPACE} version
