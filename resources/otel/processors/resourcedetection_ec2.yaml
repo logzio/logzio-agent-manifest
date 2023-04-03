@@ -1,0 +1,5 @@
+resourcedetection/ec2:
+  detectors: ["ec2"]
+  ec2:
+    tags:
+      - ^*$
