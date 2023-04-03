@@ -54,7 +54,7 @@ function get_is_kubernetes_run_on_windows_os_was_selected {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     PARAMS=("${METRICS_PARAMS[@]}")
-    get_param_value_list 'isWindows'
+    get_param_value 'isWindows'
     if [[ $? -ne 0 ]]; then
         message="metrics.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"

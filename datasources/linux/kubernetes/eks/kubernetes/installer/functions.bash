@@ -54,7 +54,7 @@ function get_is_fargate_was_selected {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     PARAMS=("${GENERAL_PARAMS[@]}")
-    get_param_value_list 'isFargate'
+    get_param_value 'isFargate'
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
