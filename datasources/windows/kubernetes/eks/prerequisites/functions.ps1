@@ -82,7 +82,7 @@ function Set-LogzioListenerUrlInTestPodYamls {
 
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
-    $Err = Add-YamlFileFieldValue "$script:KubernetesResourcesDir\logzio_logs_connection_test_pod.yaml" '.spec.containers[0].command' "`"telnet $ListenerUrl 8071`""
+    $Err = Add-YamlFileFieldValue "$script:KubernetesResourcesDir\logzio_logs_connection_test_pod.yaml" '.spec.containers[0].command' "telnet $ListenerUrl 8071"
     if ($Err.Count -ne 0) {
         $Message = "prerequisites.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
@@ -91,7 +91,7 @@ function Set-LogzioListenerUrlInTestPodYamls {
         return $ExitCode
     }
 
-    $Err = Add-YamlFileFieldValue "$script:KubernetesResourcesDir\logzio_metrics_connection_test_pod.yaml" '.spec.containers[0].command' "`"telnet $ListenerUrl 8053`""
+    $Err = Add-YamlFileFieldValue "$script:KubernetesResourcesDir\logzio_metrics_connection_test_pod.yaml" '.spec.containers[0].command' "telnet $ListenerUrl 8053"
     if ($Err.Count -ne 0) {
         $Message = "prerequisites.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPrerequisites $script:LogScriptPrerequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
@@ -139,7 +139,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     }
 
     $local:IsPodCompleted = $false
-    $local:Retries = 3
+    $local:Retries = 18
     while ($Retries -ne 0) {
         $local:Pod = kubectl get pods 2>$script:TaskErrorFile | Select-String -Pattern 'logzio-logs-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
         if ($LASTEXITCODE -ne 0) {
@@ -157,7 +157,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
             break
         }
 
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds 10
         $Retries--
     }
 
@@ -236,7 +236,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     }
 
     $local:IsPodCompleted = $false
-    $local:Retries = 3
+    $local:Retries = 18
     while ($Retries -ne 0) {
         $local:Pod = kubectl get pods 2>$script:TaskErrorFile | Select-String -Pattern 'logzio-metrics-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
         if ($LASTEXITCODE -ne 0) {
@@ -254,7 +254,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
             break
         }
 
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds 10
         $Retries--
     }
 

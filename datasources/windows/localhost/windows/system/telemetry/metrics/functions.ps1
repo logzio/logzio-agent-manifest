@@ -407,7 +407,7 @@ function Add-MetricsExporterToOtelConfig {
         return $ExitCode
     }
 
-    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.Authorization' "`"Bearer $MetricsToken`""
+    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.Authorization' "Bearer $MetricsToken"
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource

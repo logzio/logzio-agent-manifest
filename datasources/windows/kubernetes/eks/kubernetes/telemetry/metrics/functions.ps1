@@ -208,3 +208,26 @@ function Build-EnableMetricsFilterHelmSet {
     Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
+
+# Builds Fargate collector mode standalone Helm set
+# Input:
+#   ---
+# Output:
+#   LogHelmSets - Contains all the Helm sets for logging
+#   helmSets - Contains all the Helm sets
+function Build-FargateCollectorModeStandaloneHelmSet {    
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Building Fargate collector mode standalone Helm set ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    $local:HelmSet = " --set logzio-k8s-telemetry.collector.mode=standalone"
+
+    $Message = "Fargate collector mode standalone Helm set is '$HelmSet'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
+    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
+}

@@ -326,7 +326,7 @@ function Set-YamlFileFieldValue {
         [string]$Value
     )
 
-    &$script:YqExe -i "$YamlPath = ""`"$Value`"""" $YamlFile 2>$script:TaskErrorFile
+    &$script:YqExe -i "$YamlPath = ""`"`"$Value`"`"""" $YamlFile 2>$script:TaskErrorFile
     if ($LASTEXITCODE -ne 0) {
         Write-Output "error setting '$Value' to '$YamlPath in '$YamlFile': $(Get-TaskErrorMessage)"
         return 1

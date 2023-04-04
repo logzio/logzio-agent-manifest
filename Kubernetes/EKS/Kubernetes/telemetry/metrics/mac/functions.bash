@@ -104,3 +104,15 @@ function build_enable_metrics_filter_helm_set () {
     write_run "log_helm_sets+='$helm_set'"
     write_run "helm_sets+='$helm_set'"
 }
+
+# Builds Fargate collector mode standalone Helm set
+# Output:
+#   helm_sets - Contains all the Helm sets
+function build_fargate_collector_mode_standalone_helm_set () {
+    write_log "INFO" "Building Fargate collector standalone Helm set ..."
+
+    local helm_set=" --set logzio-k8s-telemetry.collector.mode=standalone"
+    write_log "INFO" "helm_set = $helm_set"
+    write_run "log_helm_sets+='$helm_set'"
+    write_run "helm_sets+='$helm_set'"
+}

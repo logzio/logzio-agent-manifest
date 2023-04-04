@@ -170,7 +170,7 @@ function can_kubernetes_cluster_connect_to_logzio {
     fi
 
     local is_pod_completed=false
-    local retries=3
+    local retries=18
     while [[ $retries -ne 0 ]]; do
         local pod_status
         pod_status=$(kubectl get pods 2>"$TASK_ERROR_FILE" | grep "$pod_name" 2>"$TASK_ERROR_FILE" | tr -s ' ' | cut -d ' ' -f3)
@@ -187,7 +187,7 @@ function can_kubernetes_cluster_connect_to_logzio {
             break
         fi
 
-        sleep 5
+        sleep 10
         ((retries--))
     done
 
