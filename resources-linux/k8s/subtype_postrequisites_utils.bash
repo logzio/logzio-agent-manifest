@@ -16,7 +16,7 @@ function are_all_pods_running_or_completed {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_POSTREQUISITES" "$LOG_SCRIPT_POSTREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local retries=3
+    local retries=18
     while [[ $retries -ne 0 ]]; do
         local pod_statuses
         pod_statuses=$(kubectl get pods -n monitoring --no-headers -o custom-columns=':.status.phase' 2>"$TASK_ERROR_FILE")
