@@ -1,0 +1,58 @@
+{
+   "name": "AWS",
+   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
+   "description": "",
+   "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
+   "subtypes": [
+     {
+       "name": "Multi-shipping-tokens",
+       "label": "Multi shipping tokens",
+       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
+       "description": "AWS Cloudwatch",
+       "hint": "AWS metrics to ship to Logz.io",
+       "supportedOs": ["AWS_Cloudformation"],
+       "integrationTemplate": "metric-stream-helpers/aws/1.2.4/sam-template.yaml&param_logzioDestination=https://listener-aws-metrics-stream-<<LOGZIO_ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
+       "datasources": [
+         {
+           "name": "Logs",
+           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
+           "description": "Ship your AWS Logs to logz.io",
+           "params": [],
+           "telemetries": [
+             {
+               "type": "LOG_ANALYTICS",
+               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your AWS services.",
+               "params": []
+             }
+           ]
+         },
+         {
+           "name": "Metrics",
+           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
+           "description": "Ship your AWS Metrics to logz.io",
+           "params": [],
+           "telemetries": [
+             {
+               "type": "METRICS",
+               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your AWS services.",
+               "params": []
+             }
+           ]
+         },
+         {
+           "name": "Tracing",
+           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
+           "description": "Ship your AWS Tracing to logz.io",
+           "params": [],
+           "telemetries": [
+             {
+               "type": "TRACING",
+               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect tracing from your AWS services.",
+               "params": []
+             }
+           ]
+         }
+       ]
+     }
+   ]
+ }
