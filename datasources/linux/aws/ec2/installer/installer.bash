@@ -47,4 +47,5 @@ execute_task 'copy_logzio_otel_collector_service_file_to_systemd_system_dir' 'Co
 # Copy delete service script file to opt subdirectory
 execute_task 'copy_delete_service_script_to_opt_sub_dir' 'Copying delete service script file to opt subdirectory'
 # Run Logz.io OTEL collector service
+sudo echo >/dev/null
 execute_task 'run_logzio_otel_collector_service' 'Running Logz.io OTEL collector service'
