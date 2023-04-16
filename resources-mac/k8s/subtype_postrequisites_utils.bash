@@ -158,7 +158,7 @@ function is_any_pod_failed {
         if [[ "$err" == *"ERROR"* ]]; then
             write_task_post_run "IS_POSTREQUISITES_FAILED=true"
         
-            message="postrequisites.bash ($EXIT_CODE): error getting pod names and statuses: $err"
+            message="postrequisites.bash ($EXIT_CODE): error getting pods names and status: $err"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_POSTREQUISITES" "$LOG_SCRIPT_POSTREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
 
