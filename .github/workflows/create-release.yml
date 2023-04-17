@@ -1,0 +1,100 @@
+name: update version and create new release
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - '.github/**'
+      - 'testing-configs/**'
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
+      - 'version'
+
+jobs:
+  update_version:
+    name: Update Version
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Increase Version
+        run: |
+          version=$(cat ./version | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
+          major=$(echo "$version" | cut -d'.' -f1)
+          minor=$(echo "$version" | cut -d'.' -f2)
+          patch=$(echo "$version" | cut -d'.' -f3)
+          
+          if [[ $patch -lt 99 ]]; then
+            ((patch++))
+          elif [[ $minor -lt 99 ]]; then
+            patch=0
+            ((minor++))
+          else
+            patch=0
+            minor=0
+            ((major++))
+          fi
+          
+          next_version="v$major.$minor.$patch"
+          echo "$next_version" >./version
+      - name: Create Github Output Env
+        id: version
+        run: |
+          version=$(cat ./version)
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
+      - name: Push Change
+        run: |
+          git config --global user.name ShiranAvidov
+          git config --global user.email shiran.avidov@logz.io
+          git add ./version
+          git commit -m "update version"
+          git push
+    outputs:
+      VERSION: ${{ steps.version.outputs.VERSION }}
+  
+  create_release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: update_version
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Update version file
+        run: |
+          echo "${{ needs.update_version.outputs.VERSION }}" >./version
+      - name: Push tag
+        run: |
+          git tag "${{ needs.update_version.outputs.VERSION }}"
+          git push origin "${{ needs.update_version.outputs.VERSION }}"
+      - name: Create directory
+        run : |
+          mkdir ./tars
+      - name: Compress Windows Files
+        run: |
+          tar -czvf 'tars/agent_windows.tar.gz' -C 'scripts/windows' . -C ${GITHUB_WORKSPACE} version
+          tar -czvf 'tars/windows_kubernetes_aks.tar.gz' -C 'datasources/windows' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_kubernetes_eks.tar.gz' -C 'datasources/windows' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_kubernetes_gke.tar.gz' -C 'datasources/windows' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_kubernetes_digitalocean.tar.gz' -C 'datasources/windows' 'kubernetes/digitalocean' -C ${GITHUB_WORKSPACE} resources
+          tar -czvf 'tars/windows_localhost_windows.tar.gz' -C 'datasources/windows' 'localhost/windows' -C ${GITHUB_WORKSPACE} resources
+      - name: Compress Linux Files
+        run: |
+          tar -czvf 'tars/agent_linux.tar.gz' -C 'scripts/linux' . -C ${GITHUB_WORKSPACE} version
+          tar -czvf 'tars/linux_kubernetes_aks.tar.gz' -C 'datasources/linux' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_kubernetes_eks.tar.gz' -C 'datasources/linux' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_kubernetes_gke.tar.gz' -C 'datasources/linux' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_kubernetes_digitalocean.tar.gz' -C 'datasources/linux' 'kubernetes/digitalocean' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_aws_ec2.tar.gz' -C 'datasources/linux' 'aws/ec2' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf 'tars/linux_localhost_linux.tar.gz' -C 'datasources/linux' 'localhost/linux' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.update_version.outputs.VERSION }}
+          name: ${{ needs.update_version.outputs.VERSION }}
+          body: |
+            New Release ${{ needs.update_version.outputs.VERSION }}
+          artifacts: "tars/*.tar.gz"

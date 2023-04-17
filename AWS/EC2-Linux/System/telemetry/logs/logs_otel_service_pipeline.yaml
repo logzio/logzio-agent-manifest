@@ -1,4 +1,0 @@
-logs:
-  receivers: []
-  processors: [resourcedetection/system, resourcedetection/ec2]
-  exporters: []

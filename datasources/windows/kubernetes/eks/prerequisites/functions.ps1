@@ -139,7 +139,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
     }
 
     $local:IsPodCompleted = $false
-    $local:Retries = 3
+    $local:Retries = 18
     while ($Retries -ne 0) {
         $local:Pod = kubectl get pods 2>$script:TaskErrorFile | Select-String -Pattern 'logzio-logs-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
         if ($LASTEXITCODE -ne 0) {
@@ -157,7 +157,7 @@ function Test-CanKubernetesClusterConnectToLogzioLogs {
             break
         }
 
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds 10
         $Retries--
     }
 
@@ -236,7 +236,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
     }
 
     $local:IsPodCompleted = $false
-    $local:Retries = 3
+    $local:Retries = 18
     while ($Retries -ne 0) {
         $local:Pod = kubectl get pods 2>$script:TaskErrorFile | Select-String -Pattern 'logzio-metrics-connection-test' | ForEach-Object {$_  -replace '\s+', ' '} | ForEach-Object {$_ -split ' '}
         if ($LASTEXITCODE -ne 0) {
@@ -254,7 +254,7 @@ function Test-CanKubernetesClusterConnectToLogzioMetrics {
             break
         }
 
-        Start-Sleep -Seconds 5
+        Start-Sleep -Seconds 10
         $Retries--
     }
 
