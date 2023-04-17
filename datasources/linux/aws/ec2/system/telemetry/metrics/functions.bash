@@ -12,7 +12,7 @@
 function load_metrics_utils {
     local func_name="${FUNCNAME[0]}"
 
-    local message='Laoding metrics utils functions ...'
+    local message='Loading metrics utils functions ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 

@@ -61,9 +61,7 @@ function get_linux_info {
 # Input:
 #   ---
 # Output:
-#   LINUX_NAME - Linux name
-#   LINUX_VERSION - Linux version
-#   CPU_ARCH - Linux cpu architecture
+#   ---
 function is_bash_version_4_or_above {
     local func_name="${FUNCNAME[0]}"
 
