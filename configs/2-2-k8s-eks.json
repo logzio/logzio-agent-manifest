@@ -86,6 +86,31 @@
               "params": []
             }
           ]
+        },
+        {
+          "name": "Security",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "Logz.io Uses Trivy to scan the Kubernetes cluster and collects the security risks reports from each pod",
+          "params": [
+            {
+              "type": "text",
+              "name": "envID",
+              "label": "Environment Name",
+              "required": true,
+              "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+              "value": "my_environment",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "patternError": "Only letters, numbers, dashes and underscores are allowed"
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect security risks reports from your Kubernetes cluster components and applications pods",
+              "params": []
+            }
+          ]
         }
       ]
     }
