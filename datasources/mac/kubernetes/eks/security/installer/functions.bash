@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################################################################
-############################################ LINUX Datasource Installer Functions ###############################################
+############################################# MAC Datasource Installer Functions ################################################
 #################################################################################################################################
 
 # Loads datasource installer utils functions
@@ -16,7 +16,7 @@ function load_installer_utils {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    source "$ALL_RESOURCES_LINUX_DIR/datasource_installer_utils.bash" 2>"$TASK_ERROR_FILE"
+    source "$ALL_RESOURCES_MAC_DIR/datasource_installer_utils.bash" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error loading installer utils functions: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -27,7 +27,7 @@ function load_installer_utils {
         exit $EXIT_CODE
     fi
 
-    source "$KUBERNETES_RESOURCES_LINUX_DIR/datasource_installer_utils.bash" 2>"$TASK_ERROR_FILE"
+    source "$KUBERNETES_RESOURCES_MAC_DIR/datasource_installer_utils.bash" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error loading installer utils functions: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"

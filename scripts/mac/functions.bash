@@ -462,7 +462,9 @@ function get_agent_json_info {
         ((index++))
     done
 
-    command="DATA_SOURCES=(${data_source_names[@]})"
+    LIST=("${data_source_names[@]}")
+    local data_sources_str=$(convert_list_to_str)
+    command="DATA_SOURCES=$data_sources_str"
     write_task_post_run "$command"
 }
 
