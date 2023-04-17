@@ -462,7 +462,7 @@ function get_agent_json_info {
         ((index++))
     done
 
-    command="DATA_SOURCES=${data_source_names[@]}"
+    command="DATA_SOURCES=(${data_source_names[@]})"
     write_task_post_run "$command"
 }
 

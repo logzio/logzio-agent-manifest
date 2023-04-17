@@ -27,9 +27,9 @@ run_all_data_sources
 
 # Print title
 echo
-echo -e '########################'
+echo -e '####################'
 echo -e "###$PURPLE_COLOR Installation $WHITE_COLOR###"
-echo -e '########################'
+echo -e '####################'
 
 EXIT_CODE=$SUB_TYPE_INSTALLER_EXIT_CODE
 
