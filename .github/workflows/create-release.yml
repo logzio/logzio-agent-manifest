@@ -5,6 +5,7 @@ on:
       - master
     paths-ignore:
       - '.github/**'
+      - 'configs/**'
       - 'testing-configs/**'
       - '.gitignore'
       - 'LICENSE'
