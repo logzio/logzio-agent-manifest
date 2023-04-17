@@ -12,7 +12,7 @@
 function load_installer_utils {
     local func_name="${FUNCNAME[0]}"
 
-    local message='Laoding installer utils functions ...'
+    local message='Loading installer utils functions ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
