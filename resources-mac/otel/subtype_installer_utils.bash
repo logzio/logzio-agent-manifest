@@ -16,7 +16,7 @@ function is_logzio_otel_collector_service_exists {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local service=$(sudo launchctl list | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" | grep -e '^[0-9]')
+    local service=$(sudo launchctl list | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME")
     if [[ -z $service ]]; then
         message="'$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME' service does not exist"
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
@@ -264,7 +264,7 @@ function run_logzio_otel_collector_service {
     local is_service_running
     is_service_running=$(sudo launchctl list | grep "$LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" | grep -e '^[0-9]')
     if [[ -z "$is_service_running" ]]; then
-        message="installer.bash ($EXIT_CODE): error running Logz.io OTEL collector service. run 'sudo tail -F $LOGZIO_OTEL_COLLECTOR_SERVICE_LOG_FILE' to see the error"
+        message="installer.bash ($EXIT_CODE): error running Logz.io OTEL collector service. run 'sudo tail -F $LOGZIO_OTEL_COLLECTOR_SERVICE_LOG_FILE' or use 'LaunchControl' app to see the error"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
         write_task_post_run "write_error \"$message\""
 
