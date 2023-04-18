@@ -81,7 +81,7 @@
         },
         {
           "name": "Security",
-          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/logz_security.png",
           "description": "Logz.io Uses Trivy to scan the Kubernetes cluster and collects the security risks reports from each pod",
           "params": [
             {
