@@ -2,6 +2,36 @@
 ##################################################### WINDOWS Agent Functions ###################################################
 #################################################################################################################################
 
+# Installs ThreadJob module
+# Input:
+#   ---
+# Output:
+#   ---
+function Install-ThreadJobModule {
+    $local:ExitCode = 1
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    try {
+        Get-Command Start-ThreadJob -ErrorAction Stop | Out-Null
+        $local:Message = "'ThreadJob' module was already installed"
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Write-Log $script:LogLevelDebug $Message
+    }
+    catch {
+        try {
+            Install-Module -Name 'ThreadJob' -AllowClobber -Force -ErrorAction Stop | Out-Null
+            $local:Message = "'ThreadJob' module is installed successfully"
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+            Write-Log $script:LogLevelDebug $Message
+        }
+        catch {
+            $script:IsLoadingAgentScriptsFailed = $true
+            Write-Error "agent.ps1 ($ExitCode): error installing 'ThreadJob' module: $_"
+            Exit $ExitCode
+        }
+    }
+}
+
 # Sets Windows and PowerShell info consts
 # Input:
 #   ---

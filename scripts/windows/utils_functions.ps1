@@ -141,12 +141,14 @@ function Send-LogToLogzio {
         MessageBody = $Log
     }
 
-    try {
-        Invoke-WebRequest -Uri $script:SqsUrl -Body $Parameters -Method Get -UseBasicParsing | Out-Null
-    }
-    catch {
-        Write-TaskPostRun "Write-Warning `"failed to send a request with log message to Logz.io agent SQS: $_`""
-    }
+    Start-ThreadJob -ScriptBlock {
+        try {
+            Invoke-WebRequest -Uri $using:SqsUrl -Body $using:Parameters -Method Get -UseBasicParsing | Out-Null
+        }
+        catch {}
+    } | Out-Null
+
+    #Invoke-WebRequest -Uri $script:SqsUrl -Body $Parameters -Method Get -UseBasicParsing 2>&1 | Out-Null
 }
 
 # Checks if function arguments exist
@@ -591,7 +593,7 @@ function Invoke-Task {
     $local:Timeout = 300
     $local:Counter = 0
     
-    $local:Job = Start-Job -ScriptBlock {
+    $local:Job = Start-ThreadJob -ScriptBlock {
         $ProgressPreference = 'SilentlyContinue'
         $WarningPreference = 'SilentlyContinue'
 
@@ -601,7 +603,7 @@ function Invoke-Task {
         }
         catch {
             $local:Message = "utils.ps1 (1): error loading agent scripts: $_"
-            Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
+            Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptUtilsFunctions $using:FuncName $using:AgentId
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return 1
@@ -613,18 +615,20 @@ function Invoke-Task {
             }
             catch {
                 $local:Message = "utils.ps1 (2): error loading '$ScriptToLoad' script: $_"
-                Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptUtilsFunctions $FuncName $script:AgentId
+                Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptUtilsFunctions $using:FuncName $using:AgentId
                 Write-TaskPostRun "Write-Error `"$Message`""
 
                 return 2
             }
         }
 
-        if ($using:FuncArgs.Count -eq 0) {
+        $local:FuncArgs = $using:FuncArgs
+
+        if ($FuncArgs.Count -eq 0) {
             &$using:FuncName
         } 
         else {
-            &$using:FuncName $using:FuncArgs
+            &$using:FuncName $FuncArgs
         }
     }
     $local:JobState = ''
@@ -633,13 +637,20 @@ function Invoke-Task {
         Write-Host "`r  [   ] $Description ..." -NoNewline
 
         for ($i=0; $i -lt $Frame.Count; $i++) {
+            $JobState = $Job.State | Write-Output
+            if ($JobState.Equals('Completed')) {
+                break
+            }
+            if ($JobState.Equals('Failed')) {
+                break
+            }
+
             Write-Host "`r  [ $($Frame[$i]) ]" -NoNewline
             Start-Sleep -Milliseconds $FrameInterval
         }
 
         $Counter++
 
-        $JobState = $Job.State | Write-Output
         if ($JobState.Equals('Completed')) {
             break
         }
@@ -652,7 +663,7 @@ function Invoke-Task {
             $JobState = 'Timeout'
 
             $local:Message = 'timeout error: the task was not completed in time'
-            Send-LogToLogzio $script:LogLevelError $Message '' $script:LogScriptAgent $FuncName $script:AgentId
+            Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptAgent $using:FuncName $using:AgentId
             Write-TaskPostRun "Write-Error `"$Message`""
             break
         }

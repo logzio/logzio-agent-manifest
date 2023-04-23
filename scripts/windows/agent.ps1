@@ -192,6 +192,9 @@ try {
         Clear-Content $script:TaskPostRunFile -Force
     }
 
+    # Install ThreadJob module
+    Install-ThreadJobModule
+
     # Write agent running log
     Write-Log $script:LogLevelInfo 'Start running Logz.io agent ...'
 
