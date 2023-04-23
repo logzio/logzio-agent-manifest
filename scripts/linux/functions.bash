@@ -61,9 +61,7 @@ function get_linux_info {
 # Input:
 #   ---
 # Output:
-#   LINUX_NAME - Linux name
-#   LINUX_VERSION - Linux version
-#   CPU_ARCH - Linux cpu architecture
+#   ---
 function is_bash_version_4_or_above {
     local func_name="${FUNCNAME[0]}"
 
@@ -111,7 +109,7 @@ function get_arguments {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    for arg in "${AGENT_ARGS[@]]}"; do
+    for arg in "${AGENT_ARGS[@]}"; do
         case "$arg" in
             --help)
                 show_help
@@ -464,7 +462,9 @@ function get_agent_json_info {
         ((index++))
     done
 
-    command="DATA_SOURCES=${data_source_names[@]}"
+    LIST=("${data_source_names[@]}")
+    local data_sources_str=$(convert_list_to_str)
+    command="DATA_SOURCES=$data_sources_str"
     write_task_post_run "$command"
 }
 

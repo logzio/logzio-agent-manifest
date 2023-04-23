@@ -36,6 +36,14 @@
               "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
               "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
               "value": true
+            },
+            {
+              "type": "boolean",
+              "name": "isFargate",
+              "label": "AWS Fargate",
+              "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable this if your EKS is based on Fargate.",
+              "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on EKS based on Fargate.",
+              "value": false
             }
           ],
           "telemetries": [
@@ -43,16 +51,7 @@
               "type": "LOG_ANALYTICS",
               "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
-              "params": [
-                {
-                  "type": "boolean",
-                  "name": "isFargate",
-                  "label": "AWS Fargate",
-                  "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable this if your EKS is based on Fargate.",
-                  "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on EKS based on Fargate.",
-                  "value": false
-                }
-              ]
+              "params": []
             },
             {
               "type": "METRICS",
@@ -84,6 +83,31 @@
               "type": "TRACING",
               "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "params": []
+            }
+          ]
+        },
+        {
+          "name": "Security",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/logz_security.png",
+          "description": "Logz.io Uses Trivy to scan the Kubernetes cluster and collects the security risks reports from each pod",
+          "params": [
+            {
+              "type": "text",
+              "name": "envID",
+              "label": "Environment Name",
+              "required": true,
+              "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+              "value": "my_environment",
+              "pattern": "^[a-zA-Z0-9_-]+$",
+              "patternError": "Only letters, numbers, dashes and underscores are allowed"
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect security risks reports from your Kubernetes cluster components and applications pods",
               "params": []
             }
           ]

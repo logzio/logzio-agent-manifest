@@ -26,6 +26,10 @@ if ($script:IsFilter) {
     # Build enable metrics filter Helm set
     Invoke-Task 'Build-EnableMetricsFilterHelmSet' @{} 'Building enable metrics filter Helm set' @($MetricsFunctionsScript)
 }
+if ($script:IsFargate) {
+    # Build Fargate collector mode standalone Helm set
+    Invoke-Task 'Build-FargateCollectorModeStandaloneHelmSet' @{} 'Building Fargate collector mode standalone Helm set' @($MetricsFunctionsScript)
+}
 
 # Finished successfully
 Exit 0

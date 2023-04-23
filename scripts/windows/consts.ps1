@@ -49,6 +49,8 @@ $script:JqUrlDownload = 'https://github.com/stedolan/jq/releases/download/jq-1.6
 $script:YqUrlDownload = 'https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_windows_amd64.exe'
 # Url for downloading OTEL collector tar.gz
 $script:OtelCollectorUrlDownload = 'https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-windows_amd64.tar.gz'
+# Url for downloading eksctl tar.gz
+$script:EksctlUrlDownload = 'https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Windows_amd64.zip'
 # Url for AWS SQS
 $script:SqsUrl = 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
 
@@ -57,6 +59,8 @@ $script:SqsUrl = 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQu
 $script:JqExe = "$script:LogzioTempDir\jq.exe"
 # Yq exe file path
 $script:YqExe = "$script:LogzioTempDir\yq.exe"
+# Eksctl exe file path
+$script:EksctlExe = "$script:LogzioTempDir\eksctl.exe"
 
 ## OTEL files
 # OTEL function file

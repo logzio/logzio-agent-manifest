@@ -36,6 +36,14 @@ if $IS_METRICS_OPTION_WAS_SELECTED || $IS_TARCES_OPTION_WAS_SELECTED; then
     # Build environment id Helm set
     execute_task 'build_environment_id_helm_set' 'Building environment id Helm set'
 fi
+# Get is Fargate option was selected
+execute_task 'get_is_fargate_was_selected' 'Getting is Fargate option was selected'
+if $IS_FARGATE; then
+    # Download eksctl
+    execute_task 'download_eksctl' 'Downloading eksctl'
+    # Create Fargate profile with monitoring namespace on Kubernetes cluster
+    execute_task 'create_fargate_profile' 'Creating Fargate profile with monitoring namespace on Kubernetes cluster'
+fi
 
 DATA_SOURCE_INSTALLER_EXIT_CODE=$EXIT_CODE
 

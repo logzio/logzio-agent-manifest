@@ -181,57 +181,6 @@ function Build-EnvironmentIdHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Gets is Fargate was selected
-# Input:
-#   FuncArgs - Hashtable {LogsParams = $script:LogsParams}
-# Output:
-#   LogsToken - Logz.io logs token
-function Get-IsFargateWasSelected {
-    param (
-        [hashtable]$FuncArgs
-    )
-
-    $local:ExitCode = 5
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Getting is Fargate was selected ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('LogsParams')
-    if ($Err.Count -ne 0) {
-        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-
-    $local:LogsParams = $FuncArgs.LogsParams
-
-    $Err = Get-ParamValue $LogsParams 'isFargate'
-    if ($Err.Count -ne 0) {
-        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-
-    $local:IsFargate = $script:ParamValue
-
-    if ($IsFargate) {
-        $Message = "AWS Fargate option was selected"
-    }
-    else {
-        $Message = "AWS Fargate option was not selected"
-    }
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:IsFargate = `$$IsFargate"
-}
-
 # Builds enable Fargate Helm set
 # Input:
 #   ---
@@ -239,14 +188,13 @@ function Get-IsFargateWasSelected {
 #   LogHelmSets - Containt all the Helm sets for logging
 #   helmSets - Contains all the Helm sets
 function Build-EnableFargateHelmSet {    
-    $local:ExitCode = 6
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Building enable Fargate Helm set ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:HelmSet = " --set fargateLogRouter.enabled=true"
+    $local:HelmSet = " --set logzio-fluentd.fargateLogRouter.enabled=true"
 
     $Message = "Enable Fargate Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource

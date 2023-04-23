@@ -54,7 +54,7 @@ function get_is_kubernetes_run_on_windows_os_was_selected {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     PARAMS=("${METRICS_PARAMS[@]}")
-    get_param_value_list 'isWindows'
+    get_param_value 'isWindows'
     if [[ $? -ne 0 ]]; then
         message="metrics.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -80,7 +80,7 @@ function get_is_kubernetes_run_on_windows_os_was_selected {
 # Input:
 #   ---
 # Output:
-#   LOG_HELM_SETS - Containt all the Helm sets for logging
+#   LOG_HELM_SETS - Contains all the Helm sets for logging
 #   HELM_SETS - Contains all the Helm sets
 function build_windows_node_username_and_password_helm_sets {
     local func_name="${FUNCNAME[0]}"

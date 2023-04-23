@@ -16,14 +16,14 @@ function are_all_pods_running_or_completed {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_POSTREQUISITES" "$LOG_SCRIPT_POSTREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local retries=3
+    local retries=18
     while [[ $retries -ne 0 ]]; do
         local pod_statuses
         pod_statuses=$(kubectl get pods -n monitoring --no-headers -o custom-columns=':.status.phase' 2>"$TASK_ERROR_FILE")
         if [[ $? -ne 0 ]]; then
             local err=$(get_task_error_message)
             if [[ "$err" == *"ERROR"* ]]; then
-                message="postrequisites.bash ($EXIT_CODE): error getting pod statuses: $err"
+                message="postrequisites.bash ($EXIT_CODE): error getting pods status: $err"
                 send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_POSTREQUISITES" "$LOG_SCRIPT_POSTREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
                 write_task_post_run "write_error \"$message\""
             
@@ -72,7 +72,7 @@ function is_any_pod_pending {
         if [[ "$err" == *"ERROR"* ]]; then
             write_task_post_run 'IS_POSTREQUISITES_FAILED=true'
         
-            message="postrequisites.bash ($EXIT_CODE): error getting pod names and statuses: $err"
+            message="postrequisites.bash ($EXIT_CODE): error getting pods names and status: $err"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_POSTREQUISITES" "$LOG_SCRIPT_POSTREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
 

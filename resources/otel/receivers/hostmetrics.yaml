@@ -1,4 +1,8 @@
-mac_run:
+mac_run: |
+  #!/bin/bash
+  function create_otel_receiver {
+    $YQ_BIN -i 'del(.receiver.hostmetrics/NAME.scrapers.process)' "$OTEL_RECEIVERS_DIR/hostmetrics.yaml"
+  }
 linux_run: |
   #!/bin/bash
   function create_otel_receiver {
