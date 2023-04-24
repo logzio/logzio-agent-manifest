@@ -147,8 +147,6 @@ function Send-LogToLogzio {
         }
         catch {}
     } | Out-Null
-
-    #Invoke-WebRequest -Uri $script:SqsUrl -Body $Parameters -Method Get -UseBasicParsing 2>&1 | Out-Null
 }
 
 # Checks if function arguments exist
