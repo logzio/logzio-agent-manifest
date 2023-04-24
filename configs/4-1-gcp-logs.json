@@ -4,11 +4,10 @@
     "description": "",
     "subtypes": [
         {
-            "name": "Logging",
+            "name": "GCP Logging",
             "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/google-cloud-logging.svg",
             "description": "Logging from GCP services.",
             "hint": "Logging from GCP services.",
-            "label": "Logs",
             "supportedOs": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
             "datasources": [

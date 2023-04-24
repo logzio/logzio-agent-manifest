@@ -4,7 +4,7 @@
     "description": "",
     "subtypes": [
         {
-            "name": "Metrics",
+            "name": "GCP Metrics",
             "logo": "https://logzbucket.s3.eu-west-1.amazonaws.com/logz-docs/google-cloud/cloud_monitoring.svg",
             "description": "Metrics from GCP services.",
             "hint": "Metrics from GCP services.",
