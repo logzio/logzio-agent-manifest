@@ -115,10 +115,7 @@ function send_log_to_logzio {
 
     log+='}'
 
-    curl -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        write_task_post_run "write_warning \"failed to send a request with log message to Logz.io agent SQS: $(get_task_error_message)\""
-    fi
+    curl -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>&1 &
 }
 
 # Gets json string field value
@@ -503,6 +500,10 @@ function execute_task {
         echo -ne "\r  [   ] $description ..."
 
         for i in "${!frame[@]}"; do
+            if ! ps -p $pid &>/dev/null; then
+                break
+            fi
+            
             echo -ne "\r  [ ${frame[i]} ]"
             sleep $frame_interval
         done
