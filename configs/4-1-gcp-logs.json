@@ -1,12 +1,12 @@
 {
-    "name": "Google Cloud Platform",
+    "name": "GCP",
     "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
     "description": "",
     "subtypes": [
         {
             "name": "Cloud Logging",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-logging.png",
-            "description": "GCP Logs.",
+            "description": "GCP Logs",
             "hint": "Logging from GCP services.",
             "supportedOs": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",

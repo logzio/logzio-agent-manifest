@@ -1,12 +1,12 @@
 {
-    "name": "Google Cloud Platform",
+    "name": "GCP",
     "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
     "description": "",
     "subtypes": [
         {
             "name": "Cloud Monitoring",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
-            "description": "GCP metrics.",
+            "description": "GCP metrics",
             "hint": "Metrics from GCP services.",
             "supportedOs": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
