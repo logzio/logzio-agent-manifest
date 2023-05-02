@@ -4,6 +4,22 @@
 ####################################################### LINUX Agent Script ######################################################
 #################################################################################################################################
 
+# Gets agent id
+# Input:
+#   ---
+# Output:
+#   AGENT_ID - Logz.io agent id
+function get_agent_id {
+    for arg in "${AGENT_ARGS[@]}"; do
+        case "$arg" in
+            --id=*)
+                local agent_id=$(echo "$arg" | cut -d '=' -f2)
+                AGENT_ID="$agent_id"
+                return
+        esac
+    done
+}
+
 # Run final commands
 # Input:
 #   ---
@@ -169,6 +185,7 @@ tput civis -- invisible 2>/dev/null
 
 # Agent args
 AGENT_ARGS=("$@")
+Agent_ID=''
 
 # Exit code
 EXIT_CODE=1
@@ -222,7 +239,11 @@ if [[ -f "$TASK_POST_RUN_FILE" ]]; then
     >"$TASK_POST_RUN_FILE"
 fi
 
+# Get agent id
+get_agent_id
+
 # Write agent running log
+send_log_to_logzio "$LOG_LEVEL_INFO" 'Start running Logz.io agent ...' "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" '' "$AGENT_ID"
 write_log "$LOG_LEVEL_INFO" 'Start running Logz.io agent ...'
 
 # Print title
