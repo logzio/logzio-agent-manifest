@@ -2,6 +2,34 @@
 ###################################################### WINDOWS Agent Script #####################################################
 #################################################################################################################################
 
+# Gets agent id
+# Input:
+#   FuncArgs - Hashtable {AgentArgs = $args}
+# Output:
+#   AgentId - Logz.io agent id
+function Get-AgentId {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('AgentArgs')
+    if ($Err.Count -ne 0) {
+        return
+    }
+
+    $local:AgentArgs = $FuncArgs.AgentArgs
+
+    foreach ($Arg in $AgentArgs) {
+        switch -Regex ($Arg) {
+            --id=* {
+                $script:AgentId = $Arg.Split('=', 2)[1]
+                "`$script:AgentId = '$script:AgentId'" | Out-File -FilePath $script:ConstsFile -Append -Encoding utf8
+                return
+            }
+        }
+    }
+}
+
 # Deletes Logz.io temp directory
 # Input:
 #   ---
@@ -145,6 +173,9 @@ function Write-AgentSupport {
 # Agent version
 $script:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
 
+# Agent id
+$script:AgentId = ''
+
 # Settings
 $ProgressPreference = 'SilentlyContinue'
 $WarningPreference = 'SilentlyContinue'
@@ -192,10 +223,14 @@ try {
         Clear-Content $script:TaskPostRunFile -Force
     }
 
+    # Get agent id
+    Get-AgentId @{AgentArgs = $args}
+
     # Install ThreadJob module
     Install-ThreadJobModule
 
     # Write agent running log
+    Send-LogToLogzio $script:LogLevelInfo 'Start running Logz.io agent ...' $script:LogStepPreInit $script:LogScriptAgent '' $script:AgentId
     Write-Log $script:LogLevelInfo 'Start running Logz.io agent ...'
 
     # Print title

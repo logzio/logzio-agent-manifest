@@ -14,14 +14,14 @@ function Install-ThreadJobModule {
     try {
         Get-Command Start-ThreadJob -ErrorAction Stop | Out-Null
         $local:Message = "'ThreadJob' module was already installed"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-Log $script:LogLevelDebug $Message
     }
     catch {
         try {
             Install-Module -Name 'ThreadJob' -AllowClobber -Force -ErrorAction Stop | Out-Null
             $local:Message = "'ThreadJob' module is installed successfully"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
             Write-Log $script:LogLevelDebug $Message
         }
         catch {
@@ -44,7 +44,7 @@ function Set-WindowsAndPowerShellInfoConsts {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Setting Windows consts ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
 
     $local:WindowsName = ''
@@ -57,7 +57,7 @@ function Set-WindowsAndPowerShellInfoConsts {
     }
     catch {
         $Message = "agent.ps1 ($ExitCode): error getting computer info: $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -67,21 +67,21 @@ function Set-WindowsAndPowerShellInfoConsts {
     $local:PowerShellEdition = $PSVersionTable.PSEdition
 
     $Message = "Windows name is '$WindowsName'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
 
     $local:WindowsNameCommand = "`$script:WindowsName = '$WindowsName'"
     Write-TaskPostRun $WindowsNameCommand
 
     $Message = "Windows version is '$WindowsVersion'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $LogLevelDebug $Message
 
     $local:WindowsVersionCommand = "`$script:WindowsVersion = '$WindowsVersion'"
     Write-TaskPostRun $WindowsVersionCommand
 
     $Message = "PowerShell version is '$PowerShellVersion $PowerShellEdition'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $LogLevelDebug $Message
 
     $local:PowerShellVersionCommand = "`$script:PowerShellVersion = '$PowerShellVersion $PowerShellEdition'"
@@ -94,7 +94,7 @@ function Set-WindowsAndPowerShellInfoConsts {
     }
     catch {
         $Message = "agent.ps1 ($ExitCode): error writing to '$script:ConstsFile': $_"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -111,7 +111,7 @@ function Test-IsElevated {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking if PowerShell was run as Administrator ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
 
     $local:Id = [System.Security.Principal.WindowsIdentity]::GetCurrent()
@@ -124,14 +124,14 @@ function Test-IsElevated {
     }
     catch {
         $Message = "agent.ps1 ($ExitCode): error checking if PowerShell was run as Administrator"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
     $Message = "agent.ps1 ($ExitCode): PowerShell was not run as Administrator. please run Powershell as Administrator and rerun the agent script"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
@@ -168,13 +168,13 @@ function Get-Arguments {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Getting arguments ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('AgentArgs')
     if ($Err.Count -ne 0) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -194,14 +194,14 @@ function Get-Arguments {
                 $local:AppUrl = $Arg.Split('=', 2)[1]
                 if ([string]::IsNullOrEmpty($AppUrl)) {
                     $Message = "agent.ps1 ($ExitCode): no Logz.io app URL specified!"
-                    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                     Write-TaskPostRun "Write-Error `"$Message`""
 
                     return $ExitCode
                 }
                 
                 $Message = "Agent argument 'url' is '$AppUrl'"
-                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                 Write-Log $script:LogLevelDebug $Message
 
                 Write-TaskPostRun "`$script:AppUrl = '$AppUrl'"
@@ -211,14 +211,14 @@ function Get-Arguments {
                 $local:AgentId = $Arg.Split('=', 2)[1]
                 if ([string]::IsNullOrEmpty($AgentId)) {
                     $Message = "agent.ps1 ($ExitCode): no agent ID specified!"
-                    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                     Write-TaskPostRun "Write-Error `"$Message`""
 
                     return $ExitCode
                 }
                 
                 $Message = "Agent argument 'id' is '$AgentId'"
-                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                 Write-Log $script:LogLevelDebug $Message
 
                 Write-TaskPostRun "`$script:AgentId = '$AgentId'"
@@ -228,14 +228,14 @@ function Get-Arguments {
                 $local:AgentJsonFile = $Arg.Split('=', 2)[1]
                 if ([string]::IsNullOrEmpty($AgentJsonFile)) {
                     $Message = "agent.ps1 ($ExitCode): no json file specified!"
-                    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                     Write-TaskPostRun "Write-Error `"$Message`""
 
                     return $ExitCode
                 }
 
                 $Message = "Agent argument 'debug' is '$AgentJsonFile'"
-                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                 Write-Log $script:LogLevelDebug $Message
 
                 Write-TaskPostRun "`$script:AgentJsonFile = '$AgentJsonFile'"
@@ -245,7 +245,7 @@ function Get-Arguments {
                 $local:RepoRelease = $Arg.Split('=', 2)[1]
 
                 $Message = "Agent argument 'release' is '$RepoRelease'"
-                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                 Write-Log $script:LogLevelDebug $Message
 
                 Write-TaskPostRun "`$script:RepoRelease = '$RepoRelease'"
@@ -253,10 +253,10 @@ function Get-Arguments {
             }
             default {
                 $Message = "agent.ps1 ($ExitCode): unrecognized flag"
-                Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                 Write-TaskPostRun "Write-Error `"$Message`""
                 $Message = "agent.ps1 ($ExitCode): try running the agent with '--help' flag for more information"
-                Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+                Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
                 Write-TaskPostRun "Write-Error `"$Message`""
 
                 return $ExitCode
@@ -279,13 +279,13 @@ function Test-ArgumentsValidation {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Checking validation ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('AppUrl', 'AgentId', 'AgentJsonFile')
     if ($Err.Count -ne 0) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -301,7 +301,7 @@ function Test-ArgumentsValidation {
         }
 
         $Message = "agent.ps1 ($ExitCode): the json file '$AgentJsonFile' does not exist"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -312,13 +312,13 @@ function Test-ArgumentsValidation {
     if ([string]::IsNullOrEmpty($AppUrl)) {
         $IsError = $true
         $Message = "agent.ps1 ($ExitCode): Logz.io app url must be specified"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
     }
     if ([string]::IsNullOrEmpty($AgentId)) {
         $IsError = $true
         $Message = "agent.ps1 ($ExitCode): agent id must be specified"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
     }
 
@@ -327,7 +327,7 @@ function Test-ArgumentsValidation {
     }
 
     $Message = "agent.ps1 ($ExitCode): try running the agent with '--help' flag for more information"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-TaskPostRun "Write-Error `"$Message`""
 
     return $ExitCode
@@ -347,13 +347,13 @@ function Set-AgentIdConst {
     $local:FuncName = $MyInvocation.MyCommand.Name
 
     $local:Message = 'Setting agent id const ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('AgentId')
     if ($Err.Count -ne 0) {
         $Message = "agent.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -366,7 +366,7 @@ function Set-AgentIdConst {
     }
 
     $local:Message = "Agent id is '$AgentId'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $LogLevelDebug $Message
 
     $local:Command = "`$script:AgentId = '$AgentId'"

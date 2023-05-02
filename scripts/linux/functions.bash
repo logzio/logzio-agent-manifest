@@ -15,13 +15,13 @@ function get_linux_info {
     local func_name="${FUNCNAME[0]}"
 
     local message='Getting Linux info ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local linux_info=$(cat /etc/os-release 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($EXIT_CODE): error getting Linux info: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
 
         return $EXIT_CODE
@@ -31,27 +31,27 @@ function get_linux_info {
     write_task_post_run "LINUX_NAME=\"$linux_name\""
 
     message="Linux name is '$linux_name'"
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local linux_version=$(echo -e "$linux_info" | grep -oP '(?<=^VERSION=").*?(?=")')
     write_task_post_run "LINUX_VERSION=\"$linux_version\""
 
     message="Linux version is '$linux_version'"
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local cpu_arch=$(uname -p 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($EXIT_CODE): error getting cpu arch: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
 
         return $EXIT_CODE
     fi
     
     message="CPU architecture is '$cpu_arch'"
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     write_task_post_run "CPU_ARCH=\"$cpu_arch\""
@@ -66,13 +66,13 @@ function is_bash_version_4_or_above {
     local func_name="${FUNCNAME[0]}"
 
     local message='Checking if bash version is 4.0 or above ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local bash_major_version=$(echo -e "$BASH_VERSION" | cut -d. -f1)
     if [[ $bash_major_version -lt 4 ]]; then
         message="agent.bash ($EXIT_CODE): bash version must be 4.0 or above"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
 
         return $EXIT_CODE
@@ -106,7 +106,7 @@ function get_arguments {
     local func_name="${FUNCNAME[0]}"
 
     local message='Getting arguments ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     for arg in "${AGENT_ARGS[@]}"; do
@@ -121,14 +121,14 @@ function get_arguments {
                 app_url=$(echo -e "$arg" | cut -d '=' -f2)
                 if [[ -z "$app_url" ]]; then
                     message="agent.bash ($EXIT_CODE): no Logz.io app URL specified!"
-                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                     write_task_post_run "write_error \"$message\""
 
                     return $EXIT_CODE
                 fi
 
                 message="Agent argument 'url' is '$app_url'"
-                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                 write_log "$LOG_LEVEL_DEBUG" "$message"
                 
                 write_task_post_run "APP_URL='$app_url'"
@@ -137,14 +137,14 @@ function get_arguments {
                 agent_id=$(echo "$arg" | cut -d '=' -f2)
                 if [[ -z "$agent_id" ]]; then
                     message="agent.bash ($EXIT_CODE): no agent ID specified!"
-                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                     write_task_post_run "write_error \"$message\""
 
                     return $EXIT_CODE
                 fi
 
                 message="Agent argument 'id' is '$agent_id'"
-                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                 write_log "$LOG_LEVEL_DEBUG" "$message"
                 
                 write_task_post_run "AGENT_ID='$agent_id'"
@@ -153,14 +153,14 @@ function get_arguments {
                 agent_json_file=$(echo "$arg" | cut -d '=' -f2)
                 if [[ -z "$agent_json_file" ]]; then
                     message="agent.bash ($EXIT_CODE): no json file specified!"
-                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                     write_task_post_run "write_error \"$message\""
 
                     return $EXIT_CODE
                 fi
 
                 message="Agent argument 'debug' is '$agent_json_file'"
-                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                 write_log "$LOG_LEVEL_DEBUG" "$message"
                 
                 write_task_post_run "AGENT_JSON_FILE='$agent_json_file'"
@@ -169,17 +169,17 @@ function get_arguments {
                 repo_release=$(echo "$arg" | cut -d '=' -f2)
                 
                 message="Agent argument 'release' is '$repo_release'"
-                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                 write_log "$LOG_LEVEL_DEBUG" "$message"
 
                 write_task_post_run "REPO_RELEASE='$repo_release'"
                 ;;
             *)
                 message="agent.bash ($EXIT_CODE): unrecognized flag"
-                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                 write_task_post_run "write_error \"$message\""
                 message="agent.bash ($EXIT_CODE): try running the agent with '--help' flag for more information"
-                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                 write_task_post_run "write_error \"$message\""
                 
                 return $EXIT_CODE
@@ -197,7 +197,7 @@ function check_arguments_validation {
     local func_name="${FUNCNAME[0]}"
 
     local message='Checking validation ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     local app_url="${func_args[app_url]}"
@@ -210,7 +210,7 @@ function check_arguments_validation {
         fi
 
         message="agent.bash ($EXIT_CODE): the json file '$AGENT_JSON_FILE' does not exist"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
 
         return $EXIT_CODE
@@ -221,13 +221,13 @@ function check_arguments_validation {
     if [[ -z "$APP_URL" ]]; then
         is_error=true
         message="agent.bash ($EXIT_CODE): Logz.io app url must be specified"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
     fi
     if [[ -z "$AGENT_ID" ]]; then
         is_error=true
         message="agent.bash ($EXIT_CODE): agent id must be specified"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
     fi
 
@@ -236,7 +236,7 @@ function check_arguments_validation {
     fi
 
     message="agent.bash ($EXIT_CODE): try running the agent with '--help' flag for more information"
-    send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name"
+    send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_task_post_run "write_error \"$message\""
 
     return $EXIT_CODE
