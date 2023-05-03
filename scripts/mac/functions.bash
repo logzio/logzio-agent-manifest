@@ -366,17 +366,15 @@ function get_agent_json {
 
         return $EXIT_CODE
     fi
-    if [[ $func_status -eq 3 ]]; then
-        return
+    if [[ $func_status -eq 0 ]]; then
+        local status_code="$JSON_VALUE"
+
+        message="agent.bash ($EXIT_CODE): error getting Logz.io agent json from agent (statusCode '$status_code'). make sure your id is valid."
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_task_post_run "write_error \"$message\""
+
+        return $EXIT_CODE
     fi
-
-    local status_code="$JSON_VALUE"
-
-    message="agent.bash ($EXIT_CODE): error getting Logz.io agent json from agent (statusCode '$status_code'). make sure your id is valid."
-    send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-    write_task_post_run "write_error \"$message\""
-
-    return $EXIT_CODE
 }
 
 # Gets agent json info
