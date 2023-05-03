@@ -1,0 +1,375 @@
+{
+    "name": "GCP",
+    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+    "description": "",
+    "subtypes": [
+        {
+            "name": "Cloud Monitoring",
+            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
+            "description": "GCP metrics",
+            "hint": "Metrics from GCP services.",
+            "supportedOs": ["GCP"],
+            "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
+            "datasources": [
+                {
+                    "name": "Cloud Monitoring",
+                    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
+                    "description": "To send metrics from your GCP to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
+                    "telemetries": [
+                        {
+                            "type": "METRICS",
+                            "hint": "Switch the toggle on if you want send metrics to logz.io from Google Cloud Sevices",
+                            "params": [
+                                {
+                                    "type": "single-select",
+                                    "name": "gcpRegion",
+                                    "label": " Google Cloud Function Region",
+                                    "description": "GCP region where you will deploy Google Cloud Function",
+                                    "options": [
+                                        {
+                                            "label": "us-central1",
+                                            "value": "us-central1"
+                                        },
+                                        {
+                                            "label": "us-east1",
+                                            "value": "us-east1"
+                                        },
+                                        {
+                                            "label": "us-east4",
+                                            "value": "us-east4"
+                                        },
+                                        {
+                                            "label": "us-west1",
+                                            "value": "us-west1"
+                                        },
+                                        {
+                                            "label": "europe-west1",
+                                            "value": "europe-west1"
+                                        },
+                                        {
+                                            "label": "europe-west2",
+                                            "value": "europe-west2"
+                                        },
+                                        {
+                                            "label": "asia-east1",
+                                            "value": "asia-east1"
+                                        },
+                                        {
+                                            "label": "asia-east2",
+                                            "value": "asia-east2"
+                                        },
+                                        {
+                                            "label": "asia-northeast1",
+                                            "value": "asia-northeast1"
+                                        },
+                                        {
+                                            "label": "asia-northeast2",
+                                            "value": "asia-northeast2"
+                                        },
+                                        {
+                                            "label": "us-west2",
+                                            "value": "us-west2"
+                                        },
+                                        {
+                                            "label": "us-west3",
+                                            "value": "us-west3"
+                                        },
+                                        {
+                                            "label": "us-west4",
+                                            "value": "us-west4"
+                                        },
+                                        {
+                                            "label": "northamerica-northeast1",
+                                            "value": "northamerica-northeast1"
+                                        },
+                                        {
+                                            "label": "southamerica-east1",
+                                            "value": "southamerica-east1"
+                                        },
+                                        {
+                                            "label": "europe-west3",
+                                            "value": "europe-west3"
+                                        },
+                                        {
+                                            "label": "europe-west6",
+                                            "value": "europe-west6"
+                                        },
+                                        {
+                                            "label": "europe-central2",
+                                            "value": "europe-central2"
+                                        },
+                                        {
+                                            "label": "australia-southeast1",
+                                            "value": "australia-southeast1"
+                                        },
+                                        {
+                                            "label": "asia-south1",
+                                            "value": "asia-south1"
+                                        },
+                                        {
+                                            "label": "asia-southeast1",
+                                            "value": "asia-southeast1"
+                                        },
+                                        {
+                                            "label": "asia-southeast2",
+                                            "value": "asia-southeast2"
+                                        },
+                                        {
+                                            "label": "asia-northeast3",
+                                            "value": "asia-northeast3"
+                                        }
+                                    ],
+                                    "value": "us-central1"
+                                },
+
+                                {
+                                    "type": "multi-select",
+                                    "name": "telemetryList",
+                                    "label": "Google Cloud Resources",
+                                    "description": "Send logs that include any of these resource types.",
+                                    "required": true,
+                                    "hint": "To send all resource types of the project select 'All services'",
+                                    "options": [
+                                        {
+                                            "label": "All Services",
+                                            "value": "all_services"
+                                        },
+                                        {
+                                            "label": "Google AI Platform",
+                                            "value": "ml.googleapis.com"
+                                        },
+                                        {
+                                            "label": "API Gateway",
+                                            "value": "apigateway.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Apigee",
+                                            "value": "apigee.googleapis.com"
+                                        },
+                                        {
+                                            "label": "App Engine",
+                                            "value": "appengine.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Assistant Smart Home",
+                                            "value": "actions.googleapis.com"
+                                        },
+                                        {
+                                            "label": "BigQuery",
+                                            "value": "bigquery.googleapis.com"
+                                        },
+                                        {
+                                            "label": "BigQuery BI Engine",
+                                            "value": "bigquerybiengine.googleapis.com"
+                                        },
+                                        {
+                                            "label": "BigQuery Data Transfer Service",
+                                            "value": "bigquerydatatransfer.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Certificate Authority Service",
+                                            "value": "privateca.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud API",
+                                            "value": "serviceruntime.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Armor",
+                                            "value": "networksecurity.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Bigtable",
+                                            "value": "bigtable.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Composer",
+                                            "value": "composer.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Data Loss Prevention",
+                                            "value": "dlp.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud DNS",
+                                            "value": "dns.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Functions",
+                                            "value": "cloudfunctions.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Healthcare API",
+                                            "value": "healthcare.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud IDS",
+                                            "value": "ids.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Interconnect",
+                                            "value": "interconnect.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Load Balancing",
+                                            "value": "loadbalancing.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Logging",
+                                            "value": "logging.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Monitoring",
+                                            "value": "monitoring.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Router",
+                                            "value": "router.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Run",
+                                            "value": "run.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud SQL",
+                                            "value": "cloudsql.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Storage",
+                                            "value": "storage.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Tasks",
+                                            "value": "cloudtasks.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud TPU",
+                                            "value": "tpu.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Trace",
+                                            "value": "cloudtrace.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud VPN",
+                                            "value": "vpn.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Compute Engine",
+                                            "value": "compute.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Compute Engine Autoscaler",
+                                            "value": "autoscaler.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Contact Center AI Insights",
+                                            "value": "contactcenterinsights.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Dataflow",
+                                            "value": "dataflow.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Cloud Dataproc",
+                                            "value": "dataproc.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Dataproc Metastore",
+                                            "value": "metastore.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Datastore",
+                                            "value": "datastore.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Datastream",
+                                            "value": "datastream.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Filestore",
+                                            "value": "file.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Firebase",
+                                            "value": "firebaseappcheck.googleapis.com,firebasedatabase.googleapis.com,firebasehosting.googleapis.com,firebasestorage"
+                                        },
+                                        {
+                                            "label": "Google Firestore",
+                                            "value": "firestore.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Firewall Insights",
+                                            "value": "firewallinsights.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Identity and Access Management",
+                                            "value": "iam.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google IoT Core",
+                                            "value": "cloudiot.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Kubernetes Engine metrics",
+                                            "value": "kubernetes.io"
+                                        },
+                                        {
+                                            "label": "Google Managed Service for Microsoft Active Directory",
+                                            "value": "managedidentities.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Memorystore for Memcached",
+                                            "value": "memcache.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Memorystore for Redis",
+                                            "value": "redis.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Network Topology",
+                                            "value": "networking.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Pub/Sub",
+                                            "value": "pubsub.googleapis.com,pubsublite.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google reCAPTCHA Enterprise",
+                                            "value": "recaptchaenterprise.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Recommendations AI",
+                                            "value": "recommendationengine.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Storage Transfer Service for on-premises data",
+                                            "value": "storagetransfer.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Vertex AI",
+                                            "value": "aiplatform.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Virtual Private Cloud",
+                                            "value": "vpcaccess.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google VM Manager",
+                                            "value": "osconfig.googleapis.com"
+                                        },
+                                        {
+                                            "label": "Google Workflows",
+                                            "value": "workflows.googleapis.com"
+                                        }
+                                    ],
+                                    "value": ["all_services"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
