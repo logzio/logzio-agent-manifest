@@ -1,0 +1,342 @@
+{
+    "name": "GCP",
+    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+    "description": "",
+    "subtypes": [
+        {
+            "name": "Cloud Logging",
+            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-logging.png",
+            "description": "GCP Logs",
+            "hint": "Logging from GCP services.",
+            "supportedOs": ["GCP"],
+            "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
+            "datasources": [
+                {
+                    "name": "Cloud Logging",
+                    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-logging.png",
+                    "description": "To send logs from your GCP to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
+                    "telemetries": [
+                        {
+                            "type": "LOG_ANALYTICS",
+                            "hint": "Switch the toggle on if you want send logs to logz.io though Google Cloud Sink and Google Cloud Pubsub.",
+                            "params": [
+                                {
+                                    "type": "single-select",
+                                    "name": "gcpRegion",
+                                    "label": " Google Cloud Function Region",
+                                    "description": "GCP region where you will deploy Google Cloud Function",
+                                    "options": [
+                                        {
+                                            "label": "us-central1",
+                                            "value": "us-central1"
+                                        },
+                                        {
+                                            "label": "us-east1",
+                                            "value": "us-east1"
+                                        },
+                                        {
+                                            "label": "us-east4",
+                                            "value": "us-east4"
+                                        },
+                                        {
+                                            "label": "us-west1",
+                                            "value": "us-west1"
+                                        },
+                                        {
+                                            "label": "europe-west1",
+                                            "value": "europe-west1"
+                                        },
+                                        {
+                                            "label": "europe-west2",
+                                            "value": "europe-west2"
+                                        },
+                                        {
+                                            "label": "asia-east1",
+                                            "value": "asia-east1"
+                                        },
+                                        {
+                                            "label": "asia-east2",
+                                            "value": "asia-east2"
+                                        },
+                                        {
+                                            "label": "asia-northeast1",
+                                            "value": "asia-northeast1"
+                                        },
+                                        {
+                                            "label": "asia-northeast2",
+                                            "value": "asia-northeast2"
+                                        },
+                                        {
+                                            "label": "us-west2",
+                                            "value": "us-west2"
+                                        },
+                                        {
+                                            "label": "us-west3",
+                                            "value": "us-west3"
+                                        },
+                                        {
+                                            "label": "us-west4",
+                                            "value": "us-west4"
+                                        },
+                                        {
+                                            "label": "northamerica-northeast1",
+                                            "value": "northamerica-northeast1"
+                                        },
+                                        {
+                                            "label": "southamerica-east1",
+                                            "value": "southamerica-east1"
+                                        },
+                                        {
+                                            "label": "europe-west3",
+                                            "value": "europe-west3"
+                                        },
+                                        {
+                                            "label": "europe-west6",
+                                            "value": "europe-west6"
+                                        },
+                                        {
+                                            "label": "europe-central2",
+                                            "value": "europe-central2"
+                                        },
+                                        {
+                                            "label": "australia-southeast1",
+                                            "value": "australia-southeast1"
+                                        },
+                                        {
+                                            "label": "asia-south1",
+                                            "value": "asia-south1"
+                                        },
+                                        {
+                                            "label": "asia-southeast1",
+                                            "value": "asia-southeast1"
+                                        },
+                                        {
+                                            "label": "asia-southeast2",
+                                            "value": "asia-southeast2"
+                                        },
+                                        {
+                                            "label": "asia-northeast3",
+                                            "value": "asia-northeast3"
+                                        }
+                                    ],
+                                    "value": "us-central1"
+                                },
+                                {
+                                    "type": "multi-select",
+                                    "name": "telemetryList",
+                                    "label": "Google Cloud Resources",
+                                    "description": "Send logs that include any of these resource types.",
+                                    "required": true,
+                                    "hint": "To send all resource types of the project select 'All services'",
+                                    "options": [
+                                        {
+                                            "label": "All Services",
+                                            "value": "all_services"
+                                        },
+                                        {
+                                            "label": "Anthos Audit API",
+                                            "value": "k8s_cluster"
+                                        },
+                                        {
+                                            "label": "Anthos GKE",
+                                            "value": "k8s_cluster"
+                                        },
+                                        {
+                                            "label": "App Engine",
+                                            "value": "gae_app,gce_instance"
+                                        },
+                                        {
+                                            "label": "Assured Workloads",
+                                            "value": "organization"
+                                        },
+                                        {
+                                            "label": "BigQuery",
+                                            "value": "bigquery_dataset,bigquery_project,bigquery_resource,bigquery_table"
+                                        },
+                                        {
+                                            "label": "BigQuery BI Engine",
+                                            "value": "bigquery_biengine_model,bigquery_dataset,bigquery_project"
+                                        },
+                                        {
+                                            "label": "BigQuery Data Transfer API",
+                                            "value": "bigquery_dts_config"
+                                        },
+                                        {
+                                            "label": "BigQuery Reservation",
+                                            "value": "bigquery_project"
+                                        },
+                                        {
+                                            "label": "Client Auth Configuration API",
+                                            "value": "client_auth_config_brand,client_auth_config_client"
+                                        },
+                                        {
+                                            "label": "Cloud Asset Inventory",
+                                            "value": "project"
+                                        },
+                                        {
+                                            "label": "Cloud Billing API",
+                                            "value": "billing_account,organization,project,build"
+                                        },
+                                        {
+                                            "label": "Cloud Composer",
+                                            "value": "cloud_composer_environment"
+                                        },
+                                        {
+                                            "label": "Cloud Datastore",
+                                            "value": "datastore_database,datastore_index"
+                                        },
+                                        {
+                                            "label": "Cloud Debugger",
+                                            "value": "cloud_debugger_resource"
+                                        },
+                                        {
+                                            "label": "Cloud DNS",
+                                            "value": "dns_managed_zone,dns_policy,project"
+                                        },
+                                        {
+                                            "label": "Cloud Firestore",
+                                            "value": "datastore_database,datastore_index"
+                                        },
+                                        {
+                                            "label": "Cloud Functions",
+                                            "value": "cloud_function"
+                                        },
+                                        {
+                                            "label": "Cloud Identity-Aware Proxy (IAP)",
+                                            "value": "gae_app,gce_backend_service,gce_instance"
+                                        },
+                                        {
+                                            "label": "Cloud IoT",
+                                            "value": "cloudiot_device,cloudiot_device_registry,cloudiot_group"
+                                        },
+                                        {
+                                            "label": "Cloud KMS",
+                                            "value": "cloudkms_cryptokey,cloudkms_cryptokeyversion,cloudkms_importjob,cloudkms_keyring"
+                                        },
+                                        {
+                                            "label": "Cloud Mail",
+                                            "value": "cloudmail_domain,cloudmail_sender"
+                                        },
+                                        {
+                                            "label": "Cloud ML Engine",
+                                            "value": "cloudml_model_version,gae_app,ml_job"
+                                        },
+                                        {
+                                            "label": "Cloud Pub/Sub",
+                                            "value": "project,pubsub_snapshot,pubsub_subscription,pubsub_topic"
+                                        },
+                                        {
+                                            "label": "Cloud Redis",
+                                            "value": "redis_instance"
+                                        },
+                                        {
+                                            "label": "Cloud Resource Manager",
+                                            "value": "folder,organization,project"
+                                        },
+                                        {
+                                            "label": "Cloud Run",
+                                            "value": "cloud_run_revision,serverless_service"
+                                        },
+                                        {
+                                            "label": "Cloud Scheduler API",
+                                            "value": "cloud_scheduler_job"
+                                        },
+                                        {
+                                            "label": "Cloud Source Repositories",
+                                            "value": "csr_repository"
+                                        },
+                                        {
+                                            "label": "Cloud SQL",
+                                            "value": "cloudsql_database"
+                                        },
+                                        {
+                                            "label": "Cloud Storage",
+                                            "value": "gcs_bucket"
+                                        },
+                                        {
+                                            "label": "Cloud TPU",
+                                            "value": "tpu_worker"
+                                        },
+                                        {
+                                            "label": "Compute Engine",
+                                            "value": "vpn_tunnel,api,gce_autoscaler,gce_backend_bucket,gce_backend_service,gce_commitment,gce_disk,gce_firewall_rule,gce_forwarding_rule,gce_health_check,gce_image,gce_instance,gce_instance_group,gce_instance_group_manager,gce_instance_template,gce_license,gce_network,gce_node_group,gce_node_template,gce_operation,gce_packet_mirroring,gce_project,gce_reserved_address,gce_resource_policy,gce_route,gce_router,gce_snapshot,gce_ssl_certificate,gce_subnetwork,gce_target_http_instance,gce_target_http_proxy,gce_target_https_proxy,gce_target_pool,gce_target_ssl_proxy,gce_url_map,global,nat_gateway,network_security_policy,vpn_gateway"
+                                        },
+                                        {
+                                            "label": "Dataflow",
+                                            "value": "dataflow_job,dataflow_step,global"
+                                        },
+                                        {
+                                            "label": "Dataproc",
+                                            "value": "cloud_dataproc_cluster"
+                                        },
+                                        {
+                                            "label": "Deployment Manager",
+                                            "value": "deployment,deployment_manager_manifest,deployment_manager_operation,deployment_manager_resource,deployment_manager_type"
+                                        },
+                                        {
+                                            "label": "Event Threat Detection",
+                                            "value": "threat_detector"
+                                        },
+                                        {
+                                            "label": "Firebase Rules",
+                                            "value": "firebaserules_release,firebaserules_ruleset"
+                                        },
+                                        {
+                                            "label": "GCE Serial Port Access",
+                                            "value": "gce_instance"
+                                        },
+                                        {
+                                            "label": "Genomics",
+                                            "value": "genomics_dataset,genomics_operation"
+                                        },
+                                        {
+                                            "label": "Google Apps Script",
+                                            "value": "app_script_function"
+                                        },
+                                        {
+                                            "label": "Google Service Management",
+                                            "value": "managed_service,service_config,service_rollout"
+                                        },
+                                        {
+                                            "label": "IAM",
+                                            "value": "api,iam_role,service_account,service_account,gae_app,gce_backend_service,gce_instance,project"
+                                        },
+                                        {
+                                            "label": "Identity Platform",
+                                            "value": "identitytoolkit_project,identitytoolkit_tenant"
+                                        },
+                                        {
+                                            "label": "Kubernetes Engine API",
+                                            "value": "gke_cluster,gke_nodepool"
+                                        },
+                                        {
+                                            "label": "Remote Build Execution",
+                                            "value": "remotebuild_instance"
+                                        },
+                                        {
+                                            "label": "Serial Console",
+                                            "value": "gce_instance"
+                                        },
+                                        {
+                                            "label": "Serverless Engine",
+                                            "value": "gae_app,serverless_service"
+                                        },
+                                        {
+                                            "label": "Service Directory",
+                                            "value": "servicedirectory_namespace,service_registry"
+                                        },
+                                        {
+                                            "label": "Web Security Scanner API",
+                                            "value": "security_scanner_scan_config"
+                                        }
+                                    ],
+                                    "value": ["all_services"]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
