@@ -495,17 +495,15 @@ function Get-AgentJson {
 
         return $ExitCode
     }
-    if ($Err.Count -ne 0 -and $Err[1] -eq 3) {
-        return
+    if ($Err.Count -eq 0) {
+        $local:StatusCode = $script:JsonValue
+
+        $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent (statusCode '$StatusCode'). make sure your id is valid."
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Write-TaskPostRun "Write-Error `"$Message`""
+    
+        return $ExitCode
     }
-
-    $local:StatusCode = $script:JsonValue
-
-    $Message = "agent.ps1 ($ExitCode): error getting Logz.io agent json from agent (statusCode '$StatusCode'). make sure your id is valid."
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
-    Write-TaskPostRun "Write-Error `"$Message`""
-
-    return $ExitCode
 }
 
 # Sets agent json consts
