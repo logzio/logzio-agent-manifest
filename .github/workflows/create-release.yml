@@ -70,34 +70,42 @@ jobs:
         run: |
           git tag "${{ needs.update_version.outputs.VERSION }}"
           git push origin "${{ needs.update_version.outputs.VERSION }}"
-      - name: Create directory
+      - name: Install zip
+        run: |
+          sudo apt-get install zip -y
+      - name: Create assets directory
         run : |
-          mkdir ./tars
+          mkdir assets
       - name: Compress Windows Files
         run: |
-          tar -czvf 'tars/agent_windows.tar.gz' -C 'scripts/windows' . -C ${GITHUB_WORKSPACE} version
-          tar -czvf 'tars/windows_kubernetes_aks.tar.gz' -C 'datasources/windows' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources
-          tar -czvf 'tars/windows_kubernetes_eks.tar.gz' -C 'datasources/windows' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources
-          tar -czvf 'tars/windows_kubernetes_gke.tar.gz' -C 'datasources/windows' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources
-          tar -czvf 'tars/windows_kubernetes_digitalocean.tar.gz' -C 'datasources/windows' 'kubernetes/digitalocean' -C ${GITHUB_WORKSPACE} resources
-          tar -czvf 'tars/windows_localhost_windows.tar.gz' -C 'datasources/windows' 'localhost/windows' -C ${GITHUB_WORKSPACE} resources
+          mkdir tmp
+          cd tmp
+          cp -r ${GITHUB_WORKSPACE}/scripts/windows/. ${GITHUB_WORKSPACE}/version .
+          zip -r ${GITHUB_WORKSPACE}/assets/agent_windows.zip .
+          rm -r ./*
+          cp -r ${GITHUB_WORKSPACE}/datasources/windows/. ${GITHUB_WORKSPACE}/resources .
+          zip -r ${GITHUB_WORKSPACE}/assets/windows_kubernetes_aks.zip kubernetes/aks resources
+          zip -r ${GITHUB_WORKSPACE}/assets/windows_kubernetes_eks.zip kubernetes/eks resources
+          zip -r ${GITHUB_WORKSPACE}/assets/windows_kubernetes_gke.zip kubernetes/gke resources
+          zip -r ${GITHUB_WORKSPACE}/assets/windows_kubernetes_digitalocean.zip kubernetes/digitalocean resources
+          zip -r ${GITHUB_WORKSPACE}/assets/windows_localhost_windows.zip localhost/windows resources
       - name: Compress Linux Files
         run: |
-          tar -czvf 'tars/agent_linux.tar.gz' -C 'scripts/linux' . -C ${GITHUB_WORKSPACE} version
-          tar -czvf 'tars/linux_kubernetes_aks.tar.gz' -C 'datasources/linux' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf 'tars/linux_kubernetes_eks.tar.gz' -C 'datasources/linux' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf 'tars/linux_kubernetes_gke.tar.gz' -C 'datasources/linux' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf 'tars/linux_kubernetes_digitalocean.tar.gz' -C 'datasources/linux' 'kubernetes/digitalocean' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf 'tars/linux_aws_ec2.tar.gz' -C 'datasources/linux' 'aws/ec2' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
-          tar -czvf 'tars/linux_localhost_linux.tar.gz' -C 'datasources/linux' 'localhost/linux' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf assets/agent_linux.tar.gz -C scripts/linux . -C ${GITHUB_WORKSPACE} version
+          tar -czvf assets/linux_kubernetes_aks.tar.gz -C datasources/linux kubernetes/aks -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf assets/linux_kubernetes_eks.tar.gz -C datasources/linux kubernetes/eks -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf assets/linux_kubernetes_gke.tar.gz -C datasources/linux kubernetes/gke -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf assets/linux_kubernetes_digitalocean.tar.gz -C datasources/linux kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf assets/linux_aws_ec2.tar.gz -C datasources/linux aws/ec2 -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
+          tar -czvf assets/linux_localhost_linux.tar.gz -C datasources/linux localhost/linux -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-linux
       - name: Compress Mac Files
         run: |
-          tar -czvf 'tars/agent_mac.tar.gz' -C 'scripts/mac' . -C ${GITHUB_WORKSPACE} version
-          tar -czvf 'tars/mac_kubernetes_aks.tar.gz' -C 'datasources/mac' 'kubernetes/aks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
-          tar -czvf 'tars/mac_kubernetes_eks.tar.gz' -C 'datasources/mac' 'kubernetes/eks' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
-          tar -czvf 'tars/mac_kubernetes_gke.tar.gz' -C 'datasources/mac' 'kubernetes/gke' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
-          tar -czvf 'tars/mac_kubernetes_digitalocean.tar.gz' -C 'datasources/mac' 'kubernetes/digitalocean' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
-          tar -czvf 'tars/mac_localhost_mac.tar.gz' -C 'datasources/mac' 'localhost/mac' -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
+          tar -czvf assets/agent_mac.tar.gz -C scripts/mac . -C ${GITHUB_WORKSPACE} version
+          tar -czvf assets/mac_kubernetes_aks.tar.gz -C datasources/mac kubernetes/aks -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
+          tar -czvf assets/mac_kubernetes_eks.tar.gz -C datasources/mac kubernetes/eks -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
+          tar -czvf assets/mac_kubernetes_gke.tar.gz -C datasources/mac kubernetes/gke -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
+          tar -czvf assets/mac_kubernetes_digitalocean.tar.gz -C datasources/mac kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
+          tar -czvf assets/mac_localhost_mac.tar.gz -C datasources/mac localhost/mac -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
@@ -106,4 +114,4 @@ jobs:
           name: ${{ needs.update_version.outputs.VERSION }}
           body: |
             New Release ${{ needs.update_version.outputs.VERSION }}
-          artifacts: "tars/*.tar.gz"
+          artifacts: "assets/**"
