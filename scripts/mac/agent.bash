@@ -253,6 +253,8 @@ echo -e '##########################'
 
 # Get Mac info
 execute_task 'get_mac_info' 'Getting Mac info'
+# Check if /tmp directory is out of space
+execute_task 'is_tmp_directory_out_of_space'
 # Check if bash version is 4.0 or above
 execute_task 'is_bash_version_4_or_above' 'Checking if bash version is 4.0 or above'
 # Get arguments
