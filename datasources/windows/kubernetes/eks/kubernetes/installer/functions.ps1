@@ -592,26 +592,26 @@ function Get-Eksctl {
     Write-Log $script:LogLevelDebug $Message
 
     try {
-        Invoke-WebRequest -Uri $script:EksctlUrlDownload -OutFile "$script:LogzioTempDir\eksctl.tar.gz" | Out-Null
+        Invoke-WebRequest -Uri $script:EksctlUrlDownload -OutFile "$script:LogzioTempDir\eksctl.zip" | Out-Null
     }
     catch {
-        $Message = "installer.ps1 ($ExitCode): error downloading eksctl tar.gz: $_"
+        $Message = "installer.ps1 ($ExitCode): error downloading eksctl zip: $_"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
-    tar -zxf "$script:LogzioTempDir\eksctl.tar.gz" --directory $script:LogzioTempDir 2>$script:TaskErrorFile | Out-Null
-    if ($LASTEXITCODE -eq 0) {
-        return
+    try {
+        Expand-Archive -LiteralPath "$script:LogzioTempDir\eksctl.zip" -DestinationPath $script:LogzioTempDir -Force | Out-Null
     }
+    catch {
+        $Message = "installer.ps1 ($ExitCode): error extracting files from zip: $_"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
 
-    $Message = "installer.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-TaskErrorMessage)"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-TaskPostRun "Write-Error `"$Message`""
-
-    return $ExitCode
+        return $ExitCode
+    }
 }
 
 # Creates Fargate profile with monitoring namespace on Kubernetes cluster
