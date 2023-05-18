@@ -47,9 +47,9 @@ $script:AgentJson = "$script:LogzioTempDir\agent.json"
 $script:JqUrlDownload = 'https://github.com/stedolan/jq/releases/download/jq-1.6/jq-win64.exe'
 # Url for downloading yq exe
 $script:YqUrlDownload = 'https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_windows_amd64.exe'
-# Url for downloading OTEL collector tar.gz
-$script:OtelCollectorUrlDownload = 'https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-windows_amd64.tar.gz'
-# Url for downloading eksctl tar.gz
+# Url for downloading OTEL collector zip
+$script:OtelCollectorUrlDownload = 'https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-windows_amd64.zip'
+# Url for downloading eksctl zip
 $script:EksctlUrlDownload = 'https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Windows_amd64.zip'
 # Url for AWS SQS
 $script:SqsUrl = 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
