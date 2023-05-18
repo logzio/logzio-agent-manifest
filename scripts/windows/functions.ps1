@@ -660,30 +660,30 @@ function Get-SubTypeFiles {
 
     try {
         if ([string]::IsNullOrEmpty($RepoRelease)) {
-            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz" -OutFile $script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz | Out-Null
+            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).zip" -OutFile "$script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).zip" | Out-Null
         }
         else {
-            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/download/$RepoRelease/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz" -OutFile $script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).tar.gz | Out-Null
+            Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/download/$RepoRelease/windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).zip" -OutFile "$script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).zip" | Out-Null
         }
     }
     catch {
-        $Message = "agent.ps1 ($ExitCode): error downloading subtype tar.gz file from Logz.io repo: $_"
+        $Message = "agent.ps1 ($ExitCode): error downloading subtype zip file from Logz.io repo: $_"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     
-    tar -zxf $script:LogzioTempDir\windows_$script:Platform`_$script:SubType.tar.gz --directory $script:LogzioTempDir 2>$script:TaskErrorFile | Out-Null
-    if ($LASTEXITCODE -eq 0) {
-        return
+    try {
+        Expand-Archive -LiteralPath "$script:LogzioTempDir\windows_$($script:Platform.ToLower())_$($script:SubType.ToLower()).zip" -DestinationPath $script:LogzioTempDir -Force | Out-Null
     }
+    catch {
+        $Message = "agent.ps1 ($ExitCode): error extracting files from zip: $_"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
+        Write-TaskPostRun "Write-Error `"$Message`""
 
-    $Message = "agent.ps1 ($ExitCode): error extracting files from tar.gz: $(Get-TaskErrorMessage)"
-    Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId $script:Platform $script:SubType
-    Write-TaskPostRun "Write-Error `"$Message`""
-
-    return $ExitCode
+        return $ExitCode
+    }
 }
 
 # Runs subtype prerequisites
