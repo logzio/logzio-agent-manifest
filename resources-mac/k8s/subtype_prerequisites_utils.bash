@@ -42,7 +42,7 @@ function is_kubectl_connected_to_kubernetes_cluster {
     cluster_info=$(kubectl cluster-info 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         local err=$(get_task_error_message)
-        if [[ "$err" == *"ERROR"* ]]; then
+        if [[ "$err" == *"ERROR"* || "$err" == *"error"* ]]; then
             message="prerequisites.bash ($EXIT_CODE): 'kubectl' is not connected to an active Kubernetes cluster. please configure your computer to access a Kubernetes cluster and rerun the agent: $err"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PREREQUISITES" "$LOG_SCRIPT_PREREQUISITES" "$func_name" "$PLATFORM" "$SUB_TYPE"
             write_task_post_run "write_error \"$message\""
@@ -163,7 +163,7 @@ function can_kubernetes_cluster_connect_to_logzio {
     kubectl apply -f "$KUBERNETES_RESOURCES_DIR/$yaml_file" >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         local err=$(get_task_error_message)
-        if [[ "$err" == *"ERROR"* ]]; then
+        if [[ "$err" == *"ERROR"* || "$err" == *"error"* ]]; then
             echo -e "prerequisites.bash ($EXIT_CODE): error creating '$pod_name' pod: $err" >"$TASK_ERROR_FILE"
             return 1
         fi
@@ -176,7 +176,7 @@ function can_kubernetes_cluster_connect_to_logzio {
         pod_status=$(kubectl get pods 2>"$TASK_ERROR_FILE" | grep "$pod_name" 2>"$TASK_ERROR_FILE" | tr -s ' ' | cut -d ' ' -f3)
         if [[ $? -ne 0 ]]; then
             local err=$(get_task_error_message)
-            if [[ "$err" == *"ERROR"* ]]; then
+            if [[ "$err" == *"ERROR"* || "$err" == *"error"* ]]; then
                 echo -e "prerequisites.bash ($EXIT_CODE): error getting '$pod_name' pod status: $err" >"$TASK_ERROR_FILE"
                 return 2
             fi
@@ -197,7 +197,7 @@ function can_kubernetes_cluster_connect_to_logzio {
         pod_logs=$(kubectl logs "$pod_name" 2>"$TASK_ERROR_FILE")
         if [[ $? -ne 0 ]]; then
             local err=$(get_task_error_message)
-            if [[ "$err" == *"ERROR"* ]]; then
+            if [[ "$err" == *"ERROR"* || "$err" == *"error"* ]]; then
                 echo -e "prerequisites.bash ($EXIT_CODE): error getting logs of '$pod_name' pod: $err" >"$TASK_ERROR_FILE"
             fi
         fi
@@ -211,7 +211,7 @@ function can_kubernetes_cluster_connect_to_logzio {
     pod_logs=$(kubectl logs "$pod_name" 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         local err=$(get_task_error_message)
-        if [[ "$err" == *"ERROR"* ]]; then
+        if [[ "$err" == *"ERROR"* || "$err" == *"error"* ]]; then
             echo -e "prerequisites.bash ($EXIT_CODE): error getting logs of '$pod_name' pod: $err" >"$TASK_ERROR_FILE"
 
             delete_test_pod "$pod_name"
@@ -240,7 +240,7 @@ function delete_test_pod {
     kubectl delete pod "$pod_name" >/dev/null 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         local err=$(get_task_error_message)
-        if [[ "$err" == *"ERROR"* ]]; then
+        if [[ "$err" == *"ERROR"* || "$err" == *"error"* ]]; then
             write_task_post_run "write_warning \"failed to delete '$pod_name' pod: $err\""
         fi
     fi

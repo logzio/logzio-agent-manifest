@@ -79,6 +79,27 @@ function is_bash_version_4_or_above {
     fi
 }
 
+# Checks if /tmp directory is out of space
+# Input:
+#   ---
+# Output:
+#   ---
+function is_tmp_directory_out_of_space {
+    local func_name="${FUNCNAME[0]}"
+
+    local message="Checking if '/tmp' directory is out of space ..."
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    local available_space=$(df -m /tmp | tail -n 1 | tr -s " " | cut -d' ' -f4)
+    if [[ $available_space -lt 750 ]]; then
+        message="agent.bash ($EXIT_CODE): '/tmp' must have at least 750MB free space"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_task_post_run "write_error \"$message\""
+
+        return $EXIT_CODE
+    fi
+}
 
 # Prints usage
 # Input:
