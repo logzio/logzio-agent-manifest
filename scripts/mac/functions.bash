@@ -91,8 +91,8 @@ function is_tmp_directory_out_of_space {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local use_percentage=$(df /tmp | tail -n 1 | tr -s " " | cut -d' ' -f5 | grep -o [0-9]*)
-    if [[ $use_percentage -gt 90 ]]; then
+    local available_space=$(df -m /tmp | tail -n 1 | tr -s " " | cut -d' ' -f4)
+    if [[ $available_space -lt 750 ]]; then
         message="agent.bash ($EXIT_CODE): '/tmp' is almost out of space - over 90% space in use"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
