@@ -93,7 +93,7 @@ function is_tmp_directory_out_of_space {
 
     local available_space=$(df -m /tmp | tail -n 1 | tr -s " " | cut -d' ' -f4)
     if [[ $available_space -lt 750 ]]; then
-        message="agent.bash ($EXIT_CODE): '/tmp' must have at least 1GB free space"
+        message="agent.bash ($EXIT_CODE): '/tmp' must have at least 750MB free space"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
         write_task_post_run "write_error \"$message\""
 
