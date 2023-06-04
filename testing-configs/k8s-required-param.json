@@ -19,6 +19,7 @@
           "params": [
             {
               "name": "required-param",
+              "label": "Required param",
               "description": "required param",
               "required": true,
               "type": "text",
