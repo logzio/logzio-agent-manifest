@@ -34,7 +34,7 @@ function get_temp_dest {
                     return
                 fi
 
-                LOGZIO_TEMP_DIR="$temp_dest"
+                LOGZIO_TEMP_DIR="$temp_dest/logzio"
                 return
         esac
     done
@@ -47,7 +47,6 @@ function get_temp_dest {
 #   ---
 function run_final {
     write_agent_final_messages
-    sudo echo >/dev/null
     delete_temp_dir
 
     tput cnorm -- normal 2>/dev/null
@@ -59,7 +58,7 @@ function run_final {
 # Output:
 #   ---
 function delete_temp_dir {
-    sudo rm -f -R "$LOGZIO_TEMP_DIR" >/dev/null 2>&1
+    rm -f -R "$LOGZIO_TEMP_DIR" >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         write_warning "failed to delete Logz.io temp directory"
     fi
@@ -240,7 +239,7 @@ fi
 source "$LOGZIO_TEMP_DIR/consts.bash" 2>"$LOGZIO_TEMP_DIR/task_error.txt"
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat $LOGZIO_TEMP_DIR/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.bash ($EXIT_CODE): error loading agent scripts: $(cat $LOGZIO_TEMP_DIR/task_error.txt)\033[0;37m"
 
     exit $EXIT_CODE
 fi
@@ -248,7 +247,7 @@ fi
 source "$LOGZIO_TEMP_DIR/functions.bash" 2>"$LOGZIO_TEMP_DIR/task_error.txt"
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat $LOGZIO_TEMP_DIR/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.bash ($EXIT_CODE): error loading agent scripts: $(cat $LOGZIO_TEMP_DIR/task_error.txt)\033[0;37m"
 
     exit $EXIT_CODE
 fi

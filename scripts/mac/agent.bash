@@ -213,7 +213,7 @@ fi
 source '/tmp/logzio/consts.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.bash ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
 
     exit $EXIT_CODE
 fi
@@ -221,7 +221,7 @@ fi
 source '/tmp/logzio/functions.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.bash ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
 
     exit $EXIT_CODE
 fi
