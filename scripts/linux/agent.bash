@@ -58,9 +58,9 @@ function run_final {
 # Output:
 #   ---
 function delete_temp_dir {
-    rm -f -R "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
+    sudo rm -f -R "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        write_warning "failed to delete Logz.io temp directory: $(get_task_error_message)"
+        write_warning "failed to delete Logz.io temp directory"
     fi
 }
 
