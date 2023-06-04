@@ -51,6 +51,8 @@ TASK_POST_RUN_FILE="$LOGZIO_TEMP_DIR/task_post_run.bash"
 TASK_ERROR_FILE="$LOGZIO_TEMP_DIR/task_error.txt"
 # Agent json file path
 AGENT_JSON="$LOGZIO_TEMP_DIR/agent.json"
+# Debug log file path
+AGENT_DEBUG_LOG_FILE="$LOGZIO_TEMP_DIR/logzio_debug.log"
 
 ## Urls
 # Url for downloading jq binary
@@ -116,6 +118,7 @@ LOG_LEVEL_ERROR='ERROR'
 LOG_LEVEL_WARN='WARN'
 
 ## Log steps
+LOG_STEP_START='Start'
 LOG_STEP_PRE_INIT='Pre-Init'
 LOG_STEP_DOWNLOADS='Downloads'
 LOG_STEP_INIT='Init'
@@ -126,7 +129,7 @@ LOG_STEP_LOGS='Logs'
 LOG_STEP_METRICS='Metrics'
 LOG_STEP_TRACES='Traces'
 LOG_STEP_POSTREQUISITES='Post-Requisites'
-LOG_STEP_FINAL='Final'
+LOG_STEP_END='End'
 
 ## Log script names
 LOG_SCRIPT_AGENT='agent.bash'

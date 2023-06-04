@@ -65,57 +65,40 @@ function get_task_error_message {
     echo -e "$err"
 }
 
-# Sends log to Logz.io
+# Writes debug log to file
 # Input:
 #   level - Log level
 #   message - Log message
 #   step - Log step
 #   script_name - Log script name
 #   func_name - Log function name
-#   agent_id - Agent id
-#   platform - Platform name
-#   sub_type - Subtype name
-#   data_source - Datasource name
 # Output:
 #   ---
-function send_log_to_logzio {
+function write_debug_log_to_file {
     local level="$1"
     local message="$2"
     local step="$3"
     local script_name="$4"
     local func_name="$5"
-    local agent_id="$6"
-    local platform="$7"
-    local sub_type="$8"
-    local data_source="$9"
 
     message="${message//\"/\\\"}"
     message=$(echo -e "$message" | tr '\n' ' ')
 
-    log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\",\"cpu_arch\":\"$CPU_ARCH\""
+    local debug_log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"$level\",\"message\":\"$message\",\"step\":\"$step\",\"script\":\"$script_name\",\"func\":\"$func_name\",\"os\":\"Linux\""
 
-    if [[ "$level" == "$LOG_LEVEL_ERROR" ]]; then
-        local error_id_part=$(echo -e "$message" | grep -o '([0-9]\+)')
-        local error_id=$(echo -e "$error_id_part" | grep -o '[0-9]\+')
-        
-        log+=",\"error_id\":\"$error_id\""
-    fi
-    if [[ ! -z "$agent_id" ]]; then
-        log+=",\"agent_id\":\"$agent_id\""
-    fi
-    if [[ ! -z "$platform" ]]; then
-        log+=",\"platform\":\"$platform\""
-    fi
-    if [[ ! -z "$sub_type" ]]; then
-        log+=",\"subtype\":\"$sub_type\""
-    fi
-    if [[ ! -z "$data_source" ]]; then
-        log+=",\"datasource\":\"$data_source\""
-    fi
+    echo -e "$debug_log" >>"$AGENT_DEBUG_LOG_FILE"
+}
 
-    log+='}'
-
-    curl -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>&1 &
+# Sends debug logs to Logz.io
+# Input:
+#   ---
+# Output:
+#   ---
+function send_debug_logs_to_logzio {
+    while read -r debug_log; do
+        debug_log+=",\"agent_id\":\"$AGENT_ID\",\"platform\":\"$PLATFORM\",\"subtype\":\"$SUB_TYPE\",\"datasource\":\"$CURRENT_DATA_SOURCE\",\"account_id\":\"$ACCOUNT_ID\",\"os_name\":\"$LINUX_NAME\",\"os_version\":\"$LINUX_VERSION\",\"shell_version\":\"$BASH_VERSION\",\"cpu_arch\":\"$CPU_ARCH\"}"
+        curl -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$debug_log" >/dev/null 2>&1 &
+    done <"$AGENT_DEBUG_LOG_FILE"
 }
 
 # Gets json string field value

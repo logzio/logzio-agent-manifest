@@ -4,23 +4,72 @@
 ####################################################### LINUX Agent Script ######################################################
 #################################################################################################################################
 
-# Gets agent id
+# Writes agent start log
 # Input:
 #   ---
 # Output:
-#   AGENT_ID - Logz.io agent id
-function get_agent_id {
-    for arg in "${AGENT_ARGS[@]}"; do
-        case "$arg" in
-            --id=*)
-                local agent_id=$(echo "$arg" | cut -d '=' -f2)
-                AGENT_ID="$agent_id"
-                return
-        esac
-    done
+#   ---
+function write_agent_start_log {
+    write_debug_log_to_file "$LOG_LEVEL_INFO" 'Start running Logz.io agent ...' "$LOG_STEP_START" "$LOG_SCRIPT_AGENT" ''
+    write_log "$LOG_LEVEL_INFO" 'Start running Logz.io agent ...'
 }
 
-# Run final commands
+function load_agent_files {
+    local func_name="${FUNCNAME[0]}"
+
+    local message='Loading agent files ...'
+    echo -e "[DEBUG] [$(date +'%Y-%m-%d %H:%M:%S')] $message" >>"/opt/logzio-agent/logzio_agent.log"
+    echo -e "{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"DEBUG\",\"message\":\"$message\",\"step\":\"Start\",\"script\":\"agent.bash\",\"func\":\"$func_name\",\"os\":\"Linux\"" >>'/tmp/logzio/agent_debug.log'
+    curl -fsSL 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -d Action='SendMessage' -d MessageBody="$debug_log" >/dev/null 2>&1 &
+
+    # Load consts
+    source '/tmp/logzio/consts.bash' 2>'/tmp/logzio/task_error.txt'
+    if [[ $? -ne 0 ]]; then
+        IS_LOADING_AGENT_SCRIPTS_FAILED=true
+        message="agent.bash ($EXIT_CODE): error loading '/tmp/logzio/consts.bash' script: $(cat /tmp/logzio/task_error.txt)"
+        echo -e "[ERROR] [$(date +'%Y-%m-%d %H:%M:%S')] $message" >>"/opt/logzio-agent/logzio_agent.log"
+        echo -e "\033[0;31m$message\033[0;37m"
+
+        message="${message//\"/\\\"}"
+        message=$(echo -e "$message" | tr '\n' ' ')
+        debug_log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"ERROR\",\"message\":\"$message\",\"step\":\"Start\",\"script\":\"agent.bash\",\"func\":\"$func_name\",\"os\":\"Linux\"}"
+
+        curl -fsSL 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -d Action='SendMessage' -d MessageBody="$debug_log" >/dev/null 2>&1 &
+        exit $EXIT_CODE
+    fi
+    # Load agent functions
+    source '/tmp/logzio/functions.bash' 2>'/tmp/logzio/task_error.txt'
+    if [[ $? -ne 0 ]]; then
+        IS_LOADING_AGENT_SCRIPTS_FAILED=true
+        message="agent.bash ($EXIT_CODE): error loading '/tmp/logzio/functions.bash' script: $(cat /tmp/logzio/task_error.txt)"
+        echo -e "[ERROR] [$(date +'%Y-%m-%d %H:%M:%S')] $message" >>"/opt/logzio-agent/logzio_agent.log"
+        echo -e "\033[0;31m$message\033[0;37m"
+        
+        message="${message//\"/\\\"}"
+        message=$(echo -e "$message" | tr '\n' ' ')
+        debug_log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"ERROR\",\"message\":\"$message\",\"step\":\"Start\",\"script\":\"agent.bash\",\"func\":\"$func_name\",\"os\":\"Linux\"}"
+
+        curl -fsSL 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -d Action='SendMessage' -d MessageBody="$debug_log" >/dev/null 2>&1 &
+        exit $EXIT_CODE
+    fi
+    # Load agent utils functions
+    source '/tmp/logzio/utils_functions.bash' 2>'/tmp/logzio/task_error.txt'
+    if [[ $? -ne 0 ]]; then
+        IS_LOADING_AGENT_SCRIPTS_FAILED=true
+        message="agent.bash ($EXIT_CODE): error loading '/tmp/logzio/utils_functions.bash' script: $(cat /tmp/logzio/task_error.txt)"
+        echo -e "[ERROR] [$(date +'%Y-%m-%d %H:%M:%S')] $message" >>"/opt/logzio-agent/logzio_agent.log"
+        echo -e "\033[0;31m$message\033[0;37m"
+
+        message="${message//\"/\\\"}"
+        message=$(echo -e "$message" | tr '\n' ' ')
+        debug_log="{\"datetime\":\"$(date +'%Y-%m-%dT%H:%M:%S%z')\",\"level\":\"ERROR\",\"message\":\"$message\",\"step\":\"Start\",\"script\":\"agent.bash\",\"func\":\"$func_name\",\"os\":\"Linux\"}"
+
+        curl -fsSL 'https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue' -d Action='SendMessage' -d MessageBody="$debug_log" >/dev/null 2>&1 &
+        exit $EXIT_CODE
+    fi
+}
+
+# Runs final commands
 # Input:
 #   ---
 # Ouput:
@@ -201,6 +250,11 @@ IS_POSTREQUISITES_FAILED=false
 CONTINUE_IF_FAILED=false
 IS_AGENT_COMPLETED=false
 
+# Writes agent start log
+write_agent_start_log
+# Loads agnet files
+load_agent_files
+
 # Print main title - Christmas theme
 source '/tmp/logzio/logo-themes/default.bash' 2>'/tmp/logzio/task_error.txt'
 if [[ $? -ne 0 ]]; then
@@ -209,42 +263,10 @@ if [[ $? -ne 0 ]]; then
     echo
 fi
 
-# Load consts
-source '/tmp/logzio/consts.bash' 2>'/tmp/logzio/task_error.txt'
-if [[ $? -ne 0 ]]; then
-    IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
-
-    exit $EXIT_CODE
-fi
-# Load agent functions
-source '/tmp/logzio/functions.bash' 2>'/tmp/logzio/task_error.txt'
-if [[ $? -ne 0 ]]; then
-    IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
-
-    exit $EXIT_CODE
-fi
-# Load agent utils functions
-source '/tmp/logzio/utils_functions.bash' 2>'/tmp/logzio/task_error.txt'
-if [[ $? -ne 0 ]]; then
-    IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "${RED_COLOR}agent.bash ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)$WHITE_COLOR"
-
-    exit $EXIT_CODE
-fi
-
 # Clears content of task post run script file if exists (happens if Logz.io temp directory was not deleted)
 if [[ -f "$TASK_POST_RUN_FILE" ]]; then
     >"$TASK_POST_RUN_FILE"
 fi
-
-# Get agent id
-get_agent_id
-
-# Write agent running log
-send_log_to_logzio "$LOG_LEVEL_INFO" 'Start running Logz.io agent ...' "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" '' "$AGENT_ID"
-write_log "$LOG_LEVEL_INFO" 'Start running Logz.io agent ...'
 
 # Print title
 echo -e '##########################'
