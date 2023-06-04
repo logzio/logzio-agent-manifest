@@ -86,11 +86,12 @@ function is_bash_version_4_or_above {
 # Output:
 #   Help usage
 function show_help {
-    write_task_post_run "echo -e \"Usage: .\agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release<repo_release>]\""
+    write_task_post_run "echo -e \"Usage: .\agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release=<repo_release>] [--tmp_dest=<temp_dest>]\""
     write_task_post_run "echo -e ' --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)'"
     write_task_post_run "echo -e ' --id=<agent_id>              Logz.io agent ID'"
     write_task_post_run "echo -e ' --debug=<agent_json>         Debug run using a local agent json file'"
     write_task_post_run "echo -e ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
+    write_task_post_run "echo -e ' --temp_dest=<temp_dest>      The temp files destination path. Default is /tmp/logzio'"
     write_task_post_run "echo -e ' --help                       Show usage'"
 }
 
@@ -174,6 +175,13 @@ function get_arguments {
 
                 write_task_post_run "REPO_RELEASE='$repo_release'"
                 ;;
+            --temp_dest=*)
+                temp_dest=$(echo "$arg" | cut -d '=' -f2)
+                
+                message="Agent argument 'temp_dest' is '$temp_dest'"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+                write_log "$LOG_LEVEL_DEBUG" "$message"
+                ;;
             *)
                 message="agent.bash ($EXIT_CODE): unrecognized flag"
                 send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
@@ -199,9 +207,6 @@ function check_arguments_validation {
     local message='Checking validation ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    local app_url="${func_args[app_url]}"
-    local agent_id="${func_args[agent_id]}"
 
     if [[ ! -z "$AGENT_JSON_FILE" ]]; then
         if [[ -f "$AGENT_JSON_FILE" ]]; then
