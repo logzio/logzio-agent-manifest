@@ -47,6 +47,7 @@ function get_temp_dest {
 #   ---
 function run_final {
     write_agent_final_messages
+    sudo echo >/dev/null
     delete_temp_dir
 
     tput cnorm -- normal 2>/dev/null
@@ -58,7 +59,7 @@ function run_final {
 # Output:
 #   ---
 function delete_temp_dir {
-    sudo rm -f -R "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
+    sudo rm -f -R "$LOGZIO_TEMP_DIR" >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         write_warning "failed to delete Logz.io temp directory"
     fi
