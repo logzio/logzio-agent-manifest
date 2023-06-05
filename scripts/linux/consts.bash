@@ -5,8 +5,6 @@
 #################################################################################################################################
 
 ## Agent Directories
-# Logz.io temp directory
-LOGZIO_TEMP_DIR='/tmp/logzio'
 # Logz.io opt directory
 LOGZIO_OPT_DIR='/opt/logzio-agent'
 

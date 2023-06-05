@@ -20,6 +20,26 @@ function get_agent_id {
     done
 }
 
+# Gets temp destination path
+# Input:
+#   ---
+# Output:
+#   LOGZIO_TEMP_DIR - temp destination path
+function get_temp_dest {
+    for arg in "${AGENT_ARGS[@]}"; do
+        case "$arg" in
+            --temp_dest=*)
+                local temp_dest=$(echo "$arg" | cut -d '=' -f2)
+                if [[ ! -d "$temp_dest" ]]; then
+                    return
+                fi
+
+                LOGZIO_TEMP_DIR="$temp_dest/logzio"
+                return
+        esac
+    done
+}
+
 # Run final commands
 # Input:
 #   ---
@@ -38,9 +58,9 @@ function run_final {
 # Output:
 #   ---
 function delete_temp_dir {
-    rm -f -R "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
+    rm -f -R "$LOGZIO_TEMP_DIR" >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
-        write_warning "failed to delete Logz.io temp directory: $(get_task_error_message)"
+        write_warning "failed to delete Logz.io temp directory"
     fi
 }
 
@@ -176,9 +196,6 @@ function write_agent_support {
 }
 
 
-# Agent version
-AGENT_VERSION=$(cat '/tmp/logzio/version')
-
 # Settings
 trap "write_agent_interruption_message" INT 
 tput civis -- invisible 2>/dev/null
@@ -186,6 +203,9 @@ tput civis -- invisible 2>/dev/null
 # Agent args
 AGENT_ARGS=("$@")
 Agent_ID=''
+
+# Logz.io temp directory
+LOGZIO_TEMP_DIR='/tmp/logzio'
 
 # Exit code
 EXIT_CODE=1
@@ -201,8 +221,14 @@ IS_POSTREQUISITES_FAILED=false
 CONTINUE_IF_FAILED=false
 IS_AGENT_COMPLETED=false
 
+# Get temp destination path
+get_temp_dest
+
+# Agent version
+AGENT_VERSION=$(cat "$LOGZIO_TEMP_DIR/version")
+
 # Print main title - Christmas theme
-source '/tmp/logzio/logo-themes/default.bash' 2>'/tmp/logzio/task_error.txt'
+source "$LOGZIO_TEMP_DIR/logo-themes/default.bash" 2>"$LOGZIO_TEMP_DIR/task_error.txt"
 if [[ $? -ne 0 ]]; then
     echo
     echo -e "\033[0;36mLogz.io Agent $AGENT_VERSION\033[0;37m"
@@ -210,26 +236,26 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Load consts
-source '/tmp/logzio/consts.bash' 2>'/tmp/logzio/task_error.txt'
+source "$LOGZIO_TEMP_DIR/consts.bash" 2>"$LOGZIO_TEMP_DIR/task_error.txt"
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.bash ($EXIT_CODE): error loading agent scripts: $(cat $LOGZIO_TEMP_DIR/task_error.txt)\033[0;37m"
 
     exit $EXIT_CODE
 fi
 # Load agent functions
-source '/tmp/logzio/functions.bash' 2>'/tmp/logzio/task_error.txt'
+source "$LOGZIO_TEMP_DIR/functions.bash" 2>"$LOGZIO_TEMP_DIR/task_error.txt"
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "\033[0;31magent.ps1 ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)\033[0;37m"
+    echo -e "\033[0;31magent.bash ($EXIT_CODE): error loading agent scripts: $(cat $LOGZIO_TEMP_DIR/task_error.txt)\033[0;37m"
 
     exit $EXIT_CODE
 fi
 # Load agent utils functions
-source '/tmp/logzio/utils_functions.bash' 2>'/tmp/logzio/task_error.txt'
+source "$LOGZIO_TEMP_DIR/utils_functions.bash" 2>"$LOGZIO_TEMP_DIR/task_error.txt"
 if [[ $? -ne 0 ]]; then
     IS_LOADING_AGENT_SCRIPTS_FAILED=true
-    echo -e "${RED_COLOR}agent.bash ($EXIT_CODE): error loading agent scripts: $(cat /tmp/logzio/task_error.txt)$WHITE_COLOR"
+    echo -e "${RED_COLOR}agent.bash ($EXIT_CODE): error loading agent scripts: $(cat $LOGZIO_TEMP_DIR/task_error.txt)$WHITE_COLOR"
 
     exit $EXIT_CODE
 fi
