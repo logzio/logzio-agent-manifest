@@ -20,12 +20,106 @@
         {
           "name": "Cloud Monitoring",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
-          "description": "To send metrics from your GCP to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
+          "description": "Placeholder decription",
+          "params": [
+            {
+              "type": "text",
+              "name": "tenantId",
+              "label": "Tenant ID",
+              "required": true,
+              "description": "Placeholder description",
+              "hint": "Placeholder hint",
+              "value": ""
+            },
+            {
+              "type": "text",
+              "name": "clientId",
+              "label": "Client ID",
+              "required": true,
+              "description": "Placeholder description",
+              "hint": "Placeholder hint",
+              "value": ""
+            },
+            {
+              "type": "text",
+              "name": "clientSecret",
+              "label": "Client Secret",
+              "required": true,
+              "description": "Placeholder description",
+              "hint": "Placeholder hint",
+              "value": ""
+            }
+          ],
           "telemetries": [
             {
-              "type": "LOG_ANALYTICS",
+              "type": "METRICS",
               "hint": "Switch the toggle on if you want send metrics to logz.io from Google Cloud Sevices",
-              "params": []
+              "params": [
+                {
+                  "type": "text",
+                  "name": "subscription",
+                  "label": "Subscription",
+                  "required": true,
+                  "description": "Placeholder description",
+                  "hint": "Placeholder hint",
+                  "value": ""
+                },
+                {
+                  "type": "text",
+                  "name": "resourceGroupName",
+                  "label": "Resource group name",
+                  "required": true,
+                  "description": "Placeholder description",
+                  "hint": "Placeholder hint",
+                  "value": ""
+                },
+                {
+                  "type": "text",
+                  "name": "tags",
+                  "label": "Tags",
+                  "required": true,
+                  "description": "Placeholder description",
+                  "hint": "Placeholder hint",
+                  "value": ""
+                },
+                {
+                  "type": "multi-select",
+                  "name": "telemetryList",
+                  "label": "Google Cloud Resources",
+                  "description": "Send logs that include any of these resource types.",
+                  "required": true,
+                  "hint": "To send all resource types of the project select 'All services'",
+                  "options": [
+                    {
+                      "label": "All Services",
+                      "value": "all_services"
+                    },
+                    {
+                      "label": "Microsoft.AAD/DomainServices",
+                      "value": "Microsoft.AAD/DomainServices"
+                    },
+                    {
+                      "label": "Microsoft.AnalysisServices/servers",
+                      "value": "Microsoft.AnalysisServices/servers"
+                    },
+                    {
+                      "label": "Microsoft.ApiManagement/service",
+                      "value": "Microsoft.ApiManagement/service"
+                    },
+                    {
+                      "label": "Microsoft.App/containerapps",
+                      "value": "Microsoft.App/containerapps"
+                    },
+                    {
+                      "label": "Microsoft.App/managedEnvironments",
+                      "value": "Microsoft.App/managedEnvironments"
+                    }
+                  ],
+                  "value": [
+                    "all_services"
+                  ]
+                }
+              ]
             }
           ]
         }
