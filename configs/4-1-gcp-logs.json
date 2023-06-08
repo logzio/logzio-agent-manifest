@@ -5,6 +5,7 @@
     "subtypes": [
         {
             "name": "Cloud Logging",
+            "label": "GCP Cloud logging",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-logging.png",
             "description": "GCP Logs",
             "hint": "Logging from GCP services.",

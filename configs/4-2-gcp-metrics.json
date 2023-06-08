@@ -5,6 +5,7 @@
     "subtypes": [
         {
             "name": "Cloud Monitoring",
+            "label": "GCP Cloud monitoring",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
             "description": "GCP metrics",
             "hint": "Metrics from GCP services.",
