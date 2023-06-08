@@ -1,0 +1,35 @@
+{
+  "name": "azure",
+  "label": "Azure fetcher",
+  "type": "Fetcher",
+  "subtypes": [
+    {
+      "name": "Azure Logs Fetcher",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
+      "description": "Azure Logs Fetcher description",
+      "hint": "Azure Logs Fetcher hint",
+      "supportedOs": [
+        "Windows",
+        "Mac",
+        "Linux",
+        "AWS_Cloudfront",
+        "GCP"
+      ],
+      "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
+      "datasources": [
+        {
+          "name": "Cloud Monitoring",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
+          "description": "To send metrics from your GCP to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "Switch the toggle on if you want send metrics to logz.io from Google Cloud Sevices",
+              "params": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

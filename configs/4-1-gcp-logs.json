@@ -1,7 +1,7 @@
 {
     "name": "GCP",
-    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
-    "description": "",
+    "label": "GCP",
+    "type": "Cloud",
     "subtypes": [
         {
             "name": "Cloud Logging",

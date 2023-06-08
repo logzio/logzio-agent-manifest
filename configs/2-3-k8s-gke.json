@@ -1,9 +1,7 @@
 {
   "name": "Kubernetes",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-  "description": "",
-  "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
-  "manifest": true,
+  "label": "Kubernetes",
+  "type": "Kubernetes",
   "subtypes": [
     {
       "name": "GKE",
