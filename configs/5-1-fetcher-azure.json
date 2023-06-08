@@ -33,7 +33,7 @@
             },
             {
               "type": "text",
-              "name": "clientId",
+              "name": "client.Id",
               "label": "Client ID",
               "required": true,
               "description": "Placeholder description",
