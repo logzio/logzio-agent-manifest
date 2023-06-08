@@ -4,7 +4,7 @@
   "type": "Fetcher",
   "subtypes": [
     {
-      "name": "Azure Logs Fetcher",
+      "name": "Azure metrics Fetcher",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
       "description": "Azure Logs Fetcher description",
       "hint": "Azure Logs Fetcher hint",
@@ -18,7 +18,7 @@
       "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
       "datasources": [
         {
-          "name": "Cloud Monitoring",
+          "name": "Azure metrics",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
           "description": "Placeholder decription",
           "params": [
@@ -84,8 +84,8 @@
                 },
                 {
                   "type": "multi-select",
-                  "name": "telemetryList",
-                  "label": "Google Cloud Resources",
+                  "name": "resourceTypeList",
+                  "label": "Resource Type",
                   "description": "Send logs that include any of these resource types.",
                   "required": true,
                   "hint": "To send all resource types of the project select 'All services'",
