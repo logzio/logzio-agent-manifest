@@ -21,6 +21,11 @@
           "name": "Azure metrics",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
           "description": "Placeholder decription",
+          "disclaimer": {
+            "title": "Installation",
+            "moreInfoLink": "https://github.com/logzio/gaia-hermes-ws/pulls/ifatregev",
+            "description": "click here please"
+          },
           "params": [
             {
               "type": "text",
