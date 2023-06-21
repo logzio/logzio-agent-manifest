@@ -6,9 +6,9 @@
   "manifest": true,
   "subtypes": [
     {
-      "name": "EKS",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-eks.svg",
-      "description": "AWS Kubernetes Service",
+      "name": "GKE",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+      "description": "GCP Kubernetes Engine",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
@@ -36,14 +36,6 @@
               "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
               "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
               "value": true
-            },
-            {
-              "type": "boolean",
-              "name": "isFargate",
-              "label": "AWS Fargate",
-              "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable this if your EKS is based on Fargate.",
-              "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on EKS based on Fargate.",
-              "value": false
             }
           ],
           "telemetries": [
