@@ -9,6 +9,7 @@
       "description": "AWS Kubernetes Service",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
+      "supportedServices": ["SPM"],
       "datasources": [
         {
           "name": "Kubernetes",

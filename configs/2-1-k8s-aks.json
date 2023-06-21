@@ -8,6 +8,7 @@
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
       "description": "Azure Kubernetes Service",
       "supportedOs": ["Mac", "Windows", "Linux"],
+      "supportedServices": ["SPM"],
       "datasources": [
         {
           "name": "Kubernetes",
