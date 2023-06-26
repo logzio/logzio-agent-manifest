@@ -1,19 +1,22 @@
 {
   "name": "Kubernetes",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-eks.svg",
   "description": "",
+  "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "manifest": true,
   "subtypes": [
     {
-      "name": "AKS",
+      "name": "EKS",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-      "description": "Azure Kubernetes Service",
+      "description": "AWS Kubernetes",
+      "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
         {
           "name": "Kubernetes",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
+          "hint": "Select the type of data you'd like to ship: logs, metrics, and traces.",
           "params": [
             {
               "type": "text",
@@ -33,16 +36,26 @@
               "description": "Taints allow a node to repel a series of pods. Tolerations are applied to pods and allow them to schedule onto nodes with matching taints. Enable to force deployment on all pods.",
               "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on all nodes.",
               "value": true
+            },
+            {
+              "type": "boolean",
+              "name": "isFargate",
+              "label": "AWS Fargate",
+              "description": "AWS Fargate is a serverless, pay-as-you-go compute engine that lets you focus on building applications without managing servers. Enable this if your EKS is based on Fargate.",
+              "hint": "By checking this option the Logz.io Telemetry Collector will be deployed on EKS based on Fargate.",
+              "value": false
             }
           ],
           "telemetries": [
             {
               "type": "LOG_ANALYTICS",
+              "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your Kubernetes cluster components and applications pods",
               "params": []
             },
             {
               "type": "METRICS",
+              "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your Kubernetes cluster, nodes and pods",
               "params": [
                 {
@@ -52,14 +65,6 @@
                   "description": "",
                   "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate Kubernetes 360 and prebuilt dashboards. In addition, we will also collect application metrics that are exposed by your pods.",
                   "value": true
-                },
-                {
-                  "type": "boolean",
-                  "name": "isWindows",
-                  "label": "My Kubernetes cluster is based on Windows nodes",
-                  "description": "",
-                  "hint": "Check this box if any of your Kubernetes pods are running on Windows nodes. As part of the installation process, you will need to provide the root user credentials to those Windows instances",
-                  "value": false
                 }
               ],
               "dashboards": [
@@ -76,6 +81,7 @@
             },
             {
               "type": "TRACING",
+              "description": "",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
               "params": []
             }
