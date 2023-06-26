@@ -1,14 +1,14 @@
 {
   "name": "Kubernetes",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gke.svg",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
   "description": "",
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "manifest": true,
   "subtypes": [
     {
       "name": "GKE",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-      "description": "GCP Kubernetes Engine",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gke.svg",
+      "description": "GCP Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [

@@ -1,13 +1,13 @@
 {
   "name": "Kubernetes",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-eks.svg",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
   "description": "",
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "manifest": true,
   "subtypes": [
     {
       "name": "EKS",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-eks.svg",
       "description": "AWS Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],

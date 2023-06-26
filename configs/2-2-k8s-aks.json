@@ -1,12 +1,13 @@
 {
   "name": "Kubernetes",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
   "description": "",
   "manifest": true,
   "subtypes": [
     {
       "name": "AKS",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
       "description": "Azure Kubernetes",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
