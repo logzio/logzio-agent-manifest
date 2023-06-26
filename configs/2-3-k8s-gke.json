@@ -8,7 +8,7 @@
     {
       "name": "GKE",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gke.svg",
-      "description": "GCP Kubernetes Engine",
+      "description": "GCP Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
