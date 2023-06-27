@@ -8,7 +8,7 @@
       "description": "AWS Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
-      "supportedServices": ["SPM"],
+      "capabilities": ["SPM"],
       "datasources": [
         {
           "name": "Kubernetes",
@@ -79,7 +79,7 @@
             },
             {
               "type": "TRACING",
-              "description": "",
+              "description": "Collects traces and aggregated trace metrics from your instrumented applications",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
               "params": []
             }
