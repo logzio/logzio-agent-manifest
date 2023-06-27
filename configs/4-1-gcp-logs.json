@@ -3,9 +3,9 @@
     "label": "GCP",
     "subtypes": [
         {
-            "name": "Cloud Logging",
+            "name": "GCP Logs",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
-            "description": "Google",
+            "description": "Cloud Logging",
             "hint": "Logging from GCP services.",
             "supportedOs": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
