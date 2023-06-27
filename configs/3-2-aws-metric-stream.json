@@ -1,9 +1,7 @@
 {
    "name": "AWS",
-   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-   "description": "",
-   "hint": "Select the environment where you want to deploy the Logz.io Telemetry Collector.",
-   "subtypes": [
+  "label": "AWS",
+  "subtypes": [
      {
        "name": "AWS Metrics",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
@@ -207,4 +205,3 @@
      }
    ]
  }
- 

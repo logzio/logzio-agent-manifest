@@ -1,9 +1,6 @@
 {
   "name": "Localhost",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
   "label": "Localhost",
-  "description": "",
-  "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "subtypes": [
     {
       "name": "Windows",
@@ -24,7 +21,7 @@
                 "receivers": ["filelog","windowseventlog_application","windowseventlog_security","windowseventlog_system"],
                 "processors": ["resourcedetection_system"]
 				      },
-              "params": 
+              "params":
               [
                 {
                   "type": "string-list",

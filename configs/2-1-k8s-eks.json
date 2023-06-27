@@ -1,9 +1,6 @@
 {
   "name": "Kubernetes",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-  "description": "",
-  "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
-  "manifest": true,
+  "label": "Kubernetes",
   "subtypes": [
     {
       "name": "EKS",
@@ -11,6 +8,7 @@
       "description": "AWS Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
+      "supportedServices": ["SPM"],
       "datasources": [
         {
           "name": "Kubernetes",

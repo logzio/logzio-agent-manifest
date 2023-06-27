@@ -1,8 +1,6 @@
 {
    "name": "AWS",
-   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-   "description": "",
-   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
+  "label": "AWS",
    "subtypes": [
      {
        "name": "EC2",
@@ -54,4 +52,3 @@
      }
    ]
  }
- 
