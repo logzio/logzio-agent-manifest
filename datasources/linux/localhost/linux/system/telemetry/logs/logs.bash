@@ -24,6 +24,7 @@ execute_task 'add_logs_pipline_to_otel_config' 'Adding logs pipeline to OTEL con
 # Get logs OTEL receivers
 execute_task 'get_logs_otel_receivers' 'Getting logs OTEL receivers'
 # Add logs receivers to OTEL config
+LOGS_TYPE='agent-linux'
 execute_task 'add_logs_receivers_to_otel_config' 'Adding logs receivers to OTEL config'
 # Get logs OTEL processors
 execute_task 'get_logs_otel_processors' 'Getting logs OTEL processors'
