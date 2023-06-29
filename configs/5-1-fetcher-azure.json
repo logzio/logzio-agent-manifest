@@ -1,26 +1,20 @@
 {
-  "name": "azure",
-  "label": "Azure fetcher",
+  "name": "Azure",
+  "label": "Azure",
   "type": "Fetcher",
   "subtypes": [
     {
-      "name": "Azure metrics Fetcher",
+      "name": "Azure",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
-      "description": "Azure Logs Fetcher description",
-      "hint": "Azure Logs Fetcher hint",
       "supportedOs": [
-        "Windows",
-        "Mac",
-        "Linux",
-        "AWS_Cloudformation",
-        "GCP"
+        "Fetcher"
       ],
       "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
       "datasources": [
         {
           "name": "Azure metrics",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
-          "description": "Placeholder decription",
+          "description": "Placeholder description",
           "disclaimer": {
             "title": "Installation",
             "moreInfoLink": "https://github.com/logzio/gaia-hermes-ws/pulls/ifatregev",
