@@ -71,7 +71,6 @@ function add_logs_receivers_to_otel_config {
             return $EXIT_CODE
         fi
 
-        LOGS_TYPE='agent-linux'
         create_otel_receiver
         local func_status=$?
         if [[ $func_status -ne 0 && $func_status -ne 1 ]]; then

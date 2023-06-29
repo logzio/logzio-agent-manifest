@@ -8,6 +8,7 @@
     {
       "name": "Linux",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/linux_machine.png",
+      "label": "Linux",
       "description": "Linux Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Linux"],
@@ -15,6 +16,7 @@
         {
           "name": "System",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "label": "System",
           "description": "Logz.io Uses OpenTelemetry to monitor your computer.",
           "telemetries": [
             {

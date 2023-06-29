@@ -1,19 +1,22 @@
 {
     "name": "GCP",
     "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+    "label": "GCP",
     "description": "",
     "subtypes": [
         {
-            "name": "GCP Metrics",
+            "name": "GCP_Metrics",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+            "label": "GCP Metrics",
             "description": "Cloud Monitoring",
             "hint": "Metrics from GCP services.",
             "supportedOs": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
             "datasources": [
                 {
-                    "name": "Cloud Monitoring",
+                    "name": "Cloud_Monitoring",
                     "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
+                    "label": "Cloud Monitoring",
                     "description": "To send metrics from your GCP to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
                     "telemetries": [
                         {
