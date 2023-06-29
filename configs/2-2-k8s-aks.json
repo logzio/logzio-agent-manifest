@@ -1,19 +1,21 @@
 {
   "name": "Kubernetes",
   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "label": "Kubernetes",
   "description": "",
   "manifest": true,
   "subtypes": [
     {
       "name": "AKS",
-
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
+      "label": "AKS",
       "description": "Azure Kubernetes",
       "supportedOs": ["Mac", "Windows", "Linux"],
       "datasources": [
         {
           "name": "Kubernetes",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "label": "Kubernetes",
           "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
           "params": [
             {
@@ -85,6 +87,7 @@
         {
           "name": "Security",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/logz_security.png",
+          "label": "Security",
           "description": "Logz.io Uses Trivy to scan the Kubernetes cluster and collects the security risks reports from each pod",
           "params": [
             {
