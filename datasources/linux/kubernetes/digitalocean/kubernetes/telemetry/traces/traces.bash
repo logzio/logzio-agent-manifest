@@ -23,3 +23,9 @@ execute_task 'build_enable_traces_helm_set' 'Building enable traces Helm set'
 execute_task 'build_logzio_traces_token_helm_set' 'Building Logz.io traces token Helm set'
 # Build Logz.io region Helm set
 execute_task 'build_logzio_region_helm_set' 'Building Logz.io region Helm set'
+# Get Logz.io SPM token
+execute_task 'get_logzio_metrics_token' 'Getting Logz.io SPM token'
+# Build enable SPM Helm set
+execute_task 'build_enable_spm_helm_set' 'Building enable SPM Helm set'
+# Build Logz.io SPM token Helm set
+execute_task 'build_logzio_spm_token_helm_set' 'Building Logz.io SPM token Helm set'

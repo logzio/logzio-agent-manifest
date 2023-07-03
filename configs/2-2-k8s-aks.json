@@ -11,6 +11,7 @@
       "label": "AKS",
       "description": "Azure Kubernetes",
       "supportedOs": ["Mac", "Windows", "Linux"],
+      "capabilities": ["SPM"],
       "datasources": [
         {
           "name": "Kubernetes",
