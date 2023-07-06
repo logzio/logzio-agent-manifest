@@ -122,7 +122,7 @@ function build_enable_metrics_filter_helm_set {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
     
-    local helm_set=" --set logzio-k8s-telemetry.enableMetricsFilter.aks=true"
+    local helm_set=" --set logzio-k8s-telemetry.enableMetricsFilter.$CLOUD_PROVIDER=true"
 
     message="Enable metrics filter Helm set is '$helm_set'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
