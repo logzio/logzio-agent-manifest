@@ -264,6 +264,13 @@ function Get-EnvironmentID {
 
     $local:EnvId = $script:ParamValue
 
+    if ([string]::IsNullOrEmpty($EnvId)) {
+        $EnvId = kubectl config current-context 2>$Null
+        if ($LASTEXITCODE -ne 0) {
+            $EnvId = [System.Guild]::NewGuid()
+        }
+    }
+
     $Message = "Environment id is '$EnvId'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
