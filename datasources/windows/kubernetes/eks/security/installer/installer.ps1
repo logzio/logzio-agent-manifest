@@ -47,7 +47,7 @@ Invoke-Task 'Get-SelectedProducts' @{} 'Getting the selected products' @($Instal
 # Get general params
 Invoke-Task 'Get-GeneralParams' @{} 'Getting general params' @($InstallerFunctionsScript)
 # Get environment id
-Invoke-Task 'Get-EnvironmentID' @{GeneralParams = $script:GeneralParams} 'Getting environment id' @($InstallerFunctionsScript)
+Invoke-Task 'Get-EnvironmentID' @{GeneralParams = $script:GeneralParams; DefaultEnvId = $script:DefaultEnvId} 'Getting environment id' @($InstallerFunctionsScript)
 # Run logs script
 Invoke-Logs
 

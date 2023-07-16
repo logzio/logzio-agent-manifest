@@ -111,7 +111,7 @@ if ($script:IsTaint) {
     Invoke-Task 'Build-TolerationsHelmSets' @{GeneralParams = $script:GeneralParams; IsLogsOptionSelected = $script:IsLogsOptionSelected; IsMetricsOptionSelected = $script:IsMetricsOptionSelected; IsTracesOptionSelected = $script:IsTracesOptionSelected} 'Building tolerations Helm sets' @($InstallerFunctionsScript)
 }
 # Get environment id
-Invoke-Task 'Get-EnvironmentID' @{GeneralParams = $script:GeneralParams} 'Getting environment id' @($InstallerFunctionsScript)
+Invoke-Task 'Get-EnvironmentID' @{GeneralParams = $script:GeneralParams; DefaultEnvId = $script:DefaultEnvId} 'Getting environment id' @($InstallerFunctionsScript)
 if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
     # Build enable metrics or traces Helm set
     Invoke-Task 'Build-EnableMetricsOrTracesHelmSet' @{} 'Building enable metrics or traces Helm set' @($InstallerFunctionsScript)

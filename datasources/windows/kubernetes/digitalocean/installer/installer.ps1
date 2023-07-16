@@ -115,6 +115,8 @@ if ($script:IsHelmExist) {
     # Get user answer about uninstalling the existed Logz.io Helm and run logic according the answer
     Invoke-RemoveHelmOrExit
 }
+$local:Guid = New-Guid
+$script:DefaultEnvId = $Guid.Guid
 # Run each datasource scripts
 Invoke-AllDataSources
 
