@@ -1,7 +1,6 @@
 {
   "name": "Localhost",
   "label": "Localhost",
-  "type": "Localhost",
   "subtypes": [
     {
       "name": "Windows",

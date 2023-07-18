@@ -1,7 +1,6 @@
 {
     "name": "GCP",
     "label": "GCP",
-    "type": "Cloud",
     "subtypes": [
         {
             "name": "Cloud Logging",

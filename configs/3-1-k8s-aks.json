@@ -1,7 +1,6 @@
 {
   "name": "Kubernetes",
   "label": "Kubernetes",
-  "type": "Kubernetes",
   "subtypes": [
     {
       "name": "AKS",

@@ -1,7 +1,6 @@
 {
    "name": "AWS",
    "label": "AWS",
-   "type": "Cloud",
    "subtypes": [
      {
        "name": "EC2",
