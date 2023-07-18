@@ -16,11 +16,17 @@
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
           "description": "Placeholder description",
           "type": "AzureMonitorMetricsFetcher",
-          "disclaimer": {
-            "title": "Installation",
-            "moreInfoLink": "https://github.com/logzio/gaia-hermes-ws/pulls/ifatregev",
-            "description": "click here please"
-          },
+          "information": [
+            {
+              "variant": "announcement",
+              "title": "Important note about data consumption",
+              "text": "Installing this integration may increase your Logz.io costs due to higher data consumption. Learn more in our [documentation](http://google.com). "
+            }, {
+              "variant": "info",
+              "title": "Connect your Microsoft Azure app to Logz.io",
+              "text": "To get started with Microsoft Azure and Logz.io, you’ll need to create an app and connect it. See our step-by-step guide."
+            }
+          ],
           "params": [
             {
               "type": "text",
