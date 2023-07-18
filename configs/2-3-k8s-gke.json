@@ -1,20 +1,24 @@
 {
   "name": "Kubernetes",
   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "label": "Kubernetes",
   "description": "",
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "manifest": true,
   "subtypes": [
     {
       "name": "GKE",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcpkubernetes.png",
-      "description": "GCP Kubernetes Engine",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gke.svg",
+      "label": "GKE",
+      "description": "GCP Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux"],
+      "capabilities": ["SPM"],
       "datasources": [
         {
           "name": "Kubernetes",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "label": "Kubernetes",
           "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
           "hint": "Select the type of data you'd like to ship: logs, metrics, and traces.",
           "params": [
@@ -22,11 +26,10 @@
               "type": "text",
               "name": "envID",
               "label": "Environment Name",
-              "required": true,
               "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
               "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
-              "value": "my_environment",
-              "pattern": "^[a-zA-Z0-9_-]+$",
+              "value": "",
+              "pattern": "^[a-zA-Z0-9_-]*$",
               "patternError": "Only letters, numbers, dashes and underscores are allowed"
             },
             {
@@ -82,17 +85,17 @@
         {
           "name": "Security",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/logz_security.png",
+          "label": "Security",
           "description": "Logz.io Uses Trivy to scan the Kubernetes cluster and collects the security risks reports from each pod",
           "params": [
             {
               "type": "text",
               "name": "envID",
               "label": "Environment Name",
-              "required": true,
               "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
               "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
-              "value": "my_environment",
-              "pattern": "^[a-zA-Z0-9_-]+$",
+              "value": "",
+              "pattern": "^[a-zA-Z0-9_-]*$",
               "patternError": "Only letters, numbers, dashes and underscores are allowed"
             }
           ],

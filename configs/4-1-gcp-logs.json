@@ -1,19 +1,22 @@
 {
     "name": "GCP",
     "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+    "label": "GCP",
     "description": "",
     "subtypes": [
         {
-            "name": "Cloud Logging",
-            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-logging.png",
-            "description": "GCP Logs",
+            "name": "GCP_Logs",
+            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
+            "label": "GCP Logs",
+            "description": "Cloud Logging",
             "hint": "Logging from GCP services.",
             "supportedOs": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
             "datasources": [
                 {
-                    "name": "Cloud Logging",
+                    "name": "Cloud_Logging",
                     "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-logging.png",
+                    "label": "Cloud Logging",
                     "description": "To send logs from your GCP to Logz.io, select the function region, project name and resources. Before running the snippet, install Google Cloud CLI",
                     "telemetries": [
                         {

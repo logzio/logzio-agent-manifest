@@ -1,0 +1,39 @@
+{
+  "name": "k8s-required-param",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "description": "",
+  "subtypes": [
+    {
+      "name": "required-param-integration",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+      "description": "",
+      "supportedOs": [
+        "Mac",
+        "Windows"
+      ],
+      "datasources": [
+        {
+          "name": "datasource with only logs and required param",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "description": "consequuntur non qui",
+          "params": [
+            {
+              "name": "required-param",
+              "label": "Required param",
+              "description": "required param",
+              "required": true,
+              "type": "text",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "params": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

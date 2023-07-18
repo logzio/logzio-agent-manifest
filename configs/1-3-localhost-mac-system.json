@@ -6,15 +6,17 @@
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "subtypes": [
     {
-      "name": "Linux",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/linux_machine.png",
-      "description": "Linux Machine",
+      "name": "Mac",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/mac_machine.png",
+      "label": "Mac",
+      "description": "Mac Machine",
       "hint": "Select your localhost OS.",
-      "supportedOs": ["Linux"],
+      "supportedOs": ["Mac"],
       "datasources": [
         {
           "name": "System",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+          "label": "System",
           "description": "Logz.io Uses OpenTelemetry to monitor your computer.",
           "telemetries": [
             {
@@ -47,7 +49,7 @@
 				      },
               "params": [],
               "dashboards": [
-                "6hb5Nww0ar4SXoF92QxMx"
+                "2gsQP2xRef7dkwt8pxWieo"
               ]
             }
           ]

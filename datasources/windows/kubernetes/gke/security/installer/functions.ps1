@@ -176,7 +176,7 @@ function Get-GeneralParams {
 
 # Gets environment id
 # Input:
-#   FuncArgs - Hashtable {GeneralParams = $script:GeneralParams}
+#   FuncArgs - Hashtable {GeneralParams = $script:GeneralParams; DefaultEnvId = $script:DefaultEnvId}
 # Output:
 #   EnvId - The environment id
 function Get-EnvironmentID {
@@ -191,7 +191,7 @@ function Get-EnvironmentID {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('GeneralParams')
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('GeneralParams', 'DefaultEnvId')
     if ($Err.Count -ne 0) {
         $Message = "installer.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
@@ -201,6 +201,7 @@ function Get-EnvironmentID {
     }
 
     $local:GeneralParams = $FuncArgs.GeneralParams
+    $local:DefaultEnvId = $FuncArgs.DefaultEnvId
 
     $Err = Get-ParamValue $GeneralParams 'envID'
     if ($Err.Count -ne 0) {
@@ -212,6 +213,15 @@ function Get-EnvironmentID {
     }
 
     $local:EnvId = $script:ParamValue
+
+    if ([string]::IsNullOrEmpty($EnvId)) {
+        $local:ClusterName = kubectl config current-context 2>$Null
+        if ($LASTEXITCODE -ne 0) {
+            $EnvId = $DefaultEnvId
+        } else {
+            $EnvId = $ClusterName.Split('_')[1]
+        }
+    }
 
     $Message = "Environment id is '$EnvId'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
