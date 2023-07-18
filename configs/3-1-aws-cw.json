@@ -52,7 +52,7 @@
               "name": "stackName",
               "label": "Enter your stack name",
               "required": true,
-              "description": "The name of your Clouformation stack.",
+              "description": "The name of your Cloudformation stack.",
               "value": "logzio-firehose",
               "pattern": "^[a-zA-Z0-9-]+$",
               "patternError": "Only letters, numbers and dashes are allowed"
