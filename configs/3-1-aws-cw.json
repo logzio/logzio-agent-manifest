@@ -12,7 +12,7 @@
        "description": "via Cloudwatch",
        "hint": "Cloudwatch logs to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
-       "integrationTemplate": "firehose-logs/0.0.1/sam-template.yaml&param_logzioType=agent_logzio_firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
+       "integrationTemplate": "firehose-logs/0.0.1/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
        "datasources": [
          {
            "name": "AWS_Logs",
