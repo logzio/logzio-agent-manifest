@@ -12,13 +12,13 @@
        "description": "via Cloudwatch",
        "hint": "Cloudwatch logs to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
-       "integrationTemplate": "cloudwatch-shipper-trigger/1.1.1/sam-template.yaml&param_logzioType=agent-aws-cloudwatch&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8071",
+       "integrationTemplate": "firehose-logs/0.0.1/sam-template.yaml&param_logzioType=agent_logzio_firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
        "datasources": [
          {
            "name": "AWS_Logs",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
            "label": "AWS Logs",
-           "description": "Ship your Cloudwatch logs to Logz.io",
+           "description": "Ship your Cloudwatch logs to Logz.io via Firehose",
            "params": [
             {
               "type": "single-select",
@@ -52,8 +52,8 @@
               "name": "stackName",
               "label": "Enter your stack name",
               "required": true,
-              "description": "The name of your Cloudwatch stack.",
-              "value": "logzio-cloudwatch-shipper",
+              "description": "The name of your Cloudformation stack.",
+              "value": "logzio-firehose",
               "pattern": "^[a-zA-Z0-9-]+$",
               "patternError": "Only letters, numbers and dashes are allowed"
             }
@@ -93,12 +93,6 @@
                   "description": "Custom log groups that you need to collect logs from.",
                   "placeholder": "Your log group /my/custom/log-group",
                   "actionText": "Add custom log group"
-                },
-                {
-                  "type": "key-value",
-                  "name": "param_logzioEnrich",
-                  "label": "Fields Enrichment",
-                  "description": "Enrich CloudWatch events with custom fields."
                 }
                ]
              }
