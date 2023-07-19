@@ -60,7 +60,7 @@
           "telemetries": [
             {
               "type": "METRICS",
-              "hint": "Switch the toggle on if you want send metrics to logz.io from Google Cloud Sevices",
+              "hint": "",
               "params": [
                 {
                   "type": "text",
