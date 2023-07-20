@@ -101,7 +101,7 @@
                       "label": "All Services",
                       "value": "all_services"
                     },
-                    {
+                     {
                       "label": "Microsoft.AAD/DomainServices",
                       "value": "Microsoft.AAD/DomainServices"
                     },
@@ -120,6 +120,514 @@
                     {
                       "label": "Microsoft.App/managedEnvironments",
                       "value": "Microsoft.App/managedEnvironments"
+                    },
+                    {
+                      "label": "Microsoft.AppConfiguration/configurationStores",
+                      "value": "Microsoft.AppConfiguration/configurationStores"
+                    },
+                    {
+                      "label": "Microsoft.AppPlatform/Spring",
+                      "value": "Microsoft.AppPlatform/Spring"
+                    },
+                    {
+                      "label": "Microsoft.Automation/automationAccounts",
+                      "value": "Microsoft.Automation/automationAccounts"
+                    },
+                    {
+                      "label": "microsoft.avs/privateClouds",
+                      "value": "microsoft.avs/privateClouds"
+                    },
+                    {
+                      "label": "microsoft.azuresphere/catalogs",
+                      "value": "microsoft.azuresphere/catalogs"
+                    },
+                    {
+                      "label": "Microsoft.Batch/batchaccounts",
+                      "value": "Microsoft.Batch/batchaccounts"
+                    },
+                    {
+                      "label": "microsoft.bing/accounts",
+                      "value": "microsoft.bing/accounts"
+                    },
+                    {
+                      "label": "microsoft.botservice/botservices",
+                      "value": "microsoft.botservice/botservices"
+                    },
+                    {
+                      "label": "Microsoft.BotService/botServices/channels",
+                      "value": "Microsoft.BotService/botServices/channels"
+                    },
+                    {
+                      "label": "Microsoft.BotService/botServices/connections",
+                      "value": "Microsoft.BotService/botServices/connections"
+                    },
+                    {
+                      "label": "Microsoft.BotService/checknameavailability",
+                      "value": "Microsoft.BotService/checknameavailability"
+                    },
+                    {
+                      "label": "Microsoft.BotService/hostsettings",
+                      "value": "Microsoft.BotService/hostsettings"
+                    },
+                    {
+                      "label": "Microsoft.BotService/listauthserviceproviders",
+                      "value": "Microsoft.BotService/listauthserviceproviders"
+                    },
+                    {
+                      "label": "Microsoft.BotService/listqnamakerendpointkeys",
+                      "value": "Microsoft.BotService/listqnamakerendpointkeys"
+                    },
+                    {
+                      "label": "Microsoft.Cache/redis",
+                      "value": "Microsoft.Cache/redis"
+                    },
+                    {
+                      "label": "Microsoft.Cache/redisEnterprise",
+                      "value": "Microsoft.Cache/redisEnterprise"
+                    },
+                    {
+                      "label": "Microsoft.Cdn/cdnwebapplicationfirewallpolicies",
+                      "value": "Microsoft.Cdn/cdnwebapplicationfirewallpolicies"
+                    },
+                    {
+                      "label": "Microsoft.Cdn/profiles",
+                      "value": "Microsoft.Cdn/profiles"
+                    },
+                    {
+                      "label": "Microsoft.ClassicCompute/domainNames/slots/roles",
+                      "value": "Microsoft.ClassicCompute/domainNames/slots/roles"
+                    },
+                    {
+                      "label": "Microsoft.ClassicCompute/virtualMachines",
+                      "value": "Microsoft.ClassicCompute/virtualMachines"
+                    },
+                    {
+                      "label": "Microsoft.ClassicStorage/storageAccounts",
+                      "value": "Microsoft.ClassicStorage/storageAccounts"
+                    },
+                    {
+                      "label": "Microsoft.ClassicStorage/storageAccounts/blobServices",
+                      "value": "Microsoft.ClassicStorage/storageAccounts/blobServices"
+                    },
+                    {
+                      "label": "Microsoft.ClassicStorage/storageAccounts/fileServices",
+                      "value": "Microsoft.ClassicStorage/storageAccounts/fileServices"
+                    },
+                    {
+                      "label": "Microsoft.ClassicStorage/storageAccounts/queueServices",
+                      "value": "Microsoft.ClassicStorage/storageAccounts/queueServices"
+                    },
+                    {
+                      "label": "Microsoft.ClassicStorage/storageAccounts/tableServices",
+                      "value": "Microsoft.ClassicStorage/storageAccounts/tableServices"
+                    },
+                    {
+                      "label": "Microsoft.Cloudtest/hostedpools",
+                      "value": "Microsoft.Cloudtest/hostedpools"
+                    },
+                    {
+                      "label": "Microsoft.Cloudtest/pools",
+                      "value": "Microsoft.Cloudtest/pools"
+                    },
+                    {
+                      "label": "Microsoft.ClusterStor/nodes",
+                      "value": "Microsoft.ClusterStor/nodes"
+                    },
+                    {
+                      "label": "Microsoft.CodeSigning/codesigningaccounts",
+                      "value": "Microsoft.CodeSigning/codesigningaccounts"
+                    },
+                    {
+                      "label": "Microsoft.CognitiveServices/accounts",
+                      "value": "Microsoft.CognitiveServices/accounts"
+                    },
+                    {
+                      "label": "Microsoft.Communication/CommunicationServices",
+                      "value": "Microsoft.Communication/CommunicationServices"
+                    },
+                    {
+                      "label": "Microsoft.Compute/cloudservices",
+                      "value": "Microsoft.Compute/cloudservices"
+                    },
+                    {
+                      "label": "Microsoft.Compute/cloudServices/roles",
+                      "value": "Microsoft.Compute/cloudServices/roles"
+                    },
+                    {
+                      "label": "microsoft.compute/disks",
+                      "value": "microsoft.compute/disks"
+                    },
+                    {
+                      "label": "Microsoft.Compute/virtualMachines",
+                      "value": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                      "label": "Microsoft.Compute/virtualmachineScaleSets",
+                      "value": "Microsoft.Compute/virtualmachineScaleSets"
+                    },
+                    {
+                      "label": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines",
+                      "value": "Microsoft.Compute/virtualMachineScaleSets/virtualMachines"
+                    },
+                    {
+                      "label": "Microsoft.ConnectedCache/CacheNodes",
+                      "value": "Microsoft.ConnectedCache/CacheNodes"
+                    },
+                    {
+                      "label": "Microsoft.ConnectedCache/ispCustomers",
+                      "value": "Microsoft.ConnectedCache/ispCustomers"
+                    },
+                    {
+                      "label": "Microsoft.ConnectedVehicle/platformAccounts",
+                      "value": "Microsoft.ConnectedVehicle/platformAccounts"
+                    },
+                    {
+                      "label": "Microsoft.ContainerInstance/containerGroups",
+                      "value": "Microsoft.ContainerInstance/containerGroups"
+                    },
+                    {
+                      "label": "Microsoft.ContainerInstance/containerScaleSets",
+                      "value": "Microsoft.ContainerInstance/containerScaleSets"
+                    },
+                    {
+                      "label": "Microsoft.ContainerRegistry/registries",
+                      "value": "Microsoft.ContainerRegistry/registries"
+                    },
+                    {
+                      "label": "Microsoft.ContainerService/managedClusters",
+                      "value": "Microsoft.ContainerService/managedClusters"
+                    },
+                    {
+                      "label": "Microsoft.CustomProviders/resourceproviders",
+                      "value": "Microsoft.CustomProviders/resourceproviders"
+                    },
+                    {
+                      "label": "Microsoft.Dashboard/grafana",
+                      "value": "Microsoft.Dashboard/grafana"
+                    },
+                    {
+                      "label": "Microsoft.DataBoxEdge/dataBoxEdgeDevices",
+                      "value": "Microsoft.DataBoxEdge/dataBoxEdgeDevices"
+                    },
+                    {
+                      "label": "Microsoft.DataBoxEdge/dataBoxEdgeDevices",
+                      "value": "Microsoft.DataBoxEdge/dataBoxEdgeDevices"
+                    },
+                    {
+                      "label": "Microsoft.DataBoxEdge/dataBoxGatewayDevices",
+                      "value": "Microsoft.DataBoxEdge/dataBoxGatewayDevices"
+                    },
+                    {
+                      "label": "Microsoft.DataCatalog/catalogs",
+                      "value": "Microsoft.DataCatalog/catalogs"
+                    },
+                    {
+                      "label": "Microsoft.DataFactory/datafactories",
+                      "value": "Microsoft.DataFactory/datafactories"
+                    },
+                    {
+                      "label": "Microsoft.DataLakeAnalytics/accounts",
+                      "value": "Microsoft.DataLakeAnalytics/accounts"
+                    },
+                    {
+                      "label": "Microsoft.DataLakeStore/accounts",
+                      "value": "Microsoft.DataLakeStore/accounts"
+                    },
+                    {
+                      "label": "Microsoft.DataMigration/services",
+                      "value": "Microsoft.DataMigration/services"
+                    },
+                    {
+                      "label": "Microsoft.DataShare/accounts",
+                      "value": "Microsoft.DataShare/accounts"
+                    },
+                    {
+                      "label": "Microsoft.Devices/IoTHubs",
+                      "value": "Microsoft.Devices/IoTHubs"
+                    },
+                    {
+                      "label": "Microsoft.DevSpaces/Controllers",
+                      "value": "Microsoft.DevSpaces/Controllers"
+                    },
+                    {
+                      "label": "Microsoft.DevTestLab/labs",
+                      "value": "Microsoft.DevTestLab/labs"
+                    },
+                    {
+                      "label": "Microsoft.DocumentDB/databaseAccounts",
+                      "value": "Microsoft.DocumentDB/databaseAccounts"
+                    },
+                    {
+                      "label": "Microsoft.DomainRegistration/domains",
+                      "value": "Microsoft.DomainRegistration/domains"
+                    },
+                    {
+                      "label": "Microsoft.EventGrid/domains",
+                      "value": "Microsoft.EventGrid/domains"
+                    },
+                    {
+                      "label": "Microsoft.EventHub/namespaces",
+                      "value": "Microsoft.EventHub/namespaces"
+                    },
+                    {
+                      "label": "Microsoft.FabricAdmin/fabricLocations",
+                      "value": "Microsoft.FabricAdmin/fabricLocations"
+                    },
+                    {
+                      "label": "Microsoft.Features/providers",
+                      "value": "Microsoft.Features/providers"
+                    },
+                    {
+                      "label": "Microsoft.HDInsight/clusters",
+                      "value": "Microsoft.HDInsight/clusters"
+                    },
+                    {
+                      "label": "Microsoft.HealthcareApis/services",
+                      "value": "Microsoft.HealthcareApis/services"
+                    },
+                    {
+                      "label": "Microsoft.HybridCompute/machines",
+                      "value": "Microsoft.HybridCompute/machines"
+                    },
+                    {
+                      "label": "Microsoft.Insights/components",
+                      "value": "Microsoft.Insights/components"
+                    },
+                    {
+                      "label": "Microsoft.IoTCentral/applicationTemplates",
+                      "value": "Microsoft.IoTCentral/applicationTemplates"
+                    },
+                    {
+                      "label": "Microsoft.KeyVault/vaults",
+                      "value": "Microsoft.KeyVault/vaults"
+                    },
+                    {
+                      "label": "Microsoft.Kusto/clusters",
+                      "value": "Microsoft.Kusto/clusters"
+                    },
+                    {
+                      "label": "Microsoft.Logic/workflows",
+                      "value": "Microsoft.Logic/workflows"
+                    },
+                    {
+                      "label": "Microsoft.MachineLearningServices/workspaces",
+                      "value": "Microsoft.MachineLearningServices/workspaces"
+                    },
+                    {
+                      "label": "Microsoft.Maintenance/configurationAssignments",
+                      "value": "Microsoft.Maintenance/configurationAssignments"
+                    },
+                    {
+                      "label": "Microsoft.Maintenance/maintenanceConfigurations",
+                      "value": "Microsoft.Maintenance/maintenanceConfigurations"
+                    },
+                    {
+                      "label": "Microsoft.ManagedIdentity/userAssignedIdentities",
+                      "value": "Microsoft.ManagedIdentity/userAssignedIdentities"
+                    },
+                    {
+                      "label": "Microsoft.Management/managementGroups",
+                      "value": "Microsoft.Management/managementGroups"
+                    },
+                    {
+                      "label": "Microsoft.Maps/accounts",
+                      "value": "Microsoft.Maps/accounts"
+                    },
+                    {
+                      "label": "Microsoft.Marketplace/marketplaceRegistrations",
+                      "value": "Microsoft.Marketplace/marketplaceRegistrations"
+                    },
+                    {
+                      "label": "Microsoft.Marketplace/marketplaceSubscriptions",
+                      "value": "Microsoft.Marketplace/marketplaceSubscriptions"
+                    },
+                    {
+                      "label": "Microsoft.Media/mediaServices",
+                      "value": "Microsoft.Media/mediaServices"
+                    },
+                    {
+                      "label": "Microsoft.Network/applicationGateways",
+                      "value": "Microsoft.Network/applicationGateways"
+                    },
+                    {
+                      "label": "Microsoft.Network/azureFirewalls",
+                      "value": "Microsoft.Network/azureFirewalls"
+                    },
+                    {
+                      "label": "Microsoft.Network/bastionHosts",
+                      "value": "Microsoft.Network/bastionHosts"
+                    },
+                    {
+                      "label": "Microsoft.Network/connections",
+                      "value": "Microsoft.Network/connections"
+                    },
+                    {
+                      "label": "Microsoft.Network/ddosProtectionPlans",
+                      "value": "Microsoft.Network/ddosProtectionPlans"
+                    },
+                    {
+                      "label": "Microsoft.Network/dnsZones",
+                      "value": "Microsoft.Network/dnsZones"
+                    },
+                    {
+                      "label": "Microsoft.Network/expressRouteCircuits",
+                      "value": "Microsoft.Network/expressRouteCircuits"
+                    },
+                    {
+                      "label": "Microsoft.Network/expressRouteGateways",
+                      "value": "Microsoft.Network/expressRouteGateways"
+                    },
+                    {
+                      "label": "Microsoft.Network/firewallPolicies",
+                      "value": "Microsoft.Network/firewallPolicies"
+                    },
+                    {
+                      "label": "Microsoft.Network/loadBalancers",
+                      "value": "Microsoft.Network/loadBalancers"
+                    },
+                    {
+                      "label": "Microsoft.Network/localNetworkGateways",
+                      "value": "Microsoft.Network/localNetworkGateways"
+                    },
+                    {
+                      "label": "Microsoft.Network/networkInterfaces",
+                      "value": "Microsoft.Network/networkInterfaces"
+                    },
+                    {
+                      "label": "Microsoft.Network/networkSecurityGroups",
+                      "value": "Microsoft.Network/networkSecurityGroups"
+                    },
+                    {
+                      "label": "Microsoft.Network/networkWatchers",
+                      "value": "Microsoft.Network/networkWatchers"
+                    },
+                    {
+                      "label": "Microsoft.Network/publicIPAddresses",
+                      "value": "Microsoft.Network/publicIPAddresses"
+                    },
+                    {
+                      "label": "Microsoft.Network/routeTables",
+                      "value": "Microsoft.Network/routeTables"
+                    },
+                    {
+                      "label": "Microsoft.Network/serviceEndpointPolicies",
+                      "value": "Microsoft.Network/serviceEndpointPolicies"
+                    },
+                    {
+                      "label": "Microsoft.Network/trafficManagerProfiles",
+                      "value": "Microsoft.Network/trafficManagerProfiles"
+                    },
+                    {
+                      "label": "Microsoft.Network/virtualNetworkGateways",
+                      "value": "Microsoft.Network/virtualNetworkGateways"
+                    },
+                    {
+                      "label": "Microsoft.Network/virtualNetworks",
+                      "value": "Microsoft.Network/virtualNetworks"
+                    },
+                    {
+                      "label": "Microsoft.NotificationHubs/namespaces/notificationHubs",
+                      "value": "Microsoft.NotificationHubs/namespaces/notificationHubs"
+                    },
+                    {
+                      "label": "Microsoft.OperationalInsights/workspaces",
+                      "value": "Microsoft.OperationalInsights/workspaces"
+                    },
+                    {
+                      "label": "Microsoft.Portal/dashboards",
+                      "value": "Microsoft.Portal/dashboards"
+                    },
+                    {
+                      "label": "Microsoft.PowerBIDedicated/capacities",
+                      "value": "Microsoft.PowerBIDedicated/capacities"
+                    },
+                    {
+                      "label": "Microsoft.PowerBI/privateLinkServicesForPowerBI",
+                      "value": "Microsoft.PowerBI/privateLinkServicesForPowerBI"
+                    },
+                    {
+                      "label": "Microsoft.RecoveryServices/vaults",
+                      "value": "Microsoft.RecoveryServices/vaults"
+                    },
+                    {
+                      "label": "Microsoft.Redis/cache",
+                      "value": "Microsoft.Redis/cache"
+                    },
+                    {
+                      "label": "Microsoft.Relay/namespaces",
+                      "value": "Microsoft.Relay/namespaces"
+                    },
+                    {
+                      "label": "Microsoft.ResourceGraph/queries",
+                      "value": "Microsoft.ResourceGraph/queries"
+                    },
+                    {
+                      "label": "Microsoft.Resources/deployments",
+                      "value": "Microsoft.Resources/deployments"
+                    },
+                    {
+                      "label": "Microsoft.Resources/tags",
+                      "value": "Microsoft.Resources/tags"
+                    },
+                    {
+                      "label": "Microsoft.Search/searchServices",
+                      "value": "Microsoft.Search/searchServices"
+                    },
+                    {
+                      "label": "Microsoft.Security/securityContacts",
+                      "value": "Microsoft.Security/securityContacts"
+                    },
+                    {
+                      "label": "Microsoft.ServiceBus/namespaces",
+                      "value": "Microsoft.ServiceBus/namespaces"
+                    },
+                    {
+                      "label": "Microsoft.ServiceFabric/clusters",
+                      "value": "Microsoft.ServiceFabric/clusters"
+                    },
+                    {
+                      "label": "Microsoft.SignalRService/SignalR",
+                      "value": "Microsoft.SignalRService/SignalR"
+                    },
+                    {
+                      "label": "Microsoft.Sql/servers",
+                      "value": "Microsoft.Sql/servers"
+                    },
+                    {
+                      "label": "Microsoft.Storage/storageAccounts",
+                      "value": "Microsoft.Storage/storageAccounts"
+                    },
+                    {
+                      "label": "Microsoft.StorageSync/storageSyncServices",
+                      "value": "Microsoft.StorageSync/storageSyncServices"
+                    },
+                    {
+                      "label": "Microsoft.StreamAnalytics/streamingJobs",
+                      "value": "Microsoft.StreamAnalytics/streamingJobs"
+                    },
+                    {
+                      "label": "Microsoft.Subscription/subscriptionDefinitions",
+                      "value": "Microsoft.Subscription/subscriptionDefinitions"
+                    },
+                    {
+                      "label": "Microsoft.TimeSeriesInsights/environments",
+                      "value": "Microsoft.TimeSeriesInsights/environments"
+                    },
+                    {
+                      "label": "Microsoft.VMwareCloudSimple/virtualMachines",
+                      "value": "Microsoft.VMwareCloudSimple/virtualMachines"
+                    },
+                    {
+                      "label": "Microsoft.Web/certificates",
+                      "value": "Microsoft.Web/certificates"
+                    },
+                    {
+                      "label": "Microsoft.Web/serverfarms",
+                      "value": "Microsoft.Web/serverfarms"
+                    },
+                    {
+                      "label": "Microsoft.Web/sites",
+                      "value": "Microsoft.Web/sites"
                     }
                   ],
                   "value": [
