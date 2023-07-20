@@ -1,5 +1,5 @@
 {
-  "name": "Azure",
+  "name": "Cloud Fetchers",
   "label": "Azure",
   "type": "FETCHER",
   "subtypes": [
@@ -13,9 +13,9 @@
       "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
       "datasources": [
         {
-          "name": "Azure",
+          "name": "Azure_Metrics",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
-          "description": "",
+          "description": "Ship your Azure metrics to logz.io",
           "type": "AzureMonitorMetricsFetcher",
           "information": [
             {
@@ -93,7 +93,7 @@
                   "type": "multi-select",
                   "name": "resourceTypeList",
                   "label": "Resource Type",
-                  "description": "Send logs that include any of these resource types.",
+                  "description": "Send metrics that include any of these resource types.",
                   "required": true,
                   "hint": "To send all resource types of the project select 'All services'",
                   "options": [
