@@ -1,7 +1,7 @@
 mac_run: |
   #!/bin/bash
   function create_otel_receiver {
-    $YQ_BIN -i 'del(.receiver.hostmetrics/NAME.scrapers.process)' "$OTEL_RECEIVERS_DIR/hostmetrics.yaml"
+    :
   }
 linux_run: |
   #!/bin/bash
@@ -19,6 +19,9 @@ receiver:
     collection_interval: 15s
     scrapers:
       cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
       disk:
       load:
       filesystem:
@@ -27,4 +30,5 @@ receiver:
       paging:
       process:
         mute_process_name_error: true
-
+        mute_process_exe_error: true
+        mute_process_io_error: true

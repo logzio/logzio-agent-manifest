@@ -56,7 +56,7 @@ JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linu
 # Url for downloading yq binary
 YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.33.2/yq_linux_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
-OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.56.1/otelcol-logzio-linux_amd64.tar.gz'
+OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.81.0/otelcol-contrib_0.81.0_linux_amd64.tar.gz'
 # Url for downloading eksctl tar.gz
 EKSCTL_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Linux_amd64.tar.gz'
 # Url for AWS SQS
@@ -74,7 +74,7 @@ EKSCTL_BIN="$LOGZIO_TEMP_DIR/eksctl"
 # OTEL function file
 OTEL_FUNCTION_FILE="$LOGZIO_TEMP_DIR/otel_function.bash"
 # OTEL collector binary file name
-OTEL_COLLECTOR_BIN_NAME='otelcol-logzio-linux_amd64'
+OTEL_COLLECTOR_BIN_NAME='otelcol-contrib'
 # OTEL collector binary file path
 OTEL_COLLECTOR_BIN="$LOGZIO_OTEL_COLLECTOR_DIR/$OTEL_COLLECTOR_BIN_NAME"
 # OTEL config file name
