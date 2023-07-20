@@ -45,7 +45,7 @@
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your computer.",
               "otel": {
                 "receivers": ["hostmetrics"],
-                "processors": ["resourcedetection_system", "attributes_agent"]
+                "processors": ["resourcedetection_system", "attributes_agent", "filter"]
 				      },
               "params": [],
               "dashboards": [
