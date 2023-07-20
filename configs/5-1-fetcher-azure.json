@@ -14,7 +14,7 @@
       "datasources": [
         {
           "name": "Azure",
-          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
           "description": "",
           "type": "AzureMonitorMetricsFetcher",
           "information": [
