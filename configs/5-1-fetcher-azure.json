@@ -75,7 +75,7 @@
                   "type": "text",
                   "name": "resource.group.id",
                   "label": "Resource group name",
-                  "required": true,
+                  "required": false,
                   "description": "",
                   "hint": "",
                   "value": ""
@@ -84,7 +84,7 @@
                   "type": "text",
                   "name": "tags",
                   "label": "Tags",
-                  "required": true,
+                  "required": false,
                   "description": "",
                   "hint": "",
                   "value": ""
@@ -94,7 +94,7 @@
                   "name": "resourceTypeList",
                   "label": "Resource Type",
                   "description": "Send metrics that include any of these resource types.",
-                  "required": true,
+                  "required": false,
                   "hint": "To send all resource types of the project select 'All services'",
                   "options": [
                     {
