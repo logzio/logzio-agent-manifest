@@ -1,6 +1,6 @@
 {
   "name": "Cloud Fetchers",
-  "label": "Azure",
+  "label": "Cloud Fetchers",
   "type": "FETCHER",
   "subtypes": [
     {
