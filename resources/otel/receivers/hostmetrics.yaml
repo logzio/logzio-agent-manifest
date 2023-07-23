@@ -26,6 +26,9 @@ receiver:
       load:
       filesystem:
       memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
       network:
       paging:
       process:
