@@ -1,124 +1,133 @@
 {
-  "name": "Azure",
-  "label": "Azure",
+  "name": "Cloud Fetchers",
+  "label": "Cloud Fetchers",
   "type": "FETCHER",
   "subtypes": [
     {
       "name": "Azure",
-      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
+      "description": "Azure Cloud Fetcher",
       "supportedOs": [
         "Fetcher"
       ],
       "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
-      "required": false,
       "datasources": [
         {
           "name": "Azure Metrics",
-          "hint": null,
-          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/google-cloud-monitoring.png",
-          "label": "Azure Metrics",
-          "description": "fetcher description",
-          "required": false,
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
+          "description": "Ship your Azure metrics to logz.io",
           "type": "TrialFetcher",
           "information": [
             {
               "variant": "announcement",
               "title": "Important note about data consumption",
-              "text": "Installing this integration may increase your Logz.io costs due to higher data consumption. Learn more in our [documentation](http://google.com). "
+              "text": "Installing this integration may increase your Logz.io costs due to higher data consumption. Learn more in our [documentation](). "
             },
             {
               "variant": "info",
               "title": "Connect your Microsoft Azure app to Logz.io",
-              "text": "To get started with Microsoft Azure and Logz.io, you’ll need to create an app and connect it. See our step-by-step guide."
+              "text": "To get started with Microsoft Azure and Logz.io, you’ll need to create an app and connect it. [See our step-by-step guide]()."
             }
           ],
           "params": [
             {
+              "type": "text",
               "name": "tenant.id",
-              "hint": null,
-              "logo": null,
-              "label": "tenant.id",
-              "description": "exercitationem qui inventore",
+              "label": "Tenant ID",
               "required": true,
-              "type": "text",
-              "value": "tenantid"
+              "description": "",
+              "hint": "",
+              "value": ""
             },
             {
+              "type": "text",
               "name": "client.id",
-              "hint": null,
-              "logo": null,
-              "label": "client.id",
-              "description": "error neque velit",
+              "label": "Client ID",
               "required": true,
-              "type": "text",
-              "value": "clientid"
+              "description": "",
+              "hint": "",
+              "value": ""
             },
             {
-              "name": "client.secret",
-              "hint": null,
-              "logo": null,
-              "label": "client.secret",
-              "description": "eius non inventore",
-              "required": true,
               "type": "text",
-              "value": "clientsecret!1l1-1-"
+              "name": "client.secret",
+              "label": "Client Secret",
+              "required": true,
+              "description": "",
+              "hint": "",
+              "value": ""
             }
           ],
           "telemetries": [
             {
-              "type": "METRICS",
-              "description": "sapiente qui consequatur",
+              "type": "LOG_ANALYTICS",
+              "hint": "",
               "params": [
                 {
+                  "type": "text",
                   "name": "subscription.id",
-                  "hint": null,
-                  "logo": null,
-                  "label": "subscription.id",
-                  "description": "sequi odio placeat",
+                  "label": "Subscription",
                   "required": true,
-                  "type": "text",
-                  "value": "subscription.id"
+                  "description": "",
+                  "hint": "",
+                  "value": ""
                 },
                 {
+                  "type": "text",
                   "name": "resource.group.id",
-                  "hint": null,
-                  "logo": null,
-                  "label": "resource.group.id",
-                  "description": "velit consequatur voluptatem",
-                  "required": true,
-                  "type": "text",
-                  "value": "cloud_fetcher_playground"
+                  "label": "Resource group name",
+                  "required": false,
+                  "description": "",
+                  "hint": "",
+                  "value": ""
                 },
                 {
+                  "type": "text",
                   "name": "tags",
-                  "hint": null,
-                  "logo": null,
-                  "label": "tags",
-                  "description": "amet voluptate adipisci",
-                  "required": true,
-                  "type": "text",
-                  "value": "tag1"
+                  "label": "Tags",
+                  "required": false,
+                  "description": "",
+                  "hint": "",
+                  "value": ""
                 },
                 {
-                  "name": "resourceTypeList",
-                  "hint": null,
-                  "logo": null,
-                  "label": "resourceTypeList",
-                  "description": "aut aliquid veniam",
-                  "required": true,
                   "type": "multi-select",
+                  "name": "resourceTypeList",
+                  "label": "Resource Type",
+                  "description": "Send metrics that include any of these resource types.",
+                  "required": false,
+                  "hint": "To send all resource types of the project select 'All services'",
                   "options": [
                     {
                       "label": "All Services",
                       "value": "all_services"
+                    },
+                    {
+                      "label": "Microsoft.AAD/DomainServices",
+                      "value": "Microsoft.AAD/DomainServices"
+                    },
+                    {
+                      "label": "Microsoft.AnalysisServices/servers",
+                      "value": "Microsoft.AnalysisServices/servers"
+                    },
+                    {
+                      "label": "Microsoft.ApiManagement/service",
+                      "value": "Microsoft.ApiManagement/service"
+                    },
+                    {
+                      "label": "Microsoft.App/containerapps",
+                      "value": "Microsoft.App/containerapps"
+                    },
+                    {
+                      "label": "Microsoft.App/managedEnvironments",
+                      "value": "Microsoft.App/managedEnvironments"
                     }
                   ],
                   "value": [
                     "all_services"
                   ]
                 }
-              ],
-              "dashboards": []
+              ]
             }
           ]
         }
