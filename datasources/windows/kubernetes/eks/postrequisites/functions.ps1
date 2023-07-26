@@ -15,9 +15,9 @@ function Test-AreAllPodsRunningOrCompleted {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Retries = 18
+    $local:Retries = 3
     while ($Retries -ne 0) {
-        $local:PodStatuses = kubectl get pods -n monitoring --no-headers -o custom-columns=":.status.phase" 2>$script:TaskErrorFile
+        $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns="NAME:metadata.name,STATUS:.status.phase" 2>$script:TaskErrorFile
         if ($LASTEXITCODE -ne 0) {
             $Message = "postrequisites.ps1 ($ExitCode): error getting pod statuses: $(Get-TaskErrorMessage)"
             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
@@ -26,9 +26,10 @@ function Test-AreAllPodsRunningOrCompleted {
             return $ExitCode
         }
 
-        $local:BadStatuses = $PodStatuses | Select-String -Pattern "Running|Completed|Succeeded" -NotMatch
+        $local:RelevantPods = $Pods | Select-String -Pattern "scan-vulnerabilityreport" -NotMatch
+        $local:BadPods = $RelevantPods | Select-String -Pattern "Running|Completed|Succeeded" -NotMatch
 
-        if ([string]::IsNullOrEmpty($BadStatuses)) {
+        if ([string]::IsNullOrEmpty($BadPods)) {
             $Message = 'All pods are running or completed'
             Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPostrequisites $script:LogScriptPostrequisites $FuncName $script:AgentId $script:Platfrom $script:Subtype
             Write-Log $script:LogLevelDebug $Message
@@ -62,7 +63,7 @@ function Test-IsAnyPodPending {
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = ''
-    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns=":.metadata.name,:.status.phase" 2>$script:TaskErrorFile | ForEach-Object {$_ -replace '\s+', ' '}
+    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns="NAME:.metadata.name,STATUS:.status.phase" 2>$script:TaskErrorFile | ForEach-Object {$_ -replace '\s+', ' '}
     if ($LASTEXITCODE -ne 0) {
         Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
         
@@ -73,7 +74,9 @@ function Test-IsAnyPodPending {
         return $ExitCode
     }
 
-    foreach ($Pod in $Pods) {
+    $local:RelevantPods = $Pods | Select-String -Pattern "scan-vulnerabilityreport" -NotMatch
+
+    foreach ($Pod in $RelevantPods) {
         $local:PodSplitted = ForEach-Object {$Pod -split ' '}
         $local:PodName = $PodSplitted[0]
         $local:PodStatus = $PodSplitted[1]
@@ -138,7 +141,7 @@ function Test-IsAnyPodFailed {
     Write-Log $script:LogLevelDebug $Message
 
     $local:Err = ''
-    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns=':.metadata.name,:.status.phase' 2>$script:TaskErrorFile | ForEach-Object {$_ -replace '\s+', ' '}
+    $local:Pods = kubectl get pods -n monitoring --no-headers -o custom-columns='NAME:.metadata.name,STATUS:.status.phase' 2>$script:TaskErrorFile | ForEach-Object {$_ -replace '\s+', ' '}
     if ($LASTEXITCODE -ne 0) {
         Write-TaskPostRun "`$script:IsPostrequisiteFailed = `$true"
 
@@ -149,7 +152,9 @@ function Test-IsAnyPodFailed {
         return $ExitCode
     }
 
-    foreach ($Pod in $Pods) {
+    $local:RelevantPods = $Pods | Select-String -Pattern "scan-vulnerabilityreport" -NotMatch
+
+    foreach ($Pod in $RelevantPods) {
         $local:PodSplitted = ForEach-Object {$Pod -split ' '}
         $local:PodName = $PodSplitted[0]
         $local:PodStatus = $PodSplitted[1]
