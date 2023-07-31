@@ -19,7 +19,7 @@ function are_all_pods_running_or_completed {
     local retries=18
     while [[ $retries -ne 0 ]]; do
         local pod_statuses
-        pod_statuses=$(kubectl get pods -n monitoring --no-headers -o custom-columns=':.status.phase' 2>"$TASK_ERROR_FILE")
+        pod_statuses=$(kubectl get pods -n monitoring --no-headers -o custom-columns='NAME:.metadata.name,STATUS:.status.phase' 2>"$TASK_ERROR_FILE")
         if [[ $? -ne 0 ]]; then
             local err=$(get_task_error_message)
             if [[ "$err" == *"ERROR"* ]]; then
@@ -31,8 +31,9 @@ function are_all_pods_running_or_completed {
             fi
         fi
 
-        local bad_statuses=$(echo -e "$pod_statuses" | grep -v -e Running -e Completed -e Succeeded)
-        if [[ -z "$bad_statuses" ]]; then
+        local relevant_pods=$(echo -e "$pods" | grep -v -e scan-vulnerabilityreport)
+        local bad_pods=$(echo -e "$relevant_pods" | grep -v -e Running -e Completed -e Succeeded)
+        if [[ -z "$bad_pods" ]]; then
             message='All pods are running or completed'
             send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_POSTREQUISITES" "$LOG_SCRIPT_POSTREQUISITES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_log "$LOG_LEVEL_DEBUG" "$message"
@@ -66,7 +67,7 @@ function is_any_pod_pending {
 
     local err=''
     local pods
-    pods=$(kubectl get pods -n monitoring --no-headers -o custom-columns=':.metadata.name,:.status.phase' 2>"$TASK_ERROR_FILE" | tr -s ' ')
+    pods=$(kubectl get pods -n monitoring --no-headers -o custom-columns='NAME:.metadata.name,STATUS:.status.phase' 2>"$TASK_ERROR_FILE" | tr -s ' ')
     if [[ $? -ne 0 ]]; then
         local err=$(get_task_error_message)
         if [[ "$err" == *"ERROR"* ]]; then
@@ -80,7 +81,9 @@ function is_any_pod_pending {
         fi
     fi
 
-    while read -r pod; do
+    local relevant_pods=$(echo -e "$pods" | grep -v -e scan-vulnerabilityreport)
+
+    while read -r relevant_pods; do
         local pod_name=$(echo -e "$pod" | cut -d ' ' -f1)
         local pod_status=$(echo -e "$pod" | cut -d ' ' -f2)
 
@@ -152,7 +155,7 @@ function is_any_pod_failed {
 
     local err=''
     local pods
-    pods=$(kubectl get pods -n monitoring --no-headers -o custom-columns=':.metadata.name,:.status.phase' 2>"$TASK_ERROR_FILE" | tr -s ' ')
+    pods=$(kubectl get pods -n monitoring --no-headers -o custom-columns='NAME:.metadata.name,STATUS:.status.phase' 2>"$TASK_ERROR_FILE" | tr -s ' ')
     if [[ $? -ne 0 ]]; then
         local err=$(get_task_error_message)
         if [[ "$err" == *"ERROR"* ]]; then
@@ -166,7 +169,9 @@ function is_any_pod_failed {
         fi
     fi
 
-    while read -r pod; do
+    local relevant_pods=$(echo -e "$pods" | grep -v -e scan-vulnerabilityreport)
+
+    while read -r relevant_pods; do
         local pod_name=$(echo -e "$pod" | cut -d ' ' -f1)
         local pod_status=$(echo -e "$pod" | cut -d ' ' -f2)
 

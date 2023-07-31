@@ -34,7 +34,8 @@ $script:KubernetesResourcesDir = "$script:LogzioResourcesDir\k8s"
 
 ## Agent files
 # Log file path
-$script:AgentLogFile = "$script:LogzioAppDataDir\logzio_agent.log"
+$script:AgentLogFileTimestamp = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss'
+$script:AgentLogFile = "$script:LogzioAppDataDir\logzio_agent$script:AgentLogFileTimestamp.log"
 # Task post run script file path
 $script:TaskPostRunFile = "$script:LogzioTempDir\task_post_run.ps1"
 # Task error file path

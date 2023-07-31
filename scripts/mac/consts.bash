@@ -44,7 +44,8 @@ KUBERNETES_RESOURCES_DIR="$LOGZIO_RESOURCES_DIR/k8s"
 
 ## Agent files
 # Log file path
-AGENT_LOG_FILE="$LOGZIO_OPT_DIR/logzio_agent.log"
+AGENT_LOG_TIMESTAMP=$(date +'%Y-%m-%dT%H:%M:%S')
+AGENT_LOG_FILE="$LOGZIO_OPT_DIR/logzio_agent$AGENT_LOG_TIMESTAMP.log"
 # Task post run script file path
 TASK_POST_RUN_FILE="$LOGZIO_TEMP_DIR/task_post_run.bash"
 # Task error file path
