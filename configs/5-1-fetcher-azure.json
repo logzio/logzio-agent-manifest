@@ -98,9 +98,6 @@
                   "required": false,
                   "allowCustom": true,
                   "hint": "To send all resource types of the project select 'All services'",
-                  "options": [
-
-                  ],
                   "value": [
 
                   ]
