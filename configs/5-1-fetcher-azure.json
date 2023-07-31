@@ -81,6 +81,30 @@
                   "value": ""
                 },
                 {
+                  "type": "string-list",
+                  "name": "logSources",
+                  "label": "Resource group name [string-list]",
+                  "placeholder": "i.e. /var/log/*.log",
+                  "required": true,
+                  "description": "The paths of log files to collect.",
+                  "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
+                  "value": []
+                },
+                {
+                  "type": "multi-select",
+                  "name": "resourceTypeList",
+                  "label": "Resource group name [multi-select]",
+                  "description": "Send metrics that include any of these resource types.",
+                  "required": false,
+                  "hint": "To send all resource types of the project select 'All services'",
+                  "options": [
+
+                  ],
+                  "value": [
+
+                  ]
+                },
+                {
                   "type": "text",
                   "name": "tags",
                   "label": "Tags",
