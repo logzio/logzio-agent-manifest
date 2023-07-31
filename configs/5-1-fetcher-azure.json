@@ -72,13 +72,14 @@
                   "value": ""
                 },
                 {
-                  "type": "text",
-                  "name": "resource.group.id",
-                  "label": "Resource group name",
+                  "type": "multi-select",
+                  "name": "resource.group.ids",
+                  "label": "Resource group names",
                   "required": false,
                   "description": "",
                   "hint": "",
-                  "value": ""
+                  "value": [],
+                  "allowCustom": true
                 },
                 {
                   "type": "text",
