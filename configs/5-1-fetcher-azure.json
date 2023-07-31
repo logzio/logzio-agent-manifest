@@ -92,7 +92,7 @@
                 },
                 {
                   "type": "multi-select",
-                  "name": "resourceTypeList",
+                  "name": "multi-select-1234",
                   "label": "Resource group name [multi-select]",
                   "description": "Send metrics that include any of these resource types.",
                   "required": false,
