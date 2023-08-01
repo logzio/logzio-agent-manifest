@@ -1,0 +1,137 @@
+{
+  "name": "Cloud Fetchers",
+  "label": "Cloud Fetchers",
+  "type": "FETCHER",
+  "subtypes": [
+    {
+      "name": "Azure",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
+      "description": "Azure Cloud Fetcher",
+      "supportedOs": [
+        "Fetcher"
+      ],
+      "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
+      "datasources": [
+        {
+          "name": "Azure Metrics",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
+          "description": "Ship your Azure metrics to logz.io",
+          "type": "TrialFetcher",
+          "information": [
+            {
+              "variant": "announcement",
+              "title": "Important note about data consumption",
+              "text": "Installing this integration may increase your Logz.io costs due to higher data consumption. Learn more in our [documentation](). "
+            },
+            {
+              "variant": "info",
+              "title": "Connect your Microsoft Azure app to Logz.io",
+              "text": "To get started with Microsoft Azure and Logz.io, you’ll need to create an app and connect it. [See our step-by-step guide]()."
+            }
+          ],
+          "params": [
+            {
+              "type": "text",
+              "name": "tenant.id",
+              "label": "Tenant ID",
+              "required": true,
+              "description": "",
+              "hint": "",
+              "value": ""
+            },
+            {
+              "type": "text",
+              "name": "client.id",
+              "label": "Client ID",
+              "required": true,
+              "description": "",
+              "hint": "",
+              "value": ""
+            },
+            {
+              "type": "text",
+              "name": "client.secret",
+              "label": "Client Secret",
+              "required": true,
+              "description": "",
+              "hint": "",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "",
+              "params": [
+                {
+                  "type": "text",
+                  "name": "subscription.id",
+                  "label": "Subscription",
+                  "required": true,
+                  "description": "",
+                  "hint": "",
+                  "value": ""
+                },
+                {
+                  "type": "text",
+                  "name": "resource.group.id",
+                  "label": "Resource group name",
+                  "required": false,
+                  "description": "",
+                  "hint": "",
+                  "value": ""
+                },
+                {
+                  "type": "text",
+                  "name": "tags",
+                  "label": "Tags",
+                  "required": false,
+                  "description": "",
+                  "hint": "",
+                  "value": ""
+                },
+                {
+                  "type": "multi-select",
+                  "name": "resourceTypeList",
+                  "label": "Resource Type",
+                  "description": "Send metrics that include any of these resource types.",
+                  "required": false,
+                  "hint": "To send all resource types of the project select 'All services'",
+                  "options": [
+                    {
+                      "label": "All Services",
+                      "value": "all_services"
+                    },
+                    {
+                      "label": "Microsoft.AAD/DomainServices",
+                      "value": "Microsoft.AAD/DomainServices"
+                    },
+                    {
+                      "label": "Microsoft.AnalysisServices/servers",
+                      "value": "Microsoft.AnalysisServices/servers"
+                    },
+                    {
+                      "label": "Microsoft.ApiManagement/service",
+                      "value": "Microsoft.ApiManagement/service"
+                    },
+                    {
+                      "label": "Microsoft.App/containerapps",
+                      "value": "Microsoft.App/containerapps"
+                    },
+                    {
+                      "label": "Microsoft.App/managedEnvironments",
+                      "value": "Microsoft.App/managedEnvironments"
+                    }
+                  ],
+                  "value": [
+                    "all_services"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
