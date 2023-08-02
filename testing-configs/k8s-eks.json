@@ -11,6 +11,7 @@
       "description": "AWS Kubernetes Service",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Mac", "Windows", "Linux", "Helm"],
+      "What": "no",
       "datasources": [
         {
           "name": "Kubernetes",
