@@ -12,7 +12,7 @@
       "label": "EKS",
       "description": "AWS Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
-      "supportedOs": ["Mac", "Windows", "Linux", "Helm"],
+      "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
       "capabilities": ["SPM"],
       "datasources": [
         {
