@@ -594,6 +594,7 @@ function Invoke-Task {
     $local:Job = Start-ThreadJob -ScriptBlock {
         $ProgressPreference = 'SilentlyContinue'
         $WarningPreference = 'SilentlyContinue'
+        $script:AgentLogFileTimestamp = $using:AgentLogFileTimestamp
 
         try {
             . $using:ConstsFile -ErrorAction Stop
