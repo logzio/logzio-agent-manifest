@@ -79,7 +79,8 @@
                   "description": "",
                   "hint": "",
                   "value": [],
-                  "allowCustom": true
+                  "allowCustom": true,
+                  "noOptionsMessage": "Enter resource group name"
                 },
                 {
                   "type": "text",
