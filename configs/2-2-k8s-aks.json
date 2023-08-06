@@ -10,7 +10,7 @@
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aks.svg",
       "label": "AKS",
       "description": "Azure Kubernetes",
-      "supportedOs": ["Mac", "Windows", "Linux"],
+      "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
       "capabilities": ["SPM"],
       "datasources": [
         {
