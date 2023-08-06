@@ -12,7 +12,7 @@
       },
       {
         "template": "  --set logzio-fluentd.fargateLogRouter.enabled=true \\",
-        "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')]"
+        "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
       },
       {
         "template": "  --set logzio-fluentd.env_id='{{value}}' \\",
@@ -43,11 +43,11 @@
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.eks=true \\",
         "condition":
-        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')]"
+        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.collector.mode=standalone \\",
-        "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')]"
+        "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
       }
     ]
   },
