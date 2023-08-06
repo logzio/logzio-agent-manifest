@@ -2,7 +2,7 @@
   { "template": "helm install -n monitoring \\" },
   {
     "template": "  --set logs.enabled=true \\",
-    "condition": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='LOG_ANALYTICS')]",
+    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='LOG_ANALYTICS')]",
     "conditionalTemplates": [
       {
         "template": "  --set logzio-fluentd.secrets.logzioShippingToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
@@ -12,22 +12,22 @@
       },
       {
         "template": "  --set logzio-fluentd.fargateLogRouter.enabled=true \\",
-        "condition": "$[?(@.name=='EKS')].datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
+        "targetElement": "$[?(@.name=='EKS')].datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
       },
       {
         "template": "  --set logzio-fluentd.env_id='{{value}}' \\",
-        "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
+        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
         "keepAsPlaceholder": true
       }
     ]
   },
   {
     "template": "  --set metricsOrTraces.enabled=true",
-    "condition": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS' || @.type=='TRACING')]"
+    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS' || @.type=='TRACING')]"
   },
   {
     "template": "  --set logzio-k8s-telemetry.metrics.enabled=true \\",
-    "condition": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]",
+    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]",
     "conditionalTemplates": [
       {
         "template": "  --set logzio-k8s-telemetry.secrets.MetricsToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
@@ -37,33 +37,36 @@
       },
       {
         "template": "  --set logzio-k8s-telemetry.secrets.p8s_logzio_name='{{value}}' \\",
-        "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
+        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
         "keepAsPlaceholder": true
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.eks=true \\",
-        "condition":
-        "$[?(@.name=='EKS')].datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+        "condition": "$[?(@=='EKS')]",
+        "targetElement":
+        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.aks=true \\",
-        "condition":
+        "condition": "$[?(@=='AKS')]",
+        "targetElement":
         "$[?(@.name=='AKS')].datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.gke=true \\",
-        "condition":
+        "condition": "$[?(@=='GKE')]",
+        "targetElement":
         "$[?(@.name=='GKE')].datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.collector.mode=standalone \\",
-        "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
+        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
       }
     ]
   },
   {
     "template": "  --set logzio-k8s-telemetry.traces.enabled=true \\",
-    "condition": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='TRACING')]",
+    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='TRACING')]",
     "conditionalTemplates": [
       {
         "template": "  --set logzio-k8s-telemetry.secrets.TracesToken='<<LOGZIO_TRACING_SHIPPING_TOKEN>>' \\"
@@ -73,11 +76,11 @@
       },
       {
         "template": "  --set logzio-k8s-telemetry.spm.enabled=true \\",
-        "condition": "capabilities[?(@ == 'SPM')]",
+        "targetElement": "capabilities[?(@ == 'SPM')]",
         "conditionalTemplates": [
           {
             "template": "  --set logzio-k8s-telemetry.secrets.env_id='{{value}}' \\",
-            "condition": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
+            "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
             "keepAsPlaceholder": true
           },
           {
@@ -89,11 +92,11 @@
   },
   {
     "template": "  --set securityReport.enabled=true \\",
-    "condition": "datasources[?(@.name=='Security')]",
+    "targetElement": "datasources[?(@.name=='Security')]",
     "conditionalTemplates": [
       {
         "template": "  --set logzio-trivy.env_id='{{value}}' \\",
-        "condition": "datasources[?(@.name=='Security')].params[?(@.name=='envID')].value",
+        "targetElement": "datasources[?(@.name=='Security')].params[?(@.name=='envID')].value",
         "keepAsPlaceholder": true
       },
       {
