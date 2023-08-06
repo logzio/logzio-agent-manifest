@@ -154,8 +154,6 @@ function Invoke-HelmInstall {
         $Retries--
     }
 
-    helm status logzio-monitoring -n monitoring 2>&1 | Out-Null
-
     $Message = "installer.ps1 ($ExitCode): error running Helm install: $(Get-TaskErrorMessage)"
     Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-TaskPostRun "Write-Error `"$Message`""

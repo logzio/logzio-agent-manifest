@@ -169,7 +169,8 @@ function Write-AgentSupport {
     Write-Host
 }
 
-
+# Agent log file timestamp
+$script:AgentLogFileTimestamp = Get-Date -Format 'yyyy-MM-ddTHH-mm-ss'
 # Agent version
 $script:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
 

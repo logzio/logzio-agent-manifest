@@ -120,8 +120,6 @@ function run_helm_install {
         ((retries--))
     done
 
-    helm status -n monitoring logzio-monitoring >/dev/null 2>"$TASK_ERROR_FILE"
-
     message="installer.bash ($EXIT_CODE): error running Helm install: $(get_task_error_message)"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
     write_task_post_run "write_error \"$message\""
