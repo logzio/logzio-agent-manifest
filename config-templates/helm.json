@@ -43,7 +43,17 @@
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.eks=true \\",
         "condition":
-        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+        "?(@.name=='EKS' && @.datasources[?(@.name=='Kubernetes')]).telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.aks=true \\",
+        "condition":
+        "?(@.name=='AKS' && @.datasources[?(@.name=='Kubernetes')]).telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.gke=true \\",
+        "condition":
+        "?(@.name=='GKE' && @.datasources[?(@.name=='Kubernetes')]).telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.collector.mode=standalone \\",
