@@ -141,12 +141,22 @@ function Send-LogToLogzio {
         MessageBody = $Log
     }
 
-    Start-ThreadJob -ScriptBlock {
-        try {
-            Invoke-WebRequest -Uri $using:SqsUrl -Body $using:Parameters -Method Get -UseBasicParsing | Out-Null
-        }
-        catch {}
-    } | Out-Null
+    if ($script:IsInstallThreadJobModuleFailed) {
+        Start-Job -ScriptBlock {
+            try {
+                Invoke-WebRequest -Uri $using:SqsUrl -Body $using:Parameters -Method Get -UseBasicParsing | Out-Null
+            }
+            catch {}
+        } | Out-Null
+    }
+    else {
+        Start-ThreadJob -ScriptBlock {
+            try {
+                Invoke-WebRequest -Uri $using:SqsUrl -Body $using:Parameters -Method Get -UseBasicParsing | Out-Null
+            }
+            catch {}
+        } | Out-Null
+    }
 }
 
 # Checks if function arguments exist
@@ -590,44 +600,92 @@ function Invoke-Task {
     $local:FrameInterval = 250
     $local:Timeout = 300
     $local:Counter = 0
-    
-    $local:Job = Start-ThreadJob -ScriptBlock {
-        $ProgressPreference = 'SilentlyContinue'
-        $WarningPreference = 'SilentlyContinue'
-        $script:AgentLogFileTimestamp = $using:AgentLogFileTimestamp
+    $local:Job
 
-        try {
-            . $using:ConstsFile -ErrorAction Stop
-            . $using:LogzioTempDir\utils_functions.ps1 --ErrorAction Stop
-        }
-        catch {
-            $local:Message = "utils.ps1 (1): error loading agent scripts: $_"
-            Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptUtilsFunctions $using:FuncName $using:AgentId
-            Write-TaskPostRun "Write-Error `"$Message`""
+    if ($script:IsInstallThreadJobModuleFailed) {
+        $Job = Start-Job -ScriptBlock {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $ProgressPreference = 'SilentlyContinue'
+            $WarningPreference = 'SilentlyContinue'
+            $script:AgentLogFileTimestamp = $using:AgentLogFileTimestamp
 
-            return 1
-        }
-
-        foreach ($ScriptToLoad in $using:ScriptsToLoad) {
             try {
-                . $ScriptToLoad -ErrorAction Stop
+                . $using:ConstsFile -ErrorAction Stop
+                . $using:LogzioTempDir\utils_functions.ps1 --ErrorAction Stop
             }
             catch {
-                $local:Message = "utils.ps1 (2): error loading '$ScriptToLoad' script: $_"
+                $local:Message = "utils.ps1 (1): error loading agent scripts: $_"
                 Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptUtilsFunctions $using:FuncName $using:AgentId
                 Write-TaskPostRun "Write-Error `"$Message`""
 
-                return 2
+                return 1
+            }
+
+            foreach ($ScriptToLoad in $using:ScriptsToLoad) {
+                try {
+                    . $ScriptToLoad -ErrorAction Stop
+                }
+                catch {
+                    $local:Message = "utils.ps1 (2): error loading '$ScriptToLoad' script: $_"
+                    Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptUtilsFunctions $using:FuncName $using:AgentId
+                    Write-TaskPostRun "Write-Error `"$Message`""
+
+                    return 2
+                }
+            }
+
+            $local:FuncArgs = $using:FuncArgs
+            $script:IsInstallThreadJobModuleFailed = $using:IsInstallThreadJobModuleFailed
+
+            if ($FuncArgs.Count -eq 0) {
+                &$using:FuncName
+            } 
+            else {
+                &$using:FuncName $FuncArgs
             }
         }
+    }
+    else {
+        $Job = Start-ThreadJob -ScriptBlock {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+            $ProgressPreference = 'SilentlyContinue'
+            $WarningPreference = 'SilentlyContinue'
+            $script:AgentLogFileTimestamp = $using:AgentLogFileTimestamp
 
-        $local:FuncArgs = $using:FuncArgs
+            try {
+                . $using:ConstsFile -ErrorAction Stop
+                . $using:LogzioTempDir\utils_functions.ps1 --ErrorAction Stop
+            }
+            catch {
+                $local:Message = "utils.ps1 (1): error loading agent scripts: $_"
+                Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptUtilsFunctions $using:FuncName $using:AgentId
+                Write-TaskPostRun "Write-Error `"$Message`""
 
-        if ($FuncArgs.Count -eq 0) {
-            &$using:FuncName
-        } 
-        else {
-            &$using:FuncName $FuncArgs
+                return 1
+            }
+
+            foreach ($ScriptToLoad in $using:ScriptsToLoad) {
+                try {
+                    . $ScriptToLoad -ErrorAction Stop
+                }
+                catch {
+                    $local:Message = "utils.ps1 (2): error loading '$ScriptToLoad' script: $_"
+                    Send-LogToLogzio $using:LogLevelError $Message '' $using:LogScriptUtilsFunctions $using:FuncName $using:AgentId
+                    Write-TaskPostRun "Write-Error `"$Message`""
+
+                    return 2
+                }
+            }
+
+            $local:FuncArgs = $using:FuncArgs
+            $script:IsInstallThreadJobModuleFailed = $using:IsInstallThreadJobModuleFailed
+
+            if ($FuncArgs.Count -eq 0) {
+                &$using:FuncName
+            } 
+            else {
+                &$using:FuncName $FuncArgs
+            }
         }
     }
     $local:JobState = ''

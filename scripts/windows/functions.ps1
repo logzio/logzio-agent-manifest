@@ -25,9 +25,10 @@ function Install-ThreadJobModule {
             Write-Log $script:LogLevelDebug $Message
         }
         catch {
-            $script:IsLoadingAgentScriptsFailed = $true
-            Write-Error "agent.ps1 ($ExitCode): error installing 'ThreadJob' module: $_"
-            Exit $ExitCode
+            $script:IsInstallThreadJobModuleFailed = $true
+            $local:Message = "'ThreadJob' module was not installed successfully. Using regular jobs"
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
+            Write-Log $script:LogLevelDebug $Message
         }
     }
 }
