@@ -12,7 +12,8 @@
       },
       {
         "template": "  --set logzio-fluentd.fargateLogRouter.enabled=true \\",
-        "targetElement": "$[?(@.name=='EKS')].datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
+        "condition": "$[?(@=='EKS')]",
+        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
       },
       {
         "template": "  --set logzio-fluentd.env_id='{{value}}' \\",
@@ -50,16 +51,17 @@
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.aks=true \\",
         "condition": "$[?(@=='AKS')]",
         "targetElement":
-        "$[?(@.name=='AKS')].datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.gke=true \\",
         "condition": "$[?(@=='GKE')]",
         "targetElement":
-        "$[?(@.name=='GKE')].datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.collector.mode=standalone \\",
+        "condition": "$[?(@=='EKS')]",
         "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
       }
     ]
