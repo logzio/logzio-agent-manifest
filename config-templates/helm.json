@@ -37,14 +37,16 @@
         "template": "  --set logzio-k8s-telemetry.secrets.ListenerHost='https://<<LOGZIO_LISTENER_ADDRESS>>:8053' \\"
       },
       {
-        "template": "  --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\",
         "condition": "$[?(@ == 'AKS')]",
-        "keepAsPlaceholder": true
-      },
-      {
-        "template": "  --set logzio-k8s-telemetry.secrets.windowsNodeUsername='{{value}}' \\",
-        "condition": "$[?(@ == 'AKS')]",
-        "keepAsPlaceholder": true
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name == 'isWindows)]",
+        "conditionalTemplates": [
+          {
+            "template": "  --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\"
+          },
+          {
+            "template": "  --set logzio-k8s-telemetry.secrets.windowsNodeUsername='{{value}}' \\"
+          }
+        ]
       },
       {
         "template": "  --set logzio-k8s-telemetry.secrets.p8s_logzio_name='{{value}}' \\",
