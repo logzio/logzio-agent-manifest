@@ -41,10 +41,10 @@
         "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name == 'isWindows')].value",
         "conditionalTemplates": [
           {
-            "template": "  --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\"
+            "template": "  --set logzio-k8s-telemetry.secrets.windowsNodeUsername='{{value}}' \\"
           },
           {
-            "template": "  --set logzio-k8s-telemetry.secrets.windowsNodeUsername='{{value}}' \\"
+            "template": "  --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\"
           }
         ]
       },
