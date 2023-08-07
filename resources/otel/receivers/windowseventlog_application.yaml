@@ -25,9 +25,16 @@ windows_run: |
       Write-Output "error setting type to windowseventlog/application receiver: $($Err[0])"
       return 3
     }
+
+    $local:Err = Add-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\windowseventlog_application.yaml" '.receiver.windowseventlog/application/NAME.exclude_providers' $script:LogzioOtelCollectorServiceName
+    if ($Err.Count -ne 0) {
+      Write-Output "error setting type to windowseventlog/application receiver: $($Err[0])"
+      return 4
+    }
   }
 receiver:
   windowseventlog/application/NAME:
     channel: Application
+    exclude_providers: []
     attributes:
       type:
