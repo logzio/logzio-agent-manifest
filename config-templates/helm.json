@@ -38,11 +38,13 @@
       },
       {
         "template": "   --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\",
-        "condition": "$[?(@ == 'AKS')]"
+        "condition": "$[?(@ == 'AKS')]",
+        "keepAsPlaceholder": true
       },
       {
         "template": "  --set logzio-k8s-telemetry.secrets.windowsNodeUsername='{{value}}' \\",
-        "condition": "$[?(@ == 'AKS')]"
+        "condition": "$[?(@ == 'AKS')]",
+        "keepAsPlaceholder": true
       },
       {
         "template": "  --set logzio-k8s-telemetry.secrets.p8s_logzio_name='{{value}}' \\",
