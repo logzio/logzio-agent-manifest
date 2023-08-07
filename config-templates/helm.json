@@ -37,7 +37,7 @@
         "template": "  --set logzio-k8s-telemetry.secrets.ListenerHost='https://<<LOGZIO_LISTENER_ADDRESS>>:8053' \\"
       },
       {
-        "template": "   --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\",
+        "template": "  --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\",
         "condition": "$[?(@ == 'AKS')]",
         "keepAsPlaceholder": true
       },
