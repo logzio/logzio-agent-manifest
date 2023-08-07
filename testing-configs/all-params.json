@@ -1,0 +1,197 @@
+{
+  "name": "all-params",
+  "label": "All Params",
+  "description": "ut porro est",
+  "subtypes": [
+    {
+      "name": "Enola",
+      "hint": null,
+      "logo": null,
+      "label": "Enola",
+      "description": "laborum in est",
+      "required": false,
+      "datasources": [
+        {
+          "name": "Valentina",
+          "hint": null,
+          "logo": null,
+          "label": "Valentina",
+          "description": "neque ipsam sit",
+          "required": false,
+          "type": null,
+          "information": [],
+          "params": [
+            {
+              "name": "Amber",
+              "hint": null,
+              "logo": null,
+              "label": "Boolean",
+              "description": "deleniti necessitatibus veritatis",
+              "required": false,
+              "type": "boolean",
+              "value": true,
+              "params": [
+                {
+                  "name": "Camryn",
+                  "hint": null,
+                  "logo": null,
+                  "label": "Nested Param (only under booleans)",
+                  "description": "adipisci impedit ut",
+                  "required": false,
+                  "type": "text",
+                  "value": "default_text_value"
+                }
+              ]
+            },
+            {
+              "name": "Golden",
+              "hint": null,
+              "logo": null,
+              "label": "Text",
+              "description": "non sint ut",
+              "required": false,
+              "type": "text",
+              "value": "default_text_value"
+            },
+            {
+              "name": "Hoyt",
+              "hint": null,
+              "logo": null,
+              "label": "Number",
+              "description": "consequatur qui illo",
+              "required": false,
+              "type": "number"
+            },
+            {
+              "name": "Minnie",
+              "hint": null,
+              "logo": null,
+              "label": "Single Select (creatable)",
+              "description": "cupiditate magnam qui",
+              "required": false,
+              "type": "single-select",
+              "allowCustom": true,
+              "options": [
+                {
+                  "label": "default_option1",
+                  "value": "default_option1"
+                },
+                {
+                  "label": "default_option2",
+                  "value": "default_option2"
+                }
+              ],
+              "value": "default_option1"
+            },
+            {
+              "name": "Augustine",
+              "hint": null,
+              "logo": null,
+              "label": "Multi Select (creatable)",
+              "description": "vel sed fuga",
+              "required": false,
+              "type": "multi-select",
+              "allowCustom": true,
+              "options": [
+                {
+                  "label": "default_option1",
+                  "value": "default_option1"
+                },
+                {
+                  "label": "default_option2",
+                  "value": "default_option2"
+                }
+              ],
+              "value": [
+                "default_option1"
+              ]
+            },
+            {
+              "name": "Bettye",
+              "hint": null,
+              "logo": null,
+              "label": "Multiline Pattern",
+              "description": "laboriosam ducimus repellendus",
+              "required": false,
+              "type": "multiline-pattern",
+              "value": [
+                {
+                  "pattern": "sit",
+                  "source": "sit"
+                },
+                {
+                  "pattern": "minima",
+                  "source": "minima"
+                },
+                {
+                  "pattern": "quidem",
+                  "source": "quidem"
+                }
+              ]
+            },
+            {
+              "name": "Janet",
+              "hint": null,
+              "logo": null,
+              "label": "Path List",
+              "description": "voluptas magni beatae",
+              "required": false,
+              "type": "path-list",
+              "value": [
+                "Adolphus/Hollie/Funk",
+                "Brendon/Murphy/Homenick",
+                "Jaclyn/Gerhard/Feest"
+              ]
+            },
+            {
+              "name": "Brock",
+              "hint": null,
+              "logo": null,
+              "label": "String List",
+              "description": "non nemo voluptatibus",
+              "required": false,
+              "type": "string-list",
+              "value": [
+                "Jo/Omari/Reynolds",
+                "Ruthe/Genoveva/Hammes",
+                "Bridget/Constance/Brown"
+              ],
+              "placeholder": "",
+              "actionText": "Add a file"
+            },
+            {
+              "name": "Filiberto",
+              "hint": null,
+              "logo": null,
+              "label": "Key Value",
+              "description": "doloribus aut aut",
+              "required": false,
+              "type": "key-value",
+              "value": [
+                {
+                  "key": "default_key",
+                  "value": "default_value"
+                }
+              ]
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "description": "sed commodi facere",
+              "params": [],
+              "dashboards": []
+            }
+          ]
+        }
+      ],
+      "supportedOs": [
+        "Mac",
+        "Linux",
+        "Windows"
+      ]
+    }
+  ],
+  "updatedAt": "2022-12-13T13:36:09.491Z",
+  "type": "AGENT"
+}
