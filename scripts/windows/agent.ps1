@@ -183,6 +183,7 @@ $WarningPreference = 'SilentlyContinue'
 [Console]::CursorVisible = $false
 
 # Agent status flags
+$script:IsInstallThreadJobModuleFailed = $false
 $script:IsShowHelp = $false
 $script:IsLoadingAgentScriptsFailed = $false
 $script:IsRemoveLastRunAnswerNo = $false
