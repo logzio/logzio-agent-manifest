@@ -37,6 +37,14 @@
         "template": "  --set logzio-k8s-telemetry.secrets.ListenerHost='https://<<LOGZIO_LISTENER_ADDRESS>>:8053' \\"
       },
       {
+        "template": "   --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\",
+        "condition": "$[?(@ == 'AKS')]"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.secrets.windowsNodeUsername='{{value}}' \\",
+        "condition": "$[?(@ == 'AKS')]"
+      },
+      {
         "template": "  --set logzio-k8s-telemetry.secrets.p8s_logzio_name='{{value}}' \\",
         "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
         "keepAsPlaceholder": true
@@ -49,7 +57,7 @@
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.aks=true \\",
-        "condition": "$[?(@ == 'AKS')]",
+        "condition": "$[?(@ == 'AKS' || @ == 'DigitalOcean')]",
         "targetElement":
         "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
