@@ -169,7 +169,8 @@ function Write-AgentSupport {
     Write-Host
 }
 
-
+# Agent log file timestamp
+$script:AgentLogFileTimestamp = Get-Date -Format 'yyyy-MM-ddTHH-mm-ss'
 # Agent version
 $script:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
 
@@ -182,6 +183,7 @@ $WarningPreference = 'SilentlyContinue'
 [Console]::CursorVisible = $false
 
 # Agent status flags
+$script:IsInstallThreadJobModuleFailed = $false
 $script:IsShowHelp = $false
 $script:IsLoadingAgentScriptsFailed = $false
 $script:IsRemoveLastRunAnswerNo = $false

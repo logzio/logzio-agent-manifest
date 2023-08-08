@@ -34,7 +34,6 @@ $script:KubernetesResourcesDir = "$script:LogzioResourcesDir\k8s"
 
 ## Agent files
 # Log file path
-$script:AgentLogFileTimestamp = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss'
 $script:AgentLogFile = "$script:LogzioAppDataDir\logzio_agent$script:AgentLogFileTimestamp.log"
 # Task post run script file path
 $script:TaskPostRunFile = "$script:LogzioTempDir\task_post_run.ps1"
@@ -49,7 +48,7 @@ $script:JqUrlDownload = 'https://github.com/stedolan/jq/releases/download/jq-1.6
 # Url for downloading yq exe
 $script:YqUrlDownload = 'https://github.com/mikefarah/yq/releases/download/v4.27.5/yq_windows_amd64.exe'
 # Url for downloading OTEL collector zip
-$script:OtelCollectorUrlDownload = 'https://github.com/logzio/otel-collector-distro/releases/download/v0.81.0/otelcol-logzio-windows_amd64.zip'
+$script:OtelCollectorUrlDownload = 'https://github.com/logzio/otel-collector-distro/releases/download/v0.82.0/otelcol-logzio-windows_amd64.zip'
 # Url for downloading eksctl zip
 $script:EksctlUrlDownload = 'https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Windows_amd64.zip'
 # Url for AWS SQS

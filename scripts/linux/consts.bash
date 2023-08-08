@@ -57,7 +57,7 @@ JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linu
 # Url for downloading yq binary
 YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.33.2/yq_linux_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
-OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.81.0/otelcol-contrib_0.81.0_linux_amd64.tar.gz'
+OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.82.0/otelcol-contrib_0.82.0_linux_amd64.tar.gz'
 # Url for downloading eksctl tar.gz
 EKSCTL_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Linux_amd64.tar.gz'
 # Url for AWS SQS
