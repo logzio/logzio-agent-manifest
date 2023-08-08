@@ -81,13 +81,13 @@
                   "value": ""
                 },
                 {
-                  "type": "text",
+                  "type": "key-value",
                   "name": "tags",
                   "label": "Tags",
                   "required": false,
                   "description": "",
                   "hint": "",
-                  "value": ""
+                  "value": []
                 },
                 {
                   "type": "multi-select",
