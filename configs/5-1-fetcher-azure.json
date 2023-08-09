@@ -74,9 +74,9 @@
                 {
                   "type": "multi-select",
                   "name": "resource.group.ids",
-                  "label": "Resource group names",
+                  "label": "Resource group names (Optional)",
                   "required": false,
-                  "description": "",
+                  "description": "If left empty, Logz.io will pull all the resource groups under the subscription",
                   "hint": "",
                   "value": [],
                   "allowCustom": true,
@@ -85,7 +85,7 @@
                 {
                   "type": "key-value",
                   "name": "tags",
-                  "label": "Tags",
+                  "label": "Tags (Optional)",
                   "required": false,
                   "description": "",
                   "hint": "",
@@ -94,7 +94,7 @@
                 {
                   "type": "multi-select",
                   "name": "resourceTypeList",
-                  "label": "Resource Type",
+                  "label": "Resource Type (Optional)",
                   "description": "Send metrics that include any of these resource types.",
                   "required": false,
                   "hint": "To send all resource types of the project select 'All services'",
