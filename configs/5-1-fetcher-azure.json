@@ -93,7 +93,7 @@
                 },
                 {
                   "type": "multi-select",
-                  "name": "resourceTypeList",
+                  "name": "resource.types",
                   "label": "Resource Type",
                   "description": "Send metrics that include any of these resource types.",
                   "required": false,
