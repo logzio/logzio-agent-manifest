@@ -4,9 +4,9 @@
   "type": "FETCHER",
   "subtypes": [
     {
-      "name": "Azure",
+      "name": "Azure Metrics",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
-      "description": "Azure Cloud Fetcher",
+      "description": "Azure Cloud",
       "supportedOs": [
         "Fetcher"
       ],
