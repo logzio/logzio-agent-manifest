@@ -1,6 +1,6 @@
 {
   "name": "Cloud Fetchers",
-  "label": "Cloud Fetchers",
+  "label": "Cloud Integrations",
   "type": "FETCHER",
   "subtypes": [
     {
