@@ -6,8 +6,7 @@
     {
       "name": "Azure",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
-      "label": "Azure Metrics",
-      "description": "Azure Cloud",
+      "description": "Azure Cloud Fetcher",
       "supportedOs": [
         "Fetcher"
       ],
