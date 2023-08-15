@@ -1,12 +1,13 @@
 {
   "name": "Cloud Fetchers",
-  "label": "Cloud Fetchers",
+  "label": "Cloud Integrations",
   "type": "FETCHER",
   "subtypes": [
     {
       "name": "Azure",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
-      "description": "Azure Cloud Fetcher",
+      "label": "Azure Metrics",
+      "description": "Azure Cloud",
       "supportedOs": [
         "Fetcher"
       ],
