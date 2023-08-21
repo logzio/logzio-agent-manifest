@@ -1,5 +1,5 @@
 [
-  { "template": "helm install -n monitoring \\" },
+  { "template": "helm install -n monitoring --create-namespace \\" },
   {
     "template": "  --set logs.enabled=true \\",
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='LOG_ANALYTICS')]",
@@ -23,7 +23,7 @@
     ]
   },
   {
-    "template": "  --set metricsOrTraces.enabled=true",
+    "template": "  --set metricsOrTraces.enabled=true \\",
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS' || @.type=='TRACING')]"
   },
   {
