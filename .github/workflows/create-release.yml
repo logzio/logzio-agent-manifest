@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - '.github/**'
       - 'configs/**'
+      - 'config-templates/**'
       - 'testing-configs/**'
       - '.gitignore'
       - 'LICENSE'
