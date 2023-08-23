@@ -86,12 +86,13 @@ function is_bash_version_4_or_above {
 # Output:
 #   Help usage
 function show_help {
-    write_task_post_run "echo -e \"Usage: .\agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release=<repo_release>] [--tmp_dest=<temp_dest>]\""
+    write_task_post_run "echo -e \"Usage: .\agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release=<repo_release>] [--tmp_dest=<temp_dest>] [--proxy=<proxy_url>}\""
     write_task_post_run "echo -e ' --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)'"
     write_task_post_run "echo -e ' --id=<agent_id>              Logz.io agent ID'"
     write_task_post_run "echo -e ' --debug=<agent_json>         Debug run using a local agent json file'"
     write_task_post_run "echo -e ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
     write_task_post_run "echo -e ' --temp_dest=<temp_dest>      The temp files destination path. Default is /tmp/logzio'"
+    write_task_post_run "echo -e ' --proxy=<proxy_url>          The proxy url"
     write_task_post_run "echo -e ' --help                       Show usage'"
 }
 
