@@ -12,7 +12,7 @@
       "label": "GKE",
       "description": "GCP Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
-      "supportedOs": ["Mac", "Windows", "Linux"],
+      "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
       "capabilities": ["SPM"],
       "datasources": [
         {
