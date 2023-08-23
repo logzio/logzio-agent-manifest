@@ -115,7 +115,11 @@ function send_log_to_logzio {
 
     log+='}'
 
-    curl -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>&1 &
+    if [[ ! -z "$PROXY" ]]; then
+        curl --proxy "$PROXY" -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>&1 &
+    else
+        curl -fsSL "$SQS_URL" -d Action='SendMessage' -d MessageBody="$log" >/dev/null 2>&1 &
+    fi
 }
 
 # Gets json string field value

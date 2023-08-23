@@ -86,12 +86,13 @@ function is_bash_version_4_or_above {
 # Output:
 #   Help usage
 function show_help {
-    write_task_post_run "echo -e \"Usage: .\agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release=<repo_release>] [--tmp_dest=<temp_dest>]\""
+    write_task_post_run "echo -e \"Usage: .\agent.bash --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release=<repo_release>] [--tmp_dest=<temp_dest>] [--proxy=<proxy_url>}\""
     write_task_post_run "echo -e ' --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)'"
     write_task_post_run "echo -e ' --id=<agent_id>              Logz.io agent ID'"
     write_task_post_run "echo -e ' --debug=<agent_json>         Debug run using a local agent json file'"
     write_task_post_run "echo -e ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
     write_task_post_run "echo -e ' --temp_dest=<temp_dest>      The temp files destination path. Default is /tmp/logzio'"
+    write_task_post_run "echo -e ' --proxy=<proxy_url>          The proxy url"
     write_task_post_run "echo -e ' --help                       Show usage'"
 }
 
@@ -182,6 +183,15 @@ function get_arguments {
                 send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
                 write_log "$LOG_LEVEL_DEBUG" "$message"
                 ;;
+            --proxy=*)
+                proxy=$(echo "$arg" | cut -d '=' -f2)
+                
+                message="Agent argument 'proxy' is '$proxy'"
+                send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+                write_log "$LOG_LEVEL_DEBUG" "$message"
+
+                write_task_post_run "PROXY='$proxy'"
+                ;;
             *)
                 message="agent.bash ($EXIT_CODE): unrecognized flag"
                 send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
@@ -259,13 +269,24 @@ function download_jq {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    curl -fsSL "$JQ_URL_DOWNLOAD" >"$JQ_BIN" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error downloading jq binary: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
+    if [[ ! -z "$PROXY" ]]; then
+        curl --proxy "$PROXY" -fsSL "$JQ_URL_DOWNLOAD" >"$JQ_BIN" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($EXIT_CODE): error downloading jq binary: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+            write_task_post_run "write_error \"$message\""
 
-        return $EXIT_CODE
+            return $EXIT_CODE
+        fi
+    else
+        curl -fsSL "$JQ_URL_DOWNLOAD" >"$JQ_BIN" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($EXIT_CODE): error downloading jq binary: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+            write_task_post_run "write_error \"$message\""
+
+            return $EXIT_CODE
+        fi
     fi
 
     chmod +x "$JQ_BIN" 2>"$TASK_ERROR_FILE"
@@ -290,13 +311,24 @@ function download_yq {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    curl -fsSL "$YQ_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/yq.tar.gz" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error downloading yq tar.gz: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
+    if [[ ! -z "$PROXY" ]]; then
+        curl --proxy "$PROXY" -fsSL "$YQ_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/yq.tar.gz" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($EXIT_CODE): error downloading yq tar.gz: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+            write_task_post_run "write_error \"$message\""
 
-        return $EXIT_CODE
+            return $EXIT_CODE
+        fi
+    else
+        curl -fsSL "$YQ_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/yq.tar.gz" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($EXIT_CODE): error downloading yq tar.gz: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+            write_task_post_run "write_error \"$message\""
+
+            return $EXIT_CODE
+        fi
     fi
 
     tar -zxf "$LOGZIO_TEMP_DIR/yq.tar.gz" --directory "$LOGZIO_TEMP_DIR" --overwrite 2>"$TASK_ERROR_FILE"
@@ -353,13 +385,24 @@ function get_agent_json {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    curl -fsSL "$APP_URL/telemetry-agent/public/agents/configuration/$AGENT_ID" >"$AGENT_JSON" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error getting Logz.io agent json from agent. make sure your url is valid: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
+    if [[ ! -z "$PROXY" ]]; then
+        curl --proxy "$PROXY" -fsSL "$APP_URL/telemetry-agent/public/agents/configuration/$AGENT_ID" >"$AGENT_JSON" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($EXIT_CODE): error getting Logz.io agent json from agent. make sure your url is valid: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+            write_task_post_run "write_error \"$message\""
 
-        return $EXIT_CODE
+            return $EXIT_CODE
+        fi
+    else
+        curl -fsSL "$APP_URL/telemetry-agent/public/agents/configuration/$AGENT_ID" >"$AGENT_JSON" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="agent.bash ($EXIT_CODE): error getting Logz.io agent json from agent. make sure your url is valid: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+            write_task_post_run "write_error \"$message\""
+
+            return $EXIT_CODE
+        fi
     fi
 
     get_json_file_field_value "$AGENT_JSON" '.statusCode'
@@ -514,22 +557,44 @@ function download_sub_type_files {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     if [[ -z "$REPO_RELEASE" ]]; then
-        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
-        if [[ $? -ne 0 ]]; then
-            message="agent.bash ($EXIT_CODE): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
-            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-            write_task_post_run "write_error \"$message\""
+        if [[ ! -z "$PROXY" ]]; then
+            curl --proxy "$PROXY" -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+            if [[ $? -ne 0 ]]; then
+                message="agent.bash ($EXIT_CODE): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+                write_task_post_run "write_error \"$message\""
 
-            return $EXIT_CODE
+                return $EXIT_CODE
+            fi
+        else
+            curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/latest/download/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+            if [[ $? -ne 0 ]]; then
+                message="agent.bash ($EXIT_CODE): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+                write_task_post_run "write_error \"$message\""
+
+                return $EXIT_CODE
+            fi
         fi
     else
-        curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/download/$REPO_RELEASE/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
-        if [[ $? -ne 0 ]]; then
-            message="agent.bash ($EXIT_CODE): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
-            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-            write_task_post_run "write_error \"$message\""
+        if [[ ! -z "$PROXY" ]]; then
+            curl --proxy "$PROXY" -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/download/$REPO_RELEASE/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+            if [[ $? -ne 0 ]]; then
+                message="agent.bash ($EXIT_CODE): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+                write_task_post_run "write_error \"$message\""
 
-            return $EXIT_CODE
+                return $EXIT_CODE
+            fi
+        else
+            curl -fsSL "https://github.com/logzio/logzio-agent-manifest/releases/download/$REPO_RELEASE/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" >"$LOGZIO_TEMP_DIR/linux_${PLATFORM,,}_${SUB_TYPE,,}.tar.gz" 2>"$TASK_ERROR_FILE"
+            if [[ $? -ne 0 ]]; then
+                message="agent.bash ($EXIT_CODE): error downloading subtype tar.gz file from Logz.io repo: $(get_task_error_message)"
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+                write_task_post_run "write_error \"$message\""
+
+                return $EXIT_CODE
+            fi
         fi
     fi
     
