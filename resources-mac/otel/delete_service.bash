@@ -13,3 +13,5 @@ rm "LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_FILE"
 if [[ $? -ne 0 ]]; then
     exit 2
 fi
+
+echo -e "service was deleted successfully"
