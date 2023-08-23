@@ -92,7 +92,7 @@ function show_help {
     write_task_post_run "echo -e ' --debug=<agent_json>         Debug run using a local agent json file'"
     write_task_post_run "echo -e ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
     write_task_post_run "echo -e ' --temp_dest=<temp_dest>      The temp files destination path. Default is /tmp/logzio'"
-    write_task_post_run "echo -e ' --proxy=<proxy_url>          The proxy url"
+    write_task_post_run "echo -e ' --proxy=<proxy_url>          The proxy url'"
     write_task_post_run "echo -e ' --help                       Show usage'"
 }
 
