@@ -92,7 +92,7 @@ function show_help {
     write_task_post_run "echo -e ' --debug=<agent_json>         Debug run using a local agent json file'"
     write_task_post_run "echo -e ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
     write_task_post_run "echo -e ' --temp_dest=<temp_dest>      The temp files destination path. Default is /tmp/logzio'"
-    write_task_post_run "echo -e ' --proxy=<proxy_url>          The proxy url"
+    write_task_post_run "echo -e ' --proxy=<proxy_url>          The proxy url'"
     write_task_post_run "echo -e ' --help                       Show usage'"
 }
 
@@ -439,6 +439,12 @@ function get_agent_json_info {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
     
+    if [[ ! -f "$AGENT_JSON" ]]; then
+        message="agent.bash ($EXIT_CODE): agent json file does not exist"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_task_post_run "write_error \"$message\""
+    fi
+
     get_json_file_field_value "$AGENT_JSON" '.configuration.name'
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($EXIT_CODE): $(get_task_error_message)"
