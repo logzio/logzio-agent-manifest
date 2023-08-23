@@ -521,6 +521,14 @@ function Set-AgentJsonConsts {
     $local:Message = 'Setting agent json consts ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
     Write-Log $script:LogLevelDebug $Message
+
+    if (-Not (Test-Path -Path $script:AgentJson -PathType Leaf)) {
+        $Message = "agent.ps1 ($ExitCode): agent json file does not exist"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInit $script:LogScriptAgent $FuncName $script:AgentId
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
     
     $local:Err = Get-JsonFileFieldValue $script:AgentJson '.configuration.name'
     if ($Err.Count -ne 0) {

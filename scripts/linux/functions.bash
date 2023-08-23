@@ -439,6 +439,12 @@ function get_agent_json_info {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
     
+    if [[ ! -f "$AGENT_JSON" ]]; then
+        message="agent.bash ($EXIT_CODE): agent json file does not exist"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_task_post_run "write_error \"$message\""
+    fi
+
     get_json_file_field_value "$AGENT_JSON" '.configuration.name'
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($EXIT_CODE): $(get_task_error_message)"
