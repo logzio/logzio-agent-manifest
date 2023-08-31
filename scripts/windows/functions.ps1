@@ -144,11 +144,12 @@ function Test-IsElevated {
 # Output:
 #   Help usage
 function Show-Help {
-    Write-TaskPostRun "Write-Host `"Usage: .\agent.ps1 --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release<repo_release>]`""
+    Write-TaskPostRun "Write-Host `"Usage: .\agent.ps1 --url=<logzio_app_url> --id=<agent_id> [--debug=<agent_json>] [--release<repo_release>] [--enable-cursor]`""
     Write-TaskPostRun "Write-Host ' --url=<logzio_app_url>       Logz.io app URL (https://app.logz.io)'"
     Write-TaskPostRun "Write-Host ' --id=<agent_id>              Logz.io agent ID'"
     Write-TaskPostRun "Write-Host ' --debug=<agent_json>         Debug run using a local agent json file'"
     Write-TaskPostRun "Write-Host ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
+    Write-TaskPostRun "Write-Host ' enable-cursor                Will not '"
     Write-TaskPostRun "Write-Host ' --help                       Show usage'"
 }
 
@@ -250,6 +251,13 @@ function Get-Arguments {
                 Write-Log $script:LogLevelDebug $Message
 
                 Write-TaskPostRun "`$script:RepoRelease = '$RepoRelease'"
+                continue
+            }
+            --enable-cursor {
+                $Message = "Agent argument 'enable-cursor' was detected"
+                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepPreInit $script:LogScriptAgent $FuncName $script:AgentId
+                Write-Log $script:LogLevelDebug $Message
+
                 continue
             }
             default {
