@@ -149,7 +149,7 @@ function Show-Help {
     Write-TaskPostRun "Write-Host ' --id=<agent_id>              Logz.io agent ID'"
     Write-TaskPostRun "Write-Host ' --debug=<agent_json>         Debug run using a local agent json file'"
     Write-TaskPostRun "Write-Host ' --release=<repo_release>     The release of Logz.io repo. Default is latest release'"
-    Write-TaskPostRun "Write-Host ' enable-cursor                Makes the cursor visible at all times'"
+    Write-TaskPostRun "Write-Host ' --enable-cursor              Makes the cursor visible at all times'"
     Write-TaskPostRun "Write-Host ' --help                       Show usage'"
 }
 
