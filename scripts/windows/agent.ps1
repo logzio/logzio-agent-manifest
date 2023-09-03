@@ -30,6 +30,28 @@ function Get-AgentId {
     }
 }
 
+# Gets enable cursor
+# Input:
+#   FuncArgs - Hashtable {AgentArgs = $args}
+# Output:
+#   EnableCursor - Tells if cursor should be enabled or not
+function Get-EnableCursor {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:AgentArgs = $FuncArgs.AgentArgs
+
+    foreach ($Arg in $AgentArgs) {
+        switch -Regex ($Arg) {
+            --enable-cursor {
+                $script:EnableCursor = $true
+                return
+            }
+        }
+    }
+}
+
 # Deletes Logz.io temp directory
 # Input:
 #   ---
@@ -180,7 +202,6 @@ $script:AgentId = ''
 # Settings
 $ProgressPreference = 'SilentlyContinue'
 $WarningPreference = 'SilentlyContinue'
-[Console]::CursorVisible = $false
 
 # Agent status flags
 $script:IsInstallThreadJobModuleFailed = $false
@@ -190,6 +211,13 @@ $script:IsRemoveLastRunAnswerNo = $false
 $script:IsAgentFailed = $false
 $script:IsPostrequisiteFailed = $false
 $script:IsAgentCompleted = $false
+$script:EnableCursor = $false
+
+# Get enable cursor
+Get-EnableCursor @{AgentArgs = $args}
+if (-Not $script:EnableCursor) {
+    [Console]::CursorVisible = $false
+}
 
 # Print main title
 try {
@@ -305,5 +333,7 @@ finally {
     Write-AgentFinalMessages
     Remove-TempDir
     
-    [Console]::CursorVisible = $true
+    if (-Not $script:EnableCursor) {
+        [Console]::CursorVisible = $true
+    }
 }
