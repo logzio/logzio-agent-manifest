@@ -40,17 +40,12 @@ function Get-EnableCursor {
         [hashtable]$FuncArgs
     )
 
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('AgentArgs')
-    if ($Err.Count -ne 0) {
-        return
-    }
-
     $local:AgentArgs = $FuncArgs.AgentArgs
 
     foreach ($Arg in $AgentArgs) {
         switch -Regex ($Arg) {
             --enable-cursor {
-                "`$script:EnableCursor = `$true"
+                $script:EnableCursor = $true
                 return
             }
         }
