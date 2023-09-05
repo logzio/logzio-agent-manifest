@@ -4,7 +4,7 @@
   "type": "FETCHER",
   "subtypes": [
     {
-      "name": "Azure",
+      "name": "Azure-logs",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
       "label": "Azure Logs",
       "description": "Azure Cloud",
@@ -13,7 +13,8 @@
       ],
       "datasources": [
         {
-          "name": "Azure Logs",
+          "name": "azure-logs",
+          "label": "Azure Logs",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
           "description": "Ship your Azure Logs to logz.io",
           "type": "AzureMonitorLogsFetcher",
