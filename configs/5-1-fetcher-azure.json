@@ -22,11 +22,11 @@
             {
               "variant": "announcement",
               "title": "Important note about data consumption",
-              "text": "Installing this integration may increase your Logz.io costs due to higher data consumption. Learn more in our [documentation](). "
+              "text": "Azure may charge additional fees for using this integration. [Read more about Azure API costs](https://azure.microsoft.com/en-us/pricing/details/api-management/). "
             }, {
               "variant": "info",
               "title": "Connect your Microsoft Azure app to Logz.io",
-              "text": "To get started with Microsoft Azure and Logz.io, you’ll need to create an app and connect it. [See our step-by-step guide]()."
+              "text": "To get started with Microsoft Azure and Logz.io, you’ll need to create an app and connect it. [See our step-by-step guide](https://docs.logz.io/user-guide/azure-native-integration.html)."
             }
           ],
           "params": [
