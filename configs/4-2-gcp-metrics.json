@@ -361,8 +361,7 @@
                                             "label": "Google Workflows",
                                             "value": "workflows.googleapis.com"
                                         }
-                                    ],
-                                    "value": ["all_services"]
+                                    ]
                                 }
                             ]
                         }
