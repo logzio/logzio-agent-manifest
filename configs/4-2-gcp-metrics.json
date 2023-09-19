@@ -134,10 +134,6 @@
                                     "hint": "To send all resource types of the project select 'All services'",
                                     "options": [
                                         {
-                                            "label": "All Services",
-                                            "value": "all_services"
-                                        },
-                                        {
                                             "label": "Google AI Platform",
                                             "value": "ml.googleapis.com"
                                         },
