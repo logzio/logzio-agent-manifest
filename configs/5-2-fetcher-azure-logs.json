@@ -15,7 +15,7 @@
         {
           "name": "azure-monitor-logs",
           "label": "Azure Logs",
-          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg ",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
           "description": "Ship your Azure Logs to logz.io",
           "type": "AzureMonitorLogsFetcher",
           "information": [
