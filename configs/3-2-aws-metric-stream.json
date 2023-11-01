@@ -12,6 +12,8 @@
        "description": "via Cloudwatch",
        "hint": "AWS metrics to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
+       "productTags": [],
+       "filterTags": [],
        "integrationTemplate": "metric-stream-helpers/aws/1.2.4/sam-template.yaml&param_logzioDestination=https://listener-aws-metrics-stream-<<LOGZIO_ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
        "datasources": [
          {
@@ -210,4 +212,3 @@
      }
    ]
  }
- 

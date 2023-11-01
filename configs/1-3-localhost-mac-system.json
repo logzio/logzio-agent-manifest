@@ -12,6 +12,8 @@
       "description": "Mac Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Mac"],
+      "productTags": [],
+      "filterTags": [],
       "datasources": [
         {
           "name": "System",

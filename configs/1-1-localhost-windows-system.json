@@ -12,6 +12,8 @@
       "description": "Windows Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Windows"],
+      "productTags": [],
+      "filterTags": [],
       "datasources": [
         {
           "name": "System",
@@ -26,7 +28,7 @@
                 "receivers": ["filelog","windowseventlog_application","windowseventlog_security","windowseventlog_system"],
                 "processors": ["resourcedetection_system"]
 				      },
-              "params": 
+              "params":
               [
                 {
                   "type": "string-list",

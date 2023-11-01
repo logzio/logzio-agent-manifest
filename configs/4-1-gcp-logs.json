@@ -11,6 +11,8 @@
             "description": "Cloud Logging",
             "hint": "Logging from GCP services.",
             "supportedOs": ["GCP"],
+            "productTags": [],
+            "filterTags": [],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
             "datasources": [
                 {
