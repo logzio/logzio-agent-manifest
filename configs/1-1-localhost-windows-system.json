@@ -12,8 +12,8 @@
       "description": "Windows Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Windows"],
-      "productTags": [],
-      "filterTags": [],
+      "productTags": ["test"],
+      "filterTags": ["test"],
       "datasources": [
         {
           "name": "System",
