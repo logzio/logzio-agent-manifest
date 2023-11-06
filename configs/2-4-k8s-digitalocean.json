@@ -13,8 +13,8 @@
       "description": "Managed Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
-      "productTags": [],
-      "filterTags": [],
+      "productTags": ["logs","metrics","traces"],
+      "filterTags": ["Containers", "Most Popular"],
       "capabilities": ["SPM"],
       "datasources": [
         {

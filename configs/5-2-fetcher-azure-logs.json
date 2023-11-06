@@ -11,8 +11,8 @@
       "supportedOs": [
         "Fetcher"
       ],
-      "productTags": [],
-      "filterTags": [],
+      "productTags": ["logs"],
+      "filterTags": ["Azure"],
       "datasources": [
         {
           "name": "azure-monitor-logs",
