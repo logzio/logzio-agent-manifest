@@ -121,5 +121,22 @@
       }
     ]
   },
+  {
+    "template": "  --set deployEvents.enabled=true \\",
+    "targetElement": "datasources[?(@.name=='DeployEvents')]",
+    "conditionalTemplates": [
+      {
+        "template": "  --set logzio-k8s-events.env_id='{{value}}' \\",
+        "targetElement": "datasources[?(@.name=='DeployEvents')].params[?(@.name=='envID')].value",
+        "keepAsPlaceholder": true
+      },
+      {
+        "template": "  --set logzio-k8s-events.secrets.logzioShippingToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
+      },
+      {
+        "template": "  --set logzio-k8s-events.secrets.logzioListener='<<LOGZIO_LISTENER_ADDRESS>>' \\"
+      }
+    ]
+  },
   { "template": "logzio-monitoring logzio-helm/logzio-monitoring" }
 ]
