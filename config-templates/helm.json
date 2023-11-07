@@ -126,7 +126,7 @@
     "targetElement": "datasources[?(@.name=='Deploy Events')]",
     "conditionalTemplates": [
       {
-        "template": "  --set logzio-k8s-events.env_id='{{value}}' \\",
+        "template": "  --set logzio-k8s-events.secrets.env_id='{{value}}' \\",
         "targetElement": "datasources[?(@.name=='Deploy Events')].params[?(@.name=='envID')].value",
         "keepAsPlaceholder": true
       },
