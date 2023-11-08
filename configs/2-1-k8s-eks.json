@@ -116,7 +116,7 @@
           ]
         },
         {
-          "name": "Deploy Events",
+          "name": "DeployEvents",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
           "label": "Deploy Events",
           "description": "Logz.io uses Kubernetes official SDK to detect deploy events that occur in your cluster and allows you to view the changes.",
