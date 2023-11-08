@@ -123,11 +123,11 @@
   },
   {
     "template": "  --set deployEvents.enabled=true \\",
-    "targetElement": "datasources[?(@.name=='Deploy Events')]",
+    "targetElement": "datasources[?(@.name=='DeployEvents')]",
     "conditionalTemplates": [
       {
-        "template": "  --set logzio-k8s-events.secrets.env_id='{{value}}' \\",
-        "targetElement": "datasources[?(@.name=='Deploy Events')].params[?(@.name=='envID')].value",
+        "template": "  --set logzio-k8s-events.env_id='{{value}}' \\",
+        "targetElement": "datasources[?(@.name=='DeployEvents')].params[?(@.name=='envID')].value",
         "keepAsPlaceholder": true
       },
       {
