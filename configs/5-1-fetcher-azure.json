@@ -11,6 +11,8 @@
       "supportedOs": [
         "Fetcher"
       ],
+      "productTags": ["metrics"],
+      "filterTags": ["Azure", "Most Popular"],
       "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
       "datasources": [
         {

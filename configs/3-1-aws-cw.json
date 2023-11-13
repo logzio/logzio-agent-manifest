@@ -12,6 +12,8 @@
        "description": "via Cloudwatch",
        "hint": "Cloudwatch logs to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
+       "productTags": ["logs"],
+      "filterTags": ["AWS", "Most Popular"],
        "integrationTemplate": "firehose-logs/0.0.2/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
        "datasources": [
          {
@@ -86,7 +88,7 @@
                     { "label": "RDS", "value": "rds" }
                   ]
                 },
-                { 
+                {
                   "type": "string-list",
                   "name": "param_customLogGroups",
                   "label": "Custom Log Groups",
@@ -102,4 +104,3 @@
      }
    ]
  }
- 

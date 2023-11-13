@@ -12,6 +12,8 @@
        "description": "Linux Logs & Metrics",
        "hint": "EC2 with Linux.",
        "supportedOs": ["Linux"],
+       "productTags": ["logs","metrics"],
+      "filterTags": ["AWS", "Most Popular"],
        "datasources": [
          {
            "name": "System",
@@ -57,4 +59,3 @@
      }
    ]
  }
- 

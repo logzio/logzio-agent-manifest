@@ -12,6 +12,8 @@
       "description": "Linux Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Linux"],
+      "productTags": ["logs", "metrics"],
+      "filterTags": ["Operating Systems", "Most Popular"],
       "datasources": [
         {
           "name": "System",
