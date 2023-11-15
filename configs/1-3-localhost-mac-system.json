@@ -12,7 +12,7 @@
       "description": "Mac Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Mac"],
-      "productTags": ["logs","metrics"],
+      "productTags": ["LOG_ANALYTICS","METRICS"],
       "filterTags": ["Operating Systems", "Most Popular"],
       "datasources": [
         {
