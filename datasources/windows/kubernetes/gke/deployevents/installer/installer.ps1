@@ -38,7 +38,7 @@ $local:InstallerFunctionsScript = "$script:LogzioTempDir\$script:Platform\$scrip
 Write-Host
 Write-Host '##########################################'
 Write-Host '### ' -NoNewline
-Write-Host 'Security Datasource Installation' -ForegroundColor Magenta -NoNewline
+Write-Host 'Deploy Events Datasource Installation' -ForegroundColor Magenta -NoNewline
 Write-Host ' ###'
 Write-Host '##########################################'
 
