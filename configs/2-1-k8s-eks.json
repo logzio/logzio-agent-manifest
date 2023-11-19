@@ -1,6 +1,6 @@
 {
   "name": "Kubernetes",
-  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+  "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kub.svg",
   "label": "Kubernetes",
   "description": "",
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
@@ -19,7 +19,7 @@
       "datasources": [
         {
           "name": "Kubernetes",
-          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kub.svg",
           "label": "Kubernetes",
           "description": "Logz.io uses OpenTelemetry instrumentation with Fluentd and Helm charts to deploy and monitor Kubernetes architecture.",
           "hint": "Select the type of data you'd like to ship: logs, metrics, and traces.",
@@ -94,7 +94,7 @@
         },
         {
           "name": "Security",
-          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/logz_security.png",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/lock.svg",
           "label": "Security",
           "description": "Logz.io Uses Trivy to scan the Kubernetes cluster and collects the security risks reports from each pod",
           "params": [
@@ -119,7 +119,7 @@
         },
         {
           "name": "DeployEvents",
-          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/flag.svg",
           "label": "Deploy Events",
           "description": "Logz.io uses Kubernetes official SDK to detect deploy events that occur in your cluster and allows you to view the changes.",
           "params": [
