@@ -12,7 +12,7 @@
       "description": "Windows Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Windows"],
-      "productTags": ["logs", "metrics"],
+      "productTags": ["LOG_ANALYTICS", "METRICS"],
       "filterTags": ["Operating Systems", "Most Popular"],
       "datasources": [
         {
