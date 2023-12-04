@@ -12,7 +12,7 @@
        "description": "Linux Logs & Metrics",
        "hint": "EC2 with Linux.",
        "supportedOs": ["Linux"],
-       "productTags": ["logs","metrics"],
+       "productTags": ["LOG_ANALYTICS","METRICS"],
       "filterTags": ["AWS", "Most Popular"],
        "datasources": [
          {

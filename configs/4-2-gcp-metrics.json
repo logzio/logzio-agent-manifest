@@ -11,7 +11,7 @@
             "description": "Cloud Monitoring",
             "hint": "Metrics from GCP services.",
             "supportedOs": ["GCP"],
-            "productTags": ["metrics"],
+            "productTags": ["METRICS"],
             "filterTags": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
             "datasources": [
