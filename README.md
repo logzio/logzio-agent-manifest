@@ -147,3 +147,4 @@ bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/downlo
 ```PowerShell
 powershell { iex “& { $(irm https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_windows.ps1) } --path=LOGZIO_REPO_DATASOURCE_PATH” }
 ```
+
