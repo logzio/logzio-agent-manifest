@@ -8,7 +8,7 @@
      {
        "name": "EC2",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-       "label": "EC2 Monitoring",
+       "label": "EC2",
        "description": "Linux Logs & Metrics",
        "hint": "EC2 with Linux.",
        "supportedOs": ["Linux"],
@@ -19,7 +19,7 @@
            "name": "System",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
            "label": "System",
-           "description": "Logz.io Uses OpenTelemetry to monitor your EC2.",
+           "description": "Monitor your EC2 using OpenTemeletry",
            "telemetries": [
              {
                "type": "LOG_ANALYTICS",

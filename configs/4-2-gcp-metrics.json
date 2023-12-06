@@ -7,7 +7,7 @@
         {
             "name": "GCP_Metrics",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
-            "label": "GCP Metrics",
+            "label": "Metrics",
             "description": "Cloud Monitoring",
             "hint": "Metrics from GCP services.",
             "supportedOs": ["GCP"],

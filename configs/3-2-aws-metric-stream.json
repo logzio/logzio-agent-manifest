@@ -8,7 +8,7 @@
      {
        "name": "AWS_Metrics",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-       "label": "AWS Metrics",
+       "label": "Metrics",
        "description": "via Cloudwatch",
        "hint": "AWS metrics to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
@@ -20,7 +20,7 @@
            "name": "AWS_Metrics",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
            "label": "AWS Metrics",
-           "description": "Ship your AWS metrics to logz.io",
+           "description": "Ship your metrics via CloudFormation, set up your AWS region and stack, and choose the specific namespace from which you wish to collect data.",
            "params": [
             {
               "type": "single-select",

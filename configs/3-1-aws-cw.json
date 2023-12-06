@@ -8,7 +8,7 @@
      {
        "name": "AWS_Logs",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-       "label": "AWS Logs",
+       "label": "Logs",
        "description": "via Cloudwatch",
        "hint": "Cloudwatch logs to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
@@ -20,7 +20,7 @@
            "name": "AWS_Logs",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
            "label": "AWS Logs",
-           "description": "Ship your Cloudwatch logs to Logz.io via Firehose",
+           "description": "Ship your Cloudwatch logs via Firehose, set up your AWS region and stack, and choose the specific services or log groups from which you wish to collect data.",
            "params": [
             {
               "type": "single-select",
