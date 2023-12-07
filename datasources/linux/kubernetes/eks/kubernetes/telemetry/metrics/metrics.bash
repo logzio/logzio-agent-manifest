@@ -34,3 +34,8 @@ if $IS_FARGATE; then
     # Build Fargate collector mode standalone Helm set
     execute_task 'build_fargate_collector_mode_standalone_helm_set' 'Building Fargate collector mode standalone Helm set'
 fi
+# Get if service graph option was selected
+execute_task 'get_is_service_graph_was_selected' 'Getting is service graph option was selected'
+if $IS_SERVICE_GRAPH; then
+    execute_task 'build_enable_service_graph_helm_set' 'Building service graph Helm set'
+fi 

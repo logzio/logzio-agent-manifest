@@ -70,6 +70,14 @@
                   "description": "",
                   "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate Kubernetes 360 and prebuilt dashboards. In addition, we will also collect application metrics that are exposed by your pods.",
                   "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "isServiceGraph",
+                  "label": "Collect Service Graph metrics",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect Service Graph metrics to populate the Services Overview.",
+                  "value": true
                 }
               ],
               "dashboards": [

@@ -101,6 +101,10 @@
             "template": "  --set logzio-k8s-telemetry.secrets.SpmToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
           }
         ]
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.serviceGraph.enabled=true \\",
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name == 'isServiceGraph')].value"
       }
     ]
   },

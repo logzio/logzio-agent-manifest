@@ -259,3 +259,77 @@ function Build-EnableMetricsFilterHelmSet {
     Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
+
+# Gets is service graph was selected
+# Input:
+#   FuncArgs - Hashtable {MetricsParams = $script:MetricsParams}
+# Output:
+#   IsServiceGraph - Tells if service graph was selected (true/false)
+function Get-IsServiceGraphWasSelected {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:ExitCode = 4
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Getting if service graph option was selected ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsParams')
+    if ($Err.Count -ne 0) {
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:MetricsParams = $FuncArgs.MetricsParams
+
+    $Err = Get-ParamValue $MetricsParams 'isServiceGraph'
+    if ($Err.Count -ne 0) {
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:IsServiceGraph = $script:ParamValue
+
+    if ($IsServiceGraph) {
+        $Message = 'Service Graph option was selected'
+    }
+    else {
+        $Message = 'Service Graph option was not selected'
+    }
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:IsServiceGraph = `$$IsServiceGraph"
+}
+
+# Builds enable service graph Helm set
+# Input:
+#   ---
+# Output:
+#   LogHelmSets - Containt all the Helm sets for logging
+#   HelmSets - Contains all the Helm sets
+function Build-EnableServiceGraphHelmSet {
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Building service graph Helm set ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+    
+    $local:HelmSet = " --set logzio-k8s-telemetry.serviceGraph.enabled=true"
+
+    $local:Message = "Enable service graph Helm set is '$HelmSet'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
+    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
+}
