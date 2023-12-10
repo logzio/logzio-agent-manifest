@@ -29,7 +29,7 @@ Invoke-Task 'Build-LogzioSpmTokenHelmSet' @{SpmToken = $script:SpmToken} 'Buildi
 # Get if service graph option was selected
 Invoke-Task 'Get-IsServiceGraphWasSelected' @{MetricsParams = $script:MetricsParams} 'Getting if service graph was selected' @($MetricsFunctionsScript)
 if ($script:IsServiceGraph) {
-    # Build enable metrics filter Helm set
+    # Build enable service graph Helm set
     Invoke-Task 'Build-EnableServiceGraphHelmSet' @{} 'Building enable service graph Helm set' @($MetricsFunctionsScript)
 }
 # Finished successfully
