@@ -29,3 +29,8 @@ execute_task 'get_logzio_metrics_token' 'Getting Logz.io SPM token'
 execute_task 'build_enable_spm_helm_set' 'Building enable SPM Helm set'
 # Build Logz.io SPM token Helm set
 execute_task 'build_logzio_spm_token_helm_set' 'Building Logz.io SPM token Helm set'
+# Get if service graph option was selected
+execute_task 'get_is_service_graph_was_selected' 'Getting is service graph option was selected'
+if $IS_SERVICE_GRAPH; then
+    execute_task 'build_enable_service_graph_helm_set' 'Building service graph Helm set'
+fi 

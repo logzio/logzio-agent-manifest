@@ -60,14 +60,6 @@
                 },
                 {
                   "type": "boolean",
-                  "name": "isServiceGraph",
-                  "label": "Collect Service Graph metrics",
-                  "description": "",
-                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect Service Graph metrics to populate the Services Overview.",
-                  "value": true
-                },
-                {
-                  "type": "boolean",
                   "name": "isWindows",
                   "label": "My Kubernetes cluster is based on Windows nodes",
                   "description": "",
@@ -90,7 +82,15 @@
             {
               "type": "TRACING",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
-              "params": []
+              "params": [
+              {
+                "type": "boolean",
+                "name": "isServiceGraph",
+                "label": "Collect Service Graph metrics",
+                "description": "",
+                "hint": "Check this box if you want Logz.io Telemetry Collector to collect Service Graph metrics to populate the Services Overview.",
+                "value": true
+              }]
             }
           ]
         },

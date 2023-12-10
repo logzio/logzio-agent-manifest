@@ -36,6 +36,3 @@ if $IS_FILTER; then
     CLOUD_PROVIDER='aks'
     execute_task 'build_enable_metrics_filter_helm_set' 'Building enable metrics filter Helm set'
 fi
-if $IS_SERVICE_GRAPH; then
-    execute_task 'build_enable_service_graph_helm_set' 'Building service graph Helm set'
-fi 
