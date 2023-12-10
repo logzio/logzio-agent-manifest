@@ -104,7 +104,7 @@
       },
       {
         "template": "  --set logzio-k8s-telemetry.serviceGraph.enabled=true \\",
-        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name == 'isServiceGraph')].value"
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='TRACING')].params[?(@.name == 'isServiceGraph')].value"
       }
     ]
   },
