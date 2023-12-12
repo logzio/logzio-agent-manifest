@@ -87,7 +87,7 @@
             {
               "type": "TRACING",
               "description": "",
-              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces from your instrumented applications in the Kubernetes environment",
+              "hint": "The Logz.io Telemetry Collector gathers traces and aggregated metrics from applications that are instrumented and running in Kubernetes.",
               "params": []
             }
           ]
