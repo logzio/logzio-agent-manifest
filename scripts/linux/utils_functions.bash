@@ -586,7 +586,14 @@ function execute_task {
     >"$TASK_POST_RUN_FILE"
 }
 
-# Check if binary is already installed with the correct version
+# Check if binary is already installed with the correct version, if it does copy it to temp directory
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_name - Binary file name
+# - binary_path - Path to binary file in Logz.io temp directory
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
 function copy_installed_binary {
     local binary_name="$1"
     local download_url="$2"
@@ -621,14 +628,24 @@ function copy_installed_binary {
         return 1  # Binary is not installed
     fi
 }
+
 # Function to get the architecture-specific download URL
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_name - Binary file name
+# - binary_path - Path to binary file in Logz.io temp directory
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
 function get_arch_specific_url {
-    local default_url="$1"
+    local amd_url="$1"
     local arm_url="$2"
 
     if [[ ( "$CPU_ARCH" == "arm64" || "$CPU_ARCH" == "aarch64" ) && ! -z "$arm_url" ]]; then
         echo "$arm_url"
+    elif [[ ( "$CPU_ARCH" == "amd64" || "$CPU_ARCH" == "x86_64" ) && ! -z "$amd_url" ]]; then
+        echo "$amd_url"
     else
-        echo "$default_url"
+        echo "error getting arch specific url, arm_url: '$arm_url', amd_url: '$amd_url'"
     fi
 }

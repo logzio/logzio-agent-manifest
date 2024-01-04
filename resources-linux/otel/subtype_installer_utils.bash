@@ -80,7 +80,7 @@ function remove_logzio_otel_collector_service {
 function download_otel_collector_binary {
     local func_name="${FUNCNAME[0]}"
     local binary_name="$OTEL_COLLECTOR_BIN_NAME"
-    local download_url=$(get_arch_specific_url "$OTEL_COLLECTOR_URL_DOWNLOAD" "$OTEL_COLLECTOR_ARM_URL_DOWNLOAD")
+    local download_url=$(get_arch_specific_url "$OTEL_COLLECTOR_AMD_URL_DOWNLOAD" "$OTEL_COLLECTOR_ARM_URL_DOWNLOAD")
     local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
 
     download_binary "$download_url" "$binary_name" "$binary_path"

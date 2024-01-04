@@ -257,7 +257,14 @@ function check_arguments_validation {
     return $EXIT_CODE
 }
 
-# Download binary
+# Downloads binary file
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_name - Binary file name
+# - binary_path - Path to binary file in Logz.io temp directory
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
 function download_binary {
     local download_url="$1"
     local binary_name="$2"
@@ -285,6 +292,12 @@ function download_binary {
 }
 
 # Helper function to download tarballs
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_name - Binary file name
+#   ---
+# Output:
+#   Extracted binary file in Logz.io temp directory
 function download_tarball {
     local download_url="$1"
     local binary_name="$2"
@@ -334,6 +347,12 @@ function download_tarball {
 
 
 # Helper function to download binary directly
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_path - Path to binary file in Logz.io temp directory
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
 function download_direct {
     local download_url="$1"
     local binary_path="$2"
@@ -350,6 +369,13 @@ function download_direct {
 }
 
 # Helper function to move the binary to the destination
+# Input:
+# - source_path - Path to downloaded Binary/zipped binary file
+# - binary_path - Path to binary file in Logz.io temp directory
+# - func_name - Function name to log
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
 function move_binary {
     local source_path="$1"
     local binary_path="$2"
@@ -374,6 +400,13 @@ function move_binary {
 }
 
 # Helper function to provide execution permissions to binary file
+# Input:
+# - binary_path - Path to downloaded Binary/zipped binary file
+# - binary_path - Path to binary file in Logz.io temp directory
+# - func_name - Function name to log
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
 function chmod_binary {
     local binary_path="$1"
     local func_name="$2"
@@ -398,7 +431,7 @@ function download_jq {
     local func_name="${FUNCNAME[0]}"
     local binary_name="jq"
     local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
-    local download_url=$(get_arch_specific_url "$JQ_URL_DOWNLOAD" "$JQ_ARM_URL_DOWNLOAD")
+    local download_url=$(get_arch_specific_url "$JQ_AMD_URL_DOWNLOAD" "$JQ_ARM_URL_DOWNLOAD")
     
     download_binary "$download_url" "$binary_name" "$binary_path"
 }
@@ -412,7 +445,7 @@ function download_yq {
     local func_name="${FUNCNAME[0]}"
     local binary_name="yq"
     local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
-    local download_url=$(get_arch_specific_url "$YQ_URL_DOWNLOAD" "$YQ_ARM_URL_DOWNLOAD")
+    local download_url=$(get_arch_specific_url "$YQ_AMD_URL_DOWNLOAD" "$YQ_ARM_URL_DOWNLOAD")
     
     download_binary "$download_url" "$binary_name" "$binary_path"
 }

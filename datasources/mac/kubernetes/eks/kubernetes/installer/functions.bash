@@ -128,7 +128,7 @@ function get_is_fargate_was_selected {
 function download_eksctl {
     local func_name="${FUNCNAME[0]}"
     local binary_name="eksctl"
-    local download_url=$(get_arch_specific_url "$EKSCTL_URL_DOWNLOAD" "$EKSCTL_ARM_URL_DOWNLOAD")
+    local download_url=$(get_arch_specific_url "$EKSCTL_AMD_URL_DOWNLOAD" "$EKSCTL_ARM_URL_DOWNLOAD")
     local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
 
     download_binary "$download_url" "$binary_name" "$binary_path"
