@@ -269,124 +269,77 @@ function download_binary {
         write_log "$LOG_LEVEL_DEBUG" "$binary_name is already installed. Skipping download."
         return 0
     fi
-
-    # Download the binary
-    local downloaded_file
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$download_message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+    write_log "$LOG_LEVEL_DEBUG" "$download_message"
+       # Extract the binary from the tar.gz archive
     if [[ "$download_url" == *".tar.gz" ]]; then
-        downloaded_file=$(download_tarball "$download_url" "$binary_name")
+        local tar_path="$LOGZIO_TEMP_DIR/$binary_name.tar.gz"
+
+        curl -fsSL "$download_url" >"$tar_path" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="installer.bash ($EXIT_CODE): error downloading $binary_name.tar.gz: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+            write_task_post_run "write_error \"$message\""
+
+            return $EXIT_CODE
+        fi
+
+        tar -zxf "$tar_path" --directory "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="installer.bash ($EXIT_CODE): error extracting files from $tar_path: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+            write_task_post_run "write_error \"$message\""
+
+            return $EXIT_CODE
+        fi
+
+        # Assuming the extracted binary starts with "$binary_name(_|-)"
+        local extracted_binary=$(find "$LOGZIO_TEMP_DIR" -type f -name "${binary_name}[-|_]*" | head -n 1)
+        message="Attempting to move extracted binary file: $extracted_binary using this pattern: '${binary_name}[-|_]*'"
+        send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        # Check if a matching file is found
+        if [ -n "$extracted_binary" ]; then
+            # Move the file to the destination
+            mv "$extracted_binary" "$binary_path"
+
+            # Check if the move was successful
+            if [ $? -eq 0 ]; then
+                message="$extracted_binary binary file moved successfully."
+                send_log_to_logzio "$LOG_LEVEL_INFO" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+            else
+                message="Error: Failed to move the $extracted_binary binary file to: $binary_path."
+                send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+
+            fi
+        else
+            message="No matching binary file that contains this name: $binary_name found."
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        
+        fi
+        rm -f $tar_path
     else
-        downloaded_file=$(download_direct "$download_url" "$binary_path") || return 1
+        # Directly download the binary file
+        curl -fsSL --create-dirs "$download_url" > "$binary_path" 2>"$TASK_ERROR_FILE"
+
+        if [[ $? -ne 0 ]]; then
+            local error_message="installer.bash ($EXIT_CODE): error downloading $binary_name: $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$error_message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
+            write_task_post_run "write_error \"$error_message\""
+            return $EXIT_CODE
+
+        fi
     fi
+
 
     # Provide execution permissions to binary file
-    chmod_binary "$binary_path" "$func_name" || return 1
-
-    return 0
-}
-
-# Helper function to download tarballs
-function download_tarball {
-    local download_url="$1"
-    local binary_name="$2"
-    local tar_path="$LOGZIO_TEMP_DIR/$binary_name.tar.gz"
-
-    # Create a timestamp-based subdirectory for extraction
-    local extract_dir="$LOGZIO_TEMP_DIR/${binary_name}_extract"
-    mkdir -p "$extract_dir"
-
-    # Download the tarball
-    curl -fsSL "$download_url" >"$tar_path" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash: error downloading $binary_name.tar.gz: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "${FUNCNAME[1]}" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-        return 1
-    fi
-
-    # Extract the tarball
-    tar -zxf "$tar_path" --directory "$extract_dir" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash: error extracting files from $tar_path: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "${FUNCNAME[1]}" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-        return 1
-    fi
-
-    # Find the extracted binary
-    local extracted_binary
-    extracted_binary=$(find "$extract_dir" -maxdepth 1 -type f -name "${binary_name}*" ! -name "*.*" | head -n 1)
-
-    if [[ -z "$extracted_binary" ]]; then
-        message="installer.bash: no matching binary file named: ${binary_name} found in the extracted directory"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "${FUNCNAME[1]}" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-        return 1
-    fi
-
-    # Move the binary to the destination
-    move_binary "$extracted_binary" "$LOGZIO_TEMP_DIR/$binary_name"
-
-    # Clean up the temporary directory and tar file
-    rm -rf "$extract_dir" "$LOGZIO_TEMP_DIR/$binary_name.tar.gz"
-
-    echo "$binary_name"
-}
-
-
-# Helper function to download binary directly
-function download_direct {
-    local download_url="$1"
-    local binary_path="$2"
-
-    curl -fsSL --create-dirs "$download_url" >"$binary_path" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash: error downloading binary: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-        return 1
-    fi
-
-    echo "$binary_path"
-}
-
-# Helper function to move the binary to the destination
-function move_binary {
-    local source_path="$1"
-    local binary_path="$2"
-    local func_name="$3"
-
-    if [[ -z "$source_path" ]]; then
-        message="installer.bash: error moving binary to $binary_path: Source path is empty"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-        return 1
-    fi
-
-    mv "$source_path" "$binary_path"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash: error moving binary to $binary_path: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-        return 1
-    fi
-
-    return 0
-}
-
-# Helper function to provide execution permissions to binary file
-function chmod_binary {
-    local binary_path="$1"
-    local func_name="$2"
-
     chmod +x "$binary_path" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="installer.bash: error giving execute permissions to '$binary_path': $(get_task_error_message)"
+        message="installer.bash ($EXIT_CODE): error giving execute premissions to '$binary_path': $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
-        return 1
-    fi
 
-    return 0
+        return $EXIT_CODE
+    fi
 }
 
 # Downloads jq

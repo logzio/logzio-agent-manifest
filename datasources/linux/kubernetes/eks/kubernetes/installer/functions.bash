@@ -127,37 +127,11 @@ function get_is_fargate_was_selected {
 #   Eksctl binary file in Logz.io temp directory
 function download_eksctl {
     local func_name="${FUNCNAME[0]}"
+    local binary_name="eksctl"
+    local download_url=$(get_arch_specific_url "$EKSCTL_URL_DOWNLOAD" "$EKSCTL_ARM_URL_DOWNLOAD")
+    local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
 
-    local message='Downloading eksctl ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-    write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    curl -fsSL "$EKSCTL_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/eksctl.tar.gz" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
-
-    tar -zxf "$LOGZIO_TEMP_DIR/eksctl.tar.gz" --directory "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): error extracting files from eksctl.tar.gz: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
-
-    chmod +x "$EKSCTL_BIN" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): error giving execute premissions to '$EKSCTL_BIN': $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
+    download_binary "$download_url" "$binary_name" "$binary_path"
 }
 
 # Creates Fargate profile with monitoring namespace on Kubernetes cluster

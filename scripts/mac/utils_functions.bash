@@ -580,3 +580,50 @@ function execute_task {
     ((EXIT_CODE++))
     >"$TASK_POST_RUN_FILE"
 }
+
+# Check if binary is already installed with the correct version, if it does copy it
+function copy_installed_binary {
+    local binary_name="$1"
+    local download_url="$2"
+    local binary_path="$3"
+
+    # Check if the binary is installed
+    if command -v "$binary_name" &>/dev/null; then
+        # If version validation is not required, binary is considered installed
+        if [ -z "$download_url" ]; then
+            # Copy the installed binary to the specified path, if provided
+            if [ -n "$binary_path" ]; then
+                cp "$(command -v "$binary_name")" "$binary_path"
+            fi
+            return 0  # Binary is installed
+        fi
+
+        # Fetch the content of the version URL
+        downloaded_version=$(curl -s "$download_url")
+
+        # Check if the downloaded version matches the installed version
+        installed_version=$("$binary_name" --version | head -n 1)
+        if echo "$installed_version" | grep -E -q "$downloaded_version"; then
+            # Copy the installed binary to the specified path, if provided
+            if [ -n "$binary_path" ]; then
+                cp "$(command -v "$binary_name")" "$binary_path"
+            fi
+            return 0  # Binary is installed with the correct version
+        else
+            return 1  # Binary is installed, but version does not match
+        fi
+    else
+        return 1  # Binary is not installed
+    fi
+}
+# Function to get the architecture-specific download URL
+function get_arch_specific_url {
+    local default_url="$1"
+    local arm_url="$2"
+
+    if [[ ( "$CPU_ARCH" == "arm64" || "$CPU_ARCH" == "aarch64" ) && ! -z "$arm_url" ]]; then
+        echo "$arm_url"
+    else
+        echo "$default_url"
+    fi
+}

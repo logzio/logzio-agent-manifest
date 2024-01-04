@@ -55,13 +55,21 @@ AGENT_JSON="$LOGZIO_TEMP_DIR/agent.json"
 
 ## Urls
 # Url for downloading jq binary
-JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.6/jq-osx-amd64'
+JQ_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.7.1/jq-osx-amd64'
 # Url for downloading yq binary
-YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.33.2/yq_darwin_amd64.tar.gz'
+YQ_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_darwin_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
 OTEL_COLLECTOR_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.82.0/otelcol-logzio-darwin_amd64.tar.gz'
 # Url for downloading eksctl tar.gz
 EKSCTL_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Darwin_amd64.tar.gz'
+# Url for downloading jq arm64 binary
+JQ_ARM_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.7.1/jq-macos-arm64'
+# Url for downloading yq arm64 binary
+YQ_ARM_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_darwin_arm64.tar.gz'
+# Url for downloading OTEL collector arm64 tar.gz
+OTEL_COLLECTOR_ARM_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.82.0/otelcol-logzio-darwin_arm64.tar.gz'
+# Url for downloading eksctl arm64 tar.gz
+EKSCTL_ARM_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Darwin_arm64.tar.gz'
 # Url for AWS SQS
 SQS_URL='https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
 
@@ -69,7 +77,7 @@ SQS_URL='https://sqs.us-east-1.amazonaws.com/486140753397/LogzioAgentQueue'
 # Jq binary file path
 JQ_BIN="$LOGZIO_TEMP_DIR/jq"
 # Yq binary file path
-YQ_BIN="$LOGZIO_TEMP_DIR/yq_darwin_amd64"
+YQ_BIN="$LOGZIO_TEMP_DIR/yq"
 # Eksctl binary file path
 EKSCTL_BIN="$LOGZIO_TEMP_DIR/eksctl"
 
@@ -77,7 +85,7 @@ EKSCTL_BIN="$LOGZIO_TEMP_DIR/eksctl"
 # OTEL function file
 OTEL_FUNCTION_FILE="$LOGZIO_TEMP_DIR/otel_function.bash"
 # OTEL collector binary file name
-OTEL_COLLECTOR_BIN_NAME='otelcol-logzio-darwin_amd64'
+OTEL_COLLECTOR_BIN_NAME='otelcol-logzio'
 # OTEL collector binary file path
 OTEL_COLLECTOR_BIN="$LOGZIO_OTEL_COLLECTOR_DIR/$OTEL_COLLECTOR_BIN_NAME"
 # OTEL config file name
