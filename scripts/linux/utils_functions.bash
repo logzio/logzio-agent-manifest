@@ -646,6 +646,9 @@ function get_arch_specific_url {
     elif [[ ( "$CPU_ARCH" == "amd64" || "$CPU_ARCH" == "x86_64" ) && ! -z "$amd_url" ]]; then
         echo "$amd_url"
     else
-        echo "error getting arch specific url, arm_url: '$arm_url', amd_url: '$amd_url'"
+        local message="error getting arch specific url, arm_url: '$arm_url', amd_url: '$amd_url'. Attempting fallback to amd64 arch based URL $amd_url..."
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" '' "$LOG_SCRIPT_UTILS_FUNCTIONS" "$func_name" "$AGENT_ID"
+        write_error "$message"
+        echo "$amd_url"
     fi
 }
