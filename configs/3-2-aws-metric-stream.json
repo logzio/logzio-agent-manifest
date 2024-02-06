@@ -14,7 +14,7 @@
        "supportedOs": ["AWS_Cloudformation"],
        "productTags": ["METRICS"],
       "filterTags": ["AWS", "Most Popular"],
-       "integrationTemplate": "metric-stream-helpers/aws/1.2.4/sam-template.yaml&param_logzioDestination=https://listener-aws-metrics-stream-<<LOGZIO_ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
+       "integrationTemplate": "metric-stream-helpers/aws/1.3.0/sam-template.yaml&param_logzioDestination=https://listener-aws-metrics-stream-<<LOGZIO_ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
        "datasources": [
          {
            "name": "AWS_Metrics",
@@ -70,7 +70,7 @@
                   "type": "multi-select",
                   "name": "param_awsNamespaces",
                   "label": "AWS Namespaces",
-                  "required": true,
+                  "required": false,
                   "description": "Services that you need to collect metrics from.",
                   "options": [
                     { "label": "All Namespaces", "value": "all-namespaces" },
@@ -203,7 +203,14 @@
                     { "label": "WorkSpaces", "value": "AWS/WorkSpaces" },
                     { "label": "WorkSpaces Web", "value": "AWS/WorkSpacesWeb" }
                   ]
-                }
+                },
+                {
+                  "type": "text",
+                  "name": "param_customNamespace",
+                  "label": "Custom Namespace",
+                  "required": false,
+                  "description": "Enter the name of your custom namespace."
+                }                
                ]
              }
            ]
