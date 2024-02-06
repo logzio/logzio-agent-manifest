@@ -209,7 +209,7 @@
                   "name": "param_customNamespace",
                   "label": "Custom Namespace",
                   "required": false,
-                  "description": "Enter the name of your custom namespace if you have services outside of AWS."
+                  "description": "Enter the name of your custom namespace."
                 }                
                ]
              }
