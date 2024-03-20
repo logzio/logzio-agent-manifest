@@ -7,10 +7,12 @@
         {
             "name": "GCP_Logs",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
-            "label": "GCP Logs",
+            "label": "Logs",
             "description": "Cloud Logging",
             "hint": "Logging from GCP services.",
             "supportedOs": ["GCP"],
+            "productTags": ["LOG_ANALYTICS"],
+            "filterTags": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-pubsub",
             "datasources": [
                 {

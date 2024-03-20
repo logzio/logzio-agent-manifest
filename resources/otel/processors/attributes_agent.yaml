@@ -1,5 +1,0 @@
-attributes/agent:
-  actions:
-    - key: logzio_agent_version
-      value: v1.1.16
-      action: insert

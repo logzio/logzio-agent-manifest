@@ -207,6 +207,9 @@ Agent_ID=''
 # Logz.io temp directory
 LOGZIO_TEMP_DIR='/tmp/logzio'
 
+# proxy ip
+PROXY=''
+
 # Exit code
 EXIT_CODE=1
 

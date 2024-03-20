@@ -19,3 +19,5 @@ systemctl reset-failed "LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>/dev/null
 rm "/etc/systemd/system/LOGZIO_OTEL_COLLECTOR_SERVICE_NAME.service" 2>/dev/null
 rm "/usr/lib/systemd/system/LOGZIO_OTEL_COLLECTOR_SERVICE_NAME.service" 2>/dev/null
 rm "/etc/init.d/LOGZIO_OTEL_COLLECTOR_SERVICE_NAME" 2>/dev/null
+
+echo -e "service was deleted successfully"

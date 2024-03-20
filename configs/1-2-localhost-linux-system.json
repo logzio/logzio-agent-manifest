@@ -12,6 +12,8 @@
       "description": "Linux Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Linux"],
+      "productTags": ["LOG_ANALYTICS", "METRICS"],
+      "filterTags": ["Operating Systems", "Most Popular"],
       "datasources": [
         {
           "name": "System",
@@ -45,7 +47,7 @@
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your computer.",
               "otel": {
                 "receivers": ["hostmetrics"],
-                "processors": ["resourcedetection_system", "attributes_agent", "filter"]
+                "processors": ["resourcedetection_system", "resource_agent", "filter"]
 				      },
               "params": [],
               "dashboards": [

@@ -7,10 +7,12 @@
         {
             "name": "GCP_Metrics",
             "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/gcp.png",
-            "label": "GCP Metrics",
+            "label": "Metrics",
             "description": "Cloud Monitoring",
             "hint": "Metrics from GCP services.",
             "supportedOs": ["GCP"],
+            "productTags": ["METRICS"],
+            "filterTags": ["GCP"],
             "integrationTemplate": "https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/logzio/logzio-google-metrics",
             "datasources": [
                 {
@@ -133,10 +135,6 @@
                                     "required": true,
                                     "hint": "To send all resource types of the project select 'All services'",
                                     "options": [
-                                        {
-                                            "label": "All Services",
-                                            "value": "all_services"
-                                        },
                                         {
                                             "label": "Google AI Platform",
                                             "value": "ml.googleapis.com"
@@ -365,8 +363,7 @@
                                             "label": "Google Workflows",
                                             "value": "workflows.googleapis.com"
                                         }
-                                    ],
-                                    "value": ["all_services"]
+                                    ]
                                 }
                             ]
                         }

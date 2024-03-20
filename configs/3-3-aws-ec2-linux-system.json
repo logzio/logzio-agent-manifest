@@ -8,16 +8,18 @@
      {
        "name": "EC2",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-       "label": "EC2 Monitoring",
+       "label": "EC2",
        "description": "Linux Logs & Metrics",
        "hint": "EC2 with Linux.",
        "supportedOs": ["Linux"],
+       "productTags": ["LOG_ANALYTICS","METRICS"],
+      "filterTags": ["AWS", "Most Popular"],
        "datasources": [
          {
            "name": "System",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
            "label": "System",
-           "description": "Logz.io Uses OpenTelemetry to monitor your EC2.",
+           "description": "Monitor your EC2 using OpenTemeletry",
            "telemetries": [
              {
                "type": "LOG_ANALYTICS",
@@ -44,7 +46,7 @@
                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your EC2.",
                "otel": {
                 "receivers": ["hostmetrics"],
-                "processors": ["resourcedetection_system", "resourcedetection_ec2", "attributes_agent", "filter"]
+                "processors": ["resourcedetection_system", "resourcedetection_ec2", "resource_agent", "filter"]
 				       },
                "params": [],
                "dashboards": [
@@ -57,4 +59,3 @@
      }
    ]
  }
- 

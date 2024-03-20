@@ -1,0 +1,8 @@
+transform/application:
+  error_mode: ignore
+  log_statements:
+    - context: log
+      statements: 
+        - flatten(body["event_data"], depth=1)
+        - flatten(body["event_data"], depth=2)
+        - replace_all_patterns(body["event_data"], "key", "data.([0-9]).", "data_$$1")

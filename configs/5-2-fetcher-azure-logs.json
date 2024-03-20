@@ -1,0 +1,762 @@
+{
+  "name": "Cloud Fetchers",
+  "label": "Cloud Integrations",
+  "type": "FETCHER",
+  "subtypes": [
+    {
+      "name": "azure-monitor-logs",
+      "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
+      "label": "Azure Logs",
+      "description": "Azure Cloud",
+      "supportedOs": [
+        "Fetcher"
+      ],
+      "productTags": ["LOG_ANALYTICS"],
+      "filterTags": ["Azure"],
+      "datasources": [
+        {
+          "name": "azure-monitor-logs",
+          "label": "Azure Logs",
+          "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/azure-logo.svg",
+          "description": "Ship your Azure Logs to logz.io",
+          "type": "AzureMonitorLogsFetcher",
+          "information": [
+            {
+              "variant": "announcement",
+              "title": "Important note about data consumption",
+              "text": "Azure may charge additional fees for using this integration. [Read more about Azure API costs](https://azure.microsoft.com/en-us/pricing/details/api-management/). "
+            },
+            {
+              "variant": "info",
+              "title": "Connect your Microsoft Azure app to Logz.io",
+              "text": "To get started with Microsoft Azure and Logz.io, you’ll need to create an app and connect it. [See our step-by-step guide](https://docs.logz.io/user-guide/azure-native-integration.html)."
+            }
+          ],
+          "params": [
+            {
+              "type": "text",
+              "name": "tenant.id",
+              "label": "Tenant ID",
+              "required": true,
+              "description": "",
+              "hint": "",
+              "value": ""
+            },
+            {
+              "type": "text",
+              "name": "client.id",
+              "label": "Client ID",
+              "required": true,
+              "description": "",
+              "hint": "",
+              "value": ""
+            },
+            {
+              "type": "text",
+              "name": "client.secret",
+              "label": "Client Secret",
+              "required": true,
+              "description": "",
+              "hint": "",
+              "value": ""
+            }
+          ],
+          "telemetries": [
+            {
+              "type": "LOG_ANALYTICS",
+              "hint": "",
+              "params": [
+                {
+                  "type": "text",
+                  "name": "subscription.id",
+                  "label": "Subscription",
+                  "required": true,
+                  "description": "",
+                  "hint": "",
+                  "value": ""
+                },
+                {
+                  "type": "multi-select",
+                  "name": "resource.group.ids",
+                  "label": "Resource group names",
+                  "required": false,
+                  "description": "",
+                  "hint": "",
+                  "value": [],
+                  "allowCustom": true,
+                  "noOptionsMessage": "Enter resource group name"
+                },
+                {
+                  "type": "key-value",
+                  "name": "tags",
+                  "label": "Tags",
+                  "required": false,
+                  "description": "",
+                  "hint": "",
+                  "value": []
+                },
+                {
+                  "type": "multi-select",
+                  "name": "resource.types",
+                  "label": "Resource Type",
+                  "description": "Send logs that include any of these resource types.",
+                  "required": false,
+                  "hint": "To send all resource types of the project select 'All services'",
+                  "options": [
+                    {
+                      "value": "Microsoft.AAD/DomainServices",
+                      "label": "Microsoft.AAD/DomainServices"
+                    },
+                    {
+                      "value": "Microsoft.AgFoodPlatform/farmBeats",
+                      "label": "Microsoft.AgFoodPlatform/farmBeats"
+                    },
+                    {
+                      "value": "Microsoft.AnalysisServices/servers",
+                      "label": "Microsoft.AnalysisServices/servers"
+                    },
+                    {
+                      "value": "Microsoft.ApiManagement/service",
+                      "label": "Microsoft.ApiManagement/service"
+                    },
+                    {
+                      "value": "Microsoft.App/managedEnvironments",
+                      "label": "Microsoft.App/managedEnvironments"
+                    },
+                    {
+                      "value": "Microsoft.AppConfiguration/configurationStores",
+                      "label": "Microsoft.AppConfiguration/configurationStores"
+                    },
+                    {
+                      "value": "Microsoft.AppPlatform/Spring",
+                      "label": "Microsoft.AppPlatform/Spring"
+                    },
+                    {
+                      "value": "Microsoft.Attestation/attestationProviders",
+                      "label": "Microsoft.Attestation/attestationProviders"
+                    },
+                    {
+                      "value": "Microsoft.Automation/automationAccounts",
+                      "label": "Microsoft.Automation/automationAccounts"
+                    },
+                    {
+                      "value": "Microsoft.AutonomousDevelopmentPlatform/accounts",
+                      "label": "Microsoft.AutonomousDevelopmentPlatform/accounts"
+                    },
+                    {
+                      "value": "Microsoft.AutonomousDevelopmentPlatform/workspaces",
+                      "label": "Microsoft.AutonomousDevelopmentPlatform/workspaces"
+                    },
+                    {
+                      "value": "microsoft.avs/privateClouds",
+                      "label": "microsoft.avs/privateClouds"
+                    },
+                    {
+                      "value": "Microsoft.AzureDataTransfer/connections/flows",
+                      "label": "Microsoft.AzureDataTransfer/connections/flows"
+                    },
+                    {
+                      "value": "microsoft.azureplaywrightservice/accounts",
+                      "label": "microsoft.azureplaywrightservice/accounts"
+                    },
+                    {
+                      "value": "microsoft.azuresphere/catalogs",
+                      "label": "microsoft.azuresphere/catalogs"
+                    },
+                    {
+                      "value": "Microsoft.Batch/batchaccounts",
+                      "label": "Microsoft.Batch/batchaccounts"
+                    },
+                    {
+                      "value": "microsoft.botservice/botservices",
+                      "label": "microsoft.botservice/botservices"
+                    },
+                    {
+                      "value": "Microsoft.Cache/redis",
+                      "label": "Microsoft.Cache/redis"
+                    },
+                    {
+                      "value": "Microsoft.Cache/redisEnterprise/databases",
+                      "label": "Microsoft.Cache/redisEnterprise/databases"
+                    },
+                    {
+                      "value": "Microsoft.Cdn/cdnwebapplicationfirewallpolicies",
+                      "label": "Microsoft.Cdn/cdnwebapplicationfirewallpolicies"
+                    },
+                    {
+                      "value": "Microsoft.Cdn/profiles",
+                      "label": "Microsoft.Cdn/profiles"
+                    },
+                    {
+                      "value": "Microsoft.Cdn/profiles/endpoints",
+                      "label": "Microsoft.Cdn/profiles/endpoints"
+                    },
+                    {
+                      "value": "Microsoft.Chaos/experiments",
+                      "label": "Microsoft.Chaos/experiments"
+                    },
+                    {
+                      "value": "Microsoft.ClassicNetwork/networksecuritygroups",
+                      "label": "Microsoft.ClassicNetwork/networksecuritygroups"
+                    },
+                    {
+                      "value": "Microsoft.Cloudtest/hostedpools",
+                      "label": "Microsoft.Cloudtest/hostedpools"
+                    },
+                    {
+                      "value": "Microsoft.CodeSigning/codesigningaccounts",
+                      "label": "Microsoft.CodeSigning/codesigningaccounts"
+                    },
+                    {
+                      "value": "Microsoft.CognitiveServices/accounts",
+                      "label": "Microsoft.CognitiveServices/accounts"
+                    },
+                    {
+                      "value": "Microsoft.Communication/CommunicationServices",
+                      "label": "Microsoft.Communication/CommunicationServices"
+                    },
+                    {
+                      "value": "Microsoft.Compute/virtualMachines",
+                      "label": "Microsoft.Compute/virtualMachines"
+                    },
+                    {
+                      "value": "Microsoft.ConfidentialLedger/ManagedCCF",
+                      "label": "Microsoft.ConfidentialLedger/ManagedCCF"
+                    },
+                    {
+                      "value": "Microsoft.ConfidentialLedger/ManagedCCFs",
+                      "label": "Microsoft.ConfidentialLedger/ManagedCCFs"
+                    },
+                    {
+                      "value": "Microsoft.ConnectedCache/CacheNodes",
+                      "label": "Microsoft.ConnectedCache/CacheNodes"
+                    },
+                    {
+                      "value": "Microsoft.ConnectedCache/enterpriseMccCustomers",
+                      "label": "Microsoft.ConnectedCache/enterpriseMccCustomers"
+                    },
+                    {
+                      "value": "Microsoft.ConnectedCache/ispCustomers",
+                      "label": "Microsoft.ConnectedCache/ispCustomers"
+                    },
+                    {
+                      "value": "Microsoft.ConnectedVehicle/platformAccounts",
+                      "label": "Microsoft.ConnectedVehicle/platformAccounts"
+                    },
+                    {
+                      "value": "Microsoft.ContainerInstance/containerGroups",
+                      "label": "Microsoft.ContainerInstance/containerGroups"
+                    },
+                    {
+                      "value": "Microsoft.ContainerRegistry/registries",
+                      "label": "Microsoft.ContainerRegistry/registries"
+                    },
+                    {
+                      "value": "Microsoft.ContainerService/fleets",
+                      "label": "Microsoft.ContainerService/fleets"
+                    },
+                    {
+                      "value": "Microsoft.ContainerService/managedClusters",
+                      "label": "Microsoft.ContainerService/managedClusters"
+                    },
+                    {
+                      "value": "Microsoft.CustomProviders/resourceproviders",
+                      "label": "Microsoft.CustomProviders/resourceproviders"
+                    },
+                    {
+                      "value": "Microsoft.Dashboard/grafana",
+                      "label": "Microsoft.Dashboard/grafana"
+                    },
+                    {
+                      "value": "Microsoft.Databricks/workspaces",
+                      "label": "Microsoft.Databricks/workspaces"
+                    },
+                    {
+                      "value": "Microsoft.DataCollaboration/workspaces",
+                      "label": "Microsoft.DataCollaboration/workspaces"
+                    },
+                    {
+                      "value": "Microsoft.DataFactory/factories",
+                      "label": "Microsoft.DataFactory/factories"
+                    },
+                    {
+                      "value": "Microsoft.DataLakeAnalytics/accounts",
+                      "label": "Microsoft.DataLakeAnalytics/accounts"
+                    },
+                    {
+                      "value": "Microsoft.DataLakeStore/accounts",
+                      "label": "Microsoft.DataLakeStore/accounts"
+                    },
+                    {
+                      "value": "Microsoft.DataProtection/BackupVaults",
+                      "label": "Microsoft.DataProtection/BackupVaults"
+                    },
+                    {
+                      "value": "Microsoft.DataShare/accounts",
+                      "label": "Microsoft.DataShare/accounts"
+                    },
+                    {
+                      "value": "Microsoft.DBforMariaDB/servers",
+                      "label": "Microsoft.DBforMariaDB/servers"
+                    },
+                    {
+                      "value": "Microsoft.DBforMySQL/flexibleServers",
+                      "label": "Microsoft.DBforMySQL/flexibleServers"
+                    },
+                    {
+                      "value": "Microsoft.DBforMySQL/servers",
+                      "label": "Microsoft.DBforMySQL/servers"
+                    },
+                    {
+                      "value": "Microsoft.DBforPostgreSQL/flexibleServers",
+                      "label": "Microsoft.DBforPostgreSQL/flexibleServers"
+                    },
+                    {
+                      "value": "Microsoft.DBForPostgreSQL/serverGroupsv2",
+                      "label": "Microsoft.DBForPostgreSQL/serverGroupsv2"
+                    },
+                    {
+                      "value": "Microsoft.DBforPostgreSQL/servers",
+                      "label": "Microsoft.DBforPostgreSQL/servers"
+                    },
+                    {
+                      "value": "Microsoft.DBforPostgreSQL/serversv2",
+                      "label": "Microsoft.DBforPostgreSQL/serversv2"
+                    },
+                    {
+                      "value": "Microsoft.DesktopVirtualization/applicationgroups",
+                      "label": "Microsoft.DesktopVirtualization/applicationgroups"
+                    },
+                    {
+                      "value": "Microsoft.DesktopVirtualization/hostpools",
+                      "label": "Microsoft.DesktopVirtualization/hostpools"
+                    },
+                    {
+                      "value": "Microsoft.DesktopVirtualization/scalingplans",
+                      "label": "Microsoft.DesktopVirtualization/scalingplans"
+                    },
+                    {
+                      "value": "Microsoft.DesktopVirtualization/workspaces",
+                      "label": "Microsoft.DesktopVirtualization/workspaces"
+                    },
+                    {
+                      "value": "Microsoft.DevCenter/devcenters",
+                      "label": "Microsoft.DevCenter/devcenters"
+                    },
+                    {
+                      "value": "Microsoft.Devices/IotHubs",
+                      "label": "Microsoft.Devices/IotHubs"
+                    },
+                    {
+                      "value": "Microsoft.Devices/provisioningServices",
+                      "label": "Microsoft.Devices/provisioningServices"
+                    },
+                    {
+                      "value": "Microsoft.DigitalTwins/digitalTwinsInstances",
+                      "label": "Microsoft.DigitalTwins/digitalTwinsInstances"
+                    },
+                    {
+                      "value": "Microsoft.DocumentDB/cassandraClusters",
+                      "label": "Microsoft.DocumentDB/cassandraClusters"
+                    },
+                    {
+                      "value": "Microsoft.DocumentDB/DatabaseAccounts",
+                      "label": "Microsoft.DocumentDB/DatabaseAccounts"
+                    },
+                    {
+                      "value": "Microsoft.EventGrid/domains",
+                      "label": "Microsoft.EventGrid/domains"
+                    },
+                    {
+                      "value": "Microsoft.EventGrid/partnerNamespaces",
+                      "label": "Microsoft.EventGrid/partnerNamespaces"
+                    },
+                    {
+                      "value": "Microsoft.EventGrid/partnerTopics",
+                      "label": "Microsoft.EventGrid/partnerTopics"
+                    },
+                    {
+                      "value": "Microsoft.EventGrid/systemTopics",
+                      "label": "Microsoft.EventGrid/systemTopics"
+                    },
+                    {
+                      "value": "Microsoft.EventGrid/topics",
+                      "label": "Microsoft.EventGrid/topics"
+                    },
+                    {
+                      "value": "Microsoft.EventHub/Namespaces",
+                      "label": "Microsoft.EventHub/Namespaces"
+                    },
+                    {
+                      "value": "Microsoft.HealthcareApis/services",
+                      "label": "Microsoft.HealthcareApis/services"
+                    },
+                    {
+                      "value": "Microsoft.HealthcareApis/workspaces/dicomservices",
+                      "label": "Microsoft.HealthcareApis/workspaces/dicomservices"
+                    },
+                    {
+                      "value": "Microsoft.HealthcareApis/workspaces/fhirservices",
+                      "label": "Microsoft.HealthcareApis/workspaces/fhirservices"
+                    },
+                    {
+                      "value": "Microsoft.HealthcareApis/workspaces/iotconnectors",
+                      "label": "Microsoft.HealthcareApis/workspaces/iotconnectors"
+                    },
+                    {
+                      "value": "microsoft.insights/autoscalesettings",
+                      "label": "microsoft.insights/autoscalesettings"
+                    },
+                    {
+                      "value": "microsoft.insights/components",
+                      "label": "microsoft.insights/components"
+                    },
+                    {
+                      "value": "Microsoft.Insights/datacollectionrules",
+                      "label": "Microsoft.Insights/datacollectionrules"
+                    },
+                    {
+                      "value": "microsoft.keyvault/managedhsms",
+                      "label": "microsoft.keyvault/managedhsms"
+                    },
+                    {
+                      "value": "Microsoft.KeyVault/vaults",
+                      "label": "Microsoft.KeyVault/vaults"
+                    },
+                    {
+                      "value": "Microsoft.Kusto/clusters",
+                      "label": "Microsoft.Kusto/clusters"
+                    },
+                    {
+                      "value": "microsoft.loadtestservice/loadtests",
+                      "label": "microsoft.loadtestservice/loadtests"
+                    },
+                    {
+                      "value": "Microsoft.Logic/IntegrationAccounts",
+                      "label": "Microsoft.Logic/IntegrationAccounts"
+                    },
+                    {
+                      "value": "Microsoft.Logic/Workflows",
+                      "label": "Microsoft.Logic/Workflows"
+                    },
+                    {
+                      "value": "Microsoft.MachineLearningServices/registries",
+                      "label": "Microsoft.MachineLearningServices/registries"
+                    },
+                    {
+                      "value": "Microsoft.MachineLearningServices/workspaces",
+                      "label": "Microsoft.MachineLearningServices/workspaces"
+                    },
+                    {
+                      "value": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints",
+                      "label": "Microsoft.MachineLearningServices/workspaces/onlineEndpoints"
+                    },
+                    {
+                      "value": "Microsoft.ManagedNetworkFabric/networkDevices",
+                      "label": "Microsoft.ManagedNetworkFabric/networkDevices"
+                    },
+                    {
+                      "value": "Microsoft.Media/mediaservices",
+                      "label": "Microsoft.Media/mediaservices"
+                    },
+                    {
+                      "value": "Microsoft.Media/mediaservices/liveEvents",
+                      "label": "Microsoft.Media/mediaservices/liveEvents"
+                    },
+                    {
+                      "value": "Microsoft.Media/mediaservices/streamingEndpoints",
+                      "label": "Microsoft.Media/mediaservices/streamingEndpoints"
+                    },
+                    {
+                      "value": "Microsoft.Media/videoanalyzers",
+                      "label": "Microsoft.Media/videoanalyzers"
+                    },
+                    {
+                      "value": "Microsoft.NetApp/netAppAccounts/capacityPools",
+                      "label": "Microsoft.NetApp/netAppAccounts/capacityPools"
+                    },
+                    {
+                      "value": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes",
+                      "label": "Microsoft.NetApp/netAppAccounts/capacityPools/volumes"
+                    },
+                    {
+                      "value": "Microsoft.Network/applicationgateways",
+                      "label": "Microsoft.Network/applicationgateways"
+                    },
+                    {
+                      "value": "Microsoft.Network/azureFirewalls",
+                      "label": "Microsoft.Network/azureFirewalls"
+                    },
+                    {
+                      "value": "microsoft.network/bastionHosts",
+                      "label": "microsoft.network/bastionHosts"
+                    },
+                    {
+                      "value": "Microsoft.Network/expressRouteCircuits",
+                      "label": "Microsoft.Network/expressRouteCircuits"
+                    },
+                    {
+                      "value": "Microsoft.Network/frontdoors",
+                      "label": "Microsoft.Network/frontdoors"
+                    },
+                    {
+                      "value": "Microsoft.Network/loadBalancers",
+                      "label": "Microsoft.Network/loadBalancers"
+                    },
+                    {
+                      "value": "Microsoft.Network/networkManagers",
+                      "label": "Microsoft.Network/networkManagers"
+                    },
+                    {
+                      "value": "Microsoft.Network/networksecuritygroups",
+                      "label": "Microsoft.Network/networksecuritygroups"
+                    },
+                    {
+                      "value": "Microsoft.Network/networkSecurityPerimeters",
+                      "label": "Microsoft.Network/networkSecurityPerimeters"
+                    },
+                    {
+                      "value": "Microsoft.Network/networkSecurityPerimeters/profiles",
+                      "label": "Microsoft.Network/networkSecurityPerimeters/profiles"
+                    },
+                    {
+                      "value": "microsoft.network/p2svpngateways",
+                      "label": "microsoft.network/p2svpngateways"
+                    },
+                    {
+                      "value": "Microsoft.Network/publicIPAddresses",
+                      "label": "Microsoft.Network/publicIPAddresses"
+                    },
+                    {
+                      "value": "Microsoft.Network/publicIPPrefixes",
+                      "label": "Microsoft.Network/publicIPPrefixes"
+                    },
+                    {
+                      "value": "Microsoft.Network/trafficManagerProfiles",
+                      "label": "Microsoft.Network/trafficManagerProfiles"
+                    },
+                    {
+                      "value": "microsoft.network/virtualnetworkgateways",
+                      "label": "microsoft.network/virtualnetworkgateways"
+                    },
+                    {
+                      "value": "Microsoft.Network/virtualNetworks",
+                      "label": "Microsoft.Network/virtualNetworks"
+                    },
+                    {
+                      "value": "microsoft.network/vpngateways",
+                      "label": "microsoft.network/vpngateways"
+                    },
+                    {
+                      "value": "Microsoft.NetworkCloud/bareMetalMachines",
+                      "label": "Microsoft.NetworkCloud/bareMetalMachines"
+                    },
+                    {
+                      "value": "Microsoft.NetworkCloud/clusters",
+                      "label": "Microsoft.NetworkCloud/clusters"
+                    },
+                    {
+                      "value": "Microsoft.NetworkCloud/storageAppliances",
+                      "label": "Microsoft.NetworkCloud/storageAppliances"
+                    },
+                    {
+                      "value": "Microsoft.NetworkFunction/azureTrafficCollectors",
+                      "label": "Microsoft.NetworkFunction/azureTrafficCollectors"
+                    },
+                    {
+                      "value": "Microsoft.NotificationHubs/namespaces",
+                      "label": "Microsoft.NotificationHubs/namespaces"
+                    },
+                    {
+                      "value": "MICROSOFT.OPENENERGYPLATFORM/ENERGYSERVICES",
+                      "label": "MICROSOFT.OPENENERGYPLATFORM/ENERGYSERVICES"
+                    },
+                    {
+                      "value": "Microsoft.OpenLogisticsPlatform/Workspaces",
+                      "label": "Microsoft.OpenLogisticsPlatform/Workspaces"
+                    },
+                    {
+                      "value": "Microsoft.OperationalInsights/workspaces",
+                      "label": "Microsoft.OperationalInsights/workspaces"
+                    },
+                    {
+                      "value": "Microsoft.PlayFab/titles",
+                      "label": "Microsoft.PlayFab/titles"
+                    },
+                    {
+                      "value": "Microsoft.PowerBI/tenants",
+                      "label": "Microsoft.PowerBI/tenants"
+                    },
+                    {
+                      "value": "Microsoft.PowerBI/tenants/workspaces",
+                      "label": "Microsoft.PowerBI/tenants/workspaces"
+                    },
+                    {
+                      "value": "Microsoft.PowerBIDedicated/capacities",
+                      "label": "Microsoft.PowerBIDedicated/capacities"
+                    },
+                    {
+                      "value": "microsoft.purview/accounts",
+                      "label": "microsoft.purview/accounts"
+                    },
+                    {
+                      "value": "Microsoft.RecoveryServices/Vaults",
+                      "label": "Microsoft.RecoveryServices/Vaults"
+                    },
+                    {
+                      "value": "Microsoft.Relay/namespaces",
+                      "label": "Microsoft.Relay/namespaces"
+                    },
+                    {
+                      "value": "Microsoft.Search/searchServices",
+                      "label": "Microsoft.Search/searchServices"
+                    },
+                    {
+                      "value": "Microsoft.Security/antiMalwareSettings",
+                      "label": "Microsoft.Security/antiMalwareSettings"
+                    },
+                    {
+                      "value": "Microsoft.Security/defenderForStorageSettings",
+                      "label": "Microsoft.Security/defenderForStorageSettings"
+                    },
+                    {
+                      "value": "microsoft.securityinsights/settings",
+                      "label": "microsoft.securityinsights/settings"
+                    },
+                    {
+                      "value": "Microsoft.ServiceBus/Namespaces",
+                      "label": "Microsoft.ServiceBus/Namespaces"
+                    },
+                    {
+                      "value": "Microsoft.ServiceNetworking/trafficControllers",
+                      "label": "Microsoft.ServiceNetworking/trafficControllers"
+                    },
+                    {
+                      "value": "Microsoft.SignalRService/SignalR",
+                      "label": "Microsoft.SignalRService/SignalR"
+                    },
+                    {
+                      "value": "Microsoft.SignalRService/SignalR/replicas",
+                      "label": "Microsoft.SignalRService/SignalR/replicas"
+                    },
+                    {
+                      "value": "Microsoft.SignalRService/WebPubSub",
+                      "label": "Microsoft.SignalRService/WebPubSub"
+                    },
+                    {
+                      "value": "Microsoft.SignalRService/WebPubSub/replicas",
+                      "label": "Microsoft.SignalRService/WebPubSub/replicas"
+                    },
+                    {
+                      "value": "microsoft.singularity/accounts",
+                      "label": "microsoft.singularity/accounts"
+                    },
+                    {
+                      "value": "Microsoft.Sql/managedInstances",
+                      "label": "Microsoft.Sql/managedInstances"
+                    },
+                    {
+                      "value": "Microsoft.Sql/managedInstances/databases",
+                      "label": "Microsoft.Sql/managedInstances/databases"
+                    },
+                    {
+                      "value": "Microsoft.Sql/servers/databases",
+                      "label": "Microsoft.Sql/servers/databases"
+                    },
+                    {
+                      "value": "Microsoft.Storage/storageAccounts/blobServices",
+                      "label": "Microsoft.Storage/storageAccounts/blobServices"
+                    },
+                    {
+                      "value": "Microsoft.Storage/storageAccounts/fileServices",
+                      "label": "Microsoft.Storage/storageAccounts/fileServices"
+                    },
+                    {
+                      "value": "Microsoft.Storage/storageAccounts/queueServices",
+                      "label": "Microsoft.Storage/storageAccounts/queueServices"
+                    },
+                    {
+                      "value": "Microsoft.Storage/storageAccounts/tableServices",
+                      "label": "Microsoft.Storage/storageAccounts/tableServices"
+                    },
+                    {
+                      "value": "Microsoft.StorageCache/amlFilesystems",
+                      "label": "Microsoft.StorageCache/amlFilesystems"
+                    },
+                    {
+                      "value": "Microsoft.StorageCache/caches",
+                      "label": "Microsoft.StorageCache/caches"
+                    },
+                    {
+                      "value": "Microsoft.StorageMover/storageMovers",
+                      "label": "Microsoft.StorageMover/storageMovers"
+                    },
+                    {
+                      "value": "Microsoft.StreamAnalytics/streamingjobs",
+                      "label": "Microsoft.StreamAnalytics/streamingjobs"
+                    },
+                    {
+                      "value": "Microsoft.Synapse/workspaces",
+                      "label": "Microsoft.Synapse/workspaces"
+                    },
+                    {
+                      "value": "Microsoft.Synapse/workspaces/bigDataPools",
+                      "label": "Microsoft.Synapse/workspaces/bigDataPools"
+                    },
+                    {
+                      "value": "Microsoft.Synapse/workspaces/kustoPools",
+                      "label": "Microsoft.Synapse/workspaces/kustoPools"
+                    },
+                    {
+                      "value": "Microsoft.Synapse/workspaces/scopePools",
+                      "label": "Microsoft.Synapse/workspaces/scopePools"
+                    },
+                    {
+                      "value": "Microsoft.Synapse/workspaces/sqlPools",
+                      "label": "Microsoft.Synapse/workspaces/sqlPools"
+                    },
+                    {
+                      "value": "Microsoft.TimeSeriesInsights/environments",
+                      "label": "Microsoft.TimeSeriesInsights/environments"
+                    },
+                    {
+                      "value": "Microsoft.TimeSeriesInsights/environments/eventsources",
+                      "label": "Microsoft.TimeSeriesInsights/environments/eventsources"
+                    },
+                    {
+                      "value": "microsoft.videoindexer/accounts",
+                      "label": "microsoft.videoindexer/accounts"
+                    },
+                    {
+                      "value": "Microsoft.Web/hostingEnvironments",
+                      "label": "Microsoft.Web/hostingEnvironments"
+                    },
+                    {
+                      "value": "Microsoft.Web/sites",
+                      "label": "Microsoft.Web/sites"
+                    },
+                    {
+                      "value": "Microsoft.Web/sites/slots",
+                      "label": "Microsoft.Web/sites/slots"
+                    },
+                    {
+                      "value": "Microsoft.Web/staticsites",
+                      "label": "Microsoft.Web/staticsites"
+                    },
+                    {
+                      "value": "microsoft.workloads/sapvirtualinstances",
+                      "label": "microsoft.workloads/sapvirtualinstances"
+                    }
+                  ],
+                  "value": [
+                    "all_services"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

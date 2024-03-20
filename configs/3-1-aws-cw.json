@@ -8,17 +8,19 @@
      {
        "name": "AWS_Logs",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-       "label": "AWS Logs",
+       "label": "Logs",
        "description": "via Cloudwatch",
        "hint": "Cloudwatch logs to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
-       "integrationTemplate": "firehose-logs/0.0.1/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
+       "productTags": ["LOG_ANALYTICS"],
+      "filterTags": ["AWS", "Most Popular"],
+       "integrationTemplate": "firehose-logs/0.0.2/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
        "datasources": [
          {
            "name": "AWS_Logs",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
            "label": "AWS Logs",
-           "description": "Ship your Cloudwatch logs to Logz.io via Firehose",
+           "description": "Ship your Cloudwatch logs via Firehose, set up your AWS region and stack, and choose the specific services or log groups from which you wish to collect data.",
            "params": [
             {
               "type": "single-select",
@@ -86,7 +88,7 @@
                     { "label": "RDS", "value": "rds" }
                   ]
                 },
-                { 
+                {
                   "type": "string-list",
                   "name": "param_customLogGroups",
                   "label": "Custom Log Groups",
@@ -102,4 +104,3 @@
      }
    ]
  }
- 

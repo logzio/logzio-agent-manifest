@@ -242,6 +242,171 @@ function check_arguments_validation {
     return $EXIT_CODE
 }
 
+# Downloads binary file
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_name - Binary file name
+# - binary_path - Path to binary file in Logz.io temp directory
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
+function download_binary {
+    local download_url="$1"
+    local binary_name="$2"
+    local binary_path="$3"
+    local func_name="${FUNCNAME[0]}"
+
+    # Check if the binary is already installed
+    if copy_installed_binary "$binary_name" "$download_url" "$binary_path"; then
+        write_log "$LOG_LEVEL_DEBUG" "$binary_name is already installed. Skipping download."
+        return 0
+    fi
+
+    # Download the binary
+    local downloaded_file
+    if [[ "$download_url" == *".tar.gz" ]]; then
+        downloaded_file=$(download_tarball "$download_url" "$binary_name")
+    else
+        downloaded_file=$(download_direct "$download_url" "$binary_path") || return 1
+    fi
+
+    # Provide execution permissions to binary file
+    chmod_binary "$binary_path" "$func_name" || return 1
+
+    return 0
+}
+
+# Helper function to download tarballs
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_name - Binary file name
+#   ---
+# Output:
+#   Extracted binary file in Logz.io temp directory
+function download_tarball {
+    local download_url="$1"
+    local binary_name="$2"
+    local tar_path="$LOGZIO_TEMP_DIR/$binary_name.tar.gz"
+
+    # Create a timestamp-based subdirectory for extraction
+    local extract_dir="$LOGZIO_TEMP_DIR/${binary_name}_extract"
+    mkdir -p "$extract_dir"
+
+    # Download the tarball
+    curl -fsSL "$download_url" >"$tar_path" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash: error downloading $binary_name.tar.gz: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "${FUNCNAME[1]}" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return 1
+    fi
+
+    # Extract the tarball
+    tar -zxf "$tar_path" --directory "$extract_dir" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash: error extracting files from $tar_path: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "${FUNCNAME[1]}" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return 1
+    fi
+
+    # Find the extracted binary
+    local extracted_binary
+    extracted_binary=$(find "$extract_dir" -maxdepth 1 -type f -name "${binary_name}*" ! -name "*.*" | head -n 1)
+
+    if [[ -z "$extracted_binary" ]]; then
+        message="installer.bash: no matching binary file named: ${binary_name} found in the extracted directory"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "${FUNCNAME[1]}" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return 1
+    fi
+
+    # Move the binary to the destination
+    move_binary "$extracted_binary" "$LOGZIO_TEMP_DIR/$binary_name"
+
+    # Clean up the temporary directory and tar file
+    rm -rf "$extract_dir" "$LOGZIO_TEMP_DIR/$binary_name.tar.gz"
+
+    echo "$binary_name"
+}
+
+
+# Helper function to download binary directly
+# Input:
+# - download_url - Binary/zipped binary file URL
+# - binary_path - Path to binary file in Logz.io temp directory
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
+function download_direct {
+    local download_url="$1"
+    local binary_path="$2"
+
+    curl -fsSL --create-dirs "$download_url" >"$binary_path" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash: error downloading binary: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return 1
+    fi
+
+    echo "$binary_path"
+}
+
+# Helper function to move the binary to the destination
+# Input:
+# - source_path - Path to downloaded Binary/zipped binary file
+# - binary_path - Path to binary file in Logz.io temp directory
+# - func_name - Function name to log
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
+function move_binary {
+    local source_path="$1"
+    local binary_path="$2"
+    local func_name="$3"
+
+    if [[ -z "$source_path" ]]; then
+        message="installer.bash: error moving binary to $binary_path: Source path is empty"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return 1
+    fi
+
+    mv "$source_path" "$binary_path"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash: error moving binary to $binary_path: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return 1
+    fi
+
+    return 0
+}
+
+# Helper function to provide execution permissions to binary file
+# Input:
+# - binary_path - Path to downloaded Binary/zipped binary file
+# - binary_path - Path to binary file in Logz.io temp directory
+# - func_name - Function name to log
+#   ---
+# Output:
+#   A binary file in Logz.io temp directory
+function chmod_binary {
+    local binary_path="$1"
+    local func_name="$2"
+
+    chmod +x "$binary_path" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash: error giving execute permissions to '$binary_path': $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return 1
+    fi
+
+    return 0
+}
+
 # Downloads jq
 # Input:
 #   ---
@@ -249,28 +414,11 @@ function check_arguments_validation {
 #   Jq binary file in Logz.io temp directory
 function download_jq {
     local func_name="${FUNCNAME[0]}"
-
-    local message='Downloading jq ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-    write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    curl -fsSL "$JQ_URL_DOWNLOAD" >"$JQ_BIN" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error downloading jq binary: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
-
-    chmod +x "$JQ_BIN" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error giving execute premissions to '$JQ_BIN': $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
+    local binary_name="jq"
+    local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
+    local download_url=$(get_arch_specific_url "$JQ_AMD_URL_DOWNLOAD" "$JQ_ARM_URL_DOWNLOAD")
+    
+    download_binary "$download_url" "$binary_name" "$binary_path"
 }
 
 # Downloads yq
@@ -280,37 +428,11 @@ function download_jq {
 #   Yq binary file in Logz.io temp directory
 function download_yq {
     local func_name="${FUNCNAME[0]}"
-
-    local message='Downloading yq ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-    write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    curl -fsSL "$YQ_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/yq.tar.gz" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error downloading yq tar.gz: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
-
-    tar -zxf "$LOGZIO_TEMP_DIR/yq.tar.gz" --directory "$LOGZIO_TEMP_DIR" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error extracting yq tar.gz file: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
-
-    chmod +x "$YQ_BIN" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="agent.bash ($EXIT_CODE): error giving execute premissions to '$YQ_BIN': $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_DOWNLOADS" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
+    local binary_name="yq"
+    local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
+    local download_url=$(get_arch_specific_url "$YQ_AMD_URL_DOWNLOAD" "$YQ_ARM_URL_DOWNLOAD")
+    
+    download_binary "$download_url" "$binary_name" "$binary_path"
 }
 
 # Gets the agent json from the agent or local file
@@ -390,6 +512,12 @@ function get_agent_json_info {
     local message='Getting agent json info ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    if [[ ! -f "$AGENT_JSON" ]]; then
+        message="agent.bash ($EXIT_CODE): agent json file does not exist"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
+        write_task_post_run "write_error \"$message\""
+    fi
     
     get_json_file_field_value "$AGENT_JSON" '.configuration.name'
     if [[ $? -ne 0 ]]; then

@@ -79,28 +79,11 @@ function remove_logzio_otel_collector_service {
 #   OTEL collector exe in Logz.io temp directory
 function download_otel_collector_binary {
     local func_name="${FUNCNAME[0]}"
+    local binary_name="$OTEL_COLLECTOR_BIN_NAME"
+    local download_url=$(get_arch_specific_url "$OTEL_COLLECTOR_AMD_URL_DOWNLOAD" "$OTEL_COLLECTOR_ARM_URL_DOWNLOAD")
+    local binary_path="$LOGZIO_TEMP_DIR/$binary_name"
 
-    local message='Downloading OTEL collector binary ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-    write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    curl -fsSL "$OTEL_COLLECTOR_URL_DOWNLOAD" >"$LOGZIO_TEMP_DIR/otelcol-contrib.tar.gz" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): error downloading otelcol-logzio.tar.gz: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
-
-    tar -zxf "$LOGZIO_TEMP_DIR/otelcol-contrib.tar.gz" --directory "$LOGZIO_TEMP_DIR" 'otelcol-contrib' 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): error extracting files from otelcol-contrib.tar.gz: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE"
-        write_task_post_run "write_error \"$message\""
-
-        return $EXIT_CODE
-    fi
+    download_binary "$download_url" "$binary_name" "$binary_path"
 }
 
 # Creates Logz.io opt subdirectory
@@ -184,6 +167,17 @@ function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
         write_task_post_run "write_error \"$message\""
     
         return $EXIT_CODE
+    fi
+
+    if [[ ! -z "$PROXY" ]]; then
+        sed -i "/^ExecStart=.*/a Environment=\"HTTPS_PROXY=$PROXY\"" "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" 2>"$TASK_ERROR_FILE"
+        if [[ $? -ne 0 ]]; then
+            message="installer.bash ($EXIT_CODE): $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+            write_task_post_run "write_error \"$message\""
+    
+            return $EXIT_CODE
+        fi
     fi
 
     sudo cp "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" "/etc/systemd/system" 2>"$TASK_ERROR_FILE"
