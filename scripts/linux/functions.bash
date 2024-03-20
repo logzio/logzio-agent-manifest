@@ -41,7 +41,7 @@ function get_linux_info {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local cpu_arch=$(uname -p 2>"$TASK_ERROR_FILE")
+    local cpu_arch=$(uname -m 2>"$TASK_ERROR_FILE")
     if [[ $? -ne 0 ]]; then
         message="agent.bash ($EXIT_CODE): error getting cpu arch: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_PRE_INIT" "$LOG_SCRIPT_AGENT" "$func_name" "$AGENT_ID"
