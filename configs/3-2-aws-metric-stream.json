@@ -14,7 +14,7 @@
        "supportedOs": ["AWS_Cloudformation"],
        "productTags": ["METRICS"],
       "filterTags": ["AWS", "Most Popular"],
-       "integrationTemplate": "metric-stream-helpers/aws/1.3.2/sam-template.yaml&param_logzioDestination=https://listener-aws-metrics-stream-<<LOGZIO_ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
+       "integrationTemplate": "metric-stream-helpers/aws/1.3.3/sam-template.yaml&param_logzioDestination=https://listener-aws-metrics-stream-<<LOGZIO_ACCOUNT_REGION_CODE>>.logz.io/&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8053",
        "datasources": [
          {
            "name": "AWS_Metrics",
@@ -35,19 +35,31 @@
                 { "label": "us-west-1", "value": "us-west-1" },
                 { "label": "us-west-2", "value": "us-west-2" },
                 { "label": "eu-central-1", "value": "eu-central-1" },
+                { "label": "eu-central-2", "value": "eu-central-2" },
                 { "label": "eu-north-1", "value": "eu-north-1" },
                 { "label": "eu-west-1", "value": "eu-west-1" },
                 { "label": "eu-west-2", "value": "eu-west-2" },
                 { "label": "eu-west-3", "value": "eu-west-3" },
+                { "label": "eu-south-1", "value": "eu-south-1" },
+                { "label": "eu-south-2", "value": "eu-south-2" },
                 { "label": "sa-east-1", "value": "sa-east-1" },
                 { "label": "ap-northeast-1", "value": "ap-northeast-1" },
                 { "label": "ap-northeast-2", "value": "ap-northeast-2" },
                 { "label": "ap-northeast-3", "value": "ap-northeast-3" },
                 { "label": "ap-south-1", "value": "ap-south-1" },
+                { "label": "ap-south-2", "value": "ap-south-2" },
                 { "label": "ap-southeast-1", "value": "ap-southeast-1" },
                 { "label": "ap-southeast-2", "value": "ap-southeast-2" },
-                { "label": "ca-central-1", "value": "ca-central-1" }
-              ]
+                { "label": "ap-southeast-3", "value": "ap-southeast-3" },
+                { "label": "ap-southeast-4", "value": "ap-southeast-4" },
+                { "label": "ap-east-1", "value": "ap-east-1" },
+                { "label": "ca-central-1", "value": "ca-central-1" },
+                { "label": "ca-west-1", "value": "ca-west-1" },
+                { "label": "af-south-1", "value": "af-south-1" },
+                { "label": "me-south-1", "value": "me-south-1" },
+                { "label": "me-central-1", "value": "me-central-1" },
+                { "label": "il-central-1", "value": "il-central-1" }
+            ]
             },
             {
               "type": "text",
