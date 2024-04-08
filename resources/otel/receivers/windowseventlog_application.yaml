@@ -36,5 +36,5 @@ receiver:
   windowseventlog/application/NAME:
     channel: Application
     exclude_providers: []
-    attributes:
+    resource:
       type:
