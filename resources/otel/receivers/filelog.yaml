@@ -9,7 +9,7 @@ mac_run: |
       fi
     done
 
-    set_yaml_file_field_value "$OTEL_RECEIVERS_DIR/filelog.yaml" '.receiver.filelog/NAME.attributes.type' "$LOGS_TYPE"
+    set_yaml_file_field_value "$OTEL_RECEIVERS_DIR/filelog.yaml" '.receiver.filelog/NAME.resource.type' "$LOGS_TYPE"
     if [[ $? -ne 0 ]]; then
       echo -e "error setting type to filelog receiver: $(get_task_error_message)" >"$TASK_ERROR_FILE"
       return 3
@@ -26,7 +26,7 @@ linux_run: |
       fi
     done
 
-    set_yaml_file_field_value "$OTEL_RECEIVERS_DIR/filelog.yaml" '.receiver.filelog/NAME.attributes.type' "$LOGS_TYPE"
+    set_yaml_file_field_value "$OTEL_RECEIVERS_DIR/filelog.yaml" '.receiver.filelog/NAME.resource.type' "$LOGS_TYPE"
     if [[ $? -ne 0 ]]; then
       echo -e "error setting type to filelog receiver: $(get_task_error_message)" >"$TASK_ERROR_FILE"
       return 3
@@ -60,7 +60,7 @@ windows_run: |
       }
     }
 
-    $local:Err = Set-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\filelog.yaml" '.receiver.filelog/NAME.attributes.type' $LogsType
+    $local:Err = Set-YamlFileFieldValue "$LogzioTempDir\resources\otel\receivers\filelog.yaml" '.receiver.filelog/NAME.resource.type' $LogsType
     if ($Err.Count -ne 0) {
       Write-Output "error setting type to filelog receiver: $($Err[0])"
       return 4
@@ -77,5 +77,5 @@ receiver:
       - type: move
         from: attributes["log.file.path"]
         to: attributes["log_file_path"]
-    attributes:
+    resource:
       type:
