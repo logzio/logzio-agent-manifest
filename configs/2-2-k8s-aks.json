@@ -60,6 +60,14 @@
                 },
                 {
                   "type": "boolean",
+                  "name": "isObjectLogs",
+                  "label": "Collect correlated Kubernetes resource object logs",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect Kubernetes resource object logs that correlate with metrics to populate Kubernetes 360 and prebuilt dashboards.",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
                   "name": "isWindows",
                   "label": "My Kubernetes cluster is based on Windows nodes",
                   "description": "",

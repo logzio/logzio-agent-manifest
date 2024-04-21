@@ -62,6 +62,14 @@
                   "description": "",
                   "hint": "Check this box if you want Logz.io Telemetry Collector to collect only the relevant system metrics to populate Kubernetes 360 and prebuilt dashboards. In addition, we will also collect application metrics that are exposed by your pods.",
                   "value": true
+                },
+                {
+                  "type": "boolean",
+                  "name": "isObjectLogs",
+                  "label": "Collect correlated Kubernetes resource object logs",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect Kubernetes resource object logs that correlate with metrics to populate Kubernetes 360 and prebuilt dashboards.",
+                  "value": true
                 }
               ],
               "dashboards": [

@@ -36,3 +36,13 @@ if $IS_FILTER; then
     CLOUD_PROVIDER='aks'
     execute_task 'build_enable_metrics_filter_helm_set' 'Building enable metrics filter Helm set'
 fi
+# Get if Kubernetes object logs option was selected
+execute_task 'get_is_object_logs_was_selected' 'Getting is Kubernetes object logs was selected'
+if $IS_OBJECT_LOGS; then
+    # Build Logz.io region Helm set
+    execute_task 'build_logzio_region_helm_set' 'Building Logz.io region Helm set'
+    # Build Logz.io Kubernetes object logs token Helm set
+    execute_task 'build_logzio_object_logs_token_helm_set' 'Building Logz.io Kubernetes object logs token Helm set'
+    # Build enable Kubernetes object logs Helm set
+    execute_task 'build_enable_object_logs_helm_set'  'Building enable Kubernetes object logs Helm set'
+fi
