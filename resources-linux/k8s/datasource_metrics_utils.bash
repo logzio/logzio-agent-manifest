@@ -232,7 +232,7 @@ function build_logzio_object_logs_token_helm_set {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
     
-    local helm_set=" --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken=$METRICS_TOKEN"
+    local helm_set=" --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken=$LOGS_TOKEN"
 
     local message="Logz.io Kubernetes object logs token Helm set is '$helm_set'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
