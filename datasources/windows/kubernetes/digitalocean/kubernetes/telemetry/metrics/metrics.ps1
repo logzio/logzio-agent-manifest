@@ -26,6 +26,18 @@ if ($script:IsFilter) {
     # Build enable metrics filter Helm set
     Invoke-Task 'Build-EnableMetricsFilterHelmSet' @{} 'Building enable metrics filter Helm set' @($MetricsFunctionsScript)
 }
+# Get if Kubernetes object logs option was selected
+Invoke-Task 'Get-IsObjectLogsWasSelected' @{MetricsParams = $script:MetricsParams} 'Getting if Kubernetes object logs was selected' @($MetricsFunctionsScript)
+if ($script:IsObjectLogs) {
+    # Build enable Kubernetes object logs Helm set
+    Invoke-Task 'Build-EnableObjectLogsHelmSet' @{} 'Building enable Kubernetes object logs Helm set' @($MetricsFunctionsScript)
+    # Get Logz.io Kubernetes object logs token
+    Invoke-Task 'Get-LogzioObjectLogsToken' @{} 'Getting Logz.io Kubernetes object logs token' @($MetricsFunctionsScript)
+    # Build Logz.io Kubernetes object logs token Helm set
+    Invoke-Task 'Build-LogzioObjectLogsTokenHelmSet' @{ObjectLogsToken = $script:ObjectLogsToken} 'Building Logz.io Kubernetes object logs token Helm set' @($MetricsFunctionsScript)
+    # Build Logz.io region Helm set
+    Invoke-Task 'Build-LogzioRegionHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io region Helm set' @($MetricsFunctionsScript)
+}
 
 # Finished successfully
 Exit 0

@@ -75,6 +75,16 @@
         "template": "  --set logzio-k8s-telemetry.collector.mode=standalone \\",
         "condition": "$[?(@ == 'EKS')]",
         "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.k8sObjectsConfig.enabled=true \\",
+        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isObjectLogs')].value"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
       }
     ]
   },
@@ -99,6 +109,9 @@
           },
           {
             "template": "  --set logzio-k8s-telemetry.secrets.SpmToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
+          },
+          {
+            "template": "  --set logzio-k8s-telemetry.serviceGraph.enabled=true \\"
           }
         ]
       }
