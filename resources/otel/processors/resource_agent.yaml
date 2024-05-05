@@ -1,5 +1,8 @@
 resource/agent:
   attributes:
     - key: logzio_agent_version
-      value: v1.1.21
+      value: v1.1.32
       action: upsert
+    - key: type
+      value: agent-windows
+      action: upsert      

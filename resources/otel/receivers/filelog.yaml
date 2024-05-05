@@ -73,9 +73,7 @@ receiver:
     operators:
       - type: move
         from: attributes["log.file.name"]
-        to: attributes["log_file_name"]
+        to: resource["log_file_name"]
       - type: move
         from: attributes["log.file.path"]
-        to: attributes["log_file_path"]
-    resource:
-      type:
+        to: resource["log_file_path"]
