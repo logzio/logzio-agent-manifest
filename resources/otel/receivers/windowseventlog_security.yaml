@@ -29,5 +29,3 @@ windows_run: |
 receiver:
   windowseventlog/security/NAME:
     channel: Security
-    resource:
-      type:
