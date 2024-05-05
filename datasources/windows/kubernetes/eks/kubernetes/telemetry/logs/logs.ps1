@@ -16,8 +16,8 @@ Write-Host '############'
 Invoke-Task 'Get-LogzioLogsToken' @{} 'Getting Logz.io logs token' @($LogsFunctionsScript)
 # Build enable logs Helm set
 Invoke-Task 'Build-EnableLogsHelmSet' @{} 'Building enable logs Helm set' @($LogsFunctionsScript)
-# Build Logz.io logs listener url Helm set
-Invoke-Task 'Build-LogzioLogsListenerUrlHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io logs listener url Helm set' @($LogsFunctionsScript)
+# Build Logz.io logs region Helm set
+Invoke-Task 'Build-LogzioLogsRegionHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io logs region Helm set' @($LogsFunctionsScript)
 # Build Logz.io logs token Helm set
 Invoke-Task 'Build-LogzioLogsTokenHelmSet' @{LogsToken = $script:LogsToken} 'Building Logz.io logs token Helm set' @($LogsFunctionsScript)
 # Build environment id Helm set

@@ -56,13 +56,13 @@ function Build-EnableLogsHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Builds Logz.io logs listener url Helm set
+# Builds Logz.io logs region Helm set
 # Input:
 #   FuncArgs - Hashtable {ListenerUrl = $script:ListenerUrl}
 # Output:
 #   LogHelmSets - Containt all the Helm sets for logging
 #   HelmSets - Contains all the Helm sets
-function Build-LogzioLogsListenerUrlHelmSet {
+function Build-LogzioLogsRegionHelmSet {
     param (
         [hashtable]$FuncArgs
     )
@@ -70,7 +70,7 @@ function Build-LogzioLogsListenerUrlHelmSet {
     $local:ExitCode = 2
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Building Logz.io logs listener URL Helm set ...'
+    $local:Message = 'Building Logz.io logs region Helm set ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
@@ -85,10 +85,16 @@ function Build-LogzioLogsListenerUrlHelmSet {
 
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
-    $local:HelmSet = " --set logzio-fluentd.secrets.logzioListener=$ListenerUrl"
+    $local:Region = Get-LogzioRegion $ListenerUrl
 
-    $Message = "Logz.io logs listener url Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    $Message = "Logz.io region is '$LogzioRegion'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+    # changed from fluentd
+    $local:HelmSet = " --set logzio-logs-collector.secrets.logzioRegion=$LogzioRegion"
+
+    $local:Message = "Logz.io region Helm set is '$HelmSet'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
