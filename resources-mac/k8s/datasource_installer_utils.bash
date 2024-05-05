@@ -164,14 +164,14 @@ function build_windows_toleration_helm_sets {
         operator='Equal'
 
         if $IS_LOGS_OPTION_WAS_SELECTED; then
-            tolerations_helm_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$toleration_index].value=$value"
+            tolerations_helm_sets+=" --set-string logzio-logs-collector.tolerations[$toleration_index].value=$value"
         fi
     fi
     
     if $IS_LOGS_OPTION_WAS_SELECTED; then
-        tolerations_helm_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$toleration_index].key=$key"
-        tolerations_helm_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$toleration_index].operator=$operator"
-        tolerations_helm_sets+=" --set-string logzio-fluentd.windowsDaemonset.tolerations[$toleration_index].effect=$effect"
+        tolerations_helm_sets+=" --set-string logzio-logs-collector.tolerations[$toleration_index].key=$key"
+        tolerations_helm_sets+=" --set-string logzio-logs-collector.tolerations[$toleration_index].operator=$operator"
+        tolerations_helm_sets+=" --set-string logzio-logs-collector.tolerations[$toleration_index].effect=$effect"
     fi
 
     echo -e "$toleration_helm_sets"
@@ -199,7 +199,7 @@ function build_no_windows_toleration_helm_sets {
         operator='Equal'
 
         if $IS_LOGS_OPTION_WAS_SELECTED; then
-            tolerations_helm_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$toleration_index].value=$value"
+            tolerations_helm_sets+=" --set-string logzio-logs-collector.tolerations[$toleration_index].value=$value"
         fi
         if $IS_METRICS_OPTION_WAS_SELECTED || $IS_TRACES_OPTION_WAS_SELECTED; then
             tolerations_helm_sets+=" --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$toleration_index].value=$value"
@@ -210,9 +210,9 @@ function build_no_windows_toleration_helm_sets {
     fi
     
     if $IS_LOGS_OPTION_WAS_SELECTED; then
-        tolerations_helm_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$toleration_index].key=$key"
-        tolerations_helm_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$toleration_index].operator=$operator"
-        tolerations_helm_sets+=" --set-string logzio-fluentd.daemonset.tolerations[$toleration_index].effect=$effect"
+        tolerations_helm_sets+=" --set-string logzio-logs-collector.tolerations[$toleration_index].key=$key"
+        tolerations_helm_sets+=" --set-string logzio-logs-collector.tolerations[$toleration_index].operator=$operator"
+        tolerations_helm_sets+=" --set-string logzio-logs-collector.[$toleration_index].effect=$effect"
     fi
     if $IS_METRICS_OPTION_WAS_SELECTED || $IS_TRACES_OPTION_WAS_SELECTED; then
         tolerations_helm_sets+=" --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$toleration_index].key=$key"

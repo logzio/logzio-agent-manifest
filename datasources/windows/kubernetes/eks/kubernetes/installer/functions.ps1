@@ -387,7 +387,7 @@ function Build-TolerationsHelmSets {
             $Operator = 'Equal'
 
             if ($script:IsLogsOptionSelected) {
-                $TolerationHelmSets += " --set-string logzio-fluentd.daemonset.tolerations[$TolerationIndex].value=$Value"
+                $TolerationHelmSets += " --set-string logzio-logs-collector.tolerations[$TolerationIndex].value=$Value"
             }
             if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
                 $TolerationHelmSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$TolerationIndex].value=$Value"
@@ -398,9 +398,9 @@ function Build-TolerationsHelmSets {
         }
         
         if ($script:IsLogsOptionSelected) {
-            $TolerationHelmSets += " --set-string logzio-fluentd.daemonset.tolerations[$TolerationIndex].key=$Key"
-            $TolerationHelmSets += " --set-string logzio-fluentd.daemonset.tolerations[$TolerationIndex].operator=$Operator"
-            $TolerationHelmSets += " --set-string logzio-fluentd.daemonset.tolerations[$TolerationIndex].effect=$Effect"
+            $TolerationHelmSets += " --set-string logzio-logs-collector.tolerations[$TolerationIndex].key=$Key"
+            $TolerationHelmSets += " --set-string logzio-logs-collector.tolerations[$TolerationIndex].operator=$Operator"
+            $TolerationHelmSets += " --set-string logzio-logs-collector.tolerations[$TolerationIndex].effect=$Effect"
         }
         if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
             $TolerationHelmSets += " --set-string logzio-k8s-telemetry.prometheus-pushgateway.tolerations[$TolerationIndex].key=$Key"
