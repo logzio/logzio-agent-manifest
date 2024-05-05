@@ -5,10 +5,16 @@
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='LOG_ANALYTICS')]",
     "conditionalTemplates": [
       {
+        "template": "  --set logzio-logs-collector.enabled=true \\"
+      },
+      {
+        "template": "  --set logzio-fluentd.enabled=false \\"
+      },
+      {
         "template": "  --set logzio-logs-collector.secrets.logzioLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
       },
       {
-        "template": "  --set logzio-logs-collector.secrets.logzioRegion='<<LOGZIO_REGION>>' \\"
+        "template": "  --set logzio-logs-collector.secrets.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
       },
       {
         "template": "  --set logzio-logs-collector.fargateLogRouter.enabled=true \\",
