@@ -13,7 +13,7 @@
         {
           "name": "Kubernetes",
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
-          "description": "Logz.io Uses OpenTelemetry and Fluentd with Helm charts to deploy and monitor Kubernetes architecture",
+          "description": "Logz.io Uses OpenTelemetry with Helm charts to deploy and monitor Kubernetes architecture",
           "params": [
             {
               "type": "text",
