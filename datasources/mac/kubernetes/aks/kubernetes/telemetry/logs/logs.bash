@@ -19,6 +19,10 @@ load_logs_utils
 execute_task 'get_logzio_logs_token' 'Getting Logz.io logs token'
 # Build enable logs Helm set
 execute_task 'build_enable_logs_helm_set' 'Building enable logs Helm set'
+# Build enable opentelemetry log collection Helm set
+execute_task 'build_enable_opentelemetry_log_collection_helm_set' 'Building enable opentelemetry log collection Helm set'
+# Build disable fluentd log collection Helm set
+execute_task 'build_disable_fluentd_log_collection_helm_set' 'Building disable fluentd log collection Helm set'
 # Build Logz.io logs region Helm set
 execute_task 'build_logzio_logs_region_helm_set' 'Building Logz.io logs region Helm set'
 # Build Logz.io logs token Helm set
