@@ -3,7 +3,7 @@
   "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/kubernetes.svg",
   "label": "Kubernetes",
   "description": "",
-  "recommendedFor": "DevOps Engineer",
+  "recommendedFor": ["DevOps Engineer"],
   "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
   "manifest": true,
   "subtypes": [
