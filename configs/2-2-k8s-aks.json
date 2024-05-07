@@ -13,6 +13,7 @@
       "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
       "productTags": ["LOG_ANALYTICS","METRICS","TRACING"],
       "filterTags": ["Containers", "Most Popular"],
+      "recommendedFor": ["DevOps Engineer", "Software Developer"],
       "capabilities": ["SPM"],
       "datasources": [
         {
