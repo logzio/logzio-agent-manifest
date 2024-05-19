@@ -13,7 +13,7 @@
       "description": "AWS Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
-      "productTags": ["LOG_ANALYTICS","METRICS","TRACING"],
+      "productTags": ["OBSERVABILITY","LOG_ANALYTICS","METRICS","TRACING"],
       "filterTags": ["Containers", "Most Popular"],
       "recommendedFor": ["DevOps Engineer"],
       "capabilities": ["SPM"],
