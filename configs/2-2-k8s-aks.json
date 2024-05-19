@@ -11,7 +11,7 @@
       "label": "AKS",
       "description": "Azure Kubernetes",
       "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
-      "productTags": ["LOG_ANALYTICS","METRICS","TRACING"],
+      "productTags": ["OBSERVABILITY","LOG_ANALYTICS","METRICS","TRACING"],
       "filterTags": ["Containers", "Most Popular"],
       "capabilities": ["SPM"],
       "datasources": [
