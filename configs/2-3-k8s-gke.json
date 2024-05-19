@@ -13,7 +13,7 @@
       "description": "GCP Kubernetes",
       "hint": "Select your cloud Kubernetes service.",
       "supportedOs": ["Helm", "Mac", "Windows", "Linux"],
-      "productTags": ["OBSERVABILITY","LOG_ANALYTICS","METRICS","TRACING"],
+      "productTags": ["LOG_ANALYTICS","METRICS","TRACING"],
       "filterTags": ["Containers", "Most Popular"],
       "capabilities": ["SPM"],
       "datasources": [
