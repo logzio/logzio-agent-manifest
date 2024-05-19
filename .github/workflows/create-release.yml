@@ -116,3 +116,5 @@ jobs:
           body: |
             New Release ${{ needs.update_version.outputs.VERSION }}
           artifacts: "assets/**"
+      - name: Set Environment Variable
+        run: echo "RELEASE_VERSION=${{ needs.update_version.outputs.VERSION }}" >> $GITHUB_ENV
