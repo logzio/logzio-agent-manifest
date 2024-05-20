@@ -1,8 +1,7 @@
 name: update version and create new release
 on:
-  push:
-    branches:
-      - add-user-agent-header
+  release:
+    types: [published]
     paths-ignore:
       - '.github/**'
       - 'configs/**'
