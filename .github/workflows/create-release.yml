@@ -1,7 +1,8 @@
 name: update version and create new release
-on: 
-  release:
-    types: [published]
+on:
+  push:
+    branches:
+      - add-user-agent-header
     paths-ignore:
       - '.github/**'
       - 'configs/**'
@@ -50,9 +51,10 @@ jobs:
         run: |
           git config --global user.name ShiranAvidov
           git config --global user.email shiran.avidov@logz.io
+          git checkout -b update-version-branch
           git add ./version
           git commit -m "update version"
-          git push
+          git push origin update-version-branch
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
   
