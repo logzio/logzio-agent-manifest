@@ -28,6 +28,10 @@ jobs:
           minor=$(echo "$version" | cut -d'.' -f2)
           patch=$(echo "$version" | cut -d'.' -f3)
           
+          echo "Major version: $major"
+          echo "Minor version: $minor"
+          echo "Patch version: $patch"
+          
           # if [[ $patch -lt 99 ]]; then
           #   ((patch++))
           # elif [[ $minor -lt 99 ]]; then
