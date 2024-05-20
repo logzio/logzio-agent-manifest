@@ -24,9 +24,9 @@ jobs:
       - name: Increase Version
         run: |
           version=$(cat ./version | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
-          # major=$(echo "$version" | cut -d'.' -f1)
-          # minor=$(echo "$version" | cut -d'.' -f2)
-          # patch=$(echo "$version" | cut -d'.' -f3)
+          major=$(echo "$version" | cut -d'.' -f1)
+          minor=$(echo "$version" | cut -d'.' -f2)
+          patch=$(echo "$version" | cut -d'.' -f3)
           
           # if [[ $patch -lt 99 ]]; then
           #   ((patch++))
