@@ -51,10 +51,10 @@ jobs:
         run: |
           git config --global user.name ShiranAvidov
           git config --global user.email shiran.avidov@logz.io
-          git checkout -b update-version-branch
+          git checkout -b add-user-agent-header
           git add ./version
           git commit -m "update version"
-          git push origin update-version-branch
+          git push origin add-user-agent-header
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
   
