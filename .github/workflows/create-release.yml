@@ -24,20 +24,20 @@ jobs:
       - name: Increase Version
         run: |
           version=$(cat ./version | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
-          major=$(echo "$version" | cut -d'.' -f1)
-          minor=$(echo "$version" | cut -d'.' -f2)
-          patch=$(echo "$version" | cut -d'.' -f3)
+          # major=$(echo "$version" | cut -d'.' -f1)
+          # minor=$(echo "$version" | cut -d'.' -f2)
+          # patch=$(echo "$version" | cut -d'.' -f3)
           
-          if [[ $patch -lt 99 ]]; then
-            ((patch++))
-          elif [[ $minor -lt 99 ]]; then
-            patch=0
-            ((minor++))
-          else
-            patch=0
-            minor=0
-            ((major++))
-          fi
+          # if [[ $patch -lt 99 ]]; then
+          #   ((patch++))
+          # elif [[ $minor -lt 99 ]]; then
+          #   patch=0
+          #   ((minor++))
+          # else
+          #   patch=0
+          #   minor=0
+          #   ((major++))
+          # fi
           
           next_version="v$major.$minor.$patch"
           echo "$next_version" >./version
