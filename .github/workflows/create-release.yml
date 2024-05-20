@@ -67,10 +67,10 @@ jobs:
       - name: Update version file
         run: |
           echo "${{ needs.update_version.outputs.VERSION }}" >./version
-      - name: Push tag
-        run: |
-          git tag "${{ needs.update_version.outputs.VERSION }}"
-          git push origin "${{ needs.update_version.outputs.VERSION }}"
+      # - name: Push tag
+      #   run: |
+      #     git tag "${{ needs.update_version.outputs.VERSION }}"
+      #     git push origin "${{ needs.update_version.outputs.VERSION }}"
       - name: Install zip
         run: |
           sudo apt-get install zip -y
