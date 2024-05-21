@@ -43,16 +43,16 @@ jobs:
           echo "Minor version: $minor"
           echo "Patch version: $patch"
 
-          # if [[ $patch -lt 99 ]]; then
-          #   ((patch++))
-          # elif [[ $minor -lt 99 ]]; then
-          #   patch=0
-          #   ((minor++))
-          # else
-          #   patch=0
-          #   minor=0
-          #   ((major++))
-          # fi
+          if [[ $patch -lt 99 ]]; then
+            ((patch++))
+          elif [[ $minor -lt 99 ]]; then
+            patch=0
+            ((minor++))
+          else
+            patch=0
+            minor=0
+            ((major++))
+          fi
           
           next_version="v$major.$minor.$patch"
           echo "$next_version" >./version
@@ -87,10 +87,10 @@ jobs:
       - name: Update version file
         run: |
           echo "${{ needs.update_version.outputs.VERSION }}" >./version
-      # - name: Push tag
-      #   run: |
-      #     git tag "${{ needs.update_version.outputs.VERSION }}"
-      #     git push origin "${{ needs.update_version.outputs.VERSION }}"
+      - name: Push tag
+        run: |
+          git tag "${{ needs.update_version.outputs.VERSION }}"
+          git push origin "${{ needs.update_version.outputs.VERSION }}"
       - name: Install zip
         run: |
           sudo apt-get install zip -y
