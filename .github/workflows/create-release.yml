@@ -21,6 +21,17 @@ jobs:
         uses: actions/checkout@v3
         with:
           token: ${{ secrets.GH_TOKEN }}
+      - name: Check version file existence
+        run: |
+          if [ ! -f ./version ]; then
+            echo "Error: version file does not exist."
+            exit 1
+          fi
+          echo "version file exists."
+      - name: Print version file content
+        run: |
+          echo "version file content:"
+          cat ./version
       - name: Increase Version
         run: |
           version=$(cat ./version | grep -o -e '[0-9]\{1,2\}\.[0-9]\{1,2\}\.[0-9]\{1,2\}')
@@ -31,7 +42,7 @@ jobs:
           echo "Major version: $major"
           echo "Minor version: $minor"
           echo "Patch version: $patch"
-          
+
           # if [[ $patch -lt 99 ]]; then
           #   ((patch++))
           # elif [[ $minor -lt 99 ]]; then
