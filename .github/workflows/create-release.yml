@@ -127,14 +127,12 @@ jobs:
           tar -czvf assets/mac_kubernetes_gke.tar.gz -C datasources/mac kubernetes/gke -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
           tar -czvf assets/mac_kubernetes_digitalocean.tar.gz -C datasources/mac kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
           tar -czvf assets/mac_localhost_mac.tar.gz -C datasources/mac localhost/mac -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
-      - name: Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ needs.update_version.outputs.VERSION }}
-          name: ${{ needs.update_version.outputs.VERSION }}
-          body: |
-            New Release ${{ needs.update_version.outputs.VERSION }}
-          artifacts: "assets/**"
-      - name: Set Environment Variable
-        run: echo "RELEASE_VERSION=${{ needs.update_version.outputs.VERSION }}" >> $GITHUB_ENV
+      # - name: Create Release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     tag: ${{ needs.update_version.outputs.VERSION }}
+      #     name: ${{ needs.update_version.outputs.VERSION }}
+      #     body: |
+      #       New Release ${{ needs.update_version.outputs.VERSION }}
+      #     artifacts: "assets/**"
