@@ -79,6 +79,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Set User-Agent Headers
+        id: set-headers
+        run: |
+          RELEASE_VERSION="${{ needs.update_version.outputs.VERSION }}"
+          echo "::set-output name=release_version::$RELEASE_VERSION"
       - name: Update version file
         run: |
           echo "${{ needs.update_version.outputs.VERSION }}" >./version
