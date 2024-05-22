@@ -166,7 +166,7 @@ RED_COLOR_BOLD='\033[1;31m'
 GREEN_COLOR_BOLD='\033[0;32m'
 
 ## Headers
-# User-Agent header for logs
-USER_AGENT_LOGS="logzio-linux-version-$RELEASE_VERSION-logs"
-# User-Agent header for metrics
-USER_AGENT_METRICS="logzio-linux-version-$RELEASE_VERSION-metrics"
+## Headers
+AGENT_VERSION=$(cat "$LOGZIO_TEMP_DIR/version")
+USER_AGENT_LOGS="logzio-mac-version-$AGENT_VERSION-logs"
+USER_AGENT_METRICS="logzio-mac-version-$AGENT_VERSION-metrics"
