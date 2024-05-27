@@ -416,6 +416,14 @@ function Add-MetricsExporterToOtelConfig {
         return $ExitCode
     }
 
+    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.user-agent' $script:UserAgentMetrics
+    if ($Err.Count -ne 0) {
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+        return $ExitCode
+    }
+
     $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelExportersDir\prometheusremotewrite.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.exporters'
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"

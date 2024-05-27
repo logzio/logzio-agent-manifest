@@ -609,6 +609,14 @@ function Add-LogsExporterToOtelConfig {
         return $ExitCode
     }
 
+    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\logzio_logs.yaml" '.logzio/logs.headers.user-agent' $script:UserAgentLogs
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0]))"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+        return $ExitCode
+    }
+
     $local:LogzioRegion = Get-LogzioRegion $ListenerUrl
     
     $Message = "Logz.io region is '$LogzioRegion'"

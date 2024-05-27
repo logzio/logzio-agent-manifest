@@ -152,3 +152,8 @@ PURPLE_COLOR='\033[0;35m'
 WHITE_COLOR='\033[0;37m'
 RED_COLOR_BOLD='\033[1;31m'
 GREEN_COLOR_BOLD='\033[0;32m'
+
+## Headers
+AGENT_VERSION=$(cat "$LOGZIO_TEMP_DIR/version")
+USER_AGENT_LOGS="logzio-linux-version-$AGENT_VERSION-logs"
+USER_AGENT_METRICS="logzio-linux-version-$AGENT_VERSION-metrics"
