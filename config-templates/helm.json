@@ -5,12 +5,6 @@
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='LOG_ANALYTICS')]",
     "conditionalTemplates": [
       {
-        "template": "  --set logzio-logs-collector.enabled=true \\"
-      },
-      {
-        "template": "  --set logzio-fluentd.enabled=false \\"
-      },
-      {
         "template": "  --set logzio-logs-collector.secrets.logzioLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
       },
       {
