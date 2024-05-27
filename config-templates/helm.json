@@ -5,18 +5,18 @@
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='LOG_ANALYTICS')]",
     "conditionalTemplates": [
       {
-        "template": "  --set logzio-fluentd.secrets.logzioShippingToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
+        "template": "  --set logzio-logs-collector.secrets.logzioLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
       },
       {
-        "template": "  --set logzio-fluentd.secrets.logzioListener='<<LOGZIO_LISTENER_ADDRESS>>' \\"
+        "template": "  --set logzio-logs-collector.secrets.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
       },
       {
-        "template": "  --set logzio-fluentd.fargateLogRouter.enabled=true \\",
+        "template": "  --set logzio-logs-collector.fargateLogRouter.enabled=true \\",
         "condition": "$[?(@ == 'EKS')]",
         "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
       },
       {
-        "template": "  --set logzio-fluentd.env_id='{{value}}' \\",
+        "template": "  --set logzio-logs-collector.secrets.env_id='{{value}}' \\",
         "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
         "keepAsPlaceholder": true
       }
