@@ -318,6 +318,15 @@ function add_metrics_exporter_to_otel_config {
         return $EXIT_CODE
     fi
 
+    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" '.prometheusremotewrite.headers.user-agent' "Bearer $USER_AGENT_METRICS"
+    if [[ $? -ne 0 ]]; then
+        message="metrics.bash ($EXIT_CODE): $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+    
+        return $EXIT_CODE
+    fi
+
     add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.exporters'
     if [[ $? -ne 0 ]]; then
         message="metrics.bash ($EXIT_CODE): $(get_task_error_message)"

@@ -78,10 +78,13 @@
       },
       {
         "template": "  --set logzio-k8s-telemetry.k8sObjectsConfig.enabled=true \\",
-        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isObjectLogs')].value"
+        "targetElement": 
+        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
       },
       {
-        "template": "  --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
+        "template": "  --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\",
+        "targetElement":
+        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
