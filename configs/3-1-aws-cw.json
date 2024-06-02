@@ -123,6 +123,8 @@
       "supportedOs": [
         "AWS_Cloudformation"
       ],
+      "productTags": ["LOG_ANALYTICS"],
+      "filterTags": ["AWS", "Most Popular"],
       "integrationTemplate": "cloudwatch-shipper-trigger/1.1.1/sam-template.yaml&param_logzioType=agent-aws-cloudwatch&param_logzioListener=https://<<LOGZIO_LISTENER_ADDRESS>>:8071",
       "datasources": [
         {
