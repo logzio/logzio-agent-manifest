@@ -117,7 +117,7 @@
      {
       "name": "AWS_Cloudwatch_Logs",
       "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-      "label": "AWS Cloudwatch Logs",
+      "label": "Cloudwatch Logs",
       "description": "via Cloudwatch using AWS Lambda",
       "hint": "Cloudwatch logs to ship to Logz.io",
       "supportedOs": [
