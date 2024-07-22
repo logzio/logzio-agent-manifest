@@ -84,7 +84,7 @@ function build_logzio_logs_region_helm_set {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local helm_set=" --set logzio-logs-collector.secrets.LogzioRegion=$region"
+    local helm_set=" --set logzio-logs-collector.secrets.logzioRegion=$region"
 
     message="Logz.io region Helm set is '$helm_set'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
