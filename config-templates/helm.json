@@ -27,7 +27,7 @@
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS' || @.type=='TRACING')]",
     "conditionalTemplates": [
       {
-        "condition": "(@['telemetries'][?(@['type']=='TRACING')].length > 0) || (@['telemetries'][?(@['type']=='METRICS')].params[?(@['name']=='isObjectLogs')].value == true)",
+        "condition": "(datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]) || (datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='TRACING')] && datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value)",
         "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
       }
     ]
