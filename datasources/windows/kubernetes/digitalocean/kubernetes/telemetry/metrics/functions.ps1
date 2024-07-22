@@ -365,6 +365,11 @@ function Build-LogzioRegionHelmSet {
 
     $local:ExitCode = 3
     $local:FuncName = $MyInvocation.MyCommand.Name
+    
+    # Check if LogzioRegion already exists in HelmSets
+    if ($script:LogHelmSets -match "logzio-k8s-telemetry\.secrets\.LogzioRegion=[^ ]+") {
+        return
+    }
 
     $local:Message = 'Building Logz.io region Helm set ...'
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
