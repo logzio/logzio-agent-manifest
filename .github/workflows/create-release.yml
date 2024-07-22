@@ -73,6 +73,7 @@ jobs:
       packages: write  # Allows accessing and publishing packages
       pull-requests: write  # Allows creating and managing pull requests
       actions: write  # Allows updating GitHub Action workflows    
+      attestations: write  # Allows adding and updating artifact attestations
     steps:
       - name: Checkout
         uses: actions/checkout@v4
