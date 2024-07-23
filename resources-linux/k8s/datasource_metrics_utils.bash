@@ -199,6 +199,11 @@ function build_enable_object_logs_helm_set {
 function build_logzio_region_helm_set {
     local func_name="${FUNCNAME[0]}"
 
+    # Check if LogzioRegion already exists in HelmSets
+    if [[ "$LOG_HELM_SETS" =~ logzio-k8s-telemetry.secrets.LogzioRegion ]]; then
+        return
+    fi
+
     local message='Building Logz.io region Helm set ...'
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
@@ -241,4 +246,3 @@ function build_logzio_object_logs_token_helm_set {
     write_task_post_run "LOG_HELM_SETS+='$helm_set'"
     write_task_post_run "HELM_SETS+='$helm_set'"
 }
-

@@ -1,5 +1,7 @@
 [
-  { "template": "helm install -n monitoring --create-namespace \\" },
+  {
+    "template": "helm install -n monitoring --create-namespace \\"
+  },
   {
     "template": "  --set logs.enabled=true \\",
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='LOG_ANALYTICS')]",
@@ -56,20 +58,17 @@
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.eks=true \\",
         "condition": "$[?(@ == 'EKS')]",
-        "targetElement":
-        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.aks=true \\",
         "condition": "$[?(@ == 'AKS' || @ == 'DigitalOcean')]",
-        "targetElement":
-        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.gke=true \\",
         "condition": "$[?(@ == 'GKE')]",
-        "targetElement":
-        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isFilter')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.collector.mode=standalone \\",
@@ -78,13 +77,11 @@
       },
       {
         "template": "  --set logzio-k8s-telemetry.k8sObjectsConfig.enabled=true \\",
-        "targetElement": 
-        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\",
-        "targetElement":
-        "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
+        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
       },
       {
         "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
@@ -154,5 +151,7 @@
       }
     ]
   },
-  { "template": "logzio-monitoring logzio-helm/logzio-monitoring" }
+  {
+    "template": "logzio-monitoring logzio-helm/logzio-monitoring"
+  }
 ]
