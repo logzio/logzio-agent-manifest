@@ -24,7 +24,7 @@
   },
   {
     "template": "  --set metricsOrTraces.enabled=true \\",
-    "targetElement": "((datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]) && (&& datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value)) || @.type=='TRACING')]"
+    "targetElement": "((datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]) && (&& datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value)) || (datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='TRACING')])"
   },
   {
     "template": "  --set logzio-k8s-telemetry.metrics.enabled=true \\",
