@@ -7,7 +7,7 @@ jobs:
     outputs:
       configs: ${{ steps.filter.outputs.configs }}
     steps:
-      - uses: actions/checkout@v3.0.2
+      - uses: actions/checkout@v4
       - name: Set filter
         uses: dorny/paths-filter@v2
         id: filter
@@ -22,7 +22,7 @@ jobs:
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
@@ -54,7 +54,7 @@ jobs:
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Download manifest from artifacts
         uses: actions/download-artifact@v3
         with:
@@ -76,7 +76,7 @@ jobs:
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
