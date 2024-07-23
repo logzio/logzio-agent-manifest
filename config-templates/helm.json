@@ -24,14 +24,8 @@
   },
   {
     "template": "  --set metricsOrTraces.enabled=true \\",
-    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS' || @.type=='TRACING')]",
-    "conditionalTemplates": [
-      {
-        "condition": "(datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]) && datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value)",
-        "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
-      }
-    ]
-  },  
+    "targetElement": "((datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]) && (&& datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value)) || @.type=='TRACING')]"
+  },
   {
     "template": "  --set logzio-k8s-telemetry.metrics.enabled=true \\",
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]",
@@ -91,6 +85,9 @@
         "template": "  --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\",
         "targetElement":
         "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
       }
     ]
   },
@@ -100,6 +97,9 @@
     "conditionalTemplates": [
       {
         "template": "  --set logzio-k8s-telemetry.secrets.TracesToken='<<LOGZIO_TRACING_SHIPPING_TOKEN>>' \\"
+      },
+      {
+        "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
       },
       {
         "template": "  --set logzio-k8s-telemetry.spm.enabled=true \\",
