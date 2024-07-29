@@ -41,7 +41,7 @@ jobs:
               f.truncate(0)
               json.dump(configs, f)
       - name: Upload manifest to workflow artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: manifest
           path: manifest.json
