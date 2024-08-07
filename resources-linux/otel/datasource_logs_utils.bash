@@ -196,6 +196,11 @@ function add_logs_processors_to_otel_config {
     for logs_otel_processor in "${LOGS_OTEL_PROCESSORS[@]}"; do
         local processor_name="${logs_otel_processor//_//}"
 
+        if [[ $processor_name == 'resource_agent' ]] ; then
+            AGENT_VERSION=$(cat '/tmp/logzio/version')
+            add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.processors.resource/agent.attributes[0].value' "$AGENT_VERSION"
+        fi
+
         add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.logs.processors' $processor_name
         if [[ $? -ne 0 ]]; then
             message="logs.bash ($EXIT_CODE): $(get_task_error_message)"

@@ -504,6 +504,11 @@ function Add-LogsProcessorsToOtelConfig {
     foreach ($LogsOtelProcessor in $LogsOtelProcessors) {
         $local:ProcessorName = $LogsOtelProcessor.Replace('_', '/')
 
+        if ($ProcessorName -eq 'resource_agent') {
+            $local:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
+            $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource/agent.attributes[0].value' $AgentVersion
+        }
+
         $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.logs.processors' $ProcessorName
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"

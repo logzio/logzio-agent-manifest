@@ -302,6 +302,11 @@ function Add-MetricsProcessorsToOtelConfig {
     foreach ($MetricsOtelProcessor in $MetricsOtelProcessors) {
         $local:ProcessorName = $MetricsOtelProcessor.Replace('_', '/')
 
+        if ($ProcessorName -eq 'resource_agent') {
+            $local:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
+            $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource/agent.attributes[0].value' $AgentVersion
+        }
+
         $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.metrics.processors' $ProcessorName
         if ($Err.Count -ne 0) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
