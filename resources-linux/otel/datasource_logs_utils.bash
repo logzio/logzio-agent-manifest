@@ -228,6 +228,11 @@ function add_logs_processors_to_otel_config {
     
             return $EXIT_CODE
         fi
+
+        if [[ $processor_name == 'resource/agent' ]] ; then
+            AGENT_VERSION=$(cat '/tmp/logzio/version')
+            add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.processors.resource/agent.attributes[0].value' "$AGENT_VERSION"
+        fi
     done
 }
 
