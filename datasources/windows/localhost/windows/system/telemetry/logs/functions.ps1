@@ -541,7 +541,6 @@ function Add-LogsProcessorsToOtelConfig {
             $local:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
             $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource/agent.attributes[0].value' $AgentVersion
         }
-
     }
 }
 
