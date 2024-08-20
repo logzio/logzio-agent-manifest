@@ -53,10 +53,6 @@ jobs:
     needs: [filter_for_configs, build_manifest]
     permissions:
       contents: write  # Allows pushing changes to the repository
-      issues: write    # Allows creating issues
-      packages: write  # Allows accessing and publishing packages
-      pull-requests: write  # Allows creating and managing pull requests
-      actions: write  # Allows updating GitHub Action workflows    
       attestations: write  # Allows adding and updating artifact attestations
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
