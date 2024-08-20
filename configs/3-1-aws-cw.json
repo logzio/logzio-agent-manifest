@@ -14,7 +14,7 @@
        "supportedOs": ["AWS_Cloudformation"],
        "productTags": ["LOG_ANALYTICS"],
       "filterTags": ["AWS", "Most Popular"],
-       "integrationTemplate": "firehose-logs/0.1.0/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
+       "integrationTemplate": "firehose-logs/0.2.1/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
        "datasources": [
          {
            "name": "AWS_Logs",
@@ -97,7 +97,8 @@
                     { "label": "ECS", "value": "ecs" },
                     { "label": "EKS", "value": "eks" },
                     { "label": "Lambda", "value": "lambda" },
-                    { "label": "RDS", "value": "rds" }
+                    { "label": "RDS", "value": "rds" },
+                    { "label": "Batch", "value": "batch" }
                   ]
                 },
                 {

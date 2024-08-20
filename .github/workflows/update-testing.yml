@@ -20,6 +20,9 @@ jobs:
   update_testing:
     name: Update testing release
     needs: filter_for_testing_configs
+    permissions:
+      contents: write  # Allows pushing changes to the repository
+      attestations: write  # Allows adding and updating artifact attestations
     if: ${{ needs.filter_for_testing_configs.outputs.testing == 'true' }}
     runs-on: ubuntu-latest
     steps:

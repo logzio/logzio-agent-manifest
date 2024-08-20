@@ -23,6 +23,9 @@ jobs:
   update_latest:
     name: Update latest release
     needs: filter_for_configs
+    permissions:
+      contents: write  # Allows pushing changes to the repository
+      attestations: write  # Allows adding and updating artifact attestations
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
