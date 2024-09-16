@@ -12,6 +12,7 @@ on:
       - 'LICENSE'
       - 'README.md'
       - 'version'
+      - 'CONTRIBUTING.md'
 
 jobs:
   update_version:
