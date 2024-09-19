@@ -12,6 +12,7 @@
     - [Linux](#linux-1)
     - [MacOS](#macos-1)
     - [Windows](#windows-1)
+- [Test and Build locally](#test-and-build-locally) 
 
 This repo contains all the scripts needed to ship logs, metrics and traces to Logz.io for supported datasources using the Logz.io agent.
 
@@ -148,3 +149,27 @@ bash <(curl -sSL https://github.com/logzio/logzio-agent-manifest/releases/downlo
 powershell { iex “& { $(irm https://github.com/logzio/logzio-agent-manifest/releases/download/latest/run_prerequisites_windows.ps1) } --path=LOGZIO_REPO_DATASOURCE_PATH” }
 ```
 
+## Test and Build locally
+If you're contributing code to this repository, please refer to the [Contribution Guidelines](CONTRIBUTING.md) for more details on the process.
+
+Before submitting a Pull Request (PR), ensure that you test your changes locally by following these steps:
+1. **Generate binary files:**
+Run the following command in the project root folder to generate the necessary binary files in the `assets` folder.
+```shell
+`make`
+```
+
+2. **Create an Agent:**
+Log in to your Logz.io account and create an Agent using the relevant integration that you want to test. This will provide you with a command similar to the following:
+```shell
+sudo mkdir -p /opt/logzio-agent; sudo chown -R $USER: /opt/logzio-agent; mkdir -p /tmp/logzio; curl -fsSL 'https://github.com/logzio/logzio-agent-manifest/releases/latest/download/agent_mac.tar.gz' -o /tmp/logzio/agent_mac.tar.gz; tar -zxf /tmp/logzio/agent_mac.tar.gz --directory /tmp/logzio; bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=<<SOME_ID>>
+```
+
+3. **Update the command:**
+Replace the `curl -fsSL` command with `cp <<LOCAL_PATH_TO_FILE>> /tmp/logzio/` where `<<LOCAL_PATH_TO_FILE>>` is the binary generated at step [1]. Example: 
+```shell
+sudo mkdir -p /opt/logzio-agent; sudo chown -R $USER: /opt/logzio-agent; mkdir -p /tmp/logzio; cp <<LOCAL_PATH_TO_FILE>> /tmp/logzio/; tar -zxf /tmp/logzio/agent_mac.tar.gz --directory /tmp/logzio; bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=<<SOME_ID>>
+```
+
+4. **Test your changes:**
+Run the modified command locally to test your changes and ensure everything works as expected.
