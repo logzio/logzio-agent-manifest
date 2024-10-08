@@ -19,7 +19,7 @@
          {
            "name": "AWS_Logs",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
-           "label": "AWS Logs (Recommended)",
+           "label": "AWS Logs",
            "description": "Ship your Cloudwatch logs via Firehose, set up your AWS region and stack, and choose the specific services or log groups from which you wish to collect data.",
            "params": [
             {
