@@ -8,7 +8,7 @@
      {
        "name": "AWS_Logs",
        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws.svg",
-       "label": "Logs",
+       "label": "Logs (Recommended)",
        "description": "via Cloudwatch",
        "hint": "Cloudwatch logs to ship to Logz.io",
        "supportedOs": ["AWS_Cloudformation"],
@@ -17,7 +17,7 @@
        "integrationTemplate": "firehose-logs/0.2.1/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
        "datasources": [
          {
-           "name": "AWS_Logs_(Recommended)",
+           "name": "AWS_Logs",
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/aws-cloudwatch.png",
            "label": "AWS Logs",
            "description": "Ship your Cloudwatch logs via Firehose, set up your AWS region and stack, and choose the specific services or log groups from which you wish to collect data.",
