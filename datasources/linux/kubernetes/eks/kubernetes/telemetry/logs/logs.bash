@@ -23,12 +23,8 @@ execute_task 'build_enable_logs_helm_set' 'Building enable logs Helm set'
 execute_task 'build_enable_opentelemetry_log_collection_helm_set' 'Building enable opentelemetry log collection Helm set'
 # Build disable fluentd log collection Helm set
 execute_task 'build_disable_fluentd_log_collection_helm_set' 'Building disable fluentd log collection Helm set'
-# Build Logz.io logs region Helm set
-execute_task 'build_logzio_logs_region_helm_set' 'Building Logz.io logs region Helm set'
 # Build Logz.io logs token Helm set
 execute_task 'build_logzio_logs_token_helm_set' 'Building Logz.io logs token Helm set'
-# Build environment id Helm set
-execute_task 'build_environment_id_helm_set' 'Building environment id Helm set'
 if $IS_FARGATE; then
     # Build enable Fargate Helm set
     execute_task 'build_enable_fargate_helm_set' 'Building enable Fargate Helm set'

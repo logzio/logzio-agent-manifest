@@ -232,30 +232,7 @@ function build_no_windows_toleration_helm_sets {
     echo -e "$toleration_helm_sets"
 }
 
-# Builds enable metrics or traces Helm set
-# Input:
-#   ---
-# Output:
-#   LOG_HELM_SETS - Contains all the Helm sets for logging
-#   HELM_SETS - Contains all the Helm sets
-function build_enable_metrics_or_traces_helm_set {
-    local func_name="${FUNCNAME[0]}"
-
-    local message='Building enable metrics or traces Helm set ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-    write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    local helm_set=' --set metricsOrTraces.enabled=true'
-    
-    message="Enable metrics or traces Helm set is '$helm_set'"
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-    write_log "$LOG_LEVEL_DEBUG" "$message"
-
-    write_task_post_run "LOG_HELM_SETS+='$helm_set'"
-    write_task_post_run "HELM_SETS+='$helm_set'"
-}
-
-# Builds metrics/traces environment tag Helm set
+# Builds environment tag Helm set
 # Input:
 #   ---
 # Output:
@@ -268,7 +245,7 @@ function build_environment_tag_helm_set {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local helm_set=" --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$ENV_ID"
+    local helm_set=" --set global.env_id=$ENV_ID"
     
     message="Environment tag Helm set is '$helm_set'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -278,23 +255,29 @@ function build_environment_tag_helm_set {
     write_task_post_run "HELM_SETS+='$helm_set'"
 }
 
-# Builds metrics/traces environment id helm set
+# Builds Logz.io logs region Helm set
 # Input:
 #   ---
 # Output:
 #   LOG_HELM_SETS - Contains all the Helm sets for logging
 #   HELM_SETS - Contains all the Helm sets
-function build_environment_id_helm_set {
+function build_logzio_region_helm_set {
     local func_name="${FUNCNAME[0]}"
 
-    local message='Building environment id Helm set ...'
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    local message='Building Logz.io logs region Helm set ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local helm_set=" --set logzio-k8s-telemetry.secrets.env_id=$ENV_ID"
+    local region=$(get_logzio_region "$LISTENER_URL")
 
-    message="Environment id Helm set is '$helm_set'"
-    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    message="Logz.io region is '$region'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    local helm_set=" --set global.logzioRegion=$region"
+
+    message="Logz.io region Helm set is '$helm_set'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     write_task_post_run "LOG_HELM_SETS+='$helm_set'"
