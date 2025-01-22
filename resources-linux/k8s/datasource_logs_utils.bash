@@ -4,9 +4,6 @@
 ########################################### LINUX Datasource Logs Utils Functions ###############################################
 #################################################################################################################################
 
-# Global variables
-add_logs_token_once_flag=0
-
 # Builds enable logs Helm set
 # Input:
 #   ---
@@ -76,10 +73,11 @@ function build_disable_fluentd_log_collection_helm_set {
 #   HELM_SETS - Contains all the Helm sets
 function build_logzio_logs_token_helm_set {
     # Add logs token only once
-    if [["$add_logs_token_once_flag" -eq 1]]; then
+    if [[ -f "$IS_LOG_TOKEN_ADDED" ]]; then
         return
+    else
+        sudo touch "$IS_LOG_TOKEN_ADDED"
     fi
-    add_logs_token_once_flag=1
     local func_name="${FUNCNAME[0]}"
 
     local message='Building Logz.io logs token Helm set ...'
