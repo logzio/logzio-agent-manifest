@@ -1,6 +1,6 @@
 [
   {
-    "template": "helm install -n monitoring --create-namespace \\"
+    "template": "helm install -n monitoring --create-namespace --version 6.2.6 \\"
   },
   {
     "template": "  --set global.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>> \\",
@@ -39,7 +39,7 @@
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]",
     "conditionalTemplates": [
       {
-        "template": "  --set global.MetricsToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
+        "template": "  --set global.logzioMetricsToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
       },
       {
         "condition": "$[?(@ == 'AKS')]",
