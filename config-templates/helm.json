@@ -1,6 +1,6 @@
 [
   {
-    "template": "helm install -n monitoring --create-namespace \\"
+    "template": "helm install -n monitoring --create-namespace --version 6.2.6 \\"
   },
   {
     "template": "  --set logs.enabled=true \\",
