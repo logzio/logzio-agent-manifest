@@ -2,6 +2,8 @@
 ################################################### WINDOWS Logs Functions ######################################################
 #################################################################################################################################
 
+$global:add_logs_token_once_flag = $false
+
 # Gets Logz.io logs token
 # Input:
 #   ---
@@ -94,51 +96,6 @@ function Build-DisableFluentdHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Builds Logz.io logs region Helm set
-# Input:
-#   FuncArgs - Hashtable {ListenerUrl = $script:ListenerUrl}
-# Output:
-#   LogHelmSets - Containt all the Helm sets for logging
-#   HelmSets - Contains all the Helm sets
-function Build-LogzioLogsRegionHelmSet {
-    param (
-        [hashtable]$FuncArgs
-    )
-
-    $local:ExitCode = 2
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Building Logz.io logs region Helm set ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('ListenerUrl')
-    if ($Err.Count -ne 0) {
-        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-
-    $local:ListenerUrl = $FuncArgs.ListenerUrl
-
-    $local:Region = Get-LogzioRegion $ListenerUrl
-
-    $Message = "Logz.io region is '$LogzioRegion'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-    # changed from fluentd
-    $local:HelmSet = " --set logzio-logs-collector.secrets.logzioRegion=$LogzioRegion"
-
-    $local:Message = "Logz.io region Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
-    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
-}
-
 # Builds Logz.io logs token Helm set
 # Input:
 #   FuncArgs - Hashtable {LogsToken = $script:LogsToken}
@@ -146,6 +103,12 @@ function Build-LogzioLogsRegionHelmSet {
 #   LogHelmSets - Containt all the Helm sets for logging
 #   helmSets - Contains all the Helm sets
 function Build-LogzioLogsTokenHelmSet {
+    # Add logs token only once
+    if ($global:add_logs_token_once_flag -eq $true) {
+        return
+    }
+    $global:add_logs_token_once_flag = $true
+    
     param (
         [hashtable]$FuncArgs
     )
@@ -168,56 +131,9 @@ function Build-LogzioLogsTokenHelmSet {
 
     $local:LogsToken = $FuncArgs.LogsToken
 
-    $local:HelmSet = " --set logzio-logs-collector.secrets.logzioLogsToken=$LogsToken"
+    $local:HelmSet = " --set global.logzioLogsToken=$LogsToken"
     
     $Message = "Logz.io logs token Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
-    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
-}
-
-# Builds environment id Helm set
-# Input:
-#   FuncArgs - Hashtable {EnvId = $script:EnvId}
-# Output:
-#   LogHelmSets - Containt all the Helm sets for logging
-#   helmSets - Contains all the Helm sets
-function Build-EnvironmentIdHelmSet {
-    param (
-        [hashtable]$FuncArgs
-    )
-    
-    $local:ExitCode = 4
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Building environment id Helm set ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('EnvId')
-    if ($Err.Count -ne 0) {
-        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-
-    $local:EnvId = $FuncArgs.EnvId
-
-    if ([string]::IsNullOrEmpty($EnvId)) {
-        $Message = 'Environment id is empty. Default value will be used'
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-Log $script:LogLevelDebug $Message
-        
-        return
-    }
-
-    $local:HelmSet = " --set logzio-logs-collector.env_id=$EnvId"
-
-    $Message = "Environment id Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 

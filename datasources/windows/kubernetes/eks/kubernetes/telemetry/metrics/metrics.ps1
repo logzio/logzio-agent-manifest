@@ -16,8 +16,6 @@ Write-Host '###############'
 Invoke-Task 'Get-LogzioMetricsToken' @{} 'Getting Logz.io metrics token' @($MetricsFunctionsScript)
 # Build enable metrics Helm set
 Invoke-Task 'Build-EnableMetricsHelmSet' @{} 'Building enable metrics Helm set' @($MetricsFunctionsScript)
-# Build Logz.io metrics listener URL Helm set
-Invoke-Task 'Build-LogzioMetricsListenerUrlHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io metrics listener URL Helm set' @($MetricsFunctionsScript)
 # Build Logz.io metrics token Helm set
 Invoke-Task 'Build-LogzioMetricsTokenHelmSet' @{MetricsToken = $script:MetricsToken} 'Building Logz.io metrics token Helm set' @($MetricsFunctionsScript)
 # Get if metrics filter option was selected
@@ -36,11 +34,9 @@ if ($script:IsObjectLogs) {
     # Build enable Kubernetes object logs Helm set
     Invoke-Task 'Build-EnableObjectLogsHelmSet' @{} 'Building enable Kubernetes object logs Helm set' @($MetricsFunctionsScript)
     # Get Logz.io Kubernetes object logs token
-    Invoke-Task 'Get-LogzioObjectLogsToken' @{} 'Getting Logz.io Kubernetes object logs token' @($MetricsFunctionsScript)
-    # Build Logz.io Kubernetes object logs token Helm set
-    Invoke-Task 'Build-LogzioObjectLogsTokenHelmSet' @{ObjectLogsToken = $script:ObjectLogsToken} 'Building Logz.io Kubernetes object logs token Helm set' @($MetricsFunctionsScript)
-    # Build Logz.io region Helm set
-    Invoke-Task 'Build-LogzioRegionHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io region Helm set' @($MetricsFunctionsScript)
+    . ..\logs\functions.ps1
+    Invoke-Task 'Get-LogzioLogsToken' @{} 'Getting Logz.io Kubernetes object logs token' @($MetricsFunctionsScript)
+    Invoke-Task 'Get-LogzioLogsTokenHelmSet' @{} 'Building Logz.io Kubernetes object logs token Helm set' @($MetricsFunctionsScript)
 }
 
 # Finished successfully

@@ -20,12 +20,8 @@ Invoke-Task 'Build-EnableLogsHelmSet' @{} 'Building enable logs Helm set' @($Log
 Invoke-Task 'Build-EnableOtelLogCollectionHelmSet' @{} 'Building enable opentelemetry log collection Helm set' @($LogsFunctionsScript)
 # Build disable fluentd log collection Helm set
 Invoke-Task 'Build-DisableFluentdHelmSet' @{} 'Building disable fluentd log collection Helm set' @($LogsFunctionsScript)
-# Build Logz.io logs region Helm set
-Invoke-Task 'Build-LogzioLogsRegionHelmSet' @{ListenerUrl = $script:ListenerUrl} 'Building Logz.io logs region Helm set' @($LogsFunctionsScript)
 # Build Logz.io logs token Helm set
 Invoke-Task 'Build-LogzioLogsTokenHelmSet' @{LogsToken = $script:LogsToken} 'Building Logz.io logs token Helm set' @($LogsFunctionsScript)
-# Build environment id Helm set
-Invoke-Task 'Build-EnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building environment id Helm set' @($LogsFunctionsScript)
 if ($script:IsFargate) {
     # Build enable Fargate Helm set
     Invoke-Task 'Build-EnableFargateHelmSet' @{} 'Building enable Fargate Helm set' @($LogsFunctionsScript)

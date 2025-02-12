@@ -174,6 +174,9 @@ Replace the `curl -fsSL` command with `cp <<LOCAL_PATH_TO_FILE>> /tmp/logzio/` w
 sudo mkdir -p /opt/logzio-agent; sudo chown -R $USER: /opt/logzio-agent; mkdir -p /tmp/logzio; cp <<LOCAL_PATH_TO_FILE>> /tmp/logzio/; tar -zxf /tmp/logzio/agent_mac.tar.gz --directory /tmp/logzio; bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=<<SOME_ID>>
 ```
 
+> [!NOTE]
+> Testing changes for files outside of `/scripts` folder is currently not supported, as it requires generating a new release.
+
 4. **Test your changes:**
 
 Run the modified command locally to test your changes and ensure everything works as expected.

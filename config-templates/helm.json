@@ -1,6 +1,21 @@
 [
   {
-    "template": "helm install -n monitoring --create-namespace --version 6.2.6 \\"
+    "template": "helm install -n monitoring --create-namespace \\"
+  },
+  {
+    "template": "  --set global.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>> \\",
+    "targetElement": "datasources[?(@.name=='Kubernetes')]",
+    "conditionalTemplates": [
+      {
+        "template": "  --set global.env_id='{{value}}' \\",
+        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
+        "keepAsPlaceholder": true
+      }
+    ]
+  },
+  {
+    "template": "  --set global.logzioLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\",
+    "targetElement": "datasources[?(@.name=='Kubernetes' || @.name=='Security' || @.name=='DeployEvents')].telemetries[?(@.type=='LOG_ANALYTICS' || (@.type=='METRICS' && @.params[?(@.name=='isObjectLogs' && @.value==true)]))]"
   },
   {
     "template": "  --set logs.enabled=true \\",
@@ -13,36 +28,18 @@
         "template": "  --set logzio-fluentd.enabled=false \\"
       },
       {
-        "template": "  --set logzio-logs-collector.secrets.logzioLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
-      },
-      {
-        "template": "  --set logzio-logs-collector.secrets.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
-      },
-      {
         "template": "  --set logzio-logs-collector.fargateLogRouter.enabled=true \\",
         "condition": "$[?(@ == 'EKS')]",
         "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='isFargate')].value"
-      },
-      {
-        "template": "  --set logzio-logs-collector.secrets.env_id='{{value}}' \\",
-        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
-        "keepAsPlaceholder": true
       }
     ]
-  },
-  {
-    "template": "  --set metricsOrTraces.enabled=true \\",
-    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS' || @.type=='TRACING')]"
   },
   {
     "template": "  --set logzio-k8s-telemetry.metrics.enabled=true \\",
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')]",
     "conditionalTemplates": [
       {
-        "template": "  --set logzio-k8s-telemetry.secrets.MetricsToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
-      },
-      {
-        "template": "  --set logzio-k8s-telemetry.secrets.ListenerHost='https://<<LOGZIO_LISTENER_ADDRESS>>:8053' \\"
+        "template": "  --set global.logzioMetricsToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
       },
       {
         "condition": "$[?(@ == 'AKS')]",
@@ -55,11 +52,6 @@
             "template": "  --set logzio-k8s-telemetry.secrets.windowsNodePassword='{{value}}' \\"
           }
         ]
-      },
-      {
-        "template": "  --set logzio-k8s-telemetry.secrets.p8s_logzio_name='{{value}}' \\",
-        "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
-        "keepAsPlaceholder": true
       },
       {
         "template": "  --set logzio-k8s-telemetry.enableMetricsFilter.eks=true \\",
@@ -84,40 +76,25 @@
       {
         "template": "  --set logzio-k8s-telemetry.k8sObjectsConfig.enabled=true \\",
         "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
-      },
-      {
-        "template": "  --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\",
-        "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs')].value"
-      },
-      {
-        "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
       }
     ]
   },
   {
-    "template": "  --set logzio-k8s-telemetry.traces.enabled=true \\",
+    "template": "  --set logzio-apm-collector.enabled=true \\",
     "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='TRACING')]",
     "conditionalTemplates": [
       {
-        "template": "  --set logzio-k8s-telemetry.secrets.TracesToken='<<LOGZIO_TRACING_SHIPPING_TOKEN>>' \\"
+        "template": "  --set global.logzioTracesToken='<<LOGZIO_TRACING_SHIPPING_TOKEN>>' \\"
       },
       {
-        "template": "  --set logzio-k8s-telemetry.secrets.LogzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\"
-      },
-      {
-        "template": "  --set logzio-k8s-telemetry.spm.enabled=true \\",
+        "template": "  --set logzio-apm-collector.spm.enabled=true \\",
         "targetElement": "capabilities[?(@ == 'SPM')]",
         "conditionalTemplates": [
           {
-            "template": "  --set logzio-k8s-telemetry.secrets.env_id='{{value}}' \\",
-            "targetElement": "datasources[?(@.name=='Kubernetes')].params[?(@.name=='envID')].value",
-            "keepAsPlaceholder": true
+            "template": "  --set global.logzioSpmToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
           },
           {
-            "template": "  --set logzio-k8s-telemetry.secrets.SpmToken='<<LOGZIO_METRICS_SHIPPING_TOKEN>>' \\"
-          },
-          {
-            "template": "  --set logzio-k8s-telemetry.serviceGraph.enabled=true \\"
+            "template": "  --set logzio-apm-collector.serviceGraph.enabled=true \\"
           }
         ]
       }
@@ -125,37 +102,11 @@
   },
   {
     "template": "  --set securityReport.enabled=true \\",
-    "targetElement": "datasources[?(@.name=='Security')]",
-    "conditionalTemplates": [
-      {
-        "template": "  --set logzio-trivy.env_id='{{value}}' \\",
-        "targetElement": "datasources[?(@.name=='Security')].params[?(@.name=='envID')].value",
-        "keepAsPlaceholder": true
-      },
-      {
-        "template": "  --set logzio-trivy.secrets.logzioShippingToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
-      },
-      {
-        "template": "  --set logzio-trivy.secrets.logzioListener='<<LOGZIO_LISTENER_ADDRESS>>' \\"
-      }
-    ]
+    "targetElement": "datasources[?(@.name=='Security')]"
   },
   {
     "template": "  --set deployEvents.enabled=true \\",
-    "targetElement": "datasources[?(@.name=='DeployEvents')]",
-    "conditionalTemplates": [
-      {
-        "template": "  --set logzio-k8s-events.secrets.env_id='{{value}}' \\",
-        "targetElement": "datasources[?(@.name=='DeployEvents')].params[?(@.name=='envID')].value",
-        "keepAsPlaceholder": true
-      },
-      {
-        "template": "  --set logzio-k8s-events.secrets.logzioShippingToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\"
-      },
-      {
-        "template": "  --set logzio-k8s-events.secrets.logzioListener='<<LOGZIO_LISTENER_ADDRESS>>' \\"
-      }
-    ]
+    "targetElement": "datasources[?(@.name=='DeployEvents')]"
   },
   {
     "template": "logzio-monitoring logzio-helm/logzio-monitoring"

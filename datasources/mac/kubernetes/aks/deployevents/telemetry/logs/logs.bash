@@ -19,9 +19,5 @@ load_logs_utils
 execute_task 'get_logzio_logs_token' 'Getting Logz.io logs token'
 # Build enable deploy events Helm set
 execute_task "build_enable_deploy_events_helm_set" "Building enable deploy events Helm set"
-# Build Logz.io deploy events logs listener URL Helm set
-execute_task "build_logzio_deploy_events_logs_listener_url_helm_set" "Building Logz.io deploy events logs listener URL Helm set"
 # Build Logz.io deploy events logs token Helm set
-execute_task "build_logzio_deploy_events_logs_token_helm_set" "Building Logz.io deploy events logs token Helm set"
-# Build Deploy events environment id Helm set
-execute_task "build_deploy_events_environment_id_helm_set" "Building deploy events environment id Helm set"
+execute_task "build_logzio_logs_token_helm_set" "Building Logz.io deploy events logs token Helm set"

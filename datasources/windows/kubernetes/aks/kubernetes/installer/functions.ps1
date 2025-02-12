@@ -430,29 +430,6 @@ function Build-TolerationsHelmSets {
     Write-TaskPostRun "`$script:HelmSets += '$TolerationsHelmSets'"
 }
 
-# Builds enable metrics or traces Helm set
-# Input:
-#   ---
-# Output:
-#   LogHelmSets - Containt all the Helm sets for logging
-#   helmSets - Contains all the Helm sets
-function Build-EnableMetricsOrTracesHelmSet {
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Building enable metrics or traces Helm set ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:HelmSet = " --set metricsOrTraces.enabled=true"
-    
-    $Message = "Enable metrics or traces Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
-    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
-}
-
 # Builds metrics/traces environment tag Helm set
 # Input:
 #   FuncArgs - Hashtable {EnvId = $script:EnvId}
@@ -482,7 +459,7 @@ function Build-EnvironmentTagHelmSet {
 
     $local:EnvId = $FuncArgs.EnvId
 
-    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.p8s_logzio_name=$EnvId"
+    $local:HelmSet = " --set global.env_id=$EnvId"
     
     $Message = "Environment tag Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
@@ -492,47 +469,45 @@ function Build-EnvironmentTagHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Builds metrics/traces environment id helm set
+# Builds Logz.io logs region Helm set
 # Input:
-#   FuncArgs - Hashtable {EnvId = $script:EnvId}
+#   FuncArgs - Hashtable {ListenerUrl = $script:ListenerUrl}
 # Output:
 #   LogHelmSets - Containt all the Helm sets for logging
 #   HelmSets - Contains all the Helm sets
-function Build-EnvironmentIdHelmSet {
+function Build-LogzioRegionHelmSet {
     param (
         [hashtable]$FuncArgs
     )
 
-    $local:ExitCode = 7
+    $local:ExitCode = 2
     $local:FuncName = $MyInvocation.MyCommand.Name
 
-    $local:Message = 'Building environment id Helm set ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    $local:Message = 'Building Logz.io region Helm set ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('EnvId')
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('ListenerUrl')
     if ($Err.Count -ne 0) {
-        $Message = "installer.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
-    $local:EnvId = $FuncArgs.EnvId
+    $local:ListenerUrl = $FuncArgs.ListenerUrl
 
-    if ([string]::IsNullOrEmpty($EnvId)) {
-        $Message = 'Environment id is empty. Default value will be used'
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-Log $script:LogLevelDebug $Message
+    $local:Region = Get-LogzioRegion $ListenerUrl
 
-        return
-    }
+    $Message = "Logz.io region is '$LogzioRegion'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+    # changed from fluentd
+    $local:HelmSet = " --set global.logzioRegion=$LogzioRegion"
 
-    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.env_id=$EnvId"
-
-    $Message = "Environment id Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    $local:Message = "Logz.io region Helm set is '$HelmSet'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
     Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
