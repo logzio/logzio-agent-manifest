@@ -3,7 +3,7 @@
     "template": "helm install -n monitoring --create-namespace \\"
   },
   {
-    "template": "  --set global.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>> \\",
+    "template": "  --set global.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>>' \\",
     "targetElement": "datasources[?(@.name=='Kubernetes')]",
     "conditionalTemplates": [
       {
