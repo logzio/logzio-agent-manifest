@@ -1,6 +1,6 @@
 [
   {
-    "template": "helm install -n monitoring --create-namespace \\"
+    "template": "helm install -n monitoring --create-namespace --version 6.2.6 \\"
   },
   {
     "template": "  --set global.logzioRegion='<<LOGZIO_ACCOUNT_REGION_CODE>> \\",
@@ -15,7 +15,11 @@
   },
   {
     "template": "  --set global.logzioLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\",
-    "targetElement": "datasources[?(@.name=='Kubernetes' || @.name=='Security' || @.name=='DeployEvents')].telemetries[?(@.type=='LOG_ANALYTICS' || (@.type=='METRICS' && @.params[?(@.name=='isObjectLogs' && @.value==true)]))]"
+    "targetElement": "datasources[?(@.name=='Kubernetes' || @.name=='Security' || @.name=='DeployEvents')].telemetries[?(@.type=='LOG_ANALYTICS')]"
+  },
+  {
+    "template": "  --set global.logzioLogsToken='<<LOGZIO_LOGS_SHIPPING_TOKEN>>' \\",
+    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isObjectLogs' && @.value==true)]"
   },
   {
     "template": "  --set logs.enabled=true \\",
