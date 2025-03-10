@@ -128,6 +128,10 @@
                       "label": "Microsoft.AppConfiguration/configurationStores"
                     },
                     {
+                      "value": "Microsoft.App/containerApps",
+                      "label": "Microsoft.App/containerApps"
+                    },
+                    {
                       "value": "Microsoft.AppPlatform/Spring",
                       "label": "Microsoft.AppPlatform/Spring"
                     },
