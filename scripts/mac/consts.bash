@@ -164,3 +164,12 @@ PURPLE_COLOR='\033[0;35m'
 WHITE_COLOR='\033[0;37m'
 RED_COLOR_BOLD='\033[1;31m'
 GREEN_COLOR_BOLD='\033[0;32m'
+
+## Headers
+## Headers
+AGENT_VERSION=$(cat "$LOGZIO_TEMP_DIR/version")
+USER_AGENT_LOGS="logzio-mac-version-$AGENT_VERSION-logs"
+USER_AGENT_METRICS="logzio-mac-version-$AGENT_VERSION-metrics"
+
+## K8s global flag added indication
+IS_LOG_TOKEN_ADDED="$LOGZIO_TEMP_DIR/is-log-token-added.txt"

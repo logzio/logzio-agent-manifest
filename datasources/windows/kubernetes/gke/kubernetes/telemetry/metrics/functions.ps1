@@ -56,46 +56,6 @@ function Build-EnableMetricsHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Builds Logz.io metrics listener URL Helm set
-# Input:
-#   FuncArgs - Hashtable {ListenerUrl = $script:ListenerUrl}
-# Output:
-#   LogHelmSets - Containt all the Helm sets for logging
-#   HelmSets - Contains all the Helm sets
-function Build-LogzioMetricsListenerUrlHelmSet {
-    param (
-        [hashtable]$FuncArgs
-    )
-
-    $local:ExitCode = 2
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Building Logz.io metrics listener url Helm set ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('ListenerUrl')
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-
-    $local:ListenerUrl = $FuncArgs.ListenerUrl
-    $ListenerUrl = "https://$ListenerUrl`:8053"
-
-    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.ListenerHost=$ListenerUrl"
-
-    $local:Message = "Logz.io metrics listener url Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
-    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
-}
-
 # Builds Logz.io metrics token Helm set
 # Input:
 #   FuncArgs - Hashtabla {MetricsToken = $script:MetricsToken}
@@ -125,7 +85,7 @@ function Build-LogzioMetricsTokenHelmSet {
 
     $local:MetricsToken = $FuncArgs.MetricsToken
     
-    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.MetricsToken=$MetricsToken"
+    $local:HelmSet = " --set global.logzioMetricsToken=$MetricsToken"
 
     $local:Message = "Logz.io metrics token Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
@@ -209,76 +169,6 @@ function Build-EnableMetricsFilterHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
-# Gets Logz.io Kubernetes object logs token
-# Input:
-#   ---
-# Output:
-#   ObjectLogsToken - Logz.io Kubernetes object logs token
-function Get-LogzioObjectLogsToken {
-    $local:ExitCode = 1
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Getting Logz.io Kubernetes object logs token ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Err = Get-JsonFileFieldValue $script:AgentJson '.shippingTokens.LOG_ANALYTICS'
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-    
-    $local:ShippingToken = $script:JsonValue
-
-    $Message = "Logz.io Kubernetes object logs token is '$ShippingToken'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:ObjectLogsToken = '$ShippingToken'"
-}
-
-# Builds Logz.io Kubernetes object logs token Helm set
-# Input:
-#   FuncArgs - Hashtabla {ObjectLogsToken = $script:ObjectLogsToken}
-# Output:
-#   LogHelmSets - Containt all the Helm sets for logging
-#   HelmSets - Contains all the Helm sets
-function Build-LogzioObjectLogsTokenHelmSet {
-    param (
-        [hashtable]$FuncArgs
-    )
-
-    $local:ExitCode = 3
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Building Logz.io Kubernetes object logs token Helm set ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('ObjectLogsToken')
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-
-    $local:ObjectLogsToken = $FuncArgs.ObjectLogsToken
-    
-    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.k8sObjectsLogsToken=$ObjectLogsToken"
-
-    $local:Message = "Logz.io Kubernetes object logs token Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
-    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
-}
-
 # Gets is Kubernetes object logs was selected
 # Input:
 #   FuncArgs - Hashtable {MetricsParams = $script:MetricsParams}
@@ -346,49 +236,6 @@ function Build-EnableObjectLogsHelmSet {
     $local:HelmSet = " --set logzio-k8s-telemetry.k8sObjectsConfig.enabled=true"
 
     $local:Message = "Enable Kubernetes object logs Helm set is '$HelmSet'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
-    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
-}
-# Builds Logz.io region Helm set
-# Input:
-#   FuncArgs - Hashtable {ListenerUrl = $script:ListenerUrl}
-# Output:
-#   HelmSets - Contains all the Helm sets
-function Build-LogzioRegionHelmSet {
-    param (
-        [hashtable]$FuncArgs
-    )
-
-    $local:ExitCode = 3
-    $local:FuncName = $MyInvocation.MyCommand.Name
-
-    $local:Message = 'Building Logz.io region Helm set ...'
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('ListenerUrl')
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-
-    $local:ListenerUrl = $FuncArgs.ListenerUrl
-
-    $local:Region = Get-LogzioRegion $ListenerUrl
-
-    $Message = "Logz.io region is '$LogzioRegion'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
-
-    $local:HelmSet = " --set logzio-k8s-telemetry.secrets.LogzioRegion=$Region"
-
-    $local:Message = "Logz.io region Helm set is '$HelmSet'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 

@@ -28,13 +28,11 @@ if $IS_TAINT; then
 fi
 # Get environment id
 execute_task 'get_environment_id' 'Getting environment id'
-if $IS_METRICS_OPTION_WAS_SELECTED || $IS_TARCES_OPTION_WAS_SELECTED; then
-    # Build enable metrics or traces Helm set
-    execute_task 'build_enable_metrics_or_traces_helm_set' 'Building enable metrics or traces Helm set'
+if $IS_LOGS_OPTION_WAS_SELECTED || $IS_METRICS_OPTION_WAS_SELECTED || $IS_TARCES_OPTION_WAS_SELECTED; then
     # Build environment tag Helm set
-    execute_task 'build_environment_tag_helm_set' 'Building environment tag Helm set'
-    # Build environment id Helm set
-    execute_task 'build_environment_id_helm_set' 'Building environment id Helm set'
+    execute_task 'build_environment_tag_helm_set' 'Building environment id Helm set'
+    # Build region Helm set
+    execute_task 'build_logzio_region_helm_set' 'Building Logz.io region Helm set'
 fi
 # Get is Fargate option was selected
 execute_task 'get_is_fargate_was_selected' 'Getting is Fargate option was selected'

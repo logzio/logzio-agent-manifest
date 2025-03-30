@@ -228,6 +228,11 @@ function add_logs_processors_to_otel_config {
     
             return $EXIT_CODE
         fi
+
+        if [[ $processor_name == 'resource/agent' ]] ; then
+            AGENT_VERSION=$(cat '/tmp/logzio/version')
+            add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.processors.resource/agent.attributes[0].value' "$AGENT_VERSION"
+        fi
     done
 }
 
@@ -280,6 +285,15 @@ function add_logs_exporter_to_otel_config {
     done
 
     set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_logs.yaml" '.logzio/logs.account_token' "$LOGS_TOKEN"
+    if [[ $? -ne 0 ]]; then
+        message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+    
+        return $EXIT_CODE
+    fi
+
+    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_logs.yaml" '.logzio/logs.headers.user-agent' "$USER_AGENT_LOGS"
     if [[ $? -ne 0 ]]; then
         message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"

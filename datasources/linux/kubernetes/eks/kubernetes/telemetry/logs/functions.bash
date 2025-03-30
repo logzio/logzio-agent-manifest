@@ -54,7 +54,7 @@ function build_enable_fargate_helm_set {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    local helm_set=" --set logzio-fluentd.fargateLogRouter.enabled=true"
+    local helm_set=" --set logzio-logs-collector.fargateLogRouter.enabled=true"
 
     message="Enable Fargate Helm set is '$helm_set'"
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"

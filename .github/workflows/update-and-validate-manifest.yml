@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.2
       - name: Set filter
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
       - name: Build manifest
@@ -41,7 +41,7 @@ jobs:
               f.truncate(0)
               json.dump(configs, f)
       - name: Upload manifest to workflow artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: manifest
           path: manifest.json
@@ -51,12 +51,15 @@ jobs:
   update_release:
     name: Update dev release
     needs: [filter_for_configs, build_manifest]
+    permissions:
+      contents: write  # Allows pushing changes to the repository
+      attestations: write  # Allows adding and updating artifact attestations
     if: ${{ needs.filter_for_configs.outputs.configs == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Download manifest from artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: manifest
       - name: Update dev pre-release
@@ -77,12 +80,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
       - run: python -m pip install requests
       - name: Download manifest from artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: manifest
       - name: Verify manifest

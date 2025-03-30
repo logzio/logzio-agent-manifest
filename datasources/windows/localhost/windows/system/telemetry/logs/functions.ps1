@@ -536,6 +536,11 @@ function Add-LogsProcessorsToOtelConfig {
 
             return $ExitCode
         }
+
+        if ($ProcessorName -eq 'resource/agent') {
+            $local:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
+            $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource/agent.attributes[0].value' $AgentVersion
+        }
     }
 }
 
@@ -606,6 +611,14 @@ function Add-LogsExporterToOtelConfig {
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
+        return $ExitCode
+    }
+
+    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\logzio_logs.yaml" '.logzio/logs.headers.user-agent' $script:UserAgentLogs
+    if ($Err.Count -ne 0) {
+        $Message = "logs.ps1 ($ExitCode): $($Err[0]))"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
         return $ExitCode
     }
 

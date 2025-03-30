@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Set filter
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
@@ -20,11 +20,14 @@ jobs:
   update_testing:
     name: Update testing release
     needs: filter_for_testing_configs
+    permissions:
+      contents: write  # Allows pushing changes to the repository
+      attestations: write  # Allows adding and updating artifact attestations
     if: ${{ needs.filter_for_testing_configs.outputs.testing == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.8'
       - name: Build manifest

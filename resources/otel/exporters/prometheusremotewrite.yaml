@@ -4,3 +4,5 @@ prometheusremotewrite:
     Authorization:
   resource_to_telemetry_conversion:
     enabled: true
+  add_metric_suffixes: false
+  timeout: 30s

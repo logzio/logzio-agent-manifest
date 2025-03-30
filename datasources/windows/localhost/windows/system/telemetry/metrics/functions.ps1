@@ -334,6 +334,11 @@ function Add-MetricsProcessorsToOtelConfig {
 
             return $ExitCode
         }
+        
+        if ($ProcessorName -eq 'resource/agent') {
+            $local:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
+            $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource/agent.attributes[0].value' $AgentVersion
+        }
     }
 }
 
@@ -413,6 +418,14 @@ function Add-MetricsExporterToOtelConfig {
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
+        return $ExitCode
+    }
+
+    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.user-agent' $script:UserAgentMetrics
+    if ($Err.Count -ne 0) {
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
+        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
         return $ExitCode
     }
 

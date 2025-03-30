@@ -112,13 +112,11 @@ if ($script:IsTaint) {
 }
 # Get environment id
 Invoke-Task 'Get-EnvironmentID' @{GeneralParams = $script:GeneralParams; DefaultEnvId = $script:DefaultEnvId} 'Getting environment id' @($InstallerFunctionsScript)
-if ($script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
-    # Build enable metrics or traces Helm set
-    Invoke-Task 'Build-EnableMetricsOrTracesHelmSet' @{} 'Building enable metrics or traces Helm set' @($InstallerFunctionsScript)
+if ($script:IsLogsOptionSelected -or $script:IsMetricsOptionSelected -or $script:IsTracesOptionSelected) {
     # Build environment tag Helm set
     Invoke-Task 'Build-EnvironmentTagHelmSet' @{EnvId = $script:EnvId} 'Building environment tag Helm set' @($InstallerFunctionsScript)
-    # Build environment id Helm set
-    Invoke-Task 'Build-EnvironmentIdHelmSet' @{EnvId = $script:EnvId} 'Building environment id Helm set' @($InstallerFunctionsScript)
+    # Build Logz.io region Helm set
+    Invoke-Task 'Build-LogzioRegionHelmSet' @{GeneralParams = $script:GeneralParams} 'Building Logz.io region Helm set' @($InstallerFunctionsScript)
 }
 if ($script:IsLogsOptionSelected) {
     # Run logs script
