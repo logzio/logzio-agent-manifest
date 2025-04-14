@@ -1,0 +1,24 @@
+
+mac_run: |
+  #!/bin/bash
+  function create_otel_receiver {
+    :
+  }
+linux_run: |
+  #!/bin/bash
+  function create_otel_receiver {
+    :
+  }
+windows_run: |
+  function New-OtelReceiver {
+    param (
+      [hashtable]$FuncArgs
+    )
+  }
+receiver:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "0.0.0.0:4317"
+      http:
+        endpoint: "0.0.0.0:4318"

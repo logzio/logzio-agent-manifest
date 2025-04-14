@@ -25,7 +25,7 @@
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your computer.",
               "otel": {
-                "receivers": ["filelog","windowseventlog_application","windowseventlog_security","windowseventlog_system"],
+                "receivers": ["filelog","windowseventlog_application","windowseventlog_security","windowseventlog_system","otlp"],
                 "processors": ["resourcedetection_system", "transform_application"]
 				      },
               "params":
@@ -69,7 +69,7 @@
               "type": "METRICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your computer.",
               "otel": {
-                "receivers": ["hostmetrics"],
+                "receivers": ["hostmetrics","otlp"],
                 "processors": ["resourcedetection_system", "resource_agent", "filter"]
 				      },
               "params": [],

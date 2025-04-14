@@ -26,7 +26,7 @@
                "type": "LOG_ANALYTICS",
                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your EC2.",
                "otel": {
-                "receivers": ["filelog"],
+                "receivers": ["filelog","otlp"],
                 "processors": ["resourcedetection_system", "resourcedetection_ec2"]
 				       },
                "params":
@@ -46,7 +46,7 @@
                "type": "METRICS",
                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your EC2.",
                "otel": {
-                "receivers": ["hostmetrics"],
+                "receivers": ["hostmetrics","otlp"],
                 "processors": ["resourcedetection_system", "resourcedetection_ec2", "resource_agent", "filter"]
 				       },
                "params": [],
