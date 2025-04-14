@@ -50,6 +50,64 @@ function build_logzio_metrics_token_helm_set {
     write_task_post_run "HELM_SETS+='$helm_set'"
 }
 
+}
+# Gets is application metrics was selected
+# Input:
+#   ---
+# Output:
+#   IS_APPLICATION_METRICS - (true/false)
+function get_is_application_metrics_was_selected {
+    local func_name="${FUNCNAME[0]}"
+
+    local message='Getting if application metrics option was selected ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    PARAMS=("${METRICS_PARAMS[@]}")
+    get_param_value_list 'isApplicationMetrics'
+    if [[ $? -ne 0 ]]; then
+        message="metrics.bash ($EXIT_CODE): $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+
+        return $EXIT_CODE
+    fi
+
+    local is_application_metrics=$PARAM_VALUE
+
+    if $is_application_metrics; then
+        message='Application metrics option was selected'
+    else
+        message='Application metrics option was not selected'
+    fi
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    write_task_post_run "IS_APPLICATION_METRICS=$is_application_metrics"
+}
+# Builds enable metrics filter Helm set
+# Input:
+#   ---
+# Output:
+#   LOG_HELM_SETS - Contains all the Helm sets for logging
+#   HELM_SETS - Contains all the Helm sets
+function build_enable_application_metrics_helm_set {
+    local func_name="${FUNCNAME[0]}"
+
+    local message='Building enable application metrics Helm set ...'
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+    
+    local helm_set=" --set logzio-k8s-telemetry.applicationMetrics.enabled=true"
+
+    message="Enable application metrics Helm set is '$helm_set'"
+    send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+    write_log "$LOG_LEVEL_DEBUG" "$message"
+
+    write_task_post_run "LOG_HELM_SETS+='$helm_set'"
+    write_task_post_run "HELM_SETS+='$helm_set'"
+}
+
 # Gets is metrics filter was selected
 # Input:
 #   ---
