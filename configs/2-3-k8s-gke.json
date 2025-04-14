@@ -66,6 +66,14 @@
                 },
                 {
                   "type": "boolean",
+                  "name": "isApplicationMetrics",
+                  "label": "Scrape metrics from application pods with `prometheus.io.scrape=true` annotation",
+                  "description": "",
+                  "hint": "Check this box if you want Logz.io Telemetry Collector to collect application metrics that are exposed by your pods.",
+                  "value": true
+                },
+                {
+                  "type": "boolean",
                   "name": "isObjectLogs",
                   "label": "Collect correlated Kubernetes resource object logs",
                   "description": "",
