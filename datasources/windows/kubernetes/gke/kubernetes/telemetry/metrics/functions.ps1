@@ -95,6 +95,82 @@ function Build-LogzioMetricsTokenHelmSet {
     Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
 }
 
+
+
+# Gets is application metrics was selected
+# Input:
+#   FuncArgs - Hashtable {MetricsParams = $script:MetricsParams}
+# Output:
+#   IsApplicationMetrics - (true/false)
+function Get-IsApplicationMetricsWasSelected {
+    param (
+        [hashtable]$FuncArgs
+    )
+
+    $local:ExitCode = 4
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Getting if applications metrics option was selected ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsParams')
+    if ($Err.Count -ne 0) {
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:MetricsParams = $FuncArgs.MetricsParams
+
+    $Err = Get-ParamValue $MetricsParams 'isApplicationMetrics'
+    if ($Err.Count -ne 0) {
+        $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:isApplicationMetrics = $script:ParamValue
+
+    if ($isApplicationMetrics) {
+        $Message = 'Applications metrics option was selected'
+    }
+    else {
+        $Message = 'Applications metrics option was not selected'
+    }
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:IsApplicationMetrics = `$$IsApplicationMetrics"
+}
+
+# Builds enable application metrics Helm set
+# Input:
+#   ---
+# Output:
+#   LogHelmSets - Containt all the Helm sets for logging
+#   HelmSets - Contains all the Helm sets
+function Build-EnableApplicationMetricsHelmSet {
+    $local:FuncName = $MyInvocation.MyCommand.Name
+
+    $local:Message = 'Building enable application metrics Helm set ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+    
+    $local:HelmSet = " --set logzio-k8s-telemetry.applicationMetrics.enabled=true"
+
+    $local:Message = "Enable application metrics Helm set is '$HelmSet'"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
+
+    Write-TaskPostRun "`$script:LogHelmSets += '$HelmSet'"
+    Write-TaskPostRun "`$script:HelmSets += '$HelmSet'"
+}
+
 # Gets is metrics filter was selected
 # Input:
 #   FuncArgs - Hashtable {MetricsParams = $script:MetricsParams}
