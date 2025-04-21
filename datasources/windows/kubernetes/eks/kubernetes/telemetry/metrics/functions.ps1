@@ -123,7 +123,7 @@ function Get-IsApplicationMetricsWasSelected {
 
     $local:MetricsParams = $FuncArgs.MetricsParams
 
-    $Err = Get-ParamValue $MetricsParams 'isApllicationMetrics'
+    $Err = Get-ParamValue $MetricsParams 'isApplicationMetrics'
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
@@ -132,9 +132,9 @@ function Get-IsApplicationMetricsWasSelected {
         return $ExitCode
     }
 
-    $local:IsAppliationMetrics = $script:ParamValue
+    $local:isApplicationMetrics = $script:ParamValue
 
-    if ($IsFilter) {
+    if ($isApplicationMetrics) {
         $Message = 'Applications metrics option was selected'
     }
     else {
