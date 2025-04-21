@@ -58,8 +58,7 @@
         ]
       },
       {
-        "template": "  --set logzio-k8s-telemetry.applicationMetrics.enabled=true \\",
-        "condition": "$[?(@ == 'EKS')]",
+        "template": "  --set logzio-k8s-telemetry.applicationMetrics.enabled='{{value}}' \\",
         "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='METRICS')].params[?(@.name=='isApplicationMetrics')].value"
       },
       {
