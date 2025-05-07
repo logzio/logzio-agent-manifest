@@ -1,5 +1,5 @@
 #################################################################################################################################
-################################################### WINDOWS Traces Functions ######################################################
+################################################## WINDOWS Traces Functions ####################################################
 #################################################################################################################################
 
 # Gets Logz.io traces token
@@ -46,66 +46,24 @@ function Add-TracesPipelineToOtelConfig {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    # Add traces pipeline
-    $local:TracesPipeline = @"
-traces:
-  receivers:
-  processors: [batch]
-  exporters: [logzio_traces]
-"@
-
-    $local:TracesMetricsPipeline = @"
-traces/metrics:
-  receivers: [otlp]
-  processors: [batch, spanmetrics]
-  exporters: [prometheusremotewrite]
-"@
-
-    # Check if service section exists
-    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service'
-    if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
-        $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
-    if ($Err.Count -ne 0) {
-        # Add service section
-        $local:Service = @"
-service:
-  pipelines: {}
-"@
-        $Service | Out-File -Append -FilePath "$script:OtelResourcesDir\$script:OtelConfigName" -Encoding utf8
-    }
-
-    # Add the traces pipeline to service.pipelines
-    $local:TracesPipelineYaml = ConvertFrom-Yaml $TracesPipeline
-    $local:TracesMetricsPipelineYaml = ConvertFrom-Yaml $TracesMetricsPipeline
-    
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces' $TracesPipelineYaml.traces
+    $local:Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelResourcesDir\traces_pipeline.yaml" "$script:OtelResourcesDir\otel_config.yaml" '' '.service.pipelines'
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines."traces/metrics"' $TracesMetricsPipelineYaml.'traces/metrics'
-    if ($Err.Count -ne 0) {
-        $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
-    }
+    $Message = 'Added traces pipeline to OTEL config'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
 }
 
 # Gets traces OTEL receivers
 # Input:
 #   FuncArgs - Hashtable {TracesTelemetry = $script:TracesTelemetry}
-# Output:
+# Ouput:
 #   TracesOtelReceivers - List of Traces OTEL receiver names
 function Get-TracesOtelReceivers {
     param (
@@ -128,9 +86,7 @@ function Get-TracesOtelReceivers {
         return $ExitCode
     }
 
-    $local:TracesTelemetry = $FuncArgs.TracesTelemetry
-
-    # Always use OTLP receiver for traces
+    # OTLP receiver is always used for traces
     $local:TracesOtelReceivers = @("otlp")
 
     $Message = "Traces OTEL receivers are '$TracesOtelReceivers'"
@@ -170,6 +126,7 @@ function Add-TracesReceiversToOtelConfig {
     $local:TracesOtelReceivers = $FuncArgs.TracesOtelReceivers
 
     # Add receivers section if not exists
+    $local:ExistReceivers = $null
     $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.receivers'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
@@ -179,33 +136,33 @@ function Add-TracesReceiversToOtelConfig {
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        # Add receivers section
-        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value "receivers: {}" -Encoding utf8
+        # Add receivers section if not exists
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value "receivers:"
     }
 
-    # Add OTLP receiver configuration
-    $local:OtlpReceiverConfig = @"
-otlp:
-  protocols:
-    grpc:
-      endpoint: 0.0.0.0:4317
-    http:
-      endpoint: 0.0.0.0:4318
-"@
-
-    $local:OtlpReceiverYaml = ConvertFrom-Yaml $OtlpReceiverConfig
-    
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.receivers.otlp' $OtlpReceiverYaml.otlp
-    if ($Err.Count -ne 0) {
+    # Add OTLP receiver if not exists
+    $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.receivers.otlp'
+    if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
+    if ($Err.Count -ne 0) {
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value @"
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+"@
+    }
 
     # Update service.pipelines.traces.receivers with the receivers list
-    $local:ReceiversList = $TracesOtelReceivers
+    $local:ReceiversList = $TracesOtelReceivers -join ','
+    $ReceiversList = "[$ReceiversList]"
     $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.receivers' $ReceiversList
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
@@ -233,7 +190,7 @@ otlp:
 # Gets traces OTEL processors
 # Input:
 #   FuncArgs - Hashtable {TracesTelemetry = $script:TracesTelemetry}
-# Output:
+# Ouput:
 #   TracesOtelProcessors - List of traces OTEL processor names
 function Get-TracesOtelProcessors {
     param (
@@ -256,10 +213,8 @@ function Get-TracesOtelProcessors {
         return $ExitCode
     }
 
-    $local:TracesTelemetry = $FuncArgs.TracesTelemetry
-
     # Standard processors for traces
-    $local:TracesOtelProcessors = @("batch", "resource", "attributes")
+    $local:TracesOtelProcessors = @('batch', 'resource', 'attributes')
 
     $Message = "Traces OTEL processors are '$TracesOtelProcessors'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
@@ -297,7 +252,7 @@ function Add-TracesProcessorsToOtelConfig {
 
     $local:TracesOtelProcessors = $FuncArgs.TracesOtelProcessors
 
-    # Add processors section if not exists
+    $local:ExistProcessors = $null
     $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
@@ -307,8 +262,8 @@ function Add-TracesProcessorsToOtelConfig {
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        # Add processors section
-        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value "processors: {}" -Encoding utf8
+        # Add processors section if not exists
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value "processors:"
     }
 
     # Add batch processor if not exists
@@ -321,20 +276,11 @@ function Add-TracesProcessorsToOtelConfig {
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        $local:BatchProcessor = @"
-batch:
-  send_batch_size: 10000
-  timeout: 1s
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value @"
+  batch:
+    send_batch_size: 10000
+    timeout: 1s
 "@
-        $local:BatchProcessorYaml = ConvertFrom-Yaml $BatchProcessor
-        $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.batch' $BatchProcessorYaml.batch
-        if ($Err.Count -ne 0) {
-            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-            Write-TaskPostRun "Write-Error `"$Message`""
-
-            return $ExitCode
-        }
     }
 
     # Add resource processor if not exists
@@ -347,23 +293,14 @@ batch:
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        $local:ResourceProcessor = @"
-resource:
-  attributes:
-    - key: service.name
-      value: ${env:COMPUTERNAME}
-    - key: service.version
-      value: 1.0.0
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value @"
+  resource:
+    attributes:
+      - key: service.name
+        value: ${env:COMPUTERNAME}
+      - key: service.version
+        value: 1.0.0
 "@
-        $local:ResourceProcessorYaml = ConvertFrom-Yaml $ResourceProcessor
-        $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource' $ResourceProcessorYaml.resource
-        if ($Err.Count -ne 0) {
-            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-            Write-TaskPostRun "Write-Error `"$Message`""
-
-            return $ExitCode
-        }
     }
 
     # Add attributes processor if not exists
@@ -376,26 +313,19 @@ resource:
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        $local:AttributesProcessor = @"
-attributes:
-  actions:
-    - key: environment
-      value: production
-      action: insert
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value @"
+  attributes:
+    actions:
+      - key: environment
+        value: production
+        action: insert
 "@
-        $local:AttributesProcessorYaml = ConvertFrom-Yaml $AttributesProcessor
-        $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.attributes' $AttributesProcessorYaml.attributes
-        if ($Err.Count -ne 0) {
-            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-            Write-TaskPostRun "Write-Error `"$Message`""
-
-            return $ExitCode
-        }
     }
 
     # Update service.pipelines.traces.processors with the processors list
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.processors' $TracesOtelProcessors
+    $local:ProcessorsList = $TracesOtelProcessors -join ','
+    $ProcessorsList = "[$ProcessorsList]"
+    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.processors' $ProcessorsList
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
@@ -432,30 +362,20 @@ function Set-SpanMetricsConnector {
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        $local:SpanMetricsProcessor = @"
-spanmetrics:
-  metrics_exporter: prometheusremotewrite
-  dimensions:
-    - name: service.name
-    - name: operation
-      default: unknown-operation
-  dimensions_cache_size: 1000
-  aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value @"
+  spanmetrics:
+    metrics_exporter: prometheusremotewrite
+    dimensions:
+      - name: service.name
+      - name: operation
+        default: unknown-operation
+    dimensions_cache_size: 1000
+    aggregation_temporality: AGGREGATION_TEMPORALITY_CUMULATIVE
 "@
-        $local:SpanMetricsProcessorYaml = ConvertFrom-Yaml $SpanMetricsProcessor
-        $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.spanmetrics' $SpanMetricsProcessorYaml.spanmetrics
-        if ($Err.Count -ne 0) {
-            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-            Write-TaskPostRun "Write-Error `"$Message`""
-
-            return $ExitCode
-        }
     }
 
     # Update service.pipelines.traces/metrics.processors with spanmetrics
-    $local:Processors = @("batch", "spanmetrics")
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines."traces/metrics".processors' $Processors
+    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines."traces/metrics".processors' "[batch,spanmetrics]"
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
@@ -498,7 +418,7 @@ function Add-TracesExporterToOtelConfig {
     $local:TracesToken = $FuncArgs.TracesToken
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
-    # Add exporters section if not exists
+    $local:ExistExporters = $null
     $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
@@ -508,15 +428,8 @@ function Add-TracesExporterToOtelConfig {
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        # Add exporters section
-        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value "exporters: {}" -Encoding utf8
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value "exporters:"
     }
-
-    # Get Logz.io region from listener URL
-    $local:LogzioRegion = Get-LogzioRegion $ListenerUrl
-    $Message = "Logz.io region is '$LogzioRegion'"
-    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-    Write-Log $script:LogLevelDebug $Message
 
     # Add Logz.io traces exporter if not exists
     $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters.logzio_traces'
@@ -527,26 +440,19 @@ function Add-TracesExporterToOtelConfig {
 
         return $ExitCode
     }
-    if ($Err.Count -ne 0) {
-        $local:LogzioTracesExporter = @"
-logzio_traces:
-  account_token: $TracesToken
-  region: $LogzioRegion
-"@
-        $local:LogzioTracesExporterYaml = ConvertFrom-Yaml $LogzioTracesExporter
-        $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters.logzio_traces' $LogzioTracesExporterYaml.logzio_traces
-        if ($Err.Count -ne 0) {
-            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-            Write-TaskPostRun "Write-Error `"$Message`""
 
-            return $ExitCode
-        }
+    if ($Err.Count -ne 0) {
+        $local:LogzioRegion = Get-LogzioRegion $ListenerUrl
+        
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value @"
+  logzio_traces:
+    account_token: ${TracesToken}
+    region: ${LogzioRegion}
+"@
     }
 
     # Update service.pipelines.traces.exporters with logzio_traces
-    $local:TracesExporters = @("logzio_traces")
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.exporters' $TracesExporters
+    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.exporters' "[logzio_traces]"
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
@@ -599,28 +505,18 @@ function Add-SpanMetricsExporter {
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        $local:PrometheusRemoteWriteExporter = @"
-prometheusremotewrite:
-  endpoint: https://listener.logz.io:8053
-  headers:
-    Authorization: Bearer $MetricsToken
-  resource_to_telemetry_conversion:
-    enabled: true
+        Add-Content -Path "$script:OtelResourcesDir\$script:OtelConfigName" -Value @"
+  prometheusremotewrite:
+    endpoint: https://$ListenerUrl:8053
+    headers:
+      Authorization: Bearer ${MetricsToken}
+    resource_to_telemetry_conversion:
+      enabled: true
 "@
-        $local:PrometheusRemoteWriteExporterYaml = ConvertFrom-Yaml $PrometheusRemoteWriteExporter
-        $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters.prometheusremotewrite' $PrometheusRemoteWriteExporterYaml.prometheusremotewrite
-        if ($Err.Count -ne 0) {
-            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-            Write-TaskPostRun "Write-Error `"$Message`""
-
-            return $ExitCode
-        }
     }
 
     # Update service.pipelines.traces/metrics.exporters with prometheusremotewrite
-    $local:SpanMetricsExporters = @("prometheusremotewrite")
-    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines."traces/metrics".exporters' $SpanMetricsExporters
+    $Err = Set-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines."traces/metrics".exporters' "[prometheusremotewrite]"
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
