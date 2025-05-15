@@ -132,5 +132,6 @@ $script:LogScriptPostrequisites = 'postrequisites.ps1'
 $script:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
 $script:UserAgentLogs = "logzio-windows-version-$script:AgentVersion-logs"
 $script:UserAgentMetrics = "logzio-windows-version-$script:AgentVersion-metrics"
+$script:UserAgentTraces = "logzio-windows-version-$script:AgentVersion-traces"
 
 # Dynamic Consts (Will be added while the agent running)

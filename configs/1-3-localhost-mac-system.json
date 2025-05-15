@@ -12,7 +12,7 @@
       "description": "Mac Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Mac"],
-      "productTags": ["LOG_ANALYTICS","METRICS"],
+      "productTags": ["LOG_ANALYTICS","METRICS","TRACING"],
       "filterTags": ["Operating Systems", "Most Popular"],
       "datasources": [
         {
@@ -53,6 +53,15 @@
               "dashboards": [
                 "2gsQP2xRef7dkwt8pxWieo"
               ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces and span metrics from your computer.",
+              "otel": {
+                "receivers": ["otlp"],
+                "processors": ["resourcedetection_system", "resource_agent"]
+              },
+              "params": []
             }
           ]
         }
