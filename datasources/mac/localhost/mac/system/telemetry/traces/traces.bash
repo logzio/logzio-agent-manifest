@@ -28,9 +28,22 @@ execute_task 'add_traces_receivers_to_otel_config' 'Adding traces receivers to O
 execute_task 'get_traces_otel_processors' 'Getting traces OTEL processors'
 # Add traces processors to OTEL config
 execute_task 'add_traces_processors_to_otel_config' 'Adding traces processors to OTEL config'
-# Configure span metrics connector
-execute_task 'configure_span_metrics_connector' 'Configuring span metrics connector'
 # Add traces exporter to OTEL config (Logz.io)
 execute_task 'add_traces_exporter_to_otel_config' 'Adding traces exporter to OTEL config'
-# Add metrics exporter for span metrics (Prometheus Remote Write)
-execute_task 'add_span_metrics_exporter' 'Adding span metrics exporter to OTEL config'
+
+# Print span metrics title
+echo
+echo -e '##############'
+echo -e "###$PURPLE_COLOR Span Metrics $WHITE_COLOR###"
+echo -e '##############'
+
+# Get Logz.io metrics token
+execute_task 'get_logzio_metrics_token' 'Getting Logz.io metrics token'
+# Add spanmetrics pipeline to OTEL config
+execute_task 'add_spanmetrics_pipeline_to_otel_config' 'Adding span metrics pipeline to OTEL config'
+# Add spanmetrics connector to OTEL config
+execute_task 'add_spanmetrics_connector_to_otel_config' 'Adding span metrics connector to OTEL config'
+# Add spanmetrics processors to OTEL config
+execute_task 'add_spanmetrics_processors_to_otel_config' 'Adding span metrics processors to OTEL config'
+# Add spanmetrics exporter to OTEL config
+execute_task 'add_spanmetrics_exporter_to_otel_config' 'Adding span metrics exporter to OTEL config'
