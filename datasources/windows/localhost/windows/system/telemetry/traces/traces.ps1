@@ -14,6 +14,8 @@ Write-Host '############'
 
 # Get Logz.io traces token
 Invoke-Task 'Get-LogzioTracesToken' @{} 'Getting Logz.io traces token' @($TracesFunctionsScript)
+# Get Logz.io metrics token
+Invoke-Task 'Get-LogzioMetricsToken' @{} 'Getting Logz.io metrics token' @($MetricsFunctionsScript)
 # Add traces pipeline to OTEL config
 Invoke-Task 'Add-TracesPipelineToOtelConfig' @{} 'Adding traces pipeline to OTEL config' @($TracesFunctionsScript)
 # Get traces OTEL receivers
