@@ -1,8 +1,4 @@
 traces:
-  receivers: [otlp]
-  processors: [batch, resource, attributes]
-  exporters: [logzio_traces]
-"traces/metrics":
-  receivers: [otlp]
-  processors: [batch, spanmetrics]
-  exporters: [prometheusremotewrite]
+  receivers: []
+  processors: []
+  exporters: [logzio/traces]

@@ -1,0 +1,14 @@
+tail_sampling:
+    policies:
+      [
+          {
+            name: error-in-policy,
+            type: status_code,
+            status_code: {status_codes: [ERROR]}
+          },
+          {
+            name: probability-policy,
+            type: probabilistic,
+            probabilistic: {sampling_percentage: 10 }
+          }       
+      ]
