@@ -84,7 +84,16 @@
                 "receivers": ["otlp"],
                 "processors": ["resourcedetection_system", "resource_agent"]
               },
-              "params": []
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "isSpanMetrics",
+                  "label": "Collect span metrics",
+                  "description": "",
+                  "hint": "By checking this option, OpenTelemetry will collect span metrics.",
+                  "value": true
+                }
+              ]
             }
           ]
         }
