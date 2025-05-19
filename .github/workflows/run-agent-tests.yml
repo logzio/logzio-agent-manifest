@@ -117,7 +117,7 @@ jobs:
           scoop install yq
 
       - name: Build agent binaries
-        run: make
+        run: make windows
         shell: bash
 
       - name: Run Windows localhost tests
