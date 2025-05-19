@@ -144,6 +144,9 @@ validate_localhost_config() {
     
     echo "Validating configuration for $os using $config_file..."
     
+    # Ensure validation directory exists
+    mkdir -p "$VALIDATION_DIR"
+    
     # Extract important parts from the test config
     local telemetries=$(jq '.subtypes[0].datasources[0].telemetries' "$config_file")
     local has_logs=$(echo "$telemetries" | jq 'map(select(.type == "LOG_ANALYTICS")) | length > 0')
