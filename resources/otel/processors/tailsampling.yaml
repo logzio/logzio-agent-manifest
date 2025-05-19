@@ -1,14 +1,19 @@
 tail_sampling:
-    policies:
-      [
-          {
-            name: error-in-policy,
-            type: status_code,
-            status_code: {status_codes: [ERROR]}
-          },
-          {
-            name: probability-policy,
-            type: probabilistic,
-            probabilistic: {sampling_percentage: 10 }
-          }       
-      ]
+  policies:
+    [
+      {
+        name: error-in-policy,
+        type: status_code,
+        status_code: { status_codes: [ERROR] },
+      },
+      {
+        name: slow-traces-policy,
+        type: latency,
+        latency: { threshold_ms: "${SAMPLING_LATENCY}" },
+      },
+      {
+        name: probability-policy,
+        type: probabilistic,
+        probabilistic: { sampling_percentage: "${SAMPLING_PROBABILITY}" },
+      },
+    ]

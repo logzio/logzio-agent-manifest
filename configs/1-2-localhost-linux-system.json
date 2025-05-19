@@ -69,8 +69,23 @@
                   "description": "",
                   "hint": "By checking this option, OpenTelemetry will collect span metrics.",
                   "value": true
-                }
-              ]
+                },
+                {
+                  "type": "number",
+                  "name": "samplingLatency",
+                  "label": "Sampling latency threshold",
+                  "description": "The sampling latency threshold in milliseconds.",
+                  "hint": "By setting this option, OpenTelemetry will sample traces that exceed the specified latency threshold.",
+                  "value": 200
+                },
+                {
+                  "type": "number",
+                  "name": "samplingPropability",
+                  "label": "Sampling probability precentage",
+                  "description": "The sampling probability precentage.",
+                  "hint": "By setting this option, OpenTelemetry will sample traces with the specified probability.",
+                  "value": 10
+                }              ]
             }
           ]
         }
