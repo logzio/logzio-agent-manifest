@@ -45,7 +45,7 @@ jobs:
       - name: Run localhost tests
         run: |
           chmod +x tests/run_localhost_tests.sh
-          ./tests/run_localhost_tests.sh
+          ./tests/run_localhost_tests.sh --skip-build
 
       - name: Validate OTEL config for Linux
         run: |
@@ -81,7 +81,7 @@ jobs:
       - name: Run localhost tests
         run: |
           chmod +x tests/run_localhost_tests.sh
-          ./tests/run_localhost_tests.sh
+          ./tests/run_localhost_tests.sh --skip-build
 
       - name: Validate OTEL config for macOS
         run: |
@@ -116,15 +116,14 @@ jobs:
           iwr -useb get.scoop.sh | iex
           scoop install yq
 
-      - name: Run Windows localhost tests
-        shell: powershell
-        run: |
-          # Run the dedicated PowerShell test script
-          ./tests/Run-LocalhostTests.ps1 -SkipBuild
-
       - name: Build agent binaries
         run: make
         shell: bash
+
+      - name: Run Windows localhost tests
+        shell: powershell
+        run: |
+          ./tests/Run-LocalhostTests.ps1
 
       - name: Validate OTEL config for Windows
         shell: powershell

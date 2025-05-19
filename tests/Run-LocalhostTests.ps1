@@ -1,12 +1,11 @@
 # Script for automated testing of Logz.io agent manifest for Windows localhost subtypes
 # This script will:
-# 1. Build the binary files using the Makefile (if on Windows)
-# 2. Run tests for Windows localhost subtype
-# 3. Validate the collector configurations
+# 1. Run tests for Windows localhost subtype
+# 2. Validate the collector configurations
 
 param(
     [Parameter(Mandatory=$false)]
-    [switch]$SkipBuild,
+    [switch]$BuildBinaries,
 
     [Parameter(Mandatory=$false)]
     [string]$TempDir = "$env:TEMP\LogzioTest"
@@ -171,9 +170,11 @@ Note: This is a static validation based on the test configuration.
 
 # Main test execution
 function Start-Tests {
-    # Build binaries if not skipped
-    if (-not $SkipBuild) {
+    # Build binaries if explicitly requested
+    if ($BuildBinaries) {
         Build-Binaries
+    } else {
+        Write-Host "Skipping binary build as it's not explicitly requested with -BuildBinaries"
     }
     
     # Test Windows localhost subtype

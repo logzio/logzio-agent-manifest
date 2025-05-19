@@ -2,9 +2,8 @@
 
 # Script for automated testing of Logz.io agent manifest for localhost subtypes
 # This script will:
-# 1. Build the binary files using the Makefile
-# 2. Run tests for each localhost subtype (Linux, Mac, Windows)
-# 3. Validate the collector configurations
+# 1. Run tests for each localhost subtype (Linux, Mac, Windows)
+# 2. Validate the collector configurations
 
 set -e
 
@@ -15,6 +14,19 @@ ASSETS_DIR="$ROOT_DIR/assets"
 TEST_CONFIGS_DIR="$ROOT_DIR/testing-configs"
 LOG_DIR="$TEMP_DIR/logs"
 VALIDATION_DIR="$TEMP_DIR/validation"
+
+# Parse command-line arguments
+SKIP_BUILD=false
+for arg in "$@"; do
+    case "$arg" in
+        --skip-build)
+            SKIP_BUILD=true
+            ;;
+        *)
+            # Unknown option
+            ;;
+    esac
+done
 
 # Ensure we're running from the repo root
 if [[ ! -f "$ROOT_DIR/Makefile" ]]; then
@@ -179,8 +191,12 @@ validate_localhost_config() {
 
 # Main test execution
 main() {
-    # Build binaries
-    build_binaries
+    # Build binaries only if not skipped
+    if [[ "$SKIP_BUILD" != "true" ]]; then
+        build_binaries
+    else
+        echo "Skipping binary build as requested by --skip-build flag"
+    fi
     
     # Test each localhost subtype
     test_localhost_subtype "linux"
