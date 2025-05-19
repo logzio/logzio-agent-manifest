@@ -27,6 +27,9 @@ TEST_CONFIG=""
 TEST_URL="https://app.logz.io"
 TEST_ID="test-agent-id"
 
+# Add a flag to control debug output
+DEBUG_MODE=false
+
 # Max time to wait for agent execution (in seconds)
 MAX_WAIT_TIME=300
 
@@ -56,6 +59,9 @@ for arg in "$@"; do
         --install-dir=*)
             INSTALL_DIR="${arg#*=}"
             ;;
+        --debug)
+            DEBUG_MODE=true
+            ;;
         *)
             # Unknown option
             ;;
@@ -83,6 +89,9 @@ echo "=== Logz.io Agent Manifest - Localhost Tests ==="
 echo "=== $(date) ==="
 echo "Test configuration: $TEST_CONFIG"
 echo "Installation directory: $INSTALL_DIR"
+if [[ "$DEBUG_MODE" == "true" ]]; then
+    echo "Debug mode: Enabled (verbose output)"
+fi
 echo ""
 
 # Function to build the binaries using the Makefile
@@ -120,9 +129,28 @@ prepare_test_env() {
     local agent_script="$TEMP_DIR/$CURRENT_OS/agent.bash"
     chmod +x "$agent_script"
     
+    # Check the contents of the agent directory
+    if [[ "$DEBUG_MODE" == "true" ]]; then
+        echo "Agent directory contents:"
+        ls -la "$TEMP_DIR/$CURRENT_OS"
+    fi
+    
     # Verify test config exists
     if [[ ! -f "$TEST_CONFIG" ]]; then
         echo "Error: Test configuration file not found: $TEST_CONFIG"
+        exit 1
+    fi
+    
+    # Check the test config is valid JSON
+    if ! jq empty "$TEST_CONFIG" 2>/dev/null; then
+        echo "Error: Invalid JSON in test configuration file: $TEST_CONFIG"
+        exit 1
+    fi
+    
+    # Verify install directory is writable
+    if [[ ! -w "$INSTALL_DIR" ]]; then
+        echo "Error: Installation directory is not writable: $INSTALL_DIR"
+        echo "Try running the script with sudo or choose a different installation directory"
         exit 1
     fi
     
@@ -138,6 +166,22 @@ run_agent() {
     
     echo "Command: $cmd"
     echo ""
+    
+    # Run the agent directly to capture output in real-time for debugging
+    if [[ "$DEBUG_MODE" == "true" ]]; then
+        echo "Running agent in debug mode (real-time output)..."
+        $cmd
+        local exit_code=$?
+        
+        if [[ $exit_code -ne 0 ]]; then
+            echo "Error: Agent execution failed with exit code $exit_code"
+            return 1
+        fi
+        
+        echo "Agent execution completed successfully."
+        echo ""
+        return 0
+    fi
     
     # Run the agent and capture output
     $cmd > "$AGENT_OUTPUT_FILE" 2> "$AGENT_ERROR_FILE" &
@@ -167,6 +211,9 @@ run_agent() {
     
     if [[ $exit_code -ne 0 ]]; then
         echo "Error: Agent execution failed with exit code $exit_code"
+        echo "Agent output (last 20 lines):"
+        tail -n 20 "$AGENT_OUTPUT_FILE"
+        echo ""
         echo "Agent error output:"
         cat "$AGENT_ERROR_FILE"
         return 1
@@ -204,6 +251,9 @@ validate_otel_config() {
     
     if [[ $missing_files -gt 0 ]]; then
         echo "Error: $missing_files required configuration files are missing"
+        # Check for permissions issues
+        echo "Installation directory permissions:"
+        ls -la "$INSTALL_DIR"
         return 1
     fi
     
@@ -365,11 +415,25 @@ generate_validation_report() {
         
         echo ""
         echo "Agent Output Summary:"
-        tail -n 20 "$AGENT_OUTPUT_FILE" | grep -v "^\s*$" || echo "No output captured"
+        if [[ -f "$AGENT_OUTPUT_FILE" ]]; then
+            tail -n 50 "$AGENT_OUTPUT_FILE" | grep -v "^\s*$" || echo "No output captured"
+        else
+            echo "No output file found"
+        fi
         
         echo ""
         echo "Agent Error Summary:"
-        cat "$AGENT_ERROR_FILE" || echo "No errors captured"
+        if [[ -f "$AGENT_ERROR_FILE" ]]; then
+            cat "$AGENT_ERROR_FILE" || echo "No errors captured"
+        else
+            echo "No error file found"
+        fi
+        
+        echo ""
+        echo "System Information:"
+        echo "- OS: $(uname -a)"
+        echo "- User: $(whoami)"
+        echo "- Working Directory: $(pwd)"
         
     } > "$validation_file"
     
@@ -399,23 +463,34 @@ main() {
     run_agent
     local agent_success=$?
     
-    # Validate OTEL configuration
-    validate_otel_config
-    local config_success=$?
-    
-    # Generate validation report
-    local overall_success=false
-    if [[ $agent_success -eq 0 && $config_success -eq 0 ]]; then
-        overall_success=true
+    if [[ $agent_success -eq 0 ]]; then
+        # Validate OTEL configuration
+        validate_otel_config
+        local config_success=$?
+        
+        # Generate validation report
+        local overall_success=false
+        if [[ $config_success -eq 0 ]]; then
+            overall_success=true
+        fi
+        generate_validation_report "$overall_success"
+    else
+        # Agent failed, generate failure report
+        generate_validation_report "false"
     fi
-    generate_validation_report "$overall_success"
     
     echo "=== Tests completed ==="
-    if [[ "$overall_success" == "true" ]]; then
-        echo "All tests passed successfully."
-        exit 0
+    if [[ "$agent_success" -eq 0 ]]; then
+        echo "Agent execution passed successfully."
+        if [[ $config_success -eq 0 ]]; then
+            echo "All validation checks passed."
+            exit 0
+        else
+            echo "Some validation checks failed. Check the validation report for details."
+            exit 1
+        fi
     else
-        echo "Some tests failed. Check the validation report for details."
+        echo "Agent execution failed. Check the validation report for details."
         exit 1
     fi
 }
