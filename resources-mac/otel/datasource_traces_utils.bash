@@ -18,7 +18,7 @@ function add_traces_pipeline_to_otel_config {
 
     add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_RESOURCES_DIR/traces_pipeline.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.service.pipelines'
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -39,7 +39,7 @@ function get_traces_otel_receivers {
 
     get_json_str_field_value_list "$TRACES_TELEMETRY" '.otel.receivers[]'
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -71,7 +71,7 @@ function add_traces_receivers_to_otel_config {
     for traces_otel_receiver in "${TRACES_OTEL_RECEIVERS[@]}"; do
         get_yaml_file_field_value "$OTEL_RECEIVERS_DIR/$traces_otel_receiver.yaml" '.mac_run'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -82,7 +82,7 @@ function add_traces_receivers_to_otel_config {
         echo -e "$script_block" >"$OTEL_FUNCTION_FILE"
         source "$OTEL_FUNCTION_FILE" 2>"$TASK_ERROR_FILE"
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): error loading '$traces_otel_receiver' OTEL function script: $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): error loading '$traces_otel_receiver' OTEL function script: $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -91,7 +91,7 @@ function add_traces_receivers_to_otel_config {
         create_otel_receiver
         local func_status=$?
         if [[ $func_status -ne 0 && $func_status -ne 1 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -105,7 +105,7 @@ function add_traces_receivers_to_otel_config {
 
         add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_RECEIVERS_DIR/$traces_otel_receiver.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.receiver' '.receivers'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -115,7 +115,7 @@ function add_traces_receivers_to_otel_config {
 
         add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.traces.receivers' "$receiver_name/NAME"
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -124,7 +124,7 @@ function add_traces_receivers_to_otel_config {
 
     sed -i '' "s@NAME@${PLATFORM,,}_${SUB_TYPE,,}_${CURRENT_DATA_SOURCE,,}@g" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -145,7 +145,7 @@ function get_traces_otel_processors {
 
     get_json_str_field_value_list "$TRACES_TELEMETRY" '.otel.processors[]'
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -180,7 +180,7 @@ function add_traces_processors_to_otel_config {
     get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.processors'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -193,7 +193,7 @@ function add_traces_processors_to_otel_config {
     if ! $is_exists_processors_empty; then
         get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.processors | keys'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -206,7 +206,7 @@ function add_traces_processors_to_otel_config {
 
         add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.traces.processors' $processor_name
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -226,7 +226,7 @@ function add_traces_processors_to_otel_config {
 
         add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/$traces_otel_processor.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -257,7 +257,7 @@ function add_traces_exporter_to_otel_config {
     get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -270,7 +270,7 @@ function add_traces_exporter_to_otel_config {
     if ! $is_exists_exporters_empty; then
         get_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters | keys'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -286,7 +286,7 @@ function add_traces_exporter_to_otel_config {
 
     set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio_traces.account_token' "$TRACES_TOKEN"
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -294,7 +294,7 @@ function add_traces_exporter_to_otel_config {
 
     set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio_traces.headers.user-agent' "$USER_AGENT_TRACES"
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -307,7 +307,7 @@ function add_traces_exporter_to_otel_config {
 
     set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio_traces.region' "$logzio_region"
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -315,7 +315,7 @@ function add_traces_exporter_to_otel_config {
 
     add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.exporters'
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -341,7 +341,7 @@ function add_spanmetrics_pipeline_to_otel_config {
     # Add traces/spanmetrics pipeline
     add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_RESOURCES_DIR/spanmetricstraces_pipeline.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.service.pipelines'
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -350,7 +350,7 @@ function add_spanmetrics_pipeline_to_otel_config {
     # Add metrics/spanmetrics pipeline
     add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_RESOURCES_DIR/spanmetrics_pipeline.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.service.pipelines'
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -373,7 +373,7 @@ function add_spanmetrics_connector_to_otel_config {
     get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.connectors'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -385,7 +385,7 @@ function add_spanmetrics_connector_to_otel_config {
     # Add spanmetrics connector from the template file
     add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_RESOURCES_DIR/connectors/spanmetrics.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.connectors'
     if [[ $? -ne 0 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -408,7 +408,7 @@ function add_spanmetrics_processors_to_otel_config {
     get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.processors'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -421,7 +421,7 @@ function add_spanmetrics_processors_to_otel_config {
     get_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.processors | keys'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -432,7 +432,7 @@ function add_spanmetrics_processors_to_otel_config {
     if [[ ! "$existing_processors" =~ "batch" ]]; then
         add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/batch.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -443,7 +443,7 @@ function add_spanmetrics_processors_to_otel_config {
     if [[ ! "$existing_processors" =~ "metricstransform/metrics-rename" ]]; then
         add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/metricstransform_metrics-rename.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -454,7 +454,7 @@ function add_spanmetrics_processors_to_otel_config {
     if [[ ! "$existing_processors" =~ "metricstransform/labels-rename" ]]; then
         add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/metricstransform_labels-rename.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -481,7 +481,7 @@ function add_spanmetrics_exporter_to_otel_config {
     get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -494,7 +494,7 @@ function add_spanmetrics_exporter_to_otel_config {
     get_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters | keys'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
-        message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+        message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_task_post_run "write_error \"$message\""
         return $EXIT_CODE
@@ -510,7 +510,7 @@ function add_spanmetrics_exporter_to_otel_config {
         # Configure Prometheusremotewrite exporter
         set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' "$endpoint"
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -519,7 +519,7 @@ function add_spanmetrics_exporter_to_otel_config {
         local auth_header="Bearer $metrics_token"
         set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" '.prometheusremotewrite.headers.Authorization' "$auth_header"
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
@@ -527,7 +527,7 @@ function add_spanmetrics_exporter_to_otel_config {
 
         add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.exporters'
         if [[ $? -ne 0 ]]; then
-            message="traces_utils.bash ($EXIT_CODE): $(get_task_error_message)"
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
             write_task_post_run "write_error \"$message\""
             return $EXIT_CODE
