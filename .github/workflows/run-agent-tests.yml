@@ -45,12 +45,7 @@ jobs:
       - name: Run localhost tests
         run: |
           chmod +x tests/run_localhost_tests.sh
-          ./tests/run_localhost_tests.sh --skip-build
-
-      - name: Validate OTEL config for Linux
-        run: |
-          chmod +x tests/validate_otel_config.sh
-          ./tests/validate_otel_config.sh --config-dir=./tmp/test/linux/test_run --os=linux
+          sudo ./tests/run_localhost_tests.sh --skip-build --install-dir=/opt/logzio-agent-test
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
@@ -81,12 +76,7 @@ jobs:
       - name: Run localhost tests
         run: |
           chmod +x tests/run_localhost_tests.sh
-          ./tests/run_localhost_tests.sh --skip-build
-
-      - name: Validate OTEL config for macOS
-        run: |
-          chmod +x tests/validate_otel_config.sh
-          ./tests/validate_otel_config.sh --config-dir=./tmp/test/mac/test_run --os=mac
+          ./tests/run_localhost_tests.sh --skip-build --install-dir=/tmp/logzio-agent-test
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
@@ -117,21 +107,20 @@ jobs:
           scoop install yq
 
       - name: Build agent binaries
-        run: make windows
+        run: make
         shell: bash
 
       - name: Run Windows localhost tests
         shell: powershell
         run: |
-          ./tests/Run-LocalhostTests.ps1
-
-      - name: Validate OTEL config for Windows
-        shell: powershell
-        run: |
-          # Run the Windows-specific validation script
-          $testRunDir = Join-Path "$env:TEMP" "LogzioTest\windows\test_run"
-          $null = New-Item -ItemType Directory -Path $testRunDir -Force
-          ./tests/Validate-OtelConfig.ps1 -ConfigDir $testRunDir
+          # Need to run with admin privileges for Windows tests to succeed (similar to actual agent)
+          if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+            Write-Host "Warning: Not running as administrator - some tests may fail due to permission issues."
+          }
+          
+          # Run the dedicated PowerShell test script
+          $testInstallDir = "$env:ProgramData\Logzio\Agent-Test"
+          ./tests/Run-LocalhostTests.ps1 -InstallDir $testInstallDir
 
       - name: Upload test artifacts
         uses: actions/upload-artifact@v4
@@ -141,7 +130,6 @@ jobs:
           path: |
             ${{ runner.temp }}\LogzioTest\validation\
             ${{ runner.temp }}\LogzioTest\logs\
-            .\otel_validation_windows.txt
 
   test-summary:
     name: Summarize Test Results
@@ -163,7 +151,7 @@ jobs:
           if [ -d "artifacts/linux-test-results" ]; then
             echo "### Linux Tests" >> summary.md
             echo "\`\`\`" >> summary.md
-            cat artifacts/linux-test-results/localhost-linux-validation.txt >> summary.md || echo "No validation report found" >> summary.md
+            find artifacts/linux-test-results/validation -name "*-validation.txt" -exec cat {} \; >> summary.md 2>/dev/null || echo "No validation report found" >> summary.md
             echo "\`\`\`" >> summary.md
           fi
           
@@ -171,7 +159,7 @@ jobs:
           if [ -d "artifacts/macos-test-results" ]; then
             echo "### MacOS Tests" >> summary.md
             echo "\`\`\`" >> summary.md
-            cat artifacts/macos-test-results/localhost-mac-validation.txt >> summary.md || echo "No validation report found" >> summary.md
+            find artifacts/macos-test-results/validation -name "*-validation.txt" -exec cat {} \; >> summary.md 2>/dev/null || echo "No validation report found" >> summary.md
             echo "\`\`\`" >> summary.md
           fi
           
@@ -179,7 +167,7 @@ jobs:
           if [ -d "artifacts/windows-test-results" ]; then
             echo "### Windows Tests" >> summary.md
             echo "\`\`\`" >> summary.md
-            find artifacts/windows-test-results -name "*-validation.txt" -exec cat {} \; >> summary.md || echo "No validation report found" >> summary.md
+            find artifacts/windows-test-results -name "*-validation.txt" -exec cat {} \; >> summary.md 2>/dev/null || echo "No validation report found" >> summary.md
             echo "\`\`\`" >> summary.md
           fi
 
