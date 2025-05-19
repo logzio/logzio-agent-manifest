@@ -1,0 +1,191 @@
+name: Agent Localhost Tests
+
+on:
+  push:
+    branches: [ main, master ]
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches: [ main, master ]
+    paths-ignore:
+      - '**.md'
+  workflow_dispatch:
+    inputs:
+      test_specific_os:
+        description: 'Test specific OS (leave empty for all)'
+        required: false
+        default: ''
+        type: choice
+        options:
+          - ''
+          - linux
+          - macos
+          - windows
+
+jobs:
+  test-linux:
+    name: Test on Linux
+    if: ${{ github.event.inputs.test_specific_os == '' || github.event.inputs.test_specific_os == 'linux' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          sudo wget -O /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Build agent binaries
+        run: make
+
+      - name: Run localhost tests
+        run: |
+          chmod +x tests/run_localhost_tests.sh
+          ./tests/run_localhost_tests.sh
+
+      - name: Validate OTEL config for Linux
+        run: |
+          chmod +x tests/validate_otel_config.sh
+          ./tests/validate_otel_config.sh --config-dir=./tmp/test/linux/test_run --os=linux
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: linux-test-results
+          path: |
+            ./tmp/test/validation/
+            ./tmp/test/logs/
+
+  test-macos:
+    name: Test on macOS
+    if: ${{ github.event.inputs.test_specific_os == '' || github.event.inputs.test_specific_os == 'macos' }}
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          brew install jq
+          brew install yq
+
+      - name: Build agent binaries
+        run: make
+
+      - name: Run localhost tests
+        run: |
+          chmod +x tests/run_localhost_tests.sh
+          ./tests/run_localhost_tests.sh
+
+      - name: Validate OTEL config for macOS
+        run: |
+          chmod +x tests/validate_otel_config.sh
+          ./tests/validate_otel_config.sh --config-dir=./tmp/test/mac/test_run --os=mac
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: macos-test-results
+          path: |
+            ./tmp/test/validation/
+            ./tmp/test/logs/
+
+  test-windows:
+    name: Test on Windows
+    if: ${{ github.event.inputs.test_specific_os == '' || github.event.inputs.test_specific_os == 'windows' }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        shell: powershell
+        run: |
+          # Install Chocolatey packages
+          choco install jq -y
+          
+          # Install yq using scoop
+          iwr -useb get.scoop.sh | iex
+          scoop install yq
+
+      - name: Run Windows localhost tests
+        shell: powershell
+        run: |
+          # Run the dedicated PowerShell test script
+          ./tests/Run-LocalhostTests.ps1 -SkipBuild
+
+      - name: Build agent binaries
+        run: make
+        shell: bash
+
+      - name: Validate OTEL config for Windows
+        shell: powershell
+        run: |
+          # Run the Windows-specific validation script
+          $testRunDir = Join-Path "$env:TEMP" "LogzioTest\windows\test_run"
+          $null = New-Item -ItemType Directory -Path $testRunDir -Force
+          ./tests/Validate-OtelConfig.ps1 -ConfigDir $testRunDir
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: windows-test-results
+          path: |
+            ${{ runner.temp }}\LogzioTest\validation\
+            ${{ runner.temp }}\LogzioTest\logs\
+            .\otel_validation_windows.txt
+
+  test-summary:
+    name: Summarize Test Results
+    needs: [test-linux, test-macos, test-windows]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+
+      - name: Generate test summary
+        run: |
+          echo "# Logz.io Agent Tests Summary" > summary.md
+          echo "## Test Results" >> summary.md
+          
+          # Check Linux results
+          if [ -d "artifacts/linux-test-results" ]; then
+            echo "### Linux Tests" >> summary.md
+            echo "\`\`\`" >> summary.md
+            cat artifacts/linux-test-results/localhost-linux-validation.txt >> summary.md || echo "No validation report found" >> summary.md
+            echo "\`\`\`" >> summary.md
+          fi
+          
+          # Check MacOS results
+          if [ -d "artifacts/macos-test-results" ]; then
+            echo "### MacOS Tests" >> summary.md
+            echo "\`\`\`" >> summary.md
+            cat artifacts/macos-test-results/localhost-mac-validation.txt >> summary.md || echo "No validation report found" >> summary.md
+            echo "\`\`\`" >> summary.md
+          fi
+          
+          # Check Windows results
+          if [ -d "artifacts/windows-test-results" ]; then
+            echo "### Windows Tests" >> summary.md
+            echo "\`\`\`" >> summary.md
+            find artifacts/windows-test-results -name "*-validation.txt" -exec cat {} \; >> summary.md || echo "No validation report found" >> summary.md
+            echo "\`\`\`" >> summary.md
+          fi
+
+      - name: Publish test summary
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-summary
+          path: summary.md
