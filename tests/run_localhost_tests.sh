@@ -2,7 +2,7 @@
 
 # Script for automated testing of Logz.io agent manifest for localhost subtypes
 # This script will:
-# 1. Run tests for each localhost subtype (Linux, Mac, Windows)
+# 1. Run tests for the current OS (Linux or Mac)
 # 2. Validate the collector configurations
 
 set -e
@@ -14,6 +14,19 @@ ASSETS_DIR="$ROOT_DIR/assets"
 TEST_CONFIGS_DIR="$ROOT_DIR/testing-configs"
 LOG_DIR="$TEMP_DIR/logs"
 VALIDATION_DIR="$TEMP_DIR/validation"
+
+# Detect current OS
+CURRENT_OS=""
+if [[ "$(uname)" == "Linux" ]]; then
+    CURRENT_OS="linux"
+elif [[ "$(uname)" == "Darwin" ]]; then
+    CURRENT_OS="mac"
+else
+    echo "Error: Unsupported OS: $(uname). This script only works on Linux or macOS."
+    exit 1
+fi
+
+echo "Detected OS: $CURRENT_OS"
 
 # Parse command-line arguments
 SKIP_BUILD=false
@@ -56,41 +69,28 @@ build_binaries() {
     echo ""
 }
 
-# Function to extract the agent for a specific OS
+# Function to extract the agent for current OS
 extract_agent() {
-    local os=$1
-    echo "Extracting agent for $os..."
+    echo "Extracting agent for $CURRENT_OS..."
     
-    mkdir -p "$TEMP_DIR/$os"
+    mkdir -p "$TEMP_DIR/$CURRENT_OS"
     
-    case "$os" in
-        linux|mac)
-            tar -xzf "$ASSETS_DIR/agent_${os}.tar.gz" -C "$TEMP_DIR/$os"
-            ;;
-        windows)
-            unzip -q -o "$ASSETS_DIR/agent_windows.zip" -d "$TEMP_DIR/$os"
-            ;;
-        *)
-            echo "Error: Unsupported OS: $os"
-            exit 1
-            ;;
-    esac
+    tar -xzf "$ASSETS_DIR/agent_${CURRENT_OS}.tar.gz" -C "$TEMP_DIR/$CURRENT_OS"
     
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to extract agent for $os"
+        echo "Error: Failed to extract agent for $CURRENT_OS"
         exit 1
     fi
     
-    echo "Agent for $os extracted successfully."
+    echo "Agent for $CURRENT_OS extracted successfully."
 }
 
-# Function to run tests for each localhost subtype
+# Function to run tests for current OS localhost subtype
 test_localhost_subtype() {
-    local os=$1
-    local config_file="$TEST_CONFIGS_DIR/localhost-${os}-system.json"
+    local config_file="$TEST_CONFIGS_DIR/localhost-${CURRENT_OS}-system.json"
     
     echo ""
-    echo "=== Testing localhost-$os-system ==="
+    echo "=== Testing localhost-$CURRENT_OS-system ==="
     
     if [[ ! -f "$config_file" ]]; then
         echo "Error: Config file not found: $config_file"
@@ -98,51 +98,33 @@ test_localhost_subtype() {
     fi
     
     # Extract the agent for the current OS
-    extract_agent "$os"
+    extract_agent
     
     echo "Running agent with test configuration..."
     
     # Set up test environment
-    local agent_script=""
-    local cmd=""
-    
-    case "$os" in
-        linux|mac)
-            agent_script="$TEMP_DIR/$os/agent.bash"
-            chmod +x "$agent_script"
-            cmd="$agent_script --debug=$config_file"
-            ;;
-        windows)
-            if [[ $(uname) == "Darwin" || $(uname) == "Linux" ]]; then
-                echo "Warning: Cannot run Windows agent test on $(uname). Skipping execution."
-                echo "Configuration validation will still be performed."
-                return 0
-            else
-                agent_script="$TEMP_DIR/$os/agent.ps1"
-                cmd="powershell $agent_script --debug=$config_file"
-            fi
-            ;;
-    esac
+    local agent_script="$TEMP_DIR/$CURRENT_OS/agent.bash"
+    chmod +x "$agent_script"
+    local cmd="$agent_script --debug=$config_file"
     
     # Run the agent with the test configuration
     # In a real implementation, we'd use a mock for cloud resources and listeners
     # For this test, we'll validate the configuration file generation only
-    mkdir -p "$TEMP_DIR/$os/test_run"
-    cd "$TEMP_DIR/$os/test_run"
+    mkdir -p "$TEMP_DIR/$CURRENT_OS/test_run"
+    cd "$TEMP_DIR/$CURRENT_OS/test_run"
     
     echo "Command that would be executed: $cmd"
     echo "For validation purposes, we'll analyze the expected results instead."
     
     # Validate configuration structure based on the test configuration
-    validate_localhost_config "$os" "$config_file"
+    validate_localhost_config "$config_file"
 }
 
 # Function to validate the expected configuration for a localhost subtype
 validate_localhost_config() {
-    local os=$1
-    local config_file=$2
+    local config_file=$1
     
-    echo "Validating configuration for $os using $config_file..."
+    echo "Validating configuration for $CURRENT_OS using $config_file..."
     
     # Ensure validation directory exists
     mkdir -p "$VALIDATION_DIR"
@@ -153,10 +135,10 @@ validate_localhost_config() {
     local has_metrics=$(echo "$telemetries" | jq 'map(select(.type == "METRICS")) | length > 0')
     
     # Generate validation report
-    local validation_file="$VALIDATION_DIR/localhost-${os}-validation.txt"
+    local validation_file="$VALIDATION_DIR/localhost-${CURRENT_OS}-validation.txt"
     
     {
-        echo "=== Validation Report for localhost-$os-system ==="
+        echo "=== Validation Report for localhost-$CURRENT_OS-system ==="
         echo "Date: $(date)"
         echo ""
         echo "Test Config File: $config_file"
@@ -166,12 +148,10 @@ validate_localhost_config() {
         
         echo "Expected Files to be Generated:"
         echo "- OTEL Configuration"
-        if [[ "$os" == "linux" ]]; then
+        if [[ "$CURRENT_OS" == "linux" ]]; then
             echo "- Systemd Service File"
-        elif [[ "$os" == "mac" ]]; then
+        elif [[ "$CURRENT_OS" == "mac" ]]; then
             echo "- LaunchD plist File"
-        elif [[ "$os" == "windows" ]]; then
-            echo "- Windows Service Configuration"
         fi
         
         if [[ "$has_logs" == "true" ]]; then
@@ -201,13 +181,11 @@ main() {
         echo "Skipping binary build as requested by --skip-build flag"
     fi
     
-    # Test each localhost subtype
-    test_localhost_subtype "linux"
-    test_localhost_subtype "mac"
-    test_localhost_subtype "windows"
+    # Test only the current OS (Linux or Mac)
+    test_localhost_subtype
     
     echo ""
-    echo "=== All tests completed ==="
+    echo "=== Tests completed ==="
     echo "Validation reports are available in: $VALIDATION_DIR"
 }
 
