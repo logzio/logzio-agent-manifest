@@ -28,7 +28,7 @@ jobs:
     if: ${{ github.event.inputs.test_specific_os == '' || github.event.inputs.test_specific_os == 'linux' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -53,7 +53,7 @@ jobs:
           ./tests/validate_otel_config.sh --config-dir=./tmp/test/linux/test_run --os=linux
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: linux-test-results
@@ -66,7 +66,7 @@ jobs:
     if: ${{ github.event.inputs.test_specific_os == '' || github.event.inputs.test_specific_os == 'macos' }}
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -89,7 +89,7 @@ jobs:
           ./tests/validate_otel_config.sh --config-dir=./tmp/test/mac/test_run --os=mac
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: macos-test-results
@@ -102,7 +102,7 @@ jobs:
     if: ${{ github.event.inputs.test_specific_os == '' || github.event.inputs.test_specific_os == 'windows' }}
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -135,7 +135,7 @@ jobs:
           ./tests/Validate-OtelConfig.ps1 -ConfigDir $testRunDir
 
       - name: Upload test artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: windows-test-results
@@ -151,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: artifacts
 
@@ -185,7 +185,7 @@ jobs:
           fi
 
       - name: Publish test summary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: test-summary
           path: summary.md
