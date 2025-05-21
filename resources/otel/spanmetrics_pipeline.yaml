@@ -1,0 +1,4 @@
+metrics/spanmetrics:
+  receivers: [spanmetricsconnector]
+  processors: []
+  exporters: [prometheusremotewrite]

@@ -12,6 +12,9 @@
 #   IsMetricsOptionSelected - Tells if metrics option was selected (true/false)
 #   MetricsTelemetry - The metrics telemetry if metrics option was selected
 #   MetricsParams - The metrics params if metrics option was selected
+#   IsTracesOptionSelected - Tells if Traces option was selected (true/false)
+#   TracesTelemetry - The Traces telemetry if logs option was selected
+#   TracesParams - The Traces params if logs option was selected
 function Get-SelectedProducts {
     $local:ExitCode = 1
     $local:FuncName = $MyInvocation.MyCommand.Name
@@ -104,10 +107,26 @@ function Get-SelectedProducts {
             Write-TaskPostRun "`$script:MetricsTelemetry = '$Telemetry'"
             Write-TaskPostRun "`$script:MetricsParams = $ParamsStr"
         }
+        elseif ($Type.Equals('TRACING')) {
+          $Message = 'Traces option was selected'
+          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+          Write-Log $script:LogLevelDebug $Message
+          $Message = "Traces telemetry is '$Telemetry'"
+          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+          Write-Log $script:LogLevelDebug $Message
+          $Message = "Traces params are '$Params'"
+          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+          Write-Log $script:LogLevelDebug $Message
+
+          $IsTracesOptionSelected = $true
+          Write-TaskPostRun "`$script:TracesTelemetry = '$Telemetry'"
+          Write-TaskPostRun "`$script:TracesParams = $ParamsStr"
+      }
 
         $TelemetryIndex++
     }
 
     Write-TaskPostRun "`$script:IsLogsOptionSelected = `$$IsLogsOptionSelected"
     Write-TaskPostRun "`$script:IsMetricsOptionSelected = `$$IsMetricsOptionSelected"
+    Write-TaskPostRun "`$script:IsTracesOptionSelected = `$$IsTracesOptionSelected"
 }

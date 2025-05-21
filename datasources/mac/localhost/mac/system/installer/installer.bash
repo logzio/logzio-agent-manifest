@@ -28,3 +28,7 @@ if $IS_METRICS_OPTION_WAS_SELECTED; then
     # Run metrics script
     run_metrics
 fi
+if $IS_TRACES_OPTION_WAS_SELECTED; then
+    # Run traces script
+    run_traces
+fi

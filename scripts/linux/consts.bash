@@ -57,7 +57,7 @@ JQ_AMD_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.7.1/j
 # Url for downloading yq binary
 YQ_AMD_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
-OTEL_COLLECTOR_AMD_URL_DOWNLOAD='https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.82.0/otelcol-contrib_0.82.0_linux_amd64.tar.gz'
+OTEL_COLLECTOR_AMD_URL_DOWNLOAD='https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.109.0/otelcol-contrib_0.109.0_linux_amd64.tar.gz'
 # Url for downloading eksctl tar.gz
 EKSCTL_AMD_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Linux_amd64.tar.gz'
 # Url for downloading jq arm64 binary
@@ -65,7 +65,7 @@ JQ_ARM_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.7.1/j
 # Url for downloading yq arm64 binary
 YQ_ARM_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_linux_arm64.tar.gz'
 # Url for downloading OTEL collector arm64 tar.gz
-OTEL_COLLECTOR_ARM_URL_DOWNLOAD='https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.82.0/otelcol-contrib_0.82.0_linux_arm64.tar.gz'
+OTEL_COLLECTOR_ARM_URL_DOWNLOAD='https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.109.0/otelcol-contrib_0.109.0_linux_arm64.tar.gz'
 # Url for downloading eksctl arm64 tar.gz
 EKSCTL_ARM_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_linux_arm64.tar.gz'
 # Url for AWS SQS

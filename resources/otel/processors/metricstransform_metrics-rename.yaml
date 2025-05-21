@@ -1,0 +1,11 @@
+metricstransform/metrics-rename:
+  transforms:
+    # rename metric duration.XXX >> latency.XXX
+    - include: ^duration(.*)$$
+      action: update
+      match_type: regexp
+      new_name: latency.$${1}
+    # rename metric calls >> calls_total
+    - action: update
+      include: calls
+      new_name: calls_total
