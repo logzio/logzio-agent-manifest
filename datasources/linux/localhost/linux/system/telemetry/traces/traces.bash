@@ -39,6 +39,7 @@ execute_task 'add_traces_processors_to_otel_config' 'Adding traces processors to
 execute_task 'add_traces_exporter_to_otel_config' 'Adding traces exporter to OTEL config'
 # Configure span metrics 
 if [[ "$IS_SPAN_METRICS" == "true" ]]; then
+  execute_task 'get_logzio_metrics_token' 'Getting Logz.io span metrics token'
   execute_task 'add_spanmetrics_pipeline_to_otel_config' 'Adding span metrics pipeline to OTEL config'
   execute_task 'add_spanmetrics_connector_to_otel_config' 'Adding span metrics connector to OTEL config'
   execute_task 'add_spanmetrics_processors_to_otel_config' 'Adding span metrics processors to OTEL config'

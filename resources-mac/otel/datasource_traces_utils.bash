@@ -284,7 +284,7 @@ function add_traces_exporter_to_otel_config {
         fi
     done
 
-    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio_traces.account_token' "$TRACES_TOKEN"
+    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio/traces.account_token' "$TRACES_TOKEN"
     if [[ $? -ne 0 ]]; then
         message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -292,7 +292,7 @@ function add_traces_exporter_to_otel_config {
         return $EXIT_CODE
     fi
 
-    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio_traces.headers.user-agent' "$USER_AGENT_TRACES"
+    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio/traces.headers.user-agent' "$USER_AGENT_TRACES"
     if [[ $? -ne 0 ]]; then
         message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -305,7 +305,7 @@ function add_traces_exporter_to_otel_config {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio_traces.region' "$logzio_region"
+    set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/logzio_traces.yaml" '.logzio/traces.region' "$logzio_region"
     if [[ $? -ne 0 ]]; then
         message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -450,7 +450,6 @@ function add_spanmetrics_processors_to_otel_config {
         fi
     fi
 
-    # Add metricstransform/labels-rename processor if not exists
     if [[ ! "$existing_processors" =~ "metricstransform/labels-rename" ]]; then
         add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/metricstransform_labels-rename.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
         if [[ $? -ne 0 ]]; then
@@ -477,7 +476,6 @@ function add_spanmetrics_exporter_to_otel_config {
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
-    # Add exporters section if not exists
     get_yaml_file_field_value_list "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
@@ -490,7 +488,6 @@ function add_spanmetrics_exporter_to_otel_config {
         echo 'exporters:' >> "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME"
     fi
 
-    # Get existing exporters
     get_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.exporters | keys'
     local func_status=$?
     if [[ $func_status -ne 0 && $func_status -ne 2 ]]; then
@@ -500,14 +497,12 @@ function add_spanmetrics_exporter_to_otel_config {
         return $EXIT_CODE
     fi
     local existing_exporters="$YAML_VALUE"
+    echo "Existing exporters: $existing_exporters"
 
-    # Check if prometheusremotewrite exporter exists
     if [[ ! "$existing_exporters" =~ "prometheusremotewrite" ]]; then
-        # Extract listener host from URL
         local listener_host=$(echo "$listener_url" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
         local endpoint="https://$listener_host:8053"
 
-        # Configure Prometheusremotewrite exporter
         set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' "$endpoint"
         if [[ $? -ne 0 ]]; then
             message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
