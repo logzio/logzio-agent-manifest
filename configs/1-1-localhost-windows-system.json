@@ -82,7 +82,7 @@
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces and span metrics from your computer.",
               "otel": {
                 "receivers": ["otlp"],
-                "processors": ["tail_sampling", "resourcedetection_system", "resource_agent"]
+                "processors": ["tail_sampling", "resourcedetection_system", "resource_agent", "batch"]
               },
               "params": [
                 {
