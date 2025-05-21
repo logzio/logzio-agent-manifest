@@ -1,6 +1,6 @@
 receivers:
 processors:
-connectors:
+connectors: {}
 exporters:
   logging:
 service:
