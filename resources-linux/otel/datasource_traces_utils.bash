@@ -200,6 +200,23 @@ function add_traces_processors_to_otel_config {
         fi
         exists_processors=("${YAML_VALUE[@]}")
     fi
+    local existing_processors="$YAML_VALUE"
+    if [[ ! "$existing_processors" =~ "tail_sampling" ]]; then
+        add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/tail_sampling.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
+        if [[ $? -ne 0 ]]; then
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+            write_task_post_run "write_error \"$message\""
+            return $EXIT_CODE
+        fi
+    fi
+    add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.traces.processors' 'tail_sampling'
+    if [[ $? -ne 0 ]]; then
+          message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
+          send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+          write_task_post_run "write_error \"$message\""
+          return $EXIT_CODE
+      fi
 
     for traces_otel_processor in "${TRACES_OTEL_PROCESSORS[@]}"; do
         local processor_name="${traces_otel_processor//_//}"
