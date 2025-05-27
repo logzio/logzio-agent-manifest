@@ -43,5 +43,5 @@ if [[ "$IS_SPAN_METRICS" == "true" ]]; then
   execute_task 'add_spanmetrics_pipeline_to_otel_config' 'Adding span metrics pipeline to OTEL config'
   execute_task 'add_spanmetrics_connector_to_otel_config' 'Adding span metrics connector to OTEL config'
   execute_task 'add_spanmetrics_processors_to_otel_config' 'Adding span metrics processors to OTEL config'
-  execute_task 'add_spanmetrics_exporter_to_otel_configs' 'Adding span metrics exporter to OTEL config'
+  execute_task 'add_spanmetrics_exporter_to_otel_config' 'Adding span metrics exporter to OTEL config'
 fi
