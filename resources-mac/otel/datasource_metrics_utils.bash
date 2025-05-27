@@ -119,7 +119,17 @@ function add_metrics_receivers_to_otel_config {
         fi
 
         local receiver_name="${metrics_otel_receiver//_//}"
-
+        if [[ "$receiver_name" == "otlp" ]]; then
+          add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.metrics.receivers' "$receiver_name"
+          if [[ $? -ne 0 ]]; then 
+              message="metrics.bash ($EXIT_CODE): $(get_task_error_message)"
+              send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_METRICS" "$LOG_SCRIPT_METRICS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+              write_task_post_run "write_error \"$message\""
+      
+              return $EXIT_CODE
+          fi
+          continue
+        fi
         add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.metrics.receivers' "$receiver_name/NAME"
         if [[ $? -ne 0 ]]; then 
             message="metrics.bash ($EXIT_CODE): $(get_task_error_message)"
