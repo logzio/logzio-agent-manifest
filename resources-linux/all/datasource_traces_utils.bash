@@ -118,7 +118,7 @@ function get_sampling_latency {
 # Output: sets SAMPLING_PROPABILITY as number (or default 0)
 function get_sampling_propability {
     local func_name="${FUNCNAME[0]}"
-    local message="Getting 'samplingPropability' param for trace sampling probability ..."
+    local message="Getting 'samplingPropability' param for trace sampling propability ..."
     send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
