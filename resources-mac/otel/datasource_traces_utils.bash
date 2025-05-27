@@ -530,7 +530,7 @@ function add_spanmetrics_exporter_to_otel_config {
 
     if [[ ! "$existing_exporters" =~ "prometheusremotewrite" ]]; then
         local listener_host=$(echo "$listener_url" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
-        local endpoint="https://$listener_host:8053"
+        local endpoint="$listener_host:8053"
 
         set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' "$endpoint"
         if [[ $? -ne 0 ]]; then
