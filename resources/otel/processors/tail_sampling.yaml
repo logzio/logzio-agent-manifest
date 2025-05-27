@@ -12,8 +12,8 @@ tail_sampling:
         latency: { threshold_ms: "${SAMPLING_LATENCY}" },
       },
       {
-        name: probability-policy,
+        name: propability-policy,
         type: probabilistic,
-        probabilistic: { sampling_percentage: "${SAMPLING_PROBABILITY}" },
+        probabilistic: { sampling_percentage: "${SAMPLING_PROPABILITY}" },
       },
     ]

@@ -1,5 +1,5 @@
 traces/spanmetrics:
   receivers: [otlp]
-  processors: [metricstransform/metrics-rename, metricstransform/labels-rename, batch]
-  exporters: [spanmetricsconnector]
+  processors: [batch]
+  exporters: [spanmetrics]
   

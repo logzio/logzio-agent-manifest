@@ -6,7 +6,6 @@ spanmetrics:
     - name: http.status_code
     - name: db.system
     - name: messaging.system
-    - name: service.name
   dimensions_cache_size: 100000
   histogram:
     explicit:
