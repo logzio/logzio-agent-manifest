@@ -169,6 +169,38 @@ function copy_logzio_otel_collector_plist_file_to_library_launch_daemons_dir {
     
         return $EXIT_CODE
     fi
+    
+    local sampling_propability=${SAMPLING_PROPABILITY:-10}
+    local sampling_latency=${SAMPLING_LATENCY:-200}
+    local is_span_metrics=${IS_SPAN_METRICS:-false}
+    
+    # Replace environment variables placeholders with actual values
+    sed -i '' "s@SAMPLING_PROPABILITY_PLACEHOLDER@$sampling_propability@g" "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash ($EXIT_CODE): error setting SAMPLING_PROPABILITY in plist file: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+    
+        return $EXIT_CODE
+    fi
+    
+    sed -i '' "s@SAMPLING_LATENCY_PLACEHOLDER@$sampling_latency@g" "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash ($EXIT_CODE): error setting SAMPLING_LATENCY in plist file: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+    
+        return $EXIT_CODE
+    fi
+    
+    sed -i '' "s@IS_SPAN_METRICS_PLACEHOLDER@$is_span_metrics@g" "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash ($EXIT_CODE): error setting IS_SPAN_METRICS in plist file: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+    
+        return $EXIT_CODE
+    fi
 
     sudo cp "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" "$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
