@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #################################################################################################################################
-############################################# MAC Datasource Traces Utils Functions ############################################
+############################################# LINUX Datasource Traces Utils Functions ############################################
 #################################################################################################################################
 
 # Adds traces pipeline to OTEL config
@@ -69,7 +69,7 @@ function add_traces_receivers_to_otel_config {
     write_log "$LOG_LEVEL_DEBUG" "$message"
 
     for traces_otel_receiver in "${TRACES_OTEL_RECEIVERS[@]}"; do
-        get_yaml_file_field_value "$OTEL_RECEIVERS_DIR/$traces_otel_receiver.yaml" '.mac_run'
+        get_yaml_file_field_value "$OTEL_RECEIVERS_DIR/$traces_otel_receiver.yaml" '.linux_run'
         if [[ $? -ne 0 ]]; then
             message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
             send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
@@ -112,6 +112,16 @@ function add_traces_receivers_to_otel_config {
         fi
 
         local receiver_name="${traces_otel_receiver//_//}"
+        if [[ "$receiver_name" == "otlp" ]]; then
+          add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.traces.receivers' "$receiver_name"
+          if [[ $? -ne 0 ]]; then
+              message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
+              send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+              write_task_post_run "write_error \"$message\""
+              return $EXIT_CODE
+          fi
+          continue
+        fi
 
         add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.traces.receivers' "$receiver_name/NAME"
         if [[ $? -ne 0 ]]; then
@@ -509,7 +519,7 @@ function add_spanmetrics_exporter_to_otel_config {
 
     if [[ ! "$existing_exporters" =~ "prometheusremotewrite" ]]; then
         local listener_host=$(echo "$listener_url" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
-        local endpoint="https://$listener_host:8053"
+        local endpoint="$listener_host:8053"
 
         set_yaml_file_field_value "$OTEL_EXPORTERS_DIR/prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' "$endpoint"
         if [[ $? -ne 0 ]]; then

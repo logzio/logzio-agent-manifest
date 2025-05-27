@@ -71,6 +71,7 @@ function add_logs_receivers_to_otel_config {
             return $EXIT_CODE
         fi
 
+        LOGS_TYPE='agent-linux'
         create_otel_receiver
         local func_status=$?
         if [[ $func_status -ne 0 && $func_status -ne 1 ]]; then
@@ -98,7 +99,17 @@ function add_logs_receivers_to_otel_config {
         fi
 
         local receiver_name="${logs_otel_receiver//_//}"
-
+        if [[ "$receiver_name" == 'otlp' ]]; then
+          add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.logs.receivers' "$receiver_name"
+          if [[ $? -ne 0 ]]; then
+              message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
+              send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+              write_task_post_run "write_error \"$message\""
+      
+              return $EXIT_CODE
+          fi
+          continue
+        fi
         add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.logs.receivers' "$receiver_name/NAME"
         if [[ $? -ne 0 ]]; then
             message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
@@ -109,7 +120,7 @@ function add_logs_receivers_to_otel_config {
         fi
     done
 
-    sed -i "s@NAME@${PLATFORM,,}_${SUB_TYPE,,}_${CURRENT_DATA_SOURCE,,}@g" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" 2>"$TASK_ERROR_FILE"
+    sed -i '' "s@NAME@${PLATFORM,,}_${SUB_TYPE,,}_${CURRENT_DATA_SOURCE,,}@g" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"

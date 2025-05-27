@@ -3,6 +3,9 @@ Description=OTEL collector for collecting logs/metrics and exporting them to Log
 
 [Service]
 ExecStart=OTEL_COLLECTOR_BIN --config OTEL_CONFIG
+Environment="SAMPLING_PROPABILITY=SAMPLING_PROPABILITY_PLACEHOLDER"
+Environment="SAMPLING_LATENCY=SAMPLING_LATENCY_PLACEHOLDER"
+Environment="IS_SPAN_METRICS=IS_SPAN_METRICS_PLACEHOLDER"
 
 [Install]
 WantedBy=multi-user.target
