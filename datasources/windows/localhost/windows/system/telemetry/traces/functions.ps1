@@ -69,16 +69,22 @@ function Get-SamplingPropability {
 }
 
 function Setup-TracesEnvParams {
+  # Get parameters from config with appropriate defaults
   Get-IsSpanMetrics
   Get-SamplingLatency
   Get-SamplingPropability
 
-  # Export values as environment variables (if your collector expects them as ENV)
-  [System.Environment]::SetEnvironmentVariable('IS_SPAN_METRICS', $script:IsSpanMetrics)
-  [System.Environment]::SetEnvironmentVariable('SAMPLING_LATENCY', $script:SamplingLatency)
-  [System.Environment]::SetEnvironmentVariable('SAMPLING_PROPABILITY', $script:SamplingPropability)
+  # Export values as environment variables for collector configuration
+  # Using the same default pattern as in Mac/Linux implementation
+  $local:IsSpanMetrics = $script:IsSpanMetrics -eq $true ? "true" : "false"
+  $local:SamplingLatency = $script:SamplingLatency -ne $null ? $script:SamplingLatency : 200
+  $local:SamplingPropability = $script:SamplingPropability -ne $null ? $script:SamplingPropability : 10
 
-  $Message = "Setup traces param env: IS_SPAN_METRICS=$($script:IsSpanMetrics), SAMPLING_LATENCY=$($script:SamplingLatency), SAMPLING_PROPABILITY=$($script:SamplingPropability)"
+  [System.Environment]::SetEnvironmentVariable('IS_SPAN_METRICS', $IsSpanMetrics)
+  [System.Environment]::SetEnvironmentVariable('SAMPLING_LATENCY', $SamplingLatency)
+  [System.Environment]::SetEnvironmentVariable('SAMPLING_PROPABILITY', $SamplingPropability)
+
+  $Message = "Setup traces param env: IS_SPAN_METRICS=$IsSpanMetrics, SAMPLING_LATENCY=$SamplingLatency, SAMPLING_PROPABILITY=$SamplingPropability"
   Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces 'Setup-TracesEnvParams' $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
   Write-Log $script:LogLevelDebug $Message
 }
@@ -267,6 +273,20 @@ function Add-TracesReceiversToOtelConfig {
 
       $local:ReceiverName = $TracesOtelReceiver.Replace('_', '/')
 
+      # Handle OTLP receiver without /NAME suffix
+      if ($ReceiverName -eq 'otlp') {
+          $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.receivers' "$ReceiverName"
+          if ($Err.Count -ne 0) {
+              $Message = "traces.ps1 ($ExitCode): $($Err[0])"
+              Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+              Write-TaskPostRun "Write-Error `"$Message`""
+
+              return $ExitCode
+          }
+          continue
+      }
+
+      # For non-OTLP receivers, add with /NAME suffix
       $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.receivers' "$ReceiverName/NAME"
       if ($Err.Count -ne 0) {
           $Message = "traces.ps1 ($ExitCode): $($Err[0])"
@@ -376,49 +396,79 @@ function Add-TracesProcessorsToOtelConfig {
       }
 
       $ExistProcessors = $script:YamlValue
-  }
-
-  foreach ($TracesOtelProcessor in $TracesOtelProcessors)     {
-    $local:ProcessorName = $TracesOtelProcessor.Replace('_', '/')
-
-    $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.processors' $ProcessorName
-    if ($Err.Count -ne 0) {
-        $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:TracesLogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-
-        return $ExitCode
     }
-
-    $local:IsProcessorExist = $false
-
+  
+    # Add tail_sampling processor if not exists, like in Mac/Linux implementation
+    $local:IsTailSamplingExist = $false
     foreach ($ExistProcessor in $ExistProcessors) {
-        $ExistProcessor = $ExistProcessor.Replace('/', '_')
-
-        if ($TracesOtelProcessor.Equals("- $ExistProcessor")) {
-            $IsProcessorExist = $true
+        if ($ExistProcessor -eq 'tail_sampling') {
+            $IsTailSamplingExist = $true
             break
         }
     }
 
-    if ($IsProcessorExist) {
-        continue
+    if (-not $IsTailSamplingExist) {
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\tail_sampling.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.processors'
+        if ($Err.Count -ne 0) {
+            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
     }
 
-    $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\$TracesOtelProcessor.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.processors'
+    # Add tail_sampling to the traces pipeline
+    $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.processors' 'tail_sampling'
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:TracesLogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
 
-    if ($ProcessorName -eq 'resource/agent') {
-        $local:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
-        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource/agent.attributes[0].value' $AgentVersion
+    # Continue with the rest of the processors
+    foreach ($TracesOtelProcessor in $TracesOtelProcessors) {
+        $local:ProcessorName = $TracesOtelProcessor.Replace('_', '/')
+
+        $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.traces.processors' $ProcessorName
+        if ($Err.Count -ne 0) {
+            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:TracesLogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+
+        $local:IsProcessorExist = $false
+        foreach ($ExistProcessor in $ExistProcessors) {
+            $ExistProcessor = $ExistProcessor.Replace('/', '_')
+
+            if ($TracesOtelProcessor.Equals("- $ExistProcessor")) {
+                $IsProcessorExist = $true
+                break
+            }
+        }
+
+        if ($IsProcessorExist) {
+            continue
+        }
+
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\$TracesOtelProcessor.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.processors'
+        if ($Err.Count -ne 0) {
+            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:TracesLogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+
+        if ($ProcessorName -eq 'resource/agent') {
+            $local:AgentVersion = Get-Content "$env:TEMP\Logzio\version"
+            $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.processors.resource/agent.attributes[0].value' $AgentVersion
+        }
     }
-  }
 }
 
 
@@ -745,9 +795,11 @@ function Add-SpanMetricsExporterToOtelConfig {
     }
 
     if (-not $IsExporterExist) {
-        # Configure Prometheusremotewrite exporter
+        # Configure Prometheusremotewrite exporter using the same pattern as in Mac/Linux
+        # Extract just the host part from the listener URL
         $local:ListenerHost = ($ListenerUrl -replace "https?://" -replace "/.*").Trim()
-        $local:Endpoint = "https://$ListenerHost:8053"
+        $local:Endpoint = "$ListenerHost:8053"
+        
         
         $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' $Endpoint
         if ($Err.Count -ne 0) {
@@ -760,6 +812,16 @@ function Add-SpanMetricsExporterToOtelConfig {
 
         $local:AuthHeader = "Bearer $MetricsToken"
         $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.Authorization' $AuthHeader
+        if ($Err.Count -ne 0) {
+            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+        
+        # Set user-agent header for consistency with other exporters
+        $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.user-agent' $script:UserAgentMetrics
         if ($Err.Count -ne 0) {
             $Message = "traces.ps1 ($ExitCode): $($Err[0])"
             Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource

@@ -184,6 +184,18 @@ function Add-MetricsReceiversToOtelConfig {
         }
 
         $local:ReceiverName = $MetricsOtelReceiver.Replace('_', '/')
+        
+        if ($ReceiverName -eq 'otlp') {
+            $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.metrics.receivers' "$ReceiverName"
+            if ($Err.Count -ne 0) {
+                $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+                Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+                Write-TaskPostRun "Write-Error `"$Message`""
+
+                return $ExitCode
+            }
+            continue
+        }
 
         $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.metrics.receivers' "$ReceiverName/NAME"
         if ($Err.Count -ne 0) {
@@ -362,7 +374,7 @@ function Add-MetricsExporterToOtelConfig {
     $local:Err = Test-AreFuncArgsExist $FuncArgs @('MetricsToken', 'ListenerUrl')
     if ($Err.Count -ne 0) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
@@ -371,71 +383,84 @@ function Add-MetricsExporterToOtelConfig {
     $local:MetricsToken = $FuncArgs.MetricsToken
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
-    $local:ExistProcessors = $null
+    $local:ExistExporters = $null
     $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters'
     if ($Err.Count -ne 0 -and $Err[1] -ne 2) {
         $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
     }
     if ($Err.Count -ne 0) {
-        $ExistProcessors = @()
+        $ExistExporters = @()
     }
 
-    if ($null -eq $ExistProcessors) {
+    if ($null -eq $ExistExporters) {
         $Err = Get-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.exporters | keys'
         if ($Err.Count -ne 0) {
             $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
-            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
             Write-TaskPostRun "Write-Error `"$Message`""
 
             return $ExitCode
         }
 
-        $ExistProcessors = $script:YamlValue
+        $ExistExporters = $script:YamlValue
     }
 
-    foreach ($ExistExporter in $ExistExporers) {
-        if ($ExistExporter.Equals('- prometheusremotewrite')) {
-            return
+    $local:IsExporterExist = $false
+    foreach ($ExistExporter in $ExistExporters) {
+        if ($ExistExporter -eq 'prometheusremotewrite') {
+            $IsExporterExist = $true
+            break
         }
     }
 
-    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' "https://$ListenerUrl`:8053"
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
+    if (-not $IsExporterExist) {
+        # Use the same pattern as in traces and Mac/Linux for formatting the endpoint
+        $local:ListenerHost = ($ListenerUrl -replace "https?://" -replace "/.*").Trim()
+        $local:Endpoint = "https://$ListenerHost`:8053"
+        
+        $Message = "Prometheus Remote Write endpoint set to '$Endpoint'"
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
+        Write-Log $script:LogLevelDebug $Message
+        
+        $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' $Endpoint
+        if ($Err.Count -ne 0) {
+            $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
 
-        return $ExitCode
-    }
+            return $ExitCode
+        }
 
-    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.Authorization' "Bearer $MetricsToken"
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
+        $local:AuthHeader = "Bearer $MetricsToken"
+        $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.Authorization' $AuthHeader
+        if ($Err.Count -ne 0) {
+            $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
 
-        return $ExitCode
-    }
+            return $ExitCode
+        }
 
-    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.user-agent' $script:UserAgentMetrics
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
-        return $ExitCode
-    }
+        $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.headers.user-agent' $script:UserAgentMetrics
+        if ($Err.Count -ne 0) {
+            $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
+            return $ExitCode
+        }
 
-    $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelExportersDir\prometheusremotewrite.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.exporters'
-    if ($Err.Count -ne 0) {
-        $Message = "metrics.ps1 ($ExitCode): $($Err[0]))"
-        Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-        Write-TaskPostRun "Write-Error `"$Message`""
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelExportersDir\prometheusremotewrite.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.exporters'
+        if ($Err.Count -ne 0) {
+            $Message = "metrics.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
 
-        return $ExitCode
+            return $ExitCode
+        }
     }
 }
 
