@@ -1,4 +1,4 @@
-name: Test on macOS
+name: localhost test on macOS
 
 on:
   workflow_dispatch:
