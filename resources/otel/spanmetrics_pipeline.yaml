@@ -1,4 +1,4 @@
 metrics/spanmetrics:
   receivers: [spanmetrics]
-  processors: [metricstransform/metrics-rename, metricstransform/labels-rename]
+  processors: [metricstransform/metrics-rename, metricstransform/labels-rename, batch]
   exporters: [prometheusremotewrite]

@@ -478,7 +478,17 @@ function add_spanmetrics_processors_to_otel_config {
             return $EXIT_CODE
         fi
     fi
-}
+
+    if [[ ! "$existing_processors" =~ "batch" ]]; then
+        add_yaml_file_field_value_to_another_yaml_file_field "$OTEL_PROCESSORS_DIR/batch.yaml" "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '' '.processors'
+        if [[ $? -ne 0 ]]; then
+            message="traces.bash ($EXIT_CODE): $(get_task_error_message)"
+            send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+            write_task_post_run "write_error \"$message\""
+            return $EXIT_CODE
+        fi
+    fi
+    }
 
 # Adds spanmetrics exporter to OTEL config
 # Input:

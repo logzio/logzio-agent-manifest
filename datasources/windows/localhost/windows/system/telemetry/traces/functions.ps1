@@ -669,7 +669,6 @@ function Add-SpanMetricsProcessorsToOtelConfig {
         $ExistProcessors = $script:YamlValue
     }
 
-    # Add batch processor
     $local:IsProcessorExist = $false
     foreach ($ExistProcessor in $ExistProcessors) {
         if ($ExistProcessor -eq 'batch') {
@@ -709,7 +708,6 @@ function Add-SpanMetricsProcessorsToOtelConfig {
         }
     }
 
-    # Add metricstransform/labels-rename processor
     $IsProcessorExist = $false
     foreach ($ExistProcessor in $ExistProcessors) {
         if ($ExistProcessor -eq 'metricstransform/labels-rename') {
