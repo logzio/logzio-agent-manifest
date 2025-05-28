@@ -51,9 +51,9 @@ jobs:
       - name: Set LOGZIO_ID
         run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
 
-      - name: Download and extract Linux agent
+      - name: build and extract Linux agent
         run: |
-          # Create necessary directories
+          make
           mkdir -p /tmp/logzio
           cp ./assets/agent_linux.tar.gz /tmp/logzio/
           # Extract the archive
@@ -109,7 +109,7 @@ jobs:
 
       - name: Download and extract Mac agent
         run: |
-          # Create necessary directories
+          make
           mkdir -p /tmp/logzio
           cp ./assets/agent_mac.tar.gz /tmp/logzio/          
           # Extract the archive
