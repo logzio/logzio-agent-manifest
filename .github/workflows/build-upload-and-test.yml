@@ -91,7 +91,7 @@ jobs:
         run: |
           sleep 10
           cat /opt/logzio-agent/logzio-otel-collector/otel_config.yaml
-          cat /opt/logzio-agent/logzio-otel-collector/logzio_otel_collector.log
+          sudo systemctl status -l logzioOTELCollector
           ps aux | grep otel-collector
 
   test-mac:
