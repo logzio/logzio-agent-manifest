@@ -28,6 +28,17 @@ done
 if command -v gh &> /dev/null; then
     echo "GitHub CLI found. Proceeding with upload..."
     
+    # Check if test release exists, create it if it doesn't
+    if ! gh release view test --repo logzio/logzio-agent-manifest &>/dev/null; then
+      echo "Test release does not exist. Creating..."
+      gh release create test --repo logzio/logzio-agent-manifest --title "Test Release" --notes "Automated test release for CI purposes." --prerelease
+      
+      if [ $? -ne 0 ]; then
+        echo "Failed to create test release. Check GitHub permissions."
+        exit 1
+      fi
+    fi
+    
     echo "Attempting to delete existing assets from test release..."
     for artifact in "${LOCALHOST_ARTIFACTS[@]}"; do
       gh release delete-asset test "$artifact" --repo logzio/logzio-agent-manifest --yes 2>/dev/null || true
@@ -37,6 +48,11 @@ if command -v gh &> /dev/null; then
     for artifact in "${LOCALHOST_ARTIFACTS[@]}"; do
       echo "Uploading $artifact..."
       gh release upload test "assets/$artifact" --repo logzio/logzio-agent-manifest
+      
+      if [ $? -ne 0 ]; then
+        echo "Failed to upload $artifact. Check GitHub permissions."
+        exit 1
+      fi
     done
     
     echo "All uploads completed successfully."
