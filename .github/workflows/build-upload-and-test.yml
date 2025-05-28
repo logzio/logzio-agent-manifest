@@ -100,15 +100,13 @@ jobs:
 
       - name: Install Bash 4 with Homebrew
         run: |
-          # Install or update Homebrew if needed
-          which brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          
-          # Update Homebrew and install Bash 4
-          brew update
+          # Install Bash 4 or above
           brew install bash
           
-          # Display installed Bash version
-          /usr/local/bin/bash --version
+          # Display installed Bash version and location
+          brew_bash=$(brew --prefix)/bin/bash
+          echo "Bash installed at: $brew_bash"
+          $brew_bash --version
 
       - name: Set up agent configuration
         run: mkdir -p /tmp/logzio-agent-test
@@ -133,8 +131,11 @@ jobs:
           sudo mkdir -p /opt/logzio-agent
           sudo chown -R $USER: /opt/logzio-agent
           
-          # Run the agent installation script with debug configuration using Bash 4
-          sudo /usr/local/bin/bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          # Get Homebrew bash path and use it
+          brew_bash=$(brew --prefix)/bin/bash
+          
+          # Run the agent installation script with debug configuration using Bash 4+
+          sudo $brew_bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
           
       - name: Check agent installation
         run: |
