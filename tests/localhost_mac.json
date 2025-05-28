@@ -1,8 +1,8 @@
 {
   "shippingTokens": {
-    "LOG_ANALYTICS": "${{ secrets.LOGZIO_LOGS_TOKEN }}",
-    "TRACING": "${{ secrets.LOGZIO_TRACES_TOKEN }}",
-    "METRICS": "${{ secrets.LOGZIO_METRICS_TOKEN }}"
+    "LOG_ANALYTICS": "${LOGZIO_LOGS_TOKEN}",
+    "TRACING": "${LOGZIO_TRACES_TOKEN}",
+    "METRICS": "${LOGZIO_METRICS_TOKEN}"
   },
   "listenerUrl": "https://listener.logz.io",
   "configuration": {
