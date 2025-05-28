@@ -51,6 +51,14 @@ jobs:
       - name: Set LOGZIO_ID
         run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
 
+      - name: Download and extract Linux agent
+        run: |
+          # Create necessary directories
+          mkdir -p /tmp/logzio
+          cp ./assets/agent_linux.tar.gz /tmp/logzio/
+          # Extract the archive
+          tar -zxf /tmp/logzio/agent_linux.tar.gz --directory /tmp/logzio
+
       - name: Install agent
         run: |
           # Create the agent directory with proper permissions
@@ -58,7 +66,7 @@ jobs:
           sudo chown -R $USER: /opt/logzio-agent
           
           # Run the agent installation script with debug configuration
-          sudo bash ./scripts/linux/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
           
       - name: Check agent installation
         run: |
@@ -99,6 +107,14 @@ jobs:
       - name: Set LOGZIO_ID
         run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
 
+      - name: Download and extract Mac agent
+        run: |
+          # Create necessary directories
+          mkdir -p /tmp/logzio
+          cp ./assets/agent_mac.tar.gz /tmp/logzio/          
+          # Extract the archive
+          tar -zxf /tmp/logzio/agent_mac.tar.gz --directory /tmp/logzio
+
       - name: Install agent
         run: |
           # Create the agent directory with proper permissions
@@ -106,7 +122,7 @@ jobs:
           sudo chown -R $USER: /opt/logzio-agent
           
           # Run the agent installation script with debug configuration
-          sudo bash ./scripts/mac/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
           
       - name: Check agent installation
         run: |
@@ -151,13 +167,23 @@ jobs:
         run: echo "LOGZIO_ID=$(New-Guid)" >> $env:GITHUB_ENV
         shell: powershell
 
+      - name: Download and extract Windows agent
+        run: |
+          # Create necessary directories
+          New-Item -Path "$env:TEMP\Logzio" -ItemType Directory -Force | Out-Null
+          
+          cp ./assets/agent_windows.zip "$env:TEMP\Logzio\agent_windows.zip"
+          # Extract the archive
+          Expand-Archive -LiteralPath "$env:TEMP\Logzio\agent_windows.zip" -DestinationPath "$env:TEMP\Logzio" -Force
+        shell: powershell
+
       - name: Install agent
         run: |
           # Set execution policy for this process
           Set-ExecutionPolicy Bypass -Scope Process -Force
           
           # Run the agent installation script with debug configuration
-          & "\scripts\windows\agent.ps1" -url "https://app.logz.io" -id "$env:LOGZIO_ID" -debug "$env:TEMP\logzio-agent-test\config.json" -release "test"
+          & "$env:TEMP\Logzio\agent.ps1" -url "https://app.logz.io" -id "$env:LOGZIO_ID" -debug "$env:TEMP\logzio-agent-test\config.json" -release "test"
         shell: powershell
           
       - name: Check agent installation
