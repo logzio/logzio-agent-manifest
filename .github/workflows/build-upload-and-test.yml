@@ -230,6 +230,12 @@ jobs:
           Expand-Archive -LiteralPath "$env:TEMP\Logzio\agent_windows.zip" -DestinationPath "$env:TEMP\Logzio" -Force
         shell: powershell
 
+      - name: Create required directories
+        run: |
+          # Create the Logz.io agent log directory
+          New-Item -Path "$env:APPDATA\LogzioAgent" -ItemType Directory -Force | Out-Null
+        shell: powershell
+
       - name: Install agent
         run: |
           # Set execution policy for this process
