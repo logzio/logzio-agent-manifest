@@ -1,0 +1,32 @@
+name: Build and Upload to Test Release
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up GitHub CLI
+        run: |
+          gh --version || (
+            echo "Installing GitHub CLI"
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt update
+            sudo apt install gh
+          )
+
+      - name: Build and upload to test release
+        run: bash ./upload-test-release.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

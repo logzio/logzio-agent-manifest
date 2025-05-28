@@ -1,0 +1,89 @@
+name: Test on Windows
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Build and Upload to Test Release"]
+    types:
+      - completed
+
+jobs:
+  test-windows:
+    runs-on: windows-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up agent configuration directory
+        run: |
+          New-Item -Path "$env:TEMP\logzio-agent-test" -ItemType Directory -Force | Out-Null
+        shell: powershell
+
+      - name: Copy test configuration
+        run: Copy-Item tests/localhost_windows.json -Destination "$env:TEMP\logzio-agent-test\config.json"
+        shell: powershell
+
+      - name: Set LOGZIO_ID
+        run: echo "LOGZIO_ID=$(New-Guid)" >> $env:GITHUB_ENV
+        shell: powershell
+
+      - name: Download and extract Windows agent
+        run: |
+          # Create necessary directories
+          New-Item -Path "$env:TEMP\Logzio" -ItemType Directory -Force | Out-Null
+          
+          # Download the agent from test release
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/download/test/windows_localhost_windows.zip" -OutFile "$env:TEMP\Logzio\agent_windows.zip"
+          
+          # Extract the archive
+          Expand-Archive -LiteralPath "$env:TEMP\Logzio\agent_windows.zip" -DestinationPath "$env:TEMP\Logzio" -Force
+        shell: powershell
+
+      - name: Install agent
+        run: |
+          # Set execution policy for this process
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          
+          # Run the agent installation script with debug configuration
+          & "$env:TEMP\Logzio\agent.ps1" -url "https://app.logz.io" -id "$env:LOGZIO_ID" -debug "$env:TEMP\logzio-agent-test\config.json" -release "test"
+        shell: powershell
+          
+      - name: Check agent installation
+        run: |
+          Start-Sleep -Seconds 10
+          if (Test-Path "C:\Program Files\Logzio\logzio-otel-collector\otel_config.yaml") {
+            Get-Content "C:\Program Files\Logzio\logzio-otel-collector\otel_config.yaml"
+          } else {
+            Write-Host "Configuration file not found at expected location"
+            Get-ChildItem -Path "C:\Program Files\Logzio" -Recurse | Select-Object FullName
+          }
+          Get-Process | Where-Object { $_.Name -like "*otel*" }
+        shell: powershell
+          
+      - name: Verify agent is running
+        run: |
+          $attempts = 5
+          for ($i=1; $i -le $attempts; $i++) {
+            $process = Get-Process -Name "otelcol" -ErrorAction SilentlyContinue
+            if ($process) {
+              Write-Host "Agent is running"
+              exit 0
+            } else {
+              $process = Get-Process | Where-Object { $_.ProcessName -like "*otel*" }
+              if ($process) {
+                Write-Host "Found OpenTelemetry process: $($process.ProcessName)"
+                exit 0
+              }
+            }
+            Write-Host "Waiting for agent to start... attempt $i"
+            Start-Sleep -Seconds 10
+          }
+          Write-Host "Agent failed to start"
+          exit 1
+        shell: powershell
+        env:
+          LOGZIO_LOGS_TOKEN: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          LOGZIO_METRICS_TOKEN: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          LOGZIO_TRACES_TOKEN: ${{ secrets.LOGZIO_TRACES_TOKEN }}

@@ -1,0 +1,122 @@
+{
+  "shippingTokens": {
+    "LOG_ANALYTICS": "${{ secrets.LOGZIO_LOGS_TOKEN }}",
+    "TRACING": "${{ secrets.LOGZIO_TRACES_TOKEN }}",
+    "METRICS": "${{ secrets.LOGZIO_METRICS_TOKEN }}"
+  },
+  "listenerUrl": "https://listener.logz.io",
+  "configuration": {
+    "name": "Localhost",
+    "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+    "description": "",
+    "hint": "Select the environment where you want to deploy Logz.io Telemetry Collector.",
+    "manifest": true,
+    "subtypes": [
+      {
+        "name": "Windows",
+        "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/windows_machine.png",
+        "description": "Windows machine",
+        "hint": "Select your localhost OS.",
+        "supportedOs": ["Windows"],
+        "datasources": [
+          {
+            "name": "System",
+            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
+            "description": "Logz.io Uses OpenTelemetry to monitor your computer.",
+            "telemetries": [
+              {
+                "type": "LOG_ANALYTICS",
+                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your computer.",
+                "otel": {
+                  "receivers": ["filelog", "windows_event_log", "otlp"],
+                  "processors": ["resourcedetection_system"]
+                },
+                "params": [
+                  {
+                    "type": "string-list",
+                    "name": "logSources",
+                    "label": "Location of your logs",
+                    "placeholder": "i.e. C:\\logs\\*.log",
+                    "description": "The paths of log files to collect.",
+                    "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
+                    "value": []
+                  },
+                  {
+                    "type": "boolean",
+                    "name": "isApplicationLog",
+                    "label": "Collect logs from Windows event logs application channel",
+                    "description": "",
+                    "hint": "By checking this option, OpenTelemetry will collect logs from Windows event logs application channel.",
+                    "value": true
+                  },
+                  {
+                    "type": "boolean",
+                    "name": "isSecurityLog",
+                    "label": "Collect logs from Windows event logs security channel",
+                    "description": "",
+                    "hint": "By checking this option, OpenTelemetry will collect logs from Windows event logs security channel.",
+                    "value": true
+                  },
+                  {
+                    "type": "boolean",
+                    "name": "isSystemLog",
+                    "label": "Collect logs from Windows event logs system channel",
+                    "description": "",
+                    "hint": "By checking this option, OpenTelemetry will collect logs from windows event logs system channel.",
+                    "value": true
+                  }
+                ]
+              },
+              {
+                "type": "METRICS",
+                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your computer.",
+                "otel": {
+                  "receivers": ["hostmetrics", "otlp"],
+                  "processors": ["resourcedetection_system", "resource_agent", "filter"]
+                },
+                "params": [],
+                "dashboards": [
+                  "7vydxtpnlKLILHIGK4puX5"
+                ]
+              },
+              {
+                "type": "TRACING",
+                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces and span metrics from your computer.",
+                "otel": {
+                  "receivers": ["otlp"],
+                  "processors": ["resourcedetection_system", "resource_agent", "batch"]
+                },
+                "params": [
+                  {
+                    "type": "boolean",
+                    "name": "isSpanMetrics",
+                    "label": "Collect span metrics",
+                    "description": "",
+                    "hint": "By checking this option, OpenTelemetry will collect span metrics.",
+                    "value": true
+                  },
+                  {
+                    "type": "number",
+                    "name": "samplingLatency",
+                    "label": "Sampling latency threshold",
+                    "description": "The sampling latency threshold in milliseconds.",
+                    "hint": "By setting this option, OpenTelemetry will sample traces that exceed the specified latency threshold.",
+                    "value": 200
+                  },
+                  {
+                    "type": "number",
+                    "name": "samplingPropability",
+                    "label": "Sampling probability precentage",
+                    "description": "The sampling probability precentage.",
+                    "hint": "By setting this option, OpenTelemetry will sample traces with the specified probability.",
+                    "value": 10
+                  }              
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
