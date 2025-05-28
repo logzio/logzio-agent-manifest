@@ -58,7 +58,7 @@ jobs:
           sudo chown -R $USER: /opt/logzio-agent
           
           # Run the agent installation script with debug configuration
-          sudo bash /scripts/linux/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          sudo bash ./scripts/linux/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
           
       - name: Check agent installation
         run: |
@@ -106,7 +106,7 @@ jobs:
           sudo chown -R $USER: /opt/logzio-agent
           
           # Run the agent installation script with debug configuration
-          sudo bash /scripts/mac/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          sudo bash ./scripts/mac/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
           
       - name: Check agent installation
         run: |
