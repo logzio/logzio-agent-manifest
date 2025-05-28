@@ -241,8 +241,9 @@ jobs:
           # Set execution policy for this process
           Set-ExecutionPolicy Bypass -Scope Process -Force
           
-          # Run the agent installation script with debug configuration and enable cursor for CI environment
-          & "$env:TEMP\Logzio\agent.ps1" -url "https://app.logz.io" -id "$env:LOGZIO_ID" -debug "$env:TEMP\logzio-agent-test\config.json" -release "test" --enable-cursor
+          # Run the agent installation script with debug configuration
+          # Use the parameters in the format the agent expects (with = for parameters that need values)
+          & "$env:TEMP\Logzio\agent.ps1" "--url=https://app.logz.io" "--id=$env:LOGZIO_ID" "--debug=$env:TEMP\logzio-agent-test\config.json" "--release=test" --enable-cursor
         shell: powershell
           
       - name: Check agent installation
