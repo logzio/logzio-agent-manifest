@@ -66,7 +66,7 @@ jobs:
           sudo chown -R $USER: /opt/logzio-agent
           
           # Run the agent installation script with debug configuration
-          sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          sudo bash /tmp/logzio/agent.bash --url=https://app.log.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
           
       - name: Check agent installation
         run: |
@@ -98,6 +98,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Install Bash 4 with Homebrew
+        run: |
+          # Install or update Homebrew if needed
+          which brew || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          
+          # Update Homebrew and install Bash 4
+          brew update
+          brew install bash
+          
+          # Display installed Bash version
+          /usr/local/bin/bash --version
+
       - name: Set up agent configuration
         run: mkdir -p /tmp/logzio-agent-test
 
@@ -121,8 +133,8 @@ jobs:
           sudo mkdir -p /opt/logzio-agent
           sudo chown -R $USER: /opt/logzio-agent
           
-          # Run the agent installation script with debug configuration
-          sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          # Run the agent installation script with debug configuration using Bash 4
+          sudo /usr/local/bin/bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
           
       - name: Check agent installation
         run: |
