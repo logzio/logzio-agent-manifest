@@ -1,0 +1,234 @@
+name: Localhost tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+      - master
+    paths-ignore:
+      - '**.md'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up GitHub CLI
+        run: |
+          gh --version || (
+            echo "Installing GitHub CLI"
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt update
+            sudo apt install gh
+          )
+
+      - name: Build and upload to test release
+        run: bash ./upload-test-release.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-linux:
+    needs: build-and-upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up agent configuration
+        run: mkdir -p /tmp/logzio-agent-test
+
+      - name: Copy test configuration
+        run: cp tests/localhost_linux.json /tmp/logzio-agent-test/config.json
+
+      - name: Set LOGZIO_ID
+        run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
+
+      - name: Download and extract Linux agent
+        run: |
+          # Create necessary directories
+          mkdir -p /tmp/logzio
+          
+          # Download the agent from test release
+          curl -L https://github.com/logzio/logzio-agent-manifest/releases/download/test/linux_localhost_linux.tar.gz -o /tmp/logzio/agent_linux.tar.gz
+          
+          # Extract the archive
+          tar -zxf /tmp/logzio/agent_linux.tar.gz --directory /tmp/logzio
+
+      - name: Install agent
+        run: |
+          # Create the agent directory with proper permissions
+          sudo mkdir -p /opt/logzio-agent
+          sudo chown -R $USER: /opt/logzio-agent
+          
+          # Run the agent installation script with debug configuration
+          sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          
+      - name: Check agent installation
+        run: |
+          sleep 10
+          cat /opt/logzio-agent/logzio-otel-collector/otel_config.yaml
+          ps aux | grep otel-collector
+          
+      - name: Verify agent is running
+        run: |
+          for i in {1..5}; do
+            if pgrep -f "otel-collector" > /dev/null; then
+              echo "Agent is running"
+              exit 0
+            fi
+            echo "Waiting for agent to start... attempt $i"
+            sleep 10
+          done
+          echo "Agent failed to start"
+          exit 1
+        env:
+          LOGZIO_LOGS_TOKEN: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          LOGZIO_METRICS_TOKEN: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          LOGZIO_TRACES_TOKEN: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+
+  test-mac:
+    needs: build-and-upload
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up agent configuration
+        run: mkdir -p /tmp/logzio-agent-test
+
+      - name: Copy test configuration
+        run: cp tests/localhost_mac.json /tmp/logzio-agent-test/config.json
+
+      - name: Set LOGZIO_ID
+        run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
+
+      - name: Download and extract Mac agent
+        run: |
+          # Create necessary directories
+          mkdir -p /tmp/logzio
+          
+          # Download the agent from test release
+          curl -L https://github.com/logzio/logzio-agent-manifest/releases/download/test/mac_localhost_mac.tar.gz -o /tmp/logzio/agent_mac.tar.gz
+          
+          # Extract the archive
+          tar -zxf /tmp/logzio/agent_mac.tar.gz --directory /tmp/logzio
+
+      - name: Install agent
+        run: |
+          # Create the agent directory with proper permissions
+          sudo mkdir -p /opt/logzio-agent
+          sudo chown -R $USER: /opt/logzio-agent
+          
+          # Run the agent installation script with debug configuration
+          sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test
+          
+      - name: Check agent installation
+        run: |
+          sleep 10
+          cat /opt/logzio-agent/logzio-otel-collector/otel_config.yaml
+          ps aux | grep otel-collector
+          
+      - name: Verify agent is running
+        run: |
+          for i in {1..5}; do
+            if pgrep -f "otel-collector" > /dev/null; then
+              echo "Agent is running"
+              exit 0
+            fi
+            echo "Waiting for agent to start... attempt $i"
+            sleep 10
+          done
+          echo "Agent failed to start"
+          exit 1
+        env:
+          LOGZIO_LOGS_TOKEN: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          LOGZIO_METRICS_TOKEN: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          LOGZIO_TRACES_TOKEN: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+
+  test-windows:
+    needs: build-and-upload
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up agent configuration directory
+        run: |
+          New-Item -Path "$env:TEMP\logzio-agent-test" -ItemType Directory -Force | Out-Null
+        shell: powershell
+
+      - name: Copy test configuration
+        run: Copy-Item tests/localhost_windows.json -Destination "$env:TEMP\logzio-agent-test\config.json"
+        shell: powershell
+
+      - name: Set LOGZIO_ID
+        run: echo "LOGZIO_ID=$(New-Guid)" >> $env:GITHUB_ENV
+        shell: powershell
+
+      - name: Download and extract Windows agent
+        run: |
+          # Create necessary directories
+          New-Item -Path "$env:TEMP\Logzio" -ItemType Directory -Force | Out-Null
+          
+          # Download the agent from test release
+          [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+          Invoke-WebRequest -Uri "https://github.com/logzio/logzio-agent-manifest/releases/download/test/windows_localhost_windows.zip" -OutFile "$env:TEMP\Logzio\agent_windows.zip"
+          
+          # Extract the archive
+          Expand-Archive -LiteralPath "$env:TEMP\Logzio\agent_windows.zip" -DestinationPath "$env:TEMP\Logzio" -Force
+        shell: powershell
+
+      - name: Install agent
+        run: |
+          # Set execution policy for this process
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          
+          # Run the agent installation script with debug configuration
+          & "$env:TEMP\Logzio\agent.ps1" -url "https://app.logz.io" -id "$env:LOGZIO_ID" -debug "$env:TEMP\logzio-agent-test\config.json" -release "test"
+        shell: powershell
+          
+      - name: Check agent installation
+        run: |
+          Start-Sleep -Seconds 10
+          if (Test-Path "C:\Program Files\Logzio\logzio-otel-collector\otel_config.yaml") {
+            Get-Content "C:\Program Files\Logzio\logzio-otel-collector\otel_config.yaml"
+          } else {
+            Write-Host "Configuration file not found at expected location"
+            Get-ChildItem -Path "C:\Program Files\Logzio" -Recurse | Select-Object FullName
+          }
+          Get-Process | Where-Object { $_.Name -like "*otel*" }
+        shell: powershell
+          
+      - name: Verify agent is running
+        run: |
+          $attempts = 5
+          for ($i=1; $i -le $attempts; $i++) {
+            $process = Get-Process -Name "otelcol" -ErrorAction SilentlyContinue
+            if ($process) {
+              Write-Host "Agent is running"
+              exit 0
+            } else {
+              $process = Get-Process | Where-Object { $_.ProcessName -like "*otel*" }
+              if ($process) {
+                Write-Host "Found OpenTelemetry process: $($process.ProcessName)"
+                exit 0
+              }
+            }
+            Write-Host "Waiting for agent to start... attempt $i"
+            Start-Sleep -Seconds 10
+          }
+          Write-Host "Agent failed to start"
+          exit 1
+        shell: powershell
+        env:
+          LOGZIO_LOGS_TOKEN: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          LOGZIO_METRICS_TOKEN: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          LOGZIO_TRACES_TOKEN: ${{ secrets.LOGZIO_TRACES_TOKEN }}
