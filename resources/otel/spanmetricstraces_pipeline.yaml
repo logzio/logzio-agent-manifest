@@ -1,0 +1,5 @@
+traces/spanmetrics:
+  receivers: [otlp]
+  processors: [batch]
+  exporters: [spanmetrics]
+  

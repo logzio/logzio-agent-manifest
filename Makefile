@@ -7,6 +7,13 @@ CURR_PATH := $(CURDIR)
 ASSETS_PATH := $(CURR_PATH)/assets
 TMP_PATH := $(CURR_PATH)/tmp
 
+# Detect OS for Windows-specific commands
+ifeq ($(OS),Windows_NT)
+	USE_POWERSHELL := 1
+else
+	USE_POWERSHELL := 0
+endif
+
 # Starting point
 .PHONY: all
 all: create_assets windows linux mac
@@ -20,6 +27,22 @@ create_assets:
 .PHONY: windows
 windows: create_assets
 	mkdir -p $(TMP_PATH)
+ifeq ($(USE_POWERSHELL),1)
+	# Use PowerShell for Windows builds
+	powershell -Command "Copy-Item -Path '$(CURR_PATH)/scripts/windows/*' -Destination '$(TMP_PATH)' -Recurse -Force"
+	powershell -Command "Copy-Item -Path '$(CURR_PATH)/version' -Destination '$(TMP_PATH)' -Force"
+	powershell -Command "Compress-Archive -Path '$(TMP_PATH)/*' -DestinationPath '$(ASSETS_PATH)/agent_windows.zip' -Force"
+	powershell -Command "Remove-Item -Path '$(TMP_PATH)/*' -Recurse -Force"
+	powershell -Command "Copy-Item -Path '$(CURR_PATH)/datasources/windows/*' -Destination '$(TMP_PATH)' -Recurse -Force"
+	powershell -Command "Copy-Item -Path '$(CURR_PATH)/resources' -Destination '$(TMP_PATH)' -Recurse -Force"
+	powershell -Command "Compress-Archive -Path '$(TMP_PATH)/kubernetes/aks', '$(TMP_PATH)/resources' -DestinationPath '$(ASSETS_PATH)/windows_kubernetes_aks.zip' -Force"
+	powershell -Command "Compress-Archive -Path '$(TMP_PATH)/kubernetes/eks', '$(TMP_PATH)/resources' -DestinationPath '$(ASSETS_PATH)/windows_kubernetes_eks.zip' -Force"
+	powershell -Command "Compress-Archive -Path '$(TMP_PATH)/kubernetes/gke', '$(TMP_PATH)/resources' -DestinationPath '$(ASSETS_PATH)/windows_kubernetes_gke.zip' -Force"
+	powershell -Command "Compress-Archive -Path '$(TMP_PATH)/kubernetes/digitalocean', '$(TMP_PATH)/resources' -DestinationPath '$(ASSETS_PATH)/windows_kubernetes_digitalocean.zip' -Force"
+	powershell -Command "Compress-Archive -Path '$(TMP_PATH)/localhost/windows', '$(TMP_PATH)/resources' -DestinationPath '$(ASSETS_PATH)/windows_localhost_windows.zip' -Force"
+	powershell -Command "Remove-Item -Path '$(TMP_PATH)' -Recurse -Force"
+else
+	# Use zip for non-Windows builds
 	cd $(TMP_PATH) && \
 	cp -r $(CURR_PATH)/scripts/windows/. $(CURR_PATH)/version . && \
 	zip -r $(ASSETS_PATH)/agent_windows.zip . && \
@@ -32,6 +55,7 @@ windows: create_assets
 	zip -r $(ASSETS_PATH)/windows_kubernetes_digitalocean.zip kubernetes/digitalocean resources && \
 	zip -r $(ASSETS_PATH)/windows_localhost_windows.zip localhost/windows resources
 	rm -rf $(TMP_PATH)
+endif
 
 # Build Linux binaries
 .PHONY: linux

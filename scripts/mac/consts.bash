@@ -59,7 +59,7 @@ JQ_AMD_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.7.1/j
 # Url for downloading yq binary
 YQ_AMD_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_darwin_amd64.tar.gz'
 # Url for downloading OTEL collector tar.gz
-OTEL_COLLECTOR_AMD_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.82.0/otelcol-logzio-darwin_amd64.tar.gz'
+OTEL_COLLECTOR_AMD_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.109.0/otelcol-logzio-darwin_amd64.tar.gz'
 # Url for downloading eksctl tar.gz
 EKSCTL_AMD_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Darwin_amd64.tar.gz'
 # Url for downloading jq arm64 binary
@@ -67,7 +67,7 @@ JQ_ARM_URL_DOWNLOAD='https://github.com/stedolan/jq/releases/download/jq-1.7.1/j
 # Url for downloading yq arm64 binary
 YQ_ARM_URL_DOWNLOAD='https://github.com/mikefarah/yq/releases/download/v4.40.5/yq_darwin_arm64.tar.gz'
 # Url for downloading OTEL collector arm64 tar.gz
-OTEL_COLLECTOR_ARM_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.82.0/otelcol-logzio-darwin_arm64.tar.gz'
+OTEL_COLLECTOR_ARM_URL_DOWNLOAD='https://github.com/logzio/otel-collector-distro/releases/download/v0.109.0/otelcol-logzio-darwin_arm64.tar.gz'
 # Url for downloading eksctl arm64 tar.gz
 EKSCTL_ARM_URL_DOWNLOAD='https://github.com/weaveworks/eksctl/releases/download/v0.133.0/eksctl_Darwin_arm64.tar.gz'
 # Url for AWS SQS
@@ -170,6 +170,7 @@ GREEN_COLOR_BOLD='\033[0;32m'
 AGENT_VERSION=$(cat "$LOGZIO_TEMP_DIR/version")
 USER_AGENT_LOGS="logzio-mac-version-$AGENT_VERSION-logs"
 USER_AGENT_METRICS="logzio-mac-version-$AGENT_VERSION-metrics"
+USER_AGENT_TRACES="logzio-mac-version-$AGENT_VERSION-traces"
 
 ## K8s global flag added indication
 IS_LOG_TOKEN_ADDED="$LOGZIO_TEMP_DIR/is-log-token-added.txt"

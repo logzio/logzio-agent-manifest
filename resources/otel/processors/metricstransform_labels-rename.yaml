@@ -1,0 +1,11 @@
+metricstransform/labels-rename:
+  transforms:
+    # for metrics matching `latencyXXX` or `callsXXX`
+    # rename label span.name >> operation
+    - action: update
+      include: ^(latency|calls)
+      match_type: regexp
+      operations:
+        - action: update_label
+          label: span.name
+          new_label: operation
