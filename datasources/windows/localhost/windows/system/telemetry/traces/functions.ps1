@@ -872,12 +872,7 @@ function Add-SpanMetricsExporterToOtelConfig {
     }
 
     if (-not $IsExporterExist) {
-        # Configure Prometheusremotewrite exporter using the same pattern as in Mac/Linux
-        # Extract just the host part from the listener URL
-        $local:ListenerHost = ($ListenerUrl -replace "https?://" -replace "/.*").Trim()
-        $local:Endpoint = "https://$ListenerHost:8053"
-        
-        
+        $local:Endpoint = "$ListenerUrl`:8053"
         $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' $Endpoint
         if ($Err.Count -ne 0) {
             $Message = "traces.ps1 ($ExitCode): $($Err[0])"
