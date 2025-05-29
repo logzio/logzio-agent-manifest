@@ -151,13 +151,10 @@ function Setup-TracesEnvParams {
 
     $local:TracesParams = $FuncArgs.TracesParams
 
-    # Get parameters from config with appropriate defaults
     Get-IsSpanMetrics @{TracesParams = $TracesParams}
     Get-SamplingLatency @{TracesParams = $TracesParams}
     Get-SamplingPropability @{TracesParams = $TracesParams}
 
-    # Export values as environment variables for collector configuration
-    # Using the same default pattern as in Mac/Linux implementation
     $local:IsSpanMetrics = if ($script:IsSpanMetrics -eq $true) { "true" } else { "false" }
     $local:SamplingLatency = if ($script:SamplingLatency -ne $null) { $script:SamplingLatency } else { 200 }
     $local:SamplingPropability = if ($script:SamplingPropability -ne $null) { $script:SamplingPropability } else { 10 }
@@ -228,7 +225,7 @@ function Add-TracesPipelineToOtelConfig {
 
 # Gets traces OTEL receivers
 # Input:
-#   FuncArgs - Hashtable {TracesTelemetry = $script:TracesTelemetry; TracesParams = $script:TracesParams}
+#   FuncArgs - Hashtable {TracesTelemetry = $script:TracesTelemetry}
 # Ouput:
 #   TracesOtelReceivers - List of Traces OTEL receiver names
 function Get-TracesOtelReceivers {
@@ -243,7 +240,7 @@ function Get-TracesOtelReceivers {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesTelemetry', 'TracesParams')
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesTelemetry')
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
@@ -253,7 +250,6 @@ function Get-TracesOtelReceivers {
     }
 
     $local:TracesTelemetry = $FuncArgs.TracesTelemetry
-    $local:TracesParams = $FuncArgs.TracesParams
 
     $Err = Get-JsonStrFieldValueList $TracesTelemetry '.otel.receivers[]'
     if ($Err.Count -ne 0) {
