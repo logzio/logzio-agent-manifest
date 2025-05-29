@@ -233,59 +233,13 @@ jobs:
           New-Item -Path "$env:APPDATA\LogzioAgent" -ItemType Directory -Force | Out-Null
         shell: powershell
         
-      - name: Setup network connectivity for tests
-        run: |
-          # Create hosts file entries for Logz.io domains
-          $hostsFile = "$env:windir\System32\drivers\etc\hosts"
-          
-          # Add entries for all Logz.io listener domains (use GitHub's IP as a placeholder)
-          @(
-            "127.0.0.1 listener.logz.io",
-            "127.0.0.1 listener-eu.logz.io",
-            "127.0.0.1 listener-ca.logz.io",
-            "127.0.0.1 listener-uk.logz.io",
-            "127.0.0.1 listener-nl.logz.io",
-            "127.0.0.1 listener-wa.logz.io",
-            "127.0.0.1 app.logz.io"
-          ) | ForEach-Object {
-            Add-Content -Path $hostsFile -Value $_ -Force
-          }
-          
-          # Setup local listener for testing network connectivity
-          # This creates a simple TCP listener on the required ports that the agent tests
-          Start-Job -ScriptBlock {
-            # Setup TCP listener for logs port (8071)
-            $listener1 = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Any, 8071)
-            $listener1.Start()
-            
-            # Setup TCP listener for metrics port (8053)
-            $listener2 = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Any, 8053)
-            $listener2.Start()
-            
-            # Setup TCP listener for traces port (8054)
-            $listener3 = New-Object System.Net.Sockets.TcpListener([System.Net.IPAddress]::Any, 8054)
-            $listener3.Start()
-            
-            # Keep the listeners active during the test
-            Start-Sleep -Seconds 600
-            
-            # Cleanup
-            $listener1.Stop()
-            $listener2.Stop()
-            $listener3.Stop()
-          }
-          
-          # Verify hosts file entries
-          Get-Content -Path $hostsFile
-          
-          # Verify TCP listeners are running
-          Start-Sleep -Seconds 2
-          @(8071, 8053, 8054) | ForEach-Object {
-            $testConnection = Test-NetConnection -ComputerName localhost -Port $_ -InformationLevel Quiet
-            Write-Host "Port $_ listener test: $testConnection"
-          }
+      - name: Test connectivity 
         shell: powershell
-        
+        run: |
+          Test-NetConnection -ComputerName listener.logz.io -Port 8071
+          Test-NetConnection -ComputerName https://listener.logz.io -Port 8071
+          Test-NetConnection -ComputerName listener.logz.io -Port 8053
+          Test-NetConnection -ComputerName https://listener.logz.io -Port 8074
       - name: Install agent
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force
