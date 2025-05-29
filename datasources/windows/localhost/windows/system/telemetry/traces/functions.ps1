@@ -3,90 +3,172 @@
 #################################################################################################################################
 
 # Gets the value for isSpanMetrics param
+# Input:
+#   FuncArgs - Hashtable {TracesParams = $script:TracesParams}
+# Output:
+#   IsSpanMetrics - Tells if span metrics should be collected (true/false)
 function Get-IsSpanMetrics {
+  param (
+    [hashtable]$FuncArgs
+  )
+  
   $local:FuncName = $MyInvocation.MyCommand.Name
   $local:Message = "Getting 'isSpanMetrics' param for span metrics collection ..."
   Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
   Write-Log $script:LogLevelDebug $Message
 
-  $script:IsSpanMetrics = $false
-  foreach ($param in $script:TracesParams) {
-      if ($param.name -eq 'isSpanMetrics') {
-          $script:IsSpanMetrics = $param.value
-          $Message = "'isSpanMetrics' param found: $($script:IsSpanMetrics)"
-          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-          Write-Log $script:LogLevelDebug $Message
-          return
-      }
+  $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesParams')
+  if ($Err.Count -ne 0) {
+      $Message = "traces.ps1 (0): $($Err[0])"
+      Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+      Write-TaskPostRun "Write-Error `"$Message`""
+      return
   }
-  $Message = "'isSpanMetrics' param not found, defaulting to false"
-  Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-  Write-Log $script:LogLevelDebug $Message
+
+  $local:TracesParams = $FuncArgs.TracesParams
+  
+  $Err = Get-ParamValue $TracesParams 'isSpanMetrics'
+  if ($Err.Count -ne 0) {
+      $script:IsSpanMetrics = $false
+      $Message = "'isSpanMetrics' param not found, defaulting to false"
+      Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+      Write-Log $script:LogLevelDebug $Message
+  }
+  else {
+      $script:IsSpanMetrics = $script:ParamValue
+      $Message = "'isSpanMetrics' param found: $($script:IsSpanMetrics)"
+      Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+      Write-Log $script:LogLevelDebug $Message
+  }
+  
+  Write-TaskPostRun "`$script:IsSpanMetrics = `$$($script:IsSpanMetrics)"
 }
 
 # Gets the value for samplingLatency param
+# Input:
+#   FuncArgs - Hashtable {TracesParams = $script:TracesParams}
+# Output:
+#   SamplingLatency - Threshold for trace sampling latency (default 200)
 function Get-SamplingLatency {
+  param (
+    [hashtable]$FuncArgs
+  )
+  
   $local:FuncName = $MyInvocation.MyCommand.Name
   $local:Message = "Getting 'samplingLatency' param for trace sampling latency threshold ..."
   Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
   Write-Log $script:LogLevelDebug $Message
 
-  $script:SamplingLatency = 200
-  foreach ($param in $script:TracesParams) {
-      if ($param.name -eq 'samplingLatency') {
-          $script:SamplingLatency = $param.value
-          $Message = "'samplingLatency' param found: $($script:SamplingLatency)"
-          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-          Write-Log $script:LogLevelDebug $Message
-          return
-      }
+  $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesParams')
+  if ($Err.Count -ne 0) {
+      $Message = "traces.ps1 (0): $($Err[0])"
+      Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+      Write-TaskPostRun "Write-Error `"$Message`""
+      return
   }
-  $Message = "'samplingLatency' param not found, defaulting to 200"
-  Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-  Write-Log $script:LogLevelDebug $Message
+
+  $local:TracesParams = $FuncArgs.TracesParams
+  
+  $Err = Get-ParamValue $TracesParams 'samplingLatency'
+  if ($Err.Count -ne 0) {
+      $script:SamplingLatency = 200
+      $Message = "'samplingLatency' param not found, defaulting to 200"
+      Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+      Write-Log $script:LogLevelDebug $Message
+  }
+  else {
+      $script:SamplingLatency = $script:ParamValue
+      $Message = "'samplingLatency' param found: $($script:SamplingLatency)"
+      Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+      Write-Log $script:LogLevelDebug $Message
+  }
+  
+  Write-TaskPostRun "`$script:SamplingLatency = $($script:SamplingLatency)"
 }
 
 # Gets the value for samplingPropability param
+# Input:
+#   FuncArgs - Hashtable {TracesParams = $script:TracesParams}
+# Output:
+#   SamplingPropability - Percentage for trace sampling probability (default 10)
 function Get-SamplingPropability {
+  param (
+    [hashtable]$FuncArgs
+  )
+  
   $local:FuncName = $MyInvocation.MyCommand.Name
   $local:Message = "Getting 'samplingPropability' param for trace sampling probability ..."
   Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
   Write-Log $script:LogLevelDebug $Message
 
-  $script:SamplingPropability = 10
-  foreach ($param in $script:TracesParams) {
-      if ($param.name -eq 'samplingPropability') {
-          $script:SamplingPropability = $param.value
-          $Message = "'samplingPropability' param found: $($script:SamplingPropability)"
-          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-          Write-Log $script:LogLevelDebug $Message
-          return
-      }
+  $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesParams')
+  if ($Err.Count -ne 0) {
+      $Message = "traces.ps1 (0): $($Err[0])"
+      Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+      Write-TaskPostRun "Write-Error `"$Message`""
+      return
   }
-  $Message = "'samplingPropability' param not found, defaulting to 10"
-  Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-  Write-Log $script:LogLevelDebug $Message
+
+  $local:TracesParams = $FuncArgs.TracesParams
+  
+  $Err = Get-ParamValue $TracesParams 'samplingPropability'
+  if ($Err.Count -ne 0) {
+      $script:SamplingPropability = 10
+      $Message = "'samplingPropability' param not found, defaulting to 10"
+      Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+      Write-Log $script:LogLevelDebug $Message
+  }
+  else {
+      $script:SamplingPropability = $script:ParamValue
+      $Message = "'samplingPropability' param found: $($script:SamplingPropability)"
+      Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+      Write-Log $script:LogLevelDebug $Message
+  }
+  
+  Write-TaskPostRun "`$script:SamplingPropability = $($script:SamplingPropability)"
 }
 
 function Setup-TracesEnvParams {
-  # Get parameters from config with appropriate defaults
-  Get-IsSpanMetrics
-  Get-SamplingLatency
-  Get-SamplingPropability
+    param (
+        [hashtable]$FuncArgs
+    )
 
-  # Export values as environment variables for collector configuration
-  # Using the same default pattern as in Mac/Linux implementation
-  $local:IsSpanMetrics = if ($script:IsSpanMetrics -eq $true) { "true" } else { "false" }
-  $local:SamplingLatency = if ($script:SamplingLatency -ne $null) { $script:SamplingLatency } else { 200 }
-  $local:SamplingPropability = if ($script:SamplingPropability -ne $null) { $script:SamplingPropability } else { 10 }
+    $local:ExitCode = 0
+    $local:FuncName = $MyInvocation.MyCommand.Name
 
-  [System.Environment]::SetEnvironmentVariable('IS_SPAN_METRICS', $IsSpanMetrics)
-  [System.Environment]::SetEnvironmentVariable('SAMPLING_LATENCY', $SamplingLatency)
-  [System.Environment]::SetEnvironmentVariable('SAMPLING_PROPABILITY', $SamplingPropability)
+    $local:Message = 'Setting up traces env params ...'
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
 
-  $Message = "Setup traces param env: IS_SPAN_METRICS=$IsSpanMetrics, SAMPLING_LATENCY=$SamplingLatency, SAMPLING_PROPABILITY=$SamplingPropability"
-  Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces 'Setup-TracesEnvParams' $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-  Write-Log $script:LogLevelDebug $Message
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesParams')
+    if ($Err.Count -ne 0) {
+        $Message = "traces.ps1 ($ExitCode): $($Err[0])"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+        Write-TaskPostRun "Write-Error `"$Message`""
+
+        return $ExitCode
+    }
+
+    $local:TracesParams = $FuncArgs.TracesParams
+
+    # Get parameters from config with appropriate defaults
+    Get-IsSpanMetrics @{TracesParams = $TracesParams}
+    Get-SamplingLatency @{TracesParams = $TracesParams}
+    Get-SamplingPropability @{TracesParams = $TracesParams}
+
+    # Export values as environment variables for collector configuration
+    # Using the same default pattern as in Mac/Linux implementation
+    $local:IsSpanMetrics = if ($script:IsSpanMetrics -eq $true) { "true" } else { "false" }
+    $local:SamplingLatency = if ($script:SamplingLatency -ne $null) { $script:SamplingLatency } else { 200 }
+    $local:SamplingPropability = if ($script:SamplingPropability -ne $null) { $script:SamplingPropability } else { 10 }
+
+    [System.Environment]::SetEnvironmentVariable('IS_SPAN_METRICS', $IsSpanMetrics)
+    [System.Environment]::SetEnvironmentVariable('SAMPLING_LATENCY', $SamplingLatency)
+    [System.Environment]::SetEnvironmentVariable('SAMPLING_PROPABILITY', $SamplingPropability)
+
+    $Message = "Setup traces param env: IS_SPAN_METRICS=$IsSpanMetrics, SAMPLING_LATENCY=$SamplingLatency, SAMPLING_PROPABILITY=$SamplingPropability"
+    Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces 'Setup-TracesEnvParams' $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+    Write-Log $script:LogLevelDebug $Message
 }
 
 
