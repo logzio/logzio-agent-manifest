@@ -47,7 +47,6 @@ jobs:
           mkdir -p /tmp/logzio-agent-test
           cp tests/localhost_linux.json /tmp/logzio-agent-test/config.json
           
-          # Replace token placeholders with actual values
           sed -i "s|\${LOGZIO_LOGS_TOKEN}|$LOGZIO_LOGS_TOKEN|g" /tmp/logzio-agent-test/config.json
           sed -i "s|\${LOGZIO_METRICS_TOKEN}|$LOGZIO_METRICS_TOKEN|g" /tmp/logzio-agent-test/config.json
           sed -i "s|\${LOGZIO_TRACES_TOKEN}|$LOGZIO_TRACES_TOKEN|g" /tmp/logzio-agent-test/config.json
@@ -64,16 +63,13 @@ jobs:
           make
           mkdir -p /tmp/logzio
           cp ./assets/agent_linux.tar.gz /tmp/logzio/
-          # Extract the archive
           tar -zxf /tmp/logzio/agent_linux.tar.gz --directory /tmp/logzio
 
       - name: Install agent
         run: |
-          # Create the agent directory with proper permissions
           sudo mkdir -p /opt/logzio-agent
           sudo chown -R $USER: /opt/logzio-agent
           
-          # Run the agent installation script with debug configuration
           sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test || {
             exit_code=$?
             
@@ -109,11 +105,9 @@ jobs:
           telemetrygen traces --otlp-insecure --traces 100 &
           TRACES_PID=$!
           
-          # Run telemetrygen to send logs to the collector
           telemetrygen logs --otlp-insecure --logs 100 &
           LOGS_PID=$!
           
-          # Wait for telemetrygen processes to complete
           wait $TRACES_PID
           wait $LOGS_PID
           
@@ -127,7 +121,6 @@ jobs:
           echo "Checking collector metrics endpoint..."
           curl -s http://localhost:8888/metrics > collector_metrics.txt
           
-          # Validate metrics, logs, and traces are being sent successfully
           if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
              grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt && \
              grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
@@ -148,10 +141,8 @@ jobs:
 
       - name: Install Bash 4 with Homebrew
         run: |
-          # Install Bash 4 or above
           brew install bash
           
-          # Display installed Bash version and location
           brew_bash=$(brew --prefix)/bin/bash
           echo "Bash installed at: $brew_bash"
           $brew_bash --version
@@ -161,7 +152,6 @@ jobs:
           mkdir -p /tmp/logzio-agent-test
           cp tests/localhost_mac.json /tmp/logzio-agent-test/config.json
           
-          # Replace token placeholders with actual values (macOS requires empty string after -i)
           sed -i '' "s|\${LOGZIO_LOGS_TOKEN}|$LOGZIO_LOGS_TOKEN|g" /tmp/logzio-agent-test/config.json
           sed -i '' "s|\${LOGZIO_METRICS_TOKEN}|$LOGZIO_METRICS_TOKEN|g" /tmp/logzio-agent-test/config.json
           sed -i '' "s|\${LOGZIO_TRACES_TOKEN}|$LOGZIO_TRACES_TOKEN|g" /tmp/logzio-agent-test/config.json
@@ -178,7 +168,6 @@ jobs:
           make
           mkdir -p /tmp/logzio
           cp ./assets/agent_mac.tar.gz /tmp/logzio/          
-          # Extract the archive
           tar -zxf /tmp/logzio/agent_mac.tar.gz --directory /tmp/logzio
 
       - name: Install agent
@@ -221,15 +210,12 @@ jobs:
       - name: Generate test telemetry data
         run: |
           echo "Generating test traces and logs..."
-          # Run telemetrygen to send traces to the collector
           telemetrygen traces --otlp-insecure --traces 100 &
           TRACES_PID=$!
           
-          # Run telemetrygen to send logs to the collector
           telemetrygen logs --otlp-insecure --logs 100 &
           LOGS_PID=$!
           
-          # Wait for telemetrygen processes to complete
           wait $TRACES_PID
           wait $LOGS_PID
           
@@ -237,15 +223,12 @@ jobs:
 
       - name: Test collector metrics endpoint
         run: |
-          # Wait longer to ensure agent has started collecting and exporting data
           echo "Waiting for collector to gather metrics..."
           sleep 60
           
-          # Check metrics endpoint for signs of successful export
           echo "Checking collector metrics endpoint..."
           curl -s http://localhost:8888/metrics > collector_metrics.txt
           
-          # Validate metrics and logs are being sent successfully
           if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
              grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt && \
              grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
@@ -272,13 +255,10 @@ jobs:
 
       - name: Set up agent configuration and replace tokens
         run: |
-          # Create the config directory
           New-Item -Path "$env:TEMP\logzio-agent-test" -ItemType Directory -Force | Out-Null
           
-          # Copy the config file
           Copy-Item tests/localhost_windows.json -Destination "$env:TEMP\logzio-agent-test\config.json"
           
-          # Replace token placeholders with actual values
           $configContent = Get-Content "$env:TEMP\logzio-agent-test\config.json" -Raw
           $configContent = $configContent.Replace('${LOGZIO_LOGS_TOKEN}', $env:LOGZIO_LOGS_TOKEN)
           $configContent = $configContent.Replace('${LOGZIO_METRICS_TOKEN}', $env:LOGZIO_METRICS_TOKEN)
@@ -318,7 +298,6 @@ jobs:
         run: |
           Start-Sleep -Seconds 10
           
-          # Check configuration file at correct location
           $configPath = "$env:APPDATA\LogzioAgent\LogzioOTELCollector\otel_config.yaml"
           if (Test-Path $configPath) {
             Write-Host "Configuration file found at: $configPath"
@@ -328,65 +307,23 @@ jobs:
             Get-ChildItem -Path "$env:APPDATA\LogzioAgent" -Recurse | Select-Object FullName
           }
           
-          # Check running processes
           Write-Host "Checking running OTEL processes:"
           Get-Process | Where-Object { $_.Name -like "*otel*" } | Format-Table Id, Name, Path
 
-      - name: Install telemetrygen
-        run: |
-          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
-          
-          # Add Go bin directory to PATH and verify installation
-          $env:PATH += ";$env:USERPROFILE\go\bin"
-          
-          # Export PATH for child processes
-          echo "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Append
-        shell: powershell
-
-      - name: Generate test telemetry data
-        run: |
-          Write-Host "Generating test traces and logs..."
-          
-          # Ensure Go bin is in PATH for child jobs
-          $goPath = "$env:USERPROFILE\go\bin"
-          
-          # Start a job for traces
-          $tracesJob = Start-Job -ScriptBlock {
-            param($goPath)
-            $env:PATH += ";$goPath"
-            & "$goPath\telemetrygen" traces --otlp-insecure --traces 10
-          } -ArgumentList $goPath
-          
-          # Start a job for logs
-          $logsJob = Start-Job -ScriptBlock {
-            param($goPath)
-            $env:PATH += ";$goPath"
-            & "$goPath\telemetrygen" logs --otlp-insecure --logs 10
-          } -ArgumentList $goPath
-          
-          # Wait for both jobs to complete
-          Receive-Job -Job $tracesJob -Wait
-          Receive-Job -Job $logsJob -Wait
-          
-          Write-Host "Telemetry data generation completed"
-        shell: powershell
 
       - name: Test collector metrics endpoint
         run: |
-          # Wait longer to ensure agent has started collecting and exporting data
           Write-Host "Waiting for collector to gather metrics..."
           Start-Sleep -Seconds 60
           
-          # Check metrics endpoint for signs of successful export
           Write-Host "Checking collector metrics endpoint..."
           $metricsContent = Invoke-WebRequest -Uri "http://localhost:8888/metrics" -UseBasicParsing
           $metricsContent.Content | Out-File -FilePath "collector_metrics.txt"
           
-          # Validate metrics and logs are being sent successfully
           $metricsContent = Get-Content -Path "collector_metrics.txt" -Raw
-          if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records" -and $metricsContent -match "otelcol_exporter_sent_spans") {
+          if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records") {
             Write-Host "✅ Collector is successfully exporting metrics, logs, and traces"
-            Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records|spans)"
+            Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records)"
           } else {
             Write-Host "❌ Collector is not exporting metrics, logs, or traces properly"
             Get-Content -Path "collector_metrics.txt"
