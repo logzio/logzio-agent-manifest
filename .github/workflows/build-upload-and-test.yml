@@ -94,6 +94,11 @@ jobs:
           sudo systemctl status -l logzioOTELCollector
           ps aux | grep otel-collector
 
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
       - name: Install telemetrygen
         run: |
           go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
@@ -206,6 +211,11 @@ jobs:
           cat /opt/logzio-agent/logzio-otel-collector/logzio_otel_collector.log
           ps aux | grep otel-collector
 
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
       - name: Install telemetrygen
         run: |
           go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
