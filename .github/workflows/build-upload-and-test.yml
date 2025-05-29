@@ -235,40 +235,30 @@ jobs:
             Get-ChildItem -Path "$env:APPDATA\LogzioAgent" -Recurse | Select-Object FullName
           }
           
-          # Check agent logs
-          $logPattern = "$env:APPDATA\LogzioAgent\logzio_agent*.log"
-          $logFiles = Get-ChildItem -Path $logPattern -ErrorAction SilentlyContinue
-          if ($logFiles) {
-            Write-Host "Agent log files found:"
-            foreach ($logFile in $logFiles) {
-              Write-Host "Log file: $($logFile.FullName)"
-              Get-Content $logFile.FullName | Select-Object -Last 50
-            }
-          } else {
-            Write-Host "No agent log files found at: $logPattern"
-          }
-          
           # Check running processes
-          Get-Process | Where-Object { $_.Name -like "*otel*" }
+          Write-Host "Checking running OTEL processes:"
+          Get-Process | Where-Object { $_.Name -like "*otel*" } | Format-Table Id, Name, Path
         shell: powershell
         
-      - name: Check agent service status
+      - name: Check agent service logs
         run: |
           $serviceName = "LogzioOTELCollector"
           $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+          
           if ($null -ne $service) {
             Write-Host "Service '$serviceName' found."
             Write-Host "Status: $($service.Status)"
             
-            # Get service logs from event viewer
-            Write-Host "Service logs from Event Viewer:"
-            Get-WinEvent -FilterHashtable @{LogName='Application'; ProviderName=$serviceName} -ErrorAction SilentlyContinue | 
-              Select-Object -First 20 TimeCreated, Message | Format-List
-          } else {
-            Write-Host "Service '$serviceName' not found."
+            $collectorLogPath = "$env:APPDATA\LogzioAgent\LogzioOTELCollector"
+            $collectorLogs = Get-ChildItem -Path $collectorLogPath -Filter "*.log" -ErrorAction SilentlyContinue
+            if ($collectorLogs) {
+              Write-Host "Collector log files found:"
+              foreach ($logFile in $collectorLogs) {
+                Write-Host "Log file: $($logFile.FullName)"
+                Get-Content $logFile.FullName | Select-Object -Last 100
+              }
+            } else {
+              Write-Host "No collector log files found in $collectorLogPath"
+            }
             
-            # List all services to help debug
-            Write-Host "Available services:"
-            Get-Service | Where-Object { $_.DisplayName -like "*logzio*" -or $_.Name -like "*logzio*" -or $_.DisplayName -like "*otel*" -or $_.Name -like "*otel*" }
-          }
         shell: powershell

@@ -12,7 +12,14 @@ function Get-IsSpanMetrics {
   $script:IsSpanMetrics = $false
   foreach ($param in $script:TracesParams) {
       if ($param.name -eq 'isSpanMetrics') {
-          $script:IsSpanMetrics = $param.value
+          if ($param.value -is [string]) {
+              if ($param.value -eq "true" -or $param.value -eq "True") {
+                  $script:IsSpanMetrics = $true
+              }
+          } else {
+              $script:IsSpanMetrics = [bool]$param.value
+          }
+          
           $Message = "'isSpanMetrics' param found: $($script:IsSpanMetrics)"
           Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
           Write-Log $script:LogLevelDebug $Message
