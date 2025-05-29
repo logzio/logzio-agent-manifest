@@ -173,27 +173,8 @@ jobs:
 
       - name: Build Windows artifacts
         run: |
-          New-Item -Path "assets" -ItemType Directory -Force | Out-Null
-          
-          New-Item -Path "tmp" -ItemType Directory -Force | Out-Null
-          
-          Copy-Item -Path "scripts/windows/*" -Destination "tmp" -Recurse -Force
-          Copy-Item -Path "version" -Destination "tmp" -Force
-          
-          Compress-Archive -Path "tmp/*" -DestinationPath "assets/agent_windows.zip" -Force
-          
-          Remove-Item -Path "tmp/*" -Recurse -Force
-          
-          Copy-Item -Path "datasources/windows/*" -Destination "tmp" -Recurse -Force
-          Copy-Item -Path "resources" -Destination "tmp" -Recurse -Force
-          
-          Compress-Archive -Path "tmp/kubernetes/aks", "tmp/resources" -DestinationPath "assets/windows_kubernetes_aks.zip" -Force
-          Compress-Archive -Path "tmp/kubernetes/eks", "tmp/resources" -DestinationPath "assets/windows_kubernetes_eks.zip" -Force
-          Compress-Archive -Path "tmp/kubernetes/gke", "tmp/resources" -DestinationPath "assets/windows_kubernetes_gke.zip" -Force
-          Compress-Archive -Path "tmp/kubernetes/digitalocean", "tmp/resources" -DestinationPath "assets/windows_kubernetes_digitalocean.zip" -Force
-          Compress-Archive -Path "tmp/localhost/windows", "tmp/resources" -DestinationPath "assets/windows_localhost_windows.zip" -Force
-          
-          Remove-Item -Path "tmp" -Recurse -Force
+          make windows
+
         shell: powershell
 
       - name: Set up agent configuration and replace tokens
