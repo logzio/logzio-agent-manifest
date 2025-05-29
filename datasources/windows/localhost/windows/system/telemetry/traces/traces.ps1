@@ -12,7 +12,7 @@ Write-Host 'Traces' -ForegroundColor Magenta -NoNewline
 Write-Host ' ###'
 Write-Host '############'
 
-Invoke-Task 'Setup-TracesEnvParams' @{} 'Setting up traces env params' @($TracesFunctionsScript)
+Invoke-Task 'Setup-TracesEnvParams' @{TracesParams = $script:TracesParams} 'Setting up traces env params' @($TracesFunctionsScript)
 # Get Logz.io traces token
 Invoke-Task 'Get-LogzioTracesToken' @{} 'Getting Logz.io traces token' @($TracesFunctionsScript)
 # Add traces pipeline to OTEL config

@@ -12,14 +12,7 @@ function Get-IsSpanMetrics {
   $script:IsSpanMetrics = $false
   foreach ($param in $script:TracesParams) {
       if ($param.name -eq 'isSpanMetrics') {
-          if ($param.value -is [string]) {
-              if ($param.value -eq "true" -or $param.value -eq "True") {
-                  $script:IsSpanMetrics = $true
-              }
-          } else {
-              $script:IsSpanMetrics = [bool]$param.value
-          }
-          
+          $script:IsSpanMetrics = $param.value
           $Message = "'isSpanMetrics' param found: $($script:IsSpanMetrics)"
           Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
           Write-Log $script:LogLevelDebug $Message
@@ -153,7 +146,7 @@ function Add-TracesPipelineToOtelConfig {
 
 # Gets traces OTEL receivers
 # Input:
-#   FuncArgs - Hashtable {TracesTelemetry = $script:TracesTelemetry}
+#   FuncArgs - Hashtable {TracesTelemetry = $script:TracesTelemetry; TracesParams = $script:TracesParams}
 # Ouput:
 #   TracesOtelReceivers - List of Traces OTEL receiver names
 function Get-TracesOtelReceivers {
@@ -168,7 +161,7 @@ function Get-TracesOtelReceivers {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
 
-    $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesTelemetry')
+    $local:Err = Test-AreFuncArgsExist $FuncArgs @('TracesTelemetry', 'TracesParams')
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
@@ -178,10 +171,11 @@ function Get-TracesOtelReceivers {
     }
 
     $local:TracesTelemetry = $FuncArgs.TracesTelemetry
+    $local:TracesParams = $FuncArgs.TracesParams
 
     $Err = Get-JsonStrFieldValueList $TracesTelemetry '.otel.receivers[]'
     if ($Err.Count -ne 0) {
-        $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+        $Message = "traces.ps1 ($ExitCode): $($Err[0])"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:TracesLogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
@@ -631,7 +625,7 @@ function Add-SpanMetricsConnectorToOtelConfig {
     $local:Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelResourcesDir\connectors\spanmetrics.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.connectors'
     if ($Err.Count -ne 0) {
         $Message = "traces.ps1 ($ExitCode): $($Err[0])"
-        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
         Write-TaskPostRun "Write-Error `"$Message`""
 
         return $ExitCode
