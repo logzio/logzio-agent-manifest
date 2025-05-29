@@ -214,31 +214,44 @@ jobs:
           New-Item -Path "$env:APPDATA\LogzioAgent" -ItemType Directory -Force | Out-Null
         shell: powershell
         
-      - name: Test connectivity 
-        shell: powershell
-        run: |
-          Test-NetConnection -ComputerName listener.logz.io -Port 8071
-          Test-NetConnection -ComputerName https://listener.logz.io -Port 8071
-          Test-NetConnection -ComputerName listener.logz.io -Port 8053
-          Test-NetConnection -ComputerName https://listener.logz.io -Port 8074
       - name: Install agent
         run: |
           Set-ExecutionPolicy Bypass -Scope Process -Force
           
-          & "$env:TEMP\Logzio\agent.ps1" "--url=https://app.logz.io" "--id=$env:LOGZIO_ID" "--debug=$env:TEMP\logzio-agent-test\config.json" "--release=test" --enable-cursor
+          & "$env:TEMP\Logzio\agent.ps1" "--url=https://app.logz.io" "--id=$env:LOGZIO_ID" "--debug=$env:TEMP\logzio-agent-test\config.json" "--release=test" "--enable-cursor"
         shell: powershell
           
       - name: Check agent installation
         run: |
           Start-Sleep -Seconds 10
-          if (Test-Path "C:\Program Files\Logzio\logzio-otel-collector\otel_config.yaml") {
-            Get-Content "C:\Program Files\Logzio\logzio-otel-collector\otel_config.yaml"
+          
+          # Check configuration file at correct location
+          $configPath = "$env:APPDATA\LogzioAgent\LogzioOTELCollector\otel_config.yaml"
+          if (Test-Path $configPath) {
+            Write-Host "Configuration file found at: $configPath"
+            Get-Content $configPath
           } else {
-            Write-Host "Configuration file not found at expected location"
-            Get-ChildItem -Path "C:\Program Files\Logzio" -Recurse | Select-Object FullName
+            Write-Host "Configuration file not found at expected location: $configPath"
+            Get-ChildItem -Path "$env:APPDATA\LogzioAgent" -Recurse | Select-Object FullName
           }
+          
+          # Check agent logs
+          $logPattern = "$env:APPDATA\LogzioAgent\logzio_agent*.log"
+          $logFiles = Get-ChildItem -Path $logPattern -ErrorAction SilentlyContinue
+          if ($logFiles) {
+            Write-Host "Agent log files found:"
+            foreach ($logFile in $logFiles) {
+              Write-Host "Log file: $($logFile.FullName)"
+              Get-Content $logFile.FullName | Select-Object -Last 50
+            }
+          } else {
+            Write-Host "No agent log files found at: $logPattern"
+          }
+          
+          # Check running processes
           Get-Process | Where-Object { $_.Name -like "*otel*" }
         shell: powershell
+        
       - name: Check agent service status
         run: |
           $serviceName = "LogzioOTELCollector"
@@ -246,7 +259,16 @@ jobs:
           if ($null -ne $service) {
             Write-Host "Service '$serviceName' found."
             Write-Host "Status: $($service.Status)"
+            
+            # Get service logs from event viewer
+            Write-Host "Service logs from Event Viewer:"
+            Get-WinEvent -FilterHashtable @{LogName='Application'; ProviderName=$serviceName} -ErrorAction SilentlyContinue | 
+              Select-Object -First 20 TimeCreated, Message | Format-List
           } else {
             Write-Host "Service '$serviceName' not found."
+            
+            # List all services to help debug
+            Write-Host "Available services:"
+            Get-Service | Where-Object { $_.DisplayName -like "*logzio*" -or $_.Name -like "*logzio*" -or $_.DisplayName -like "*otel*" -or $_.Name -like "*otel*" }
           }
         shell: powershell
