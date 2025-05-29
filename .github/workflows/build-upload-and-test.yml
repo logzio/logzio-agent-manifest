@@ -102,7 +102,6 @@ jobs:
       - name: Install telemetrygen
         run: |
           go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
-          telemetrygen --version
 
       - name: Generate test telemetry data
         run: |
@@ -219,7 +218,6 @@ jobs:
       - name: Install telemetrygen
         run: |
           go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
-          telemetrygen --version
 
       - name: Generate test telemetry data
         run: |
@@ -338,7 +336,6 @@ jobs:
       - name: Install telemetrygen
         run: |
           go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
-          telemetrygen --version
 
       - name: Generate test telemetry data
         run: |
