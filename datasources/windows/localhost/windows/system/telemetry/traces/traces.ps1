@@ -36,7 +36,7 @@ if ($script:IsSpanMetrics -eq $true) {
   Write-Host '############'
 
   # Get Logz.io metrics token
-  Invoke-Task 'Get-LogzioMetricsToken' @{} 'Getting Logz.io metrics token' @($MetricsFunctionsScript)
+  Invoke-Task 'Get-LogzioMetricsToken' @{} 'Getting Logz.io metrics token' @($TracesFunctionsScript)
   # Configure spanmetrics pipeline to OTEL config
   Invoke-Task 'Add-SpanMetircsPipelineToOtelConfig' @{} 'Adding span metrics pipeline to OTEL config' @($TracesFunctionsScript)
   # Add spanmetrics connector to OTEL config
