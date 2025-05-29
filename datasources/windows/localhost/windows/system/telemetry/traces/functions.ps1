@@ -501,7 +501,7 @@ function Add-TracesExporterToOtelConfig {
     $local:TracesToken = $FuncArgs.TracesToken
     $local:ListenerUrl = $FuncArgs.ListenerUrl
 
-    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\logzio_traces.yaml" '.logzio/traces.account_token' $LogsToken
+    $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\logzio_traces.yaml" '.logzio/traces.account_token' $TracesToken
     if ($Err.Count -ne 0) {
       $Message = "traces.ps1 ($ExitCode): $($Err[0])"
       Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
