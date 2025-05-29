@@ -76,9 +76,9 @@ function Setup-TracesEnvParams {
 
   # Export values as environment variables for collector configuration
   # Using the same default pattern as in Mac/Linux implementation
-  $local:IsSpanMetrics = $script:IsSpanMetrics -eq $true ? "true" : "false"
-  $local:SamplingLatency = $script:SamplingLatency -ne $null ? $script:SamplingLatency : 200
-  $local:SamplingPropability = $script:SamplingPropability -ne $null ? $script:SamplingPropability : 10
+  $local:IsSpanMetrics = if ($script:IsSpanMetrics -eq $true) { "true" } else { "false" }
+  $local:SamplingLatency = if ($script:SamplingLatency -ne $null) { $script:SamplingLatency } else { 200 }
+  $local:SamplingPropability = if ($script:SamplingPropability -ne $null) { $script:SamplingPropability } else { 10 }
 
   [System.Environment]::SetEnvironmentVariable('IS_SPAN_METRICS', $IsSpanMetrics)
   [System.Environment]::SetEnvironmentVariable('SAMPLING_LATENCY', $SamplingLatency)
