@@ -4,7 +4,7 @@
     "TRACING": "${LOGZIO_TRACES_TOKEN}",
     "METRICS": "${LOGZIO_METRICS_TOKEN}"
   },
-  "listenerUrl": "https://listener.logz.io",
+  "listenerUrl": "listener.logz.io",
   "configuration": {
     "name": "Localhost",
     "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
