@@ -170,7 +170,8 @@ function Invoke-LogzioOtelCollectorService {
         New-Service -Name $script:LogzioOtelCollectorServiceName -BinaryPathName "$script:OtelCollectorExe --config $script:OtelConfig" -Description "Collects localhost logs/metrics and sends them to Logz.io." -ErrorAction Stop | Out-Null
     }
     catch {
-        Write-Host "Failed to create service: $($_.Exception.Message)"
+        $Message = "Failed to create service: $($_.Exception.Message)"
+        Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         $Message = "installer.ps1 ($ExitCode): error creating '$script:LogzioOtelCollectorServiceName' service: $_"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
