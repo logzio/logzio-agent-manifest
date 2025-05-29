@@ -872,7 +872,7 @@ function Add-SpanMetricsExporterToOtelConfig {
     }
 
     if (-not $IsExporterExist) {
-        $local:Endpoint = "$ListenerUrl`:8053"
+        $local:Endpoint = "https://$ListenerUrl`:8053"
         $Err = Set-YamlFileFieldValue "$script:OtelExportersDir\prometheusremotewrite.yaml" '.prometheusremotewrite.endpoint' $Endpoint
         if ($Err.Count -ne 0) {
             $Message = "traces.ps1 ($ExitCode): $($Err[0])"

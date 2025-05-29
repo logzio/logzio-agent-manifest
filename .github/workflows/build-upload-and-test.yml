@@ -94,6 +94,27 @@ jobs:
           sudo systemctl status -l logzioOTELCollector
           ps aux | grep otel-collector
 
+      - name: Test collector metrics endpoint
+        run: |
+          # Wait longer to ensure agent has started collecting and exporting data
+          echo "Waiting for collector to gather metrics..."
+          sleep 60
+          
+          # Check metrics endpoint for signs of successful export
+          echo "Checking collector metrics endpoint..."
+          curl -s http://localhost:8888/metrics > collector_metrics.txt
+          
+          # Validate metrics and logs are being sent successfully
+          if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt; then
+            echo "✅ Collector is successfully exporting metrics and logs"
+            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records)"
+          else
+            echo "❌ Collector is not exporting metrics or logs properly"
+            cat collector_metrics.txt
+            exit 1
+          fi
+
   test-mac:
     needs: build-and-upload
     runs-on: macos-latest
@@ -163,6 +184,27 @@ jobs:
           cat /opt/logzio-agent/logzio-otel-collector/otel_config.yaml
           cat /opt/logzio-agent/logzio-otel-collector/logzio_otel_collector.log
           ps aux | grep otel-collector
+
+      - name: Test collector metrics endpoint
+        run: |
+          # Wait longer to ensure agent has started collecting and exporting data
+          echo "Waiting for collector to gather metrics..."
+          sleep 60
+          
+          # Check metrics endpoint for signs of successful export
+          echo "Checking collector metrics endpoint..."
+          curl -s http://localhost:8888/metrics > collector_metrics.txt
+          
+          # Validate metrics and logs are being sent successfully
+          if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt; then
+            echo "✅ Collector is successfully exporting metrics and logs"
+            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records)"
+          else
+            echo "❌ Collector is not exporting metrics or logs properly"
+            cat collector_metrics.txt
+            exit 1
+          fi
 
   test-windows:
     needs: build-and-upload
@@ -238,27 +280,26 @@ jobs:
           # Check running processes
           Write-Host "Checking running OTEL processes:"
           Get-Process | Where-Object { $_.Name -like "*otel*" } | Format-Table Id, Name, Path
-        shell: powershell
-        
-      - name: Check agent service logs
+
+      - name: Test collector metrics endpoint
         run: |
-          $serviceName = "LogzioOTELCollector"
-          $service = Get-Service -Name $serviceName -ErrorAction SilentlyContinue
+          # Wait longer to ensure agent has started collecting and exporting data
+          Write-Host "Waiting for collector to gather metrics..."
+          Start-Sleep -Seconds 60
           
-          if ($null -ne $service) {
-            Write-Host "Service '$serviceName' found."
-            Write-Host "Status: $($service.Status)"
-            
-            $collectorLogPath = "$env:APPDATA\LogzioAgent\LogzioOTELCollector"
-            $collectorLogs = Get-ChildItem -Path $collectorLogPath -Filter "*.log" -ErrorAction SilentlyContinue
-            if ($collectorLogs) {
-              Write-Host "Collector log files found:"
-              foreach ($logFile in $collectorLogs) {
-                Write-Host "Log file: $($logFile.FullName)"
-                Get-Content $logFile.FullName | Select-Object -Last 100
-              }
-            } else {
-              Write-Host "No collector log files found in $collectorLogPath"
-            }
-            
+          # Check metrics endpoint for signs of successful export
+          Write-Host "Checking collector metrics endpoint..."
+          $metricsContent = Invoke-WebRequest -Uri "http://localhost:8888/metrics" -UseBasicParsing
+          $metricsContent.Content | Out-File -FilePath "collector_metrics.txt"
+          
+          # Validate metrics and logs are being sent successfully
+          $metricsContent = Get-Content -Path "collector_metrics.txt" -Raw
+          if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records") {
+            Write-Host "✅ Collector is successfully exporting metrics and logs"
+            Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records)"
+          } else {
+            Write-Host "❌ Collector is not exporting metrics or logs properly"
+            Get-Content -Path "collector_metrics.txt"
+            exit 1
+          }
         shell: powershell

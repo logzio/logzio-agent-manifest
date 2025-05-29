@@ -418,7 +418,7 @@ function Add-MetricsExporterToOtelConfig {
     }
 
     if (-not $IsExporterExist) {
-        $local:Endpoint = "$ListenerUrl`:8053"
+        $local:Endpoint = "https://$ListenerUrl`:8053"
         
         $Message = "Prometheus Remote Write endpoint set to '$Endpoint'"
         Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepMetrics $script:LogScriptMetrics $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
