@@ -106,12 +106,11 @@ jobs:
       - name: Generate test telemetry data
         run: |
           echo "Generating test traces and logs..."
-          # Run telemetrygen to send traces to the collector
-          telemetrygen traces --otlp-insecure --traces 10 &
+          telemetrygen traces --otlp-insecure --traces 100 &
           TRACES_PID=$!
           
           # Run telemetrygen to send logs to the collector
-          telemetrygen logs --otlp-insecure --logs 10 &
+          telemetrygen logs --otlp-insecure --logs 100 &
           LOGS_PID=$!
           
           # Wait for telemetrygen processes to complete
@@ -223,11 +222,11 @@ jobs:
         run: |
           echo "Generating test traces and logs..."
           # Run telemetrygen to send traces to the collector
-          telemetrygen traces --otlp-insecure --traces 10 &
+          telemetrygen traces --otlp-insecure --traces 100 &
           TRACES_PID=$!
           
           # Run telemetrygen to send logs to the collector
-          telemetrygen logs --otlp-insecure --logs 10 &
+          telemetrygen logs --otlp-insecure --logs 100 &
           LOGS_PID=$!
           
           # Wait for telemetrygen processes to complete
@@ -336,20 +335,34 @@ jobs:
       - name: Install telemetrygen
         run: |
           go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+          
+          # Add Go bin directory to PATH and verify installation
+          $env:PATH += ";$env:USERPROFILE\go\bin"
+          
+          # Export PATH for child processes
+          echo "PATH=$env:PATH" | Out-File -FilePath $env:GITHUB_ENV -Append
+        shell: powershell
 
       - name: Generate test telemetry data
         run: |
           Write-Host "Generating test traces and logs..."
           
+          # Ensure Go bin is in PATH for child jobs
+          $goPath = "$env:USERPROFILE\go\bin"
+          
           # Start a job for traces
           $tracesJob = Start-Job -ScriptBlock {
-            telemetrygen traces --otlp-insecure --traces 10
-          }
+            param($goPath)
+            $env:PATH += ";$goPath"
+            & "$goPath\telemetrygen" traces --otlp-insecure --traces 10
+          } -ArgumentList $goPath
           
           # Start a job for logs
           $logsJob = Start-Job -ScriptBlock {
-            telemetrygen logs --otlp-insecure --logs 10
-          }
+            param($goPath)
+            $env:PATH += ";$goPath"
+            & "$goPath\telemetrygen" logs --otlp-insecure --logs 10
+          } -ArgumentList $goPath
           
           # Wait for both jobs to complete
           Receive-Job -Job $tracesJob -Wait
