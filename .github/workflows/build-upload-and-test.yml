@@ -94,23 +94,44 @@ jobs:
           sudo systemctl status -l logzioOTELCollector
           ps aux | grep otel-collector
 
+      - name: Install telemetrygen
+        run: |
+          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+          telemetrygen --version
+
+      - name: Generate test telemetry data
+        run: |
+          echo "Generating test traces and logs..."
+          # Run telemetrygen to send traces to the collector
+          telemetrygen traces --otlp-insecure --traces 10 &
+          TRACES_PID=$!
+          
+          # Run telemetrygen to send logs to the collector
+          telemetrygen logs --otlp-insecure --logs 10 &
+          LOGS_PID=$!
+          
+          # Wait for telemetrygen processes to complete
+          wait $TRACES_PID
+          wait $LOGS_PID
+          
+          echo "Telemetry data generation completed"
+
       - name: Test collector metrics endpoint
         run: |
-          # Wait longer to ensure agent has started collecting and exporting data
           echo "Waiting for collector to gather metrics..."
           sleep 60
           
-          # Check metrics endpoint for signs of successful export
           echo "Checking collector metrics endpoint..."
           curl -s http://localhost:8888/metrics > collector_metrics.txt
           
-          # Validate metrics and logs are being sent successfully
+          # Validate metrics, logs, and traces are being sent successfully
           if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
-             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt; then
-            echo "✅ Collector is successfully exporting metrics and logs"
-            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records)"
+             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
+            echo "✅ Collector is successfully exporting metrics, logs, and traces"
+            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
           else
-            echo "❌ Collector is not exporting metrics or logs properly"
+            echo "❌ Collector is not exporting metrics, logs, or traces properly"
             cat collector_metrics.txt
             exit 1
           fi
@@ -185,6 +206,28 @@ jobs:
           cat /opt/logzio-agent/logzio-otel-collector/logzio_otel_collector.log
           ps aux | grep otel-collector
 
+      - name: Install telemetrygen
+        run: |
+          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+          telemetrygen --version
+
+      - name: Generate test telemetry data
+        run: |
+          echo "Generating test traces and logs..."
+          # Run telemetrygen to send traces to the collector
+          telemetrygen traces --otlp-insecure --traces 10 &
+          TRACES_PID=$!
+          
+          # Run telemetrygen to send logs to the collector
+          telemetrygen logs --otlp-insecure --logs 10 &
+          LOGS_PID=$!
+          
+          # Wait for telemetrygen processes to complete
+          wait $TRACES_PID
+          wait $LOGS_PID
+          
+          echo "Telemetry data generation completed"
+
       - name: Test collector metrics endpoint
         run: |
           # Wait longer to ensure agent has started collecting and exporting data
@@ -197,11 +240,12 @@ jobs:
           
           # Validate metrics and logs are being sent successfully
           if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
-             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt; then
-            echo "✅ Collector is successfully exporting metrics and logs"
-            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records)"
+             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
+            echo "✅ Collector is successfully exporting metrics, logs, and traces"
+            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
           else
-            echo "❌ Collector is not exporting metrics or logs properly"
+            echo "❌ Collector is not exporting metrics, logs, or traces properly"
             cat collector_metrics.txt
             exit 1
           fi
@@ -281,6 +325,32 @@ jobs:
           Write-Host "Checking running OTEL processes:"
           Get-Process | Where-Object { $_.Name -like "*otel*" } | Format-Table Id, Name, Path
 
+      - name: Install telemetrygen
+        run: |
+          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+          telemetrygen --version
+
+      - name: Generate test telemetry data
+        run: |
+          Write-Host "Generating test traces and logs..."
+          
+          # Start a job for traces
+          $tracesJob = Start-Job -ScriptBlock {
+            telemetrygen traces --otlp-insecure --traces 10
+          }
+          
+          # Start a job for logs
+          $logsJob = Start-Job -ScriptBlock {
+            telemetrygen logs --otlp-insecure --logs 10
+          }
+          
+          # Wait for both jobs to complete
+          Receive-Job -Job $tracesJob -Wait
+          Receive-Job -Job $logsJob -Wait
+          
+          Write-Host "Telemetry data generation completed"
+        shell: powershell
+
       - name: Test collector metrics endpoint
         run: |
           # Wait longer to ensure agent has started collecting and exporting data
@@ -294,11 +364,11 @@ jobs:
           
           # Validate metrics and logs are being sent successfully
           $metricsContent = Get-Content -Path "collector_metrics.txt" -Raw
-          if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records") {
-            Write-Host "✅ Collector is successfully exporting metrics and logs"
-            Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records)"
+          if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records" -and $metricsContent -match "otelcol_exporter_sent_spans") {
+            Write-Host "✅ Collector is successfully exporting metrics, logs, and traces"
+            Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records|spans)"
           } else {
-            Write-Host "❌ Collector is not exporting metrics or logs properly"
+            Write-Host "❌ Collector is not exporting metrics, logs, or traces properly"
             Get-Content -Path "collector_metrics.txt"
             exit 1
           }
