@@ -86,7 +86,7 @@ function get_is_span_metrics {
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_log "$LOG_LEVEL_DEBUG" "$message"
     fi
-    export IS_SPAN_METRICS
+    write_task_post_run "IS_SPAN_METRICS='$IS_SPAN_METRICS'"
 }
 
 # Gets the value for samplingLatency param
@@ -111,7 +111,7 @@ function get_sampling_latency {
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_log "$LOG_LEVEL_DEBUG" "$message"
     fi
-    export SAMPLING_LATENCY
+    write_task_post_run "SAMPLING_LATENCY='$SAMPLING_LATENCY'"
 }
 
 # Gets the value for samplingPropability param
@@ -136,5 +136,5 @@ function get_sampling_propability {
         send_log_to_logzio "$LOG_LEVEL_DEBUG" "$message" "$LOG_STEP_TRACES" "$LOG_SCRIPT_TRACES" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
         write_log "$LOG_LEVEL_DEBUG" "$message"
     fi
-    export SAMPLING_PROPABILITY
+    write_task_post_run "SAMPLING_PROPABILITY='$SAMPLING_PROPABILITY'"
 }

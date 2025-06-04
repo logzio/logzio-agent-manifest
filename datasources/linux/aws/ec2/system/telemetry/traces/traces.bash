@@ -19,9 +19,6 @@ load_traces_utils
 get_is_span_metrics
 get_sampling_latency
 get_sampling_propability
-export IS_SPAN_METRICS
-export SAMPLING_LATENCY
-export SAMPLING_PROPABILITY
 
 # Get Logz.io traces token
 execute_task 'get_logzio_traces_token' 'Getting Logz.io traces token'
