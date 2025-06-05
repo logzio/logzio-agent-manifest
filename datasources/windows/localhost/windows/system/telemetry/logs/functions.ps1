@@ -387,7 +387,7 @@ function Add-LogsReceiversToOtelConfig {
 
         $local:ReceiverName = $LogsOtelReceiver.Replace('_', '/')
         
-        # Handle OTLP receiver without /NAME suffix
+        # We dont use /NAME in otel config for otlp receiver because it is used for all telemetry pipelines
         if ($ReceiverName -eq 'otlp') {
             $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.logs.receivers' "$ReceiverName"
             if ($Err.Count -ne 0) {
