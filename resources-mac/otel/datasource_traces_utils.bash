@@ -112,6 +112,7 @@ function add_traces_receivers_to_otel_config {
         fi
 
         local receiver_name="${traces_otel_receiver//_//}"
+        # We dont use /NAME in otel config for otlp receiver because it is used for all telemetry pipelines
         if [[ "$receiver_name" == "otlp" ]]; then
           add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.traces.receivers' "$receiver_name"
           if [[ $? -ne 0 ]]; then
