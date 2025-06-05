@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
   pull_request:
     branches:
-      - main
       - master
     paths-ignore:
       - '**.md'
@@ -18,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up GitHub CLI
         run: |
@@ -40,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up agent configuration and replace tokens
         run: |
@@ -137,7 +136,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Bash 4 with Homebrew
         run: |
@@ -199,7 +198,7 @@ jobs:
           ps aux | grep otel-collector
 
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: '1.21'
           
@@ -245,7 +244,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build Windows artifacts
         run: |
