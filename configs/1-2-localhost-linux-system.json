@@ -67,7 +67,7 @@
                   "name": "isSpanMetrics",
                   "label": "Collect span metrics",
                   "description": "",
-                  "hint": "By checking this option, OpenTelemetry will collect span metrics.",
+                  "hint": "By checking this option, Logz.io Telemetry Collector will collect span metrics.",
                   "value": true
                 },
                 {
@@ -75,7 +75,7 @@
                   "name": "samplingLatency",
                   "label": "Sampling latency threshold",
                   "description": "The sampling latency threshold in milliseconds.",
-                  "hint": "By setting this option, OpenTelemetry will sample traces that exceed the specified latency threshold.",
+                  "hint": "By setting this option, Logz.io Telemetry Collector will sample traces that exceed the specified latency threshold.",
                   "value": 200
                 },
                 {
@@ -83,7 +83,7 @@
                   "name": "samplingPropability",
                   "label": "Sampling probability precentage",
                   "description": "The sampling probability precentage.",
-                  "hint": "By setting this option, OpenTelemetry will sample traces with the specified probability.",
+                  "hint": "By setting this option, Logz.io Telemetry Collector will sample traces with the specified probability.",
                   "value": 10
                 }              ]
             }
