@@ -19,5 +19,15 @@
       <string>OTEL_CONFIG</string>
     </array>
 
+    <key>EnvironmentVariables</key>
+    <dict>
+      <key>SAMPLING_PROPABILITY</key>
+      <string>SAMPLING_PROPABILITY_PLACEHOLDER</string>
+      <key>SAMPLING_LATENCY</key>
+      <string>SAMPLING_LATENCY_PLACEHOLDER</string>
+      <key>IS_SPAN_METRICS</key>
+      <string>IS_SPAN_METRICS_PLACEHOLDER</string>
+    </dict>
+
   </dict>
 </plist>

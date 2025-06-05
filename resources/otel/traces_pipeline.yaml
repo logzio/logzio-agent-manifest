@@ -1,0 +1,4 @@
+traces:
+  receivers: []
+  processors: []
+  exporters: [logzio/traces]

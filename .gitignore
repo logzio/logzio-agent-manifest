@@ -1,3 +1,5 @@
 .idea/**
 manifest.json
 **/.DS_Store
+assets
+tests/test.json

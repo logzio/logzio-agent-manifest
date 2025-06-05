@@ -165,12 +165,11 @@ function Invoke-LogzioOtelCollectorService {
     $Message = Get-Content -Path $script:OtelConfig
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
-
     try {
         New-Service -Name $script:LogzioOtelCollectorServiceName -BinaryPathName "$script:OtelCollectorExe --config $script:OtelConfig" -Description "Collects localhost logs/metrics and sends them to Logz.io." -ErrorAction Stop | Out-Null
     }
     catch {
-        $Message = "installer.ps1 ($ExitCode): error creating '$script:LogzioOtelCollectorServiceName' service: $_"
+        $Message = "installer.ps1 ($ExitCode): error creating '$script:LogzioOtelCollectorServiceName' service: $_ error: $_.Exception.Message"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
 
@@ -191,7 +190,6 @@ function Invoke-LogzioOtelCollectorService {
         $Message = "installer.ps1 ($ExitCode): error starting '$script:LogzioOtelCollectorServiceName' service: $_"
         Send-LogToLogzio $script:LogLevelError $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
         Write-TaskPostRun "Write-Error `"$Message`""
-
         sc.exe DELETE LogzioOTELCollector 2>$script:TaskErrorFile | Out-Null
         if ($LASTEXITCODE -ne 0) {
             $Message = "installer.ps1 ($ExitCode): error deleting '$script:LogzioOtelCollectorServiceName' service: $(Get-TaskErrorMessage)"

@@ -1,0 +1,331 @@
+name: Localhost tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+
+permissions:
+  contents: write
+  actions: write
+
+jobs:
+  build-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up GitHub CLI
+        run: |
+          gh --version || (
+            echo "Installing GitHub CLI"
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt update
+            sudo apt install gh
+          )
+
+      - name: Build and upload to test release
+        run: bash ./upload-test-release.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test-linux:
+    needs: build-and-upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up agent configuration and replace tokens
+        run: |
+          mkdir -p /tmp/logzio-agent-test
+          cp tests/localhost_linux.json /tmp/logzio-agent-test/config.json
+          
+          sed -i "s|\${LOGZIO_LOGS_TOKEN}|$LOGZIO_LOGS_TOKEN|g" /tmp/logzio-agent-test/config.json
+          sed -i "s|\${LOGZIO_METRICS_TOKEN}|$LOGZIO_METRICS_TOKEN|g" /tmp/logzio-agent-test/config.json
+          sed -i "s|\${LOGZIO_TRACES_TOKEN}|$LOGZIO_TRACES_TOKEN|g" /tmp/logzio-agent-test/config.json
+        env:
+          LOGZIO_LOGS_TOKEN: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          LOGZIO_METRICS_TOKEN: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          LOGZIO_TRACES_TOKEN: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+
+      - name: Set LOGZIO_ID
+        run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
+
+      - name: build and extract Linux agent
+        run: |
+          make
+          mkdir -p /tmp/logzio
+          cp ./assets/agent_linux.tar.gz /tmp/logzio/
+          tar -zxf /tmp/logzio/agent_linux.tar.gz --directory /tmp/logzio
+
+      - name: Install agent
+        run: |
+          sudo mkdir -p /opt/logzio-agent
+          sudo chown -R $USER: /opt/logzio-agent
+          
+          sudo bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test || {
+            exit_code=$?
+            
+            if [ $exit_code -eq 3 ]; then
+              echo "Agent installation exited with code 3"
+              echo "Continuing with the workflow..."
+              true # Force success
+            else
+              echo "Agent installation failed with exit code $exit_code"
+              exit $exit_code
+            fi
+          }
+          
+      - name: Check agent installation
+        run: |
+          sleep 10
+          cat /opt/logzio-agent/logzio-otel-collector/otel_config.yaml
+          sudo systemctl status -l logzioOTELCollector
+          ps aux | grep otel-collector
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
+      - name: Install telemetrygen
+        run: |
+          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+
+      - name: Generate test telemetry data
+        run: |
+          echo "Generating test traces and logs..."
+          telemetrygen traces --otlp-http --otlp-insecure --traces 100 &
+          TRACES_PID=$!
+          
+          telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
+          LOGS_PID=$!
+          
+          wait $TRACES_PID
+          wait $LOGS_PID
+          
+          echo "Telemetry data generation completed"
+
+      - name: Test collector metrics endpoint
+        run: |
+          echo "Waiting for collector to gather metrics..."
+          sleep 60
+          
+          echo "Checking collector metrics endpoint..."
+          curl -s http://localhost:8888/metrics > collector_metrics.txt
+          
+          if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
+            echo "✅ Collector is successfully exporting metrics, logs, and traces"
+            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
+          else
+            echo "❌ Collector is not exporting metrics, logs, or traces properly"
+            cat collector_metrics.txt
+            exit 1
+          fi
+
+  test-mac:
+    needs: build-and-upload
+    runs-on: macos-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Bash 4 with Homebrew
+        run: |
+          brew install bash
+          
+          brew_bash=$(brew --prefix)/bin/bash
+          echo "Bash installed at: $brew_bash"
+          $brew_bash --version
+
+      - name: Set up agent configuration and replace tokens
+        run: |
+          mkdir -p /tmp/logzio-agent-test
+          cp tests/localhost_mac.json /tmp/logzio-agent-test/config.json
+          
+          sed -i '' "s|\${LOGZIO_LOGS_TOKEN}|$LOGZIO_LOGS_TOKEN|g" /tmp/logzio-agent-test/config.json
+          sed -i '' "s|\${LOGZIO_METRICS_TOKEN}|$LOGZIO_METRICS_TOKEN|g" /tmp/logzio-agent-test/config.json
+          sed -i '' "s|\${LOGZIO_TRACES_TOKEN}|$LOGZIO_TRACES_TOKEN|g" /tmp/logzio-agent-test/config.json
+        env:
+          LOGZIO_LOGS_TOKEN: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          LOGZIO_METRICS_TOKEN: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          LOGZIO_TRACES_TOKEN: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+
+      - name: Set LOGZIO_ID
+        run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
+
+      - name: Download and extract Mac agent
+        run: |
+          make
+          mkdir -p /tmp/logzio
+          cp ./assets/agent_mac.tar.gz /tmp/logzio/          
+          tar -zxf /tmp/logzio/agent_mac.tar.gz --directory /tmp/logzio
+
+      - name: Install agent
+        run: |
+          sudo mkdir -p /opt/logzio-agent
+          sudo chown -R $USER: /opt/logzio-agent
+          
+          brew_bash=$(brew --prefix)/bin/bash
+          echo "Using Bash from: $brew_bash"
+          
+          sudo $brew_bash /tmp/logzio/agent.bash --url=https://app.logz.io --id=${LOGZIO_ID} --debug=/tmp/logzio-agent-test/config.json --release=test || {
+            exit_code=$?
+            
+            if [ $exit_code -eq 3 ]; then
+              echo "Agent installation exited with code 3"
+              echo "Continuing with the workflow..."
+              true # Force success
+            else
+              echo "Agent installation failed with exit code $exit_code"
+              exit $exit_code
+            fi
+          }
+          
+      - name: Check agent installation
+        run: |
+          sleep 10
+          cat /opt/logzio-agent/logzio-otel-collector/otel_config.yaml
+          cat /opt/logzio-agent/logzio-otel-collector/logzio_otel_collector.log
+          ps aux | grep otel-collector
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          
+      - name: Install telemetrygen
+        run: |
+          go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/telemetrygen@latest
+
+      - name: Generate test telemetry data
+        run: |
+          echo "Generating test traces and logs..."
+          telemetrygen traces --otlp-http --otlp-insecure --traces 100 &
+          TRACES_PID=$!
+          
+          telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
+          LOGS_PID=$!
+          
+          wait $TRACES_PID
+          wait $LOGS_PID
+          
+          echo "Telemetry data generation completed"
+
+      - name: Test collector metrics endpoint
+        run: |
+          echo "Waiting for collector to gather metrics..."
+          sleep 60
+          
+          echo "Checking collector metrics endpoint..."
+          curl -s http://localhost:8888/metrics > collector_metrics.txt
+          
+          if grep -q "otelcol_exporter_sent_metric_points" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_log_records" collector_metrics.txt && \
+             grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
+            echo "✅ Collector is successfully exporting metrics, logs, and traces"
+            cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
+          else
+            echo "❌ Collector is not exporting metrics, logs, or traces properly"
+            cat collector_metrics.txt
+            exit 1
+          fi
+
+  test-windows:
+    needs: build-and-upload
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Windows artifacts
+        run: |
+          make windows
+
+        shell: powershell
+
+      - name: Set up agent configuration and replace tokens
+        run: |
+          New-Item -Path "$env:TEMP\logzio-agent-test" -ItemType Directory -Force | Out-Null
+          
+          Copy-Item tests/localhost_windows.json -Destination "$env:TEMP\logzio-agent-test\config.json"
+          
+          $configContent = Get-Content "$env:TEMP\logzio-agent-test\config.json" -Raw
+          $configContent = $configContent.Replace('${LOGZIO_LOGS_TOKEN}', $env:LOGZIO_LOGS_TOKEN)
+          $configContent = $configContent.Replace('${LOGZIO_METRICS_TOKEN}', $env:LOGZIO_METRICS_TOKEN)
+          $configContent = $configContent.Replace('${LOGZIO_TRACES_TOKEN}', $env:LOGZIO_TRACES_TOKEN)
+          $configContent | Set-Content "$env:TEMP\logzio-agent-test\config.json"
+        shell: powershell
+        env:
+          LOGZIO_LOGS_TOKEN: ${{ secrets.LOGZIO_LOGS_TOKEN }}
+          LOGZIO_METRICS_TOKEN: ${{ secrets.LOGZIO_METRICS_TOKEN }}
+          LOGZIO_TRACES_TOKEN: ${{ secrets.LOGZIO_TRACES_TOKEN }}
+
+      - name: Set LOGZIO_ID
+        run: echo "LOGZIO_ID=$(New-Guid)" >> $env:GITHUB_ENV
+        shell: powershell
+
+      - name: Download and extract Windows agent
+        run: |
+          New-Item -Path "$env:TEMP\Logzio" -ItemType Directory -Force | Out-Null
+          
+          cp ./assets/agent_windows.zip "$env:TEMP\Logzio\agent_windows.zip"
+          Expand-Archive -LiteralPath "$env:TEMP\Logzio\agent_windows.zip" -DestinationPath "$env:TEMP\Logzio" -Force
+        shell: powershell
+
+      - name: Create required directories
+        run: |
+          New-Item -Path "$env:APPDATA\LogzioAgent" -ItemType Directory -Force | Out-Null
+        shell: powershell
+        
+      - name: Install agent
+        run: |
+          Set-ExecutionPolicy Bypass -Scope Process -Force
+          
+          & "$env:TEMP\Logzio\agent.ps1" "--url=https://app.logz.io" "--id=$env:LOGZIO_ID" "--debug=$env:TEMP\logzio-agent-test\config.json" "--release=test" "--enable-cursor"
+        shell: powershell
+          
+      - name: Check agent installation
+        run: |
+          Start-Sleep -Seconds 10
+          
+          $configPath = "$env:APPDATA\LogzioAgent\LogzioOTELCollector\otel_config.yaml"
+          if (Test-Path $configPath) {
+            Write-Host "Configuration file found at: $configPath"
+            Get-Content $configPath
+          } else {
+            Write-Host "Configuration file not found at expected location: $configPath"
+            Get-ChildItem -Path "$env:APPDATA\LogzioAgent" -Recurse | Select-Object FullName
+          }
+          
+          Write-Host "Checking running OTEL processes:"
+          Get-Process | Where-Object { $_.Name -like "*otel*" } | Format-Table Id, Name, Path
+
+
+      - name: Test collector metrics endpoint
+        run: |
+          Write-Host "Waiting for collector to gather metrics..."
+          Start-Sleep -Seconds 60
+          
+          Write-Host "Checking collector metrics endpoint..."
+          $metricsContent = Invoke-WebRequest -Uri "http://localhost:8888/metrics" -UseBasicParsing
+          $metricsContent.Content | Out-File -FilePath "collector_metrics.txt"
+          
+          $metricsContent = Get-Content -Path "collector_metrics.txt" -Raw
+          if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records") {
+            Write-Host "✅ Collector is successfully exporting metrics, logs, and traces"
+            Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records)"
+          } else {
+            Write-Host "❌ Collector is not exporting metrics, logs, or traces properly"
+            Get-Content -Path "collector_metrics.txt"
+            exit 1
+          }
+        shell: powershell

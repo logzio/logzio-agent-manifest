@@ -71,6 +71,7 @@ function add_logs_receivers_to_otel_config {
             return $EXIT_CODE
         fi
 
+        LOGS_TYPE='agent-linux'
         create_otel_receiver
         local func_status=$?
         if [[ $func_status -ne 0 && $func_status -ne 1 ]]; then
@@ -98,7 +99,18 @@ function add_logs_receivers_to_otel_config {
         fi
 
         local receiver_name="${logs_otel_receiver//_//}"
-
+        # We dont use /NAME in otel config for otlp receiver because it is used for all telemetry pipelines
+        if [[ "$receiver_name" == 'otlp' ]]; then
+          add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.logs.receivers' "$receiver_name"
+          if [[ $? -ne 0 ]]; then
+              message="logs.bash ($EXIT_CODE): $(get_task_error_message)"
+              send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_LOGS" "$LOG_SCRIPT_LOGS" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+              write_task_post_run "write_error \"$message\""
+      
+              return $EXIT_CODE
+          fi
+          continue
+        fi
         add_yaml_file_field_value "$OTEL_RESOURCES_DIR/$OTEL_CONFIG_NAME" '.service.pipelines.logs.receivers' "$receiver_name/NAME"
         if [[ $? -ne 0 ]]; then
             message="logs.bash ($EXIT_CODE): $(get_task_error_message)"

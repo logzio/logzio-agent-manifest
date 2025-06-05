@@ -386,7 +386,21 @@ function Add-LogsReceiversToOtelConfig {
         }
 
         $local:ReceiverName = $LogsOtelReceiver.Replace('_', '/')
+        
+        # We dont use /NAME in otel config for otlp receiver because it is used for all telemetry pipelines
+        if ($ReceiverName -eq 'otlp') {
+            $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.logs.receivers' "$ReceiverName"
+            if ($Err.Count -ne 0) {
+                $Message = "logs.ps1 ($ExitCode): $($Err[0])"
+                Send-LogToLogzio $script:LogLevelError $Message $script:LogStepLogs $script:LogScriptLogs $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+                Write-TaskPostRun "Write-Error `"$Message`""
 
+                return $ExitCode
+            }
+            continue
+        }
+
+        # For non-OTLP receivers, add with /NAME suffix
         $Err = Add-YamlFileFieldValue "$script:OtelResourcesDir\$script:OtelConfigName" '.service.pipelines.logs.receivers' "$ReceiverName/NAME"
         if ($Err.Count -ne 0) {
             $Message = "logs.ps1 ($ExitCode): $($Err[0])"

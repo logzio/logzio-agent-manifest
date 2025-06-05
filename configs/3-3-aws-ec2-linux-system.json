@@ -38,7 +38,7 @@
                    "required": true,
                    "description": "The paths of log files to collect.",
                    "hint": "By adding paths, OpenTelemetry will read logs from these log paths and will export them to Logz.io.",
-                   "value": ["/var/log/*.log"]
+                   "value": ["/var/log/*.log"] 
                  }
                ]
              },
@@ -46,15 +46,48 @@
                "type": "METRICS",
                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your EC2.",
                "otel": {
-                "receivers": ["hostmetrics","otlp"],
+                "receivers": ["hostmetrics" ,"otlp"],
                 "processors": ["resourcedetection_system", "resourcedetection_ec2", "resource_agent", "filter"]
 				       },
                "params": [],
                "dashboards": [
                  "2oLvCy5p914pM9m5pLoD6u"
                ]
-             }
-           ]
+              },
+              { 
+                "type": "TRACING",
+                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces and span metrics from your computer.",
+                "otel": {
+                  "receivers": ["otlp"],
+                  "processors": [ "resourcedetection_system", "resource_agent", "batch"]
+                },
+                "params": [
+                  {
+                    "type": "boolean",
+                    "name": "isSpanMetrics",
+                    "label": "Collect span metrics",
+                    "description": "",
+                    "hint": "By checking this option, Logz.io Telemetry Collector will aggregate and send span metrics.",
+                    "value": true
+                  },
+                  {
+                    "type": "number",
+                    "name": "samplingLatency",
+                    "label": "Sampling latency threshold",
+                    "description": "The sampling latency threshold in milliseconds.",
+                    "hint": "By setting this option, Logz.io Telemetry Collector will sample traces that exceed the specified latency threshold.",
+                    "value": 200
+                  },
+                  {
+                    "type": "number",
+                    "name": "samplingPropability",
+                    "label": "Sampling probability precentage",
+                    "description": "The sampling probability precentage.",
+                    "hint": "By setting this option, Logz.io Telemetry Collector will sample traces with the specified probability.",
+                    "value": 10
+                  }                ]
+              }           
+            ]
          }
        ]
      }

@@ -12,7 +12,7 @@
       "description": "Mac Machine",
       "hint": "Select your localhost OS.",
       "supportedOs": ["Mac"],
-      "productTags": ["LOG_ANALYTICS","METRICS"],
+      "productTags": ["LOG_ANALYTICS","METRICS","TRACING"],
       "filterTags": ["Operating Systems", "Most Popular"],
       "datasources": [
         {
@@ -52,6 +52,40 @@
               "params": [],
               "dashboards": [
                 "2gsQP2xRef7dkwt8pxWieo"
+              ]
+            },
+            {
+              "type": "TRACING",
+              "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect traces and span metrics from your computer.",
+              "otel": {
+                "receivers": ["otlp"],
+                "processors": ["resourcedetection_system", "resource_agent", "batch"]
+              },
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "isSpanMetrics",
+                  "label": "Collect span metrics",
+                  "description": "",
+                  "hint": "By checking this option, Logz.io Telemetry Collector will collect span metrics.",
+                  "value": true
+                },
+                {
+                  "type": "number",
+                  "name": "samplingLatency",
+                  "label": "Sampling latency threshold",
+                  "description": "The sampling latency threshold in milliseconds.",
+                  "hint": "By setting this option, Logz.io Telemetry Collector will sample traces that exceed the specified latency threshold.",
+                  "value": 200
+                },
+                {
+                  "type": "number",
+                  "name": "samplingPropability",
+                  "label": "Sampling probability precentage",
+                  "description": "The sampling probability precentage.",
+                  "hint": "By setting this option, Logz.io Telemetry Collector will sample traces with the specified probability.",
+                  "value": 10
+                }              
               ]
             }
           ]
