@@ -13,6 +13,7 @@
     - [MacOS](#macos-1)
     - [Windows](#windows-1)
 - [Test and Build locally](#test-and-build-locally)
+
 This repo contains all the scripts needed to ship logs, metrics and traces to Logz.io for supported datasources using the Logz.io agent.
 
 Supports the following OS:
