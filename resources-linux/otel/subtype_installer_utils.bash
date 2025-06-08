@@ -211,6 +211,22 @@ function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
             return $EXIT_CODE
         fi
     fi
+    # Get ENV_ID from environment variable or generate one
+    local env_id="${ENV_ID}"
+    if [[ -z "$env_id" ]]; then
+        PARAMS=("${GENERAL_PARAMS[@]}")
+        get_param_value 'envID'
+        if [[ $? -eq 0 ]]; then
+            env_id="$PARAM_VALUE"
+        fi
+    fi
+    sed -i "s@ENV_ID_PLACEHOLDER@$env_id@g" "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash ($EXIT_CODE): error setting ENV_ID in service file: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return $EXIT_CODE
+    fi
 
     sudo cp "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" "/etc/systemd/system" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
