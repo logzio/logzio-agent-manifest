@@ -215,7 +215,6 @@ function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
     # Extract envID from GENERAL_PARAMS
     local envid_value=""
     for param in ${GENERAL_PARAMS//,/ }; do
-        echo "observing param: $param"
         if [[ "$param" == envID=* ]]; then
             envid_value="${param#envID=}"
             break
