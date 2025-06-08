@@ -27,6 +27,8 @@
       <string>SAMPLING_LATENCY_PLACEHOLDER</string>
       <key>IS_SPAN_METRICS</key>
       <string>IS_SPAN_METRICS_PLACEHOLDER</string>
+      <key>ENV_ID</key>
+      <string>ENV_ID_PLACEHOLDER</string>
     </dict>
 
   </dict>

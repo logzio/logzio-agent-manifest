@@ -202,6 +202,23 @@ function copy_logzio_otel_collector_plist_file_to_library_launch_daemons_dir {
         return $EXIT_CODE
     fi
 
+    # Get ENV_ID from environment variable or generate one
+    local env_id="${ENV_ID}"
+    if [[ -z "$env_id" ]]; then
+        PARAMS=("${GENERAL_PARAMS[@]}")
+        get_param_value 'envID'
+        if [[ $? -eq 0 ]]; then
+            env_id="$PARAM_VALUE"
+        fi
+    fi
+    sed -i "s@ENV_ID_PLACEHOLDER@$env_id@g" "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" 2>"$TASK_ERROR_FILE"
+    if [[ $? -ne 0 ]]; then
+        message="installer.bash ($EXIT_CODE): error setting ENV_ID in service file: $(get_task_error_message)"
+        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
+        write_task_post_run "write_error \"$message\""
+        return $EXIT_CODE
+    fi
+
     sudo cp "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" "$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_FILE" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error copying OTEL collector plist file to Library LaunchDaemons directory: $(get_task_error_message)"
