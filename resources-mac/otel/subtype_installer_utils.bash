@@ -78,6 +78,18 @@ function download_otel_collector_binary {
     download_binary "$download_url" "$binary_name" "$binary_path"
 }
 
+function get_environment_id {
+    PARAMS=("${GENERAL_PARAMS[@]}")
+    get_param_value 'envID'
+    local rc=$?
+    if [[ $rc -ne 0 ]]; then
+        ENV_ID=localhost-$(hostname)
+    else
+        ENV_ID="${PARAM_VALUE}"
+    fi
+    write_task_post_run "ENV_ID='$ENV_ID'"
+}
+
 # Creates Logz.io opt subdirectory
 # Input:
 #   ---
@@ -201,17 +213,8 @@ function copy_logzio_otel_collector_plist_file_to_library_launch_daemons_dir {
     
         return $EXIT_CODE
     fi
-
-    get_general_params
-    # Extract envID from GENERAL_PARAMS
-    local envid_value=""
-    for param in ${GENERAL_PARAMS//,/ }; do
-        if [[ "$param" == envID=* ]]; then
-            envid_value="${param#envID=}"
-            break
-        fi
-    done
-    sed -i '' "s#ENV_ID_PLACEHOLDER#$envid_value#g" "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" 2>"$TASK_ERROR_FILE"
+    get_environment_id  
+    sed -i '' "s#ENV_ID_PLACEHOLDER#${ENV_ID}#g" "$OTEL_RESOURCES_MAC_DIR/$LOGZIO_OTEL_COLLECTOR_SERVICE_PLIST_NAME" 2>"$TASK_ERROR_FILE"
     if [[ $? -ne 0 ]]; then
         message="installer.bash ($EXIT_CODE): error setting ENV_ID in service file: $(get_task_error_message)"
         send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
