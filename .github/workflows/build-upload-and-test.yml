@@ -57,6 +57,14 @@ jobs:
       - name: Set LOGZIO_ID
         run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
 
+      - name: Set ENV_ID
+        run: echo "ENV_ID=$(uuidgen)" >> $GITHUB_ENV
+
+      - name: Inject ENV_ID into config
+        run: |
+          jq --arg env_id "$ENV_ID" '.configuration.subtypes[0].datasources[0].params[0].value = $env_id' /tmp/logzio-agent-test/config.json > /tmp/logzio-agent-test/config.json.tmp && mv /tmp/logzio-agent-test/config.json.tmp /tmp/logzio-agent-test/config.json
+        shell: bash
+
       - name: build and extract Linux agent
         run: |
           make
@@ -103,14 +111,21 @@ jobs:
           echo "Generating test traces and logs..."
           telemetrygen traces --otlp-http --otlp-insecure --traces 100 --status-code 1 &
           TRACES_PID=$!
-          
           telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
           LOGS_PID=$!
-          
           wait $TRACES_PID
           wait $LOGS_PID
-          
           echo "Telemetry data generation completed"
+
+      - name: Validate App360 metrics and labels
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq curl
+          chmod +x ./tests/validate_app360_metrics.sh
+          ./tests/validate_app360_metrics.sh
+        env:
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+          ENV_ID: ${{ env.ENV_ID }}
+        shell: bash
 
       - name: Test collector metrics endpoint
         run: |
@@ -163,6 +178,14 @@ jobs:
       - name: Set LOGZIO_ID
         run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
 
+      - name: Set ENV_ID
+        run: echo "ENV_ID=$(uuidgen)" >> $GITHUB_ENV
+
+      - name: Inject ENV_ID into config
+        run: |
+          jq --arg env_id "$ENV_ID" '.configuration.subtypes[0].datasources[0].params[0].value = $env_id' /tmp/logzio-agent-test/config.json > /tmp/logzio-agent-test/config.json.tmp && mv /tmp/logzio-agent-test/config.json.tmp /tmp/logzio-agent-test/config.json
+        shell: bash
+
       - name: Download and extract Mac agent
         run: |
           make
@@ -212,14 +235,21 @@ jobs:
           echo "Generating test traces and logs..."
           telemetrygen traces --otlp-http --otlp-insecure --traces 100 --status-code 1 &
           TRACES_PID=$!
-          
           telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
           LOGS_PID=$!
-          
           wait $TRACES_PID
           wait $LOGS_PID
-          
           echo "Telemetry data generation completed"
+
+      - name: Validate App360 metrics and labels
+        run: |
+          brew install jq curl
+          chmod +x ./tests/validate_app360_metrics.sh
+          ./tests/validate_app360_metrics.sh
+        env:
+          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
+          ENV_ID: ${{ env.ENV_ID }}
+        shell: bash
 
       - name: Test collector metrics endpoint
         run: |
