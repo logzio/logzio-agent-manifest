@@ -3,7 +3,7 @@ set -e
 
 REQUIRED_METRICS=("calls_total" "latency_sum" "latency_count")
 REQUIRED_LABELS=("service_name" "operation" "env_id" "status_code")
-LOGZIO_API_URL="https://api.logz.io/metrics/prometheus/api/v1/query"
+LOGZIO_API_URL="https://api.logz.io/v1/metrics/prometheus/api/v1/query"
 API_TOKEN="${LOGZIO_METRICS_API_KEY}"
 ENV_ID="${ENV_ID}"
 
