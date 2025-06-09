@@ -185,7 +185,7 @@ function Invoke-LogzioOtelCollectorService {
     }
 
     try {
-        Start-Service -Name $script:LogzioOtelCollectorServiceName -ErrorAction Stop | Out-Null
+        Start-Service -Name $script:LogzioOtelCollectorServiceName -ErrorAction Continue | Out-Null
     }
     catch {
         $Message = "installer.ps1 ($ExitCode): error starting '$script:LogzioOtelCollectorServiceName' service: $_"
