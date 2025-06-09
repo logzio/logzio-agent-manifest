@@ -40,14 +40,6 @@ function Get-SelectedProducts {
 
         return $ExitCode
     }
-    # Retrieve envid parameter (similar to Get-EnvironmentID)
-    $local:EnvId = $null
-    $Err = Get-ParamValue $script:GeneralParams 'envID'
-    if ($Err.Count -eq 0) {
-        $EnvId = $script:ParamValue
-    }
-    [System.Environment]::SetEnvironmentVariable('ENV_ID', $EnvId)
-
 
     $local:Telemetries = $script:JsonValue
     
@@ -232,5 +224,5 @@ function Get-EnvironmentID {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
     
-    Write-TaskPostRun "`$script:EnvId = '$EnvId'"
+    Write-TaskPostRun "`$script:ENV_ID = '$EnvId'"
 }
