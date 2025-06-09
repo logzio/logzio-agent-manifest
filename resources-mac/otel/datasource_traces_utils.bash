@@ -536,7 +536,6 @@ function add_spanmetrics_exporter_to_otel_config {
         return $EXIT_CODE
     fi
     local existing_exporters="$YAML_VALUE"
-    echo "Existing exporters: $existing_exporters"
 
     if [[ ! "$existing_exporters" =~ "prometheusremotewrite" ]]; then
         local listener_host=$(echo "https://$listener_url" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
