@@ -120,7 +120,7 @@ jobs:
       - name: Test collector metrics endpoint
         run: |
           echo "Waiting for collector to gather metrics..."
-          sleep 60
+          sleep 120
           
           echo "Checking collector metrics endpoint..."
           curl -s http://localhost:8888/metrics > collector_metrics.txt
@@ -243,7 +243,7 @@ jobs:
       - name: Test collector metrics endpoint
         run: |
           echo "Waiting for collector to gather metrics..."
-          sleep 60
+          sleep 120
           
           echo "Checking collector metrics endpoint..."
           curl -s http://localhost:8888/metrics > collector_metrics.txt
@@ -343,7 +343,7 @@ jobs:
       - name: Test collector metrics endpoint
         run: |
           Write-Host "Waiting for collector to gather metrics..."
-          Start-Sleep -Seconds 60
+          Start-Sleep -Seconds 120
           
           Write-Host "Checking collector metrics endpoint..."
           $metricsContent = Invoke-WebRequest -Uri "http://localhost:8888/metrics" -UseBasicParsing
