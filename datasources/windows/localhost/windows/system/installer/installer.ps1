@@ -98,12 +98,12 @@ Write-Host 'System Datasource Installation' -ForegroundColor Magenta -NoNewline
 Write-Host ' ###'
 Write-Host '######################################'
 
+# Get the selected products
+Invoke-Task 'Get-SelectedProducts' @{} 'Getting the selected products' @($InstallerFunctionsScript)
 # Get general params
 Invoke-Task 'Get-GeneralParams' @{} 'Getting general params' @($InstallerFunctionsScript)
 # Get environment id
 Invoke-Task 'Get-EnvironmentID' @{GeneralParams = $script:GeneralParams; DefaultEnvId = $script:DefaultEnvId} 'Getting environment id' @($InstallerFunctionsScript)
-# Get the selected products
-Invoke-Task 'Get-SelectedProducts' @{} 'Getting the selected products' @($InstallerFunctionsScript)
 if ($script:IsLogsOptionSelected) {
     # Run logs script
     Invoke-Logs
