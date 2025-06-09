@@ -1,6 +1,6 @@
 metricstransform/rename:
   transforms:
-    - include: '^traces_span_metrics_(.*)$'
+    - include: '^traces.span.metrics.(.*)$'
       match_type: regexp
       action: update
       new_name: '$1'
