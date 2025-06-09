@@ -101,7 +101,7 @@ jobs:
       - name: Generate test telemetry data
         run: |
           echo "Generating test traces and logs..."
-          telemetrygen traces --otlp-http --otlp-insecure --traces 100 &
+          telemetrygen traces --otlp-http --otlp-insecure --traces 100 --status-code 1 &
           TRACES_PID=$!
           
           telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
@@ -210,7 +210,7 @@ jobs:
       - name: Generate test telemetry data
         run: |
           echo "Generating test traces and logs..."
-          telemetrygen traces --otlp-http --otlp-insecure --traces 100 &
+          telemetrygen traces --otlp-http --otlp-insecure --traces 100 --status-code 1 &
           TRACES_PID=$!
           
           telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
