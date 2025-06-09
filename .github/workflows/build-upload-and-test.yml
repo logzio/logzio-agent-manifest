@@ -125,6 +125,7 @@ jobs:
              grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
             echo "✅ Collector is successfully exporting metrics, logs, and traces"
             cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
+            cat collector_metrics.txt
           else
             echo "❌ Collector is not exporting metrics, logs, or traces properly"
             cat collector_metrics.txt
@@ -233,6 +234,7 @@ jobs:
              grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
             echo "✅ Collector is successfully exporting metrics, logs, and traces"
             cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
+            cat collector_metrics.txt
           else
             echo "❌ Collector is not exporting metrics, logs, or traces properly"
             cat collector_metrics.txt
@@ -323,6 +325,7 @@ jobs:
           if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records") {
             Write-Host "✅ Collector is successfully exporting metrics, logs, and traces"
             Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records)"
+            Get-Content -Path "collector_metrics.txt"
           } else {
             Write-Host "❌ Collector is not exporting metrics, logs, or traces properly"
             Get-Content -Path "collector_metrics.txt"
