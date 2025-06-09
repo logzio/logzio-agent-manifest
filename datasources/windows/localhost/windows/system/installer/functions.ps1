@@ -223,6 +223,7 @@ function Get-EnvironmentID {
     $Message = "Environment id is '$EnvId'"
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
     Write-Log $script:LogLevelDebug $Message
+    # Set ENV_ID as a machine environment variable so it can be used in the collector service
     [System.Environment]::SetEnvironmentVariable('ENV_ID', $EnvId, 'Machine')
     Write-TaskPostRun "`$script:ENV_ID = '$EnvId'"
 }
