@@ -9,20 +9,14 @@ ENV_ID="${ENV_ID}"
 
 fail=0
 
-# Query all metrics for this env_id in a single API call
 QUERY="{env_id=\"${ENV_ID}\"}"
 RESPONSE=$(curl -s -H "X-API-TOKEN: ${API_TOKEN}" -H "Accept: application/json" "${LOGZIO_API_URL}?query=$(echo "$QUERY" | jq -sRr @uri)")
-echo "Response from Logz.io API:"
-echo "$RESPONSE" | jq .
-# Build a map of metric name to its label sets
 mapfile -t METRIC_NAMES < <(echo "$RESPONSE" | jq -r '.data.result[].metric.__name__' | sort -u)
-
 for metric in "${REQUIRED_METRICS[@]}"; do
   found=0
   for i in "${!METRIC_NAMES[@]}"; do
     if [[ "${METRIC_NAMES[$i]}" == "$metric" ]]; then
       found=1
-      # For each result with this metric, check labels
       mapfile -t LABELS_ARRAY < <(echo "$RESPONSE" | jq -c --arg name "$metric" '.data.result[] | select(.metric.__name__ == $name) | .metric')
       for labels_json in "${LABELS_ARRAY[@]}"; do
         missing_label=0
