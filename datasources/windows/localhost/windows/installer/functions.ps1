@@ -166,14 +166,6 @@ function Invoke-LogzioOtelCollectorService {
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
 
-    # Retrieve envid parameter (similar to Get-EnvironmentID)
-    $local:EnvId = $null
-    $Err = Get-ParamValue $script:GeneralParams 'envID'
-    if ($Err.Count -eq 0) {
-        $EnvId = $script:ParamValue
-    }
-    [System.Environment]::SetEnvironmentVariable('ENV_ID', $EnvId)
-
     try {
         New-Service -Name $script:LogzioOtelCollectorServiceName -BinaryPathName "$script:OtelCollectorExe --config $script:OtelConfig" -Description "Collects localhost logs/metrics and sends them to Logz.io." -ErrorAction Stop | Out-Null
     }
