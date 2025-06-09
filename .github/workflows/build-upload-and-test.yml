@@ -30,7 +30,7 @@ jobs:
           )
 
       - name: Build and upload to test release
-        run: bash ./upload-test-release.sh
+        run: bash ./tests/upload-test-release.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
