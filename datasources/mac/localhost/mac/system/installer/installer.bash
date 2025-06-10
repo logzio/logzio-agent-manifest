@@ -18,6 +18,9 @@ load_installer_utils
 # Get the selected products
 execute_task 'get_selected_products' 'Getting selected products'
 
+# Get general params
+execute_task 'get_general_params' 'Getting general params'
+
 DATA_SOURCE_INSTALLER_EXIT_CODE=$EXIT_CODE
 
 if $IS_LOGS_OPTION_WAS_SELECTED; then
