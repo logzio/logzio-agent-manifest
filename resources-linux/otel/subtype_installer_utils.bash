@@ -139,17 +139,6 @@ function copy_logzio_otel_files_to_opt_sub_dir {
     fi
 }
 
-function get_environment_id {
-    PARAMS=("${GENERAL_PARAMS[@]}")
-    get_param_value 'envID'
-    local rc=$?
-    if [[ $rc -ne 0 ]]; then
-        ENV_ID=localhost-$(hostname)
-    else
-        ENV_ID="${PARAM_VALUE}"
-    fi
-    write_task_post_run "ENV_ID='$ENV_ID'"
-}
 # Copies service file to systemd system directory
 # Input:
 #   ---
@@ -221,15 +210,6 @@ function copy_logzio_otel_collector_service_file_to_systemd_system_dir {
     
             return $EXIT_CODE
         fi
-    fi
-
-    get_environment_id
-    sed -i "s@ENV_ID_PLACEHOLDER@${ENV_ID}@g" "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" 2>"$TASK_ERROR_FILE"
-    if [[ $? -ne 0 ]]; then
-        message="installer.bash ($EXIT_CODE): error setting ENV_ID in service file: $(get_task_error_message)"
-        send_log_to_logzio "$LOG_LEVEL_ERROR" "$message" "$LOG_STEP_INSTALLATION" "$LOG_SCRIPT_INSTALLER" "$func_name" "$AGENT_ID" "$PLATFORM" "$SUB_TYPE" "$CURRENT_DATA_SOURCE"
-        write_task_post_run "write_error \"$message\""
-        return $EXIT_CODE
     fi
 
     sudo cp "$OTEL_RESOURCES_LINUX_DIR/logzioOTELCollector.service" "/etc/systemd/system" 2>"$TASK_ERROR_FILE"

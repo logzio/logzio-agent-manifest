@@ -1,4 +1,4 @@
 logs:
   receivers: []
-  processors: [attributes/env_id]
+  processors: []
   exporters: [logzio/logs]

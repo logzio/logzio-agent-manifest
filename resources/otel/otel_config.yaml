@@ -1,10 +1,5 @@
 receivers:
 processors:
-  attributes/env_id:
-    actions:
-    - action: insert
-      key: env_id
-      value: ${ENV_ID}
 connectors: {}
 exporters:
   debug:

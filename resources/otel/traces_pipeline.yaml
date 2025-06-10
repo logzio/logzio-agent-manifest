@@ -1,4 +1,4 @@
 traces:
   receivers: []
-  processors: [attributes/env_id]
+  processors: []
   exporters: [logzio/traces]
