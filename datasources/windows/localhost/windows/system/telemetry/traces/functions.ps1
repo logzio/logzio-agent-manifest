@@ -767,7 +767,26 @@ function Add-SpanMetricsProcessorsToOtelConfig {
         }
     }
 
-    # Add metricstransform/metrics-rename processor
+    $IsProcessorExist = $false
+    foreach ($ExistProcessor in $ExistProcessors) {
+        if ($ExistProcessor -eq 'metricstransform/rename') {
+            $IsProcessorExist = $true
+            break
+        }
+    }
+
+    if (-not $IsProcessorExist) {
+        $Err = Add-YamlFileFieldValueToAnotherYamlFileField "$script:OtelProcessorsDir\metricstransform_rename.yaml" "$script:OtelResourcesDir\$script:OtelConfigName" '' '.processors'
+        if ($Err.Count -ne 0) {
+            $Message = "traces.ps1 ($ExitCode): $($Err[0])"
+            Send-LogToLogzio $script:LogLevelError $Message $script:LogStepTraces $script:LogScriptTraces $FuncName $script:AgentId $script:Platform $script:SubType $script:CurrentDataSource
+            Write-TaskPostRun "Write-Error `"$Message`""
+
+            return $ExitCode
+        }
+    }
+
+    
     $IsProcessorExist = $false
     foreach ($ExistProcessor in $ExistProcessors) {
         if ($ExistProcessor -eq 'metricstransform/metrics-rename') {
