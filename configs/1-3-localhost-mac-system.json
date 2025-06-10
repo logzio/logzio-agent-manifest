@@ -27,7 +27,7 @@
               "label": "Environment Name",
               "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
               "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
-              "value": "",
+              "value": "localhost-macos",
               "pattern": "^[a-zA-Z0-9_-]*$",
               "patternError": "Only letters, numbers, dashes and underscores are allowed"
             }
