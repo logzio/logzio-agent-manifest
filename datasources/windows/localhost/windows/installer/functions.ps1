@@ -165,7 +165,6 @@ function Invoke-LogzioOtelCollectorService {
     $Message = Get-Content -Path $script:OtelConfig
     Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype
     Write-Log $script:LogLevelDebug $Message
-
     try {
         New-Service -Name $script:LogzioOtelCollectorServiceName -BinaryPathName "$script:OtelCollectorExe --config $script:OtelConfig" -Description "Collects localhost logs/metrics and sends them to Logz.io." -ErrorAction Stop | Out-Null
     }
