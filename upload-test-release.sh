@@ -1,5 +1,5 @@
 #!/bin/bash
-# filepath: tests/upload-test-release.sh
+# filepath: automation_script.sh
 
 # Exit on error
 set -e
