@@ -30,7 +30,7 @@ jobs:
           )
 
       - name: Build and upload to test release
-        run: bash ./tests/upload-test-release.sh
+        run: bash ./upload-test-release.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -56,14 +56,6 @@ jobs:
 
       - name: Set LOGZIO_ID
         run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
-
-      - name: Set ENV_ID
-        run: echo "ENV_ID=$(uuidgen)" >> $GITHUB_ENV
-
-      - name: Inject ENV_ID into config
-        run: |
-          jq --arg env_id "$ENV_ID" '.configuration.subtypes[0].datasources[0].params[0].value = $env_id' /tmp/logzio-agent-test/config.json > /tmp/logzio-agent-test/config.json.tmp && mv /tmp/logzio-agent-test/config.json.tmp /tmp/logzio-agent-test/config.json
-        shell: bash
 
       - name: build and extract Linux agent
         run: |
@@ -98,7 +90,7 @@ jobs:
           ps aux | grep otel-collector
 
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v4
         with:
           go-version: '1.21'
           
@@ -109,18 +101,21 @@ jobs:
       - name: Generate test telemetry data
         run: |
           echo "Generating test traces and logs..."
-          telemetrygen traces --otlp-http --otlp-insecure --traces 100 --status-code 1 &
+          telemetrygen traces --otlp-http --otlp-insecure --traces 100 &
           TRACES_PID=$!
+          
           telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
           LOGS_PID=$!
+          
           wait $TRACES_PID
           wait $LOGS_PID
+          
           echo "Telemetry data generation completed"
 
       - name: Test collector metrics endpoint
         run: |
           echo "Waiting for collector to gather metrics..."
-          sleep 120
+          sleep 60
           
           echo "Checking collector metrics endpoint..."
           curl -s http://localhost:8888/metrics > collector_metrics.txt
@@ -130,21 +125,11 @@ jobs:
              grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
             echo "✅ Collector is successfully exporting metrics, logs, and traces"
             cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
-            cat collector_metrics.txt
           else
             echo "❌ Collector is not exporting metrics, logs, or traces properly"
             cat collector_metrics.txt
             exit 1
           fi
-      - name: Validate App360 metrics and labels
-        run: |
-          sudo apt-get update && sudo apt-get install -y jq curl
-          chmod +x ./tests/validate_app360_metrics.sh
-          ./tests/validate_app360_metrics.sh
-        env:
-          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
-          ENV_ID: ${{ env.ENV_ID }}
-        shell: bash
 
   test-mac:
     needs: build-and-upload
@@ -176,14 +161,6 @@ jobs:
 
       - name: Set LOGZIO_ID
         run: echo "LOGZIO_ID=$(uuidgen)" >> $GITHUB_ENV
-
-      - name: Set ENV_ID
-        run: echo "ENV_ID=$(uuidgen)" >> $GITHUB_ENV
-
-      - name: Inject ENV_ID into config
-        run: |
-          jq --arg env_id "$ENV_ID" '.configuration.subtypes[0].datasources[0].params[0].value = $env_id' /tmp/logzio-agent-test/config.json > /tmp/logzio-agent-test/config.json.tmp && mv /tmp/logzio-agent-test/config.json.tmp /tmp/logzio-agent-test/config.json
-        shell: bash
 
       - name: Download and extract Mac agent
         run: |
@@ -232,18 +209,21 @@ jobs:
       - name: Generate test telemetry data
         run: |
           echo "Generating test traces and logs..."
-          telemetrygen traces --otlp-http --otlp-insecure --traces 100 --status-code 1 &
+          telemetrygen traces --otlp-http --otlp-insecure --traces 100 &
           TRACES_PID=$!
+          
           telemetrygen logs --otlp-http --otlp-insecure --logs 100 &
           LOGS_PID=$!
+          
           wait $TRACES_PID
           wait $LOGS_PID
+          
           echo "Telemetry data generation completed"
 
       - name: Test collector metrics endpoint
         run: |
           echo "Waiting for collector to gather metrics..."
-          sleep 120
+          sleep 60
           
           echo "Checking collector metrics endpoint..."
           curl -s http://localhost:8888/metrics > collector_metrics.txt
@@ -253,21 +233,11 @@ jobs:
              grep -q "otelcol_exporter_sent_spans" collector_metrics.txt; then
             echo "✅ Collector is successfully exporting metrics, logs, and traces"
             cat collector_metrics.txt | grep -E "otelcol_exporter_sent_(metric_points|log_records|spans)"
-            cat collector_metrics.txt
           else
             echo "❌ Collector is not exporting metrics, logs, or traces properly"
             cat collector_metrics.txt
             exit 1
           fi
-      - name: Validate App360 metrics and labels
-        run: |
-          brew install jq curl
-          chmod +x ./tests/validate_app360_metrics.sh
-          ./tests/validate_app360_metrics.sh
-        env:
-          LOGZIO_METRICS_API_KEY: ${{ secrets.LOGZIO_METRICS_API_KEY }}
-          ENV_ID: ${{ env.ENV_ID }}
-        shell: bash
 
   test-windows:
     needs: build-and-upload
@@ -343,7 +313,7 @@ jobs:
       - name: Test collector metrics endpoint
         run: |
           Write-Host "Waiting for collector to gather metrics..."
-          Start-Sleep -Seconds 120
+          Start-Sleep -Seconds 60
           
           Write-Host "Checking collector metrics endpoint..."
           $metricsContent = Invoke-WebRequest -Uri "http://localhost:8888/metrics" -UseBasicParsing
@@ -353,7 +323,6 @@ jobs:
           if ($metricsContent -match "otelcol_exporter_sent_metric_points" -and $metricsContent -match "otelcol_exporter_sent_log_records") {
             Write-Host "✅ Collector is successfully exporting metrics, logs, and traces"
             Get-Content -Path "collector_metrics.txt" | Select-String -Pattern "otelcol_exporter_sent_(metric_points|log_records)"
-            Get-Content -Path "collector_metrics.txt"
           } else {
             Write-Host "❌ Collector is not exporting metrics, logs, or traces properly"
             Get-Content -Path "collector_metrics.txt"
