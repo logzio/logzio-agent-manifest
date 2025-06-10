@@ -20,13 +20,25 @@
           "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
           "label": "System",
           "description": "Logz.io Uses OpenTelemetry to monitor your computer.",
+          "params": [
+            {
+              "type": "text",
+              "name": "envID",
+              "label": "Environment Name",
+              "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+              "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+              "value": "",
+              "pattern": "^[a-zA-Z0-9_-]*$",
+              "patternError": "Only letters, numbers, dashes and underscores are allowed"
+            }
+          ],
           "telemetries": [
             {
               "type": "LOG_ANALYTICS",
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your computer.",
               "otel": {
                 "receivers": ["filelog","otlp"],
-                "processors": ["resourcedetection_system"]
+                "processors": ["resourcedetection_system", "batch"]
 				      },
               "params":
               [
@@ -47,7 +59,7 @@
               "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your computer.",
               "otel": {
                 "receivers": ["hostmetrics","otlp"],
-                "processors": ["resourcedetection_system", "resource_agent", "filter"]
+                "processors": ["resourcedetection_system", "resource_agent", "filter", "batch"]
 				      },
               "params": [],
               "dashboards": [
