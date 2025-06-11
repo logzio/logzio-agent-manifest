@@ -21,13 +21,25 @@
            "logo": "https://dytvr9ot2sszz.cloudfront.net/logz-docs/shipper-logos/local_host.png",
            "label": "System",
            "description": "Monitor your EC2 using OpenTemeletry",
+           "params": [
+             {
+               "type": "text",
+               "name": "envID",
+               "label": "Environment Name",
+               "description": "The name for your environments identifier, to easily identify the telemetry data for each environment.",
+               "hint": "By typing an environment name, the name will be added as a label to the telemetry data of your environment.",
+               "value": "ec2-linux",
+               "pattern": "^[a-zA-Z0-9_-]*$",
+               "patternError": "Only letters, numbers, dashes and underscores are allowed"
+             }
+           ],
            "telemetries": [
              {
                "type": "LOG_ANALYTICS",
                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect logs from your EC2.",
                "otel": {
                 "receivers": ["filelog","otlp"],
-                "processors": ["resourcedetection_system", "resourcedetection_ec2"]
+                "processors": ["resourcedetection_system", "resourcedetection_ec2", "batch"]
 				       },
                "params":
                [
@@ -47,7 +59,7 @@
                "hint": "Switch the toggle on if you want Logz.io Telemetry Collector to collect metrics from your EC2.",
                "otel": {
                 "receivers": ["hostmetrics" ,"otlp"],
-                "processors": ["resourcedetection_system", "resourcedetection_ec2", "resource_agent", "filter"]
+                "processors": ["resourcedetection_system", "resourcedetection_ec2", "resource_agent", "filter", "batch"]
 				       },
                "params": [],
                "dashboards": [
