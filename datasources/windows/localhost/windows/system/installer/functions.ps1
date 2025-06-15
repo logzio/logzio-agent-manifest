@@ -108,19 +108,19 @@ function Get-SelectedProducts {
             Write-TaskPostRun "`$script:MetricsParams = $ParamsStr"
         }
         elseif ($Type.Equals('TRACING')) {
-          $Message = 'Traces option was selected'
-          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-          Write-Log $script:LogLevelDebug $Message
-          $Message = "Traces telemetry is '$Telemetry'"
-          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-          Write-Log $script:LogLevelDebug $Message
-          $Message = "Traces params are '$Params'"
-          Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
-          Write-Log $script:LogLevelDebug $Message
+            $Message = 'Traces option was selected'
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Write-Log $script:LogLevelDebug $Message
+            $Message = "Traces telemetry is '$Telemetry'"
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Write-Log $script:LogLevelDebug $Message
+            $Message = "Traces params are '$Params'"
+            Send-LogToLogzio $script:LogLevelDebug $Message $script:LogStepInstallation $script:LogScriptInstaller $FuncName $script:AgentId $script:Platform $script:Subtype $script:CurrentDataSource
+            Write-Log $script:LogLevelDebug $Message
 
-          $IsTracesOptionSelected = $true
-          Write-TaskPostRun "`$script:TracesTelemetry = '$Telemetry'"
-          Write-TaskPostRun "`$script:TracesParams = $ParamsStr"
+            $IsTracesOptionSelected = $true
+            Write-TaskPostRun "`$script:TracesTelemetry = '$Telemetry'"
+            Write-TaskPostRun "`$script:TracesParams = $ParamsStr"
       }
 
         $TelemetryIndex++
