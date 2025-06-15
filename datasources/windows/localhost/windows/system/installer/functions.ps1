@@ -45,6 +45,7 @@ function Get-SelectedProducts {
     
     $local:IsLogsOptionSelected = $false
     $local:IsMetricsOptionSelected = $false
+    $local:IsTracesOptionSelected = $false
     
     $local:TelemetryIndex = 0
     foreach ($Telemetry in $Telemetries) {
