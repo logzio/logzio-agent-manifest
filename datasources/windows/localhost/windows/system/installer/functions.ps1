@@ -45,6 +45,7 @@ function Get-SelectedProducts {
     
     $local:IsLogsOptionSelected = $false
     $local:IsMetricsOptionSelected = $false
+    $local:IsTracesOptionSelected = $false
     
     $local:TelemetryIndex = 0
     foreach ($Telemetry in $Telemetries) {
@@ -126,9 +127,9 @@ function Get-SelectedProducts {
         $TelemetryIndex++
     }
 
-    Write-TaskPostRun "`$script:IsLogsOptionSelected = `$($IsLogsOptionSelected)"
-    Write-TaskPostRun "`$script:IsMetricsOptionSelected = `$($IsMetricsOptionSelected)"
-    Write-TaskPostRun "`$script:IsTracesOptionSelected = `$($IsTracesOptionSelected)"
+    Write-TaskPostRun "`$script:IsLogsOptionSelected = `$$IsLogsOptionSelected"
+    Write-TaskPostRun "`$script:IsMetricsOptionSelected = `$$IsMetricsOptionSelected"
+    Write-TaskPostRun "`$script:IsTracesOptionSelected = `$$IsTracesOptionSelected"
 }
 
 # Gets general params (params under datasource)
