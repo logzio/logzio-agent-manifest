@@ -126,9 +126,9 @@ function Get-SelectedProducts {
         $TelemetryIndex++
     }
 
-    Write-TaskPostRun "`$script:IsLogsOptionSelected = `$$IsLogsOptionSelected"
-    Write-TaskPostRun "`$script:IsMetricsOptionSelected = `$$IsMetricsOptionSelected"
-    Write-TaskPostRun "`$script:IsTracesOptionSelected = `$$IsTracesOptionSelected"
+    Write-TaskPostRun "`$script:IsLogsOptionSelected = `$($IsLogsOptionSelected)"
+    Write-TaskPostRun "`$script:IsMetricsOptionSelected = `$($IsMetricsOptionSelected)"
+    Write-TaskPostRun "`$script:IsTracesOptionSelected = `$($IsTracesOptionSelected)"
 }
 
 # Gets general params (params under datasource)
