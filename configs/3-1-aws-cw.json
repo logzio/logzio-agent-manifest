@@ -15,7 +15,7 @@
        "productTags": ["LOG_ANALYTICS"],
        "filterTags": ["AWS", "Most Popular"],
        "recommendedFor": ["DevOps Engineer"],
-       "integrationTemplate": "firehose-logs/0.4.1/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
+       "integrationTemplate": "firehose-logs/0.4.2/sam-template.yaml&param_logzioType=agent-logzio-firehose&param_logzioListener=https://aws-firehose-logs-<<LOGZIO_LISTENER_ADDRESS>>",
        "datasources": [
          {
            "name": "AWS_Logs",
