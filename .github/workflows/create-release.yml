@@ -27,7 +27,7 @@ jobs:
       actions: write  # Allows updating GitHub Action workflows
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Increase Version
@@ -78,7 +78,7 @@ jobs:
       attestations: write  # Allows adding and updating artifact attestations
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Update version file
         run: |
           echo "${{ needs.update_version.outputs.VERSION }}" >./version
