@@ -1,0 +1,123 @@
+[
+  {
+    "template": "import { LogzioRUM } from '@logzio/browser';"
+  },
+  {
+    "template": ""
+  },
+  {
+    "template": "LogzioRUM.init({"
+  },
+  {
+    "template": "  region: <<LOGZIO_ACCOUNT_REGION_CODE>>"
+  },
+  {
+    "template": "  tokens: {",
+    "targetElement": "<<TODO: FILL IN PATH TO ENABLE STATES CONDITIONS>>",
+    "conditionalTemplates": [
+      {
+        "template": "    traces: <<LOGZIO_TRACING_SHIPPING_TOKEN>>,"
+      },
+      {
+        "template": "    logs: <<LOGZIO_LOGS_SHIPPING_TOKEN>>,",
+        "targetElement": "<<TODO: FILL IN PATH TO LOG SPECIFIC ENABLE STATE CONDITIONS>>"
+      },
+      {
+        "template": "    },"
+      }
+    ]
+  },
+  {
+    "template": "  endpoint: {"
+  },
+  {
+    "template": "  endpoint: {",
+    "targetElement": "<<TODO: FILL PATH TO WHERE WE CAN TELL IF ENDPOINT VALUES EXIST>>",
+    "conditionalTemplates": [
+      {
+        "template": "    url: \"{{value}}\",",
+        "targetElement": "<<TODO: FILL IN PATH TO URL VALUE>>.value",
+        "keepAsPlaceholder": true
+      },
+      {
+        "template": "    addSuffix: true,",
+        "targetElement": "<<TODO: FILL IN PATH TO ADD SUFFIX ENABLE STATE>>"
+      },
+      {
+        "template": "  },"
+      }
+    ]
+  },
+  {
+    "template": "  service: {",
+    "targetElement": "<<TODO: FILL PATH TO WHERE WE CAN TELL IF SERVICE SETTINGS EXIST>>",
+    "conditionalTemplates": [
+      {
+        "template": "    name: \"{{value}}\",",
+        "targetElement": "<<TODO: FILL IN PATH TO SERVICE NAME VALUE>>.value",
+        "keepAsPlaceholder": true
+      },
+      {
+        "template": "    version: \"{{value}}\",",
+        "targetElement": "<<TODO: FILL IN PATH TO SERVICE VERSION VALUE>>.value"
+      },
+      {
+        "template": "  },"
+      }
+    ]
+  },
+  {
+    "template": "  customAttributes: {",
+    "targetElement": "<<TODO: FILL PATH TO WHERE WE CAN TELL IF CUSTOM ATTRIBUTES EXIST>>",
+    "conditionalTemplates": [
+      {
+        "template": "    env_id: \"{{value}}\",",
+        "targetElement": "<<TODO: FILL IN PATH TO ENVIRONMENT ID VALUE>>.value",
+        "keepAsPlaceholder": true
+      },
+      {
+        "TODO": "ADD ALL ADDITIONAL CUSTOM ATTRIBUTES"
+      },
+      {
+        "template": "  },"
+      }
+    ]
+  },
+  {
+    "template": "  propagateTraceHeaderCorsUrls: {{value}}",
+    "targetElement": "<<TODO: ADD PATH TO PROPAGATE TRACE HEADER CORS URLS VALUE (SHOULD BE AN ARRAY)>>.value",
+    "keepAsPlaceholder": true
+  },
+  {
+    "template": "  samplingRate: {{value}}",
+    "targetElement": "<<TODO: ADD PATH TO SAMPLING RATE VALUE>>.value"
+  },
+  {
+    "template": "  frustrationThresholds: {",
+    "targetElement": "<<TODO: FILL PATH TO WHERE WE CAN TELL IF FRUSTRATION SETTINGS EXIST>>",
+    "conditionalTemplates": [
+      {
+        "template": "    rageClickCount: \"{{value}}\",",
+        "targetElement": "<<TODO: FILL IN PATH TO RAGE CLICK COUNT VALUE>>.value",
+        "keepAsPlaceholder": true
+      },
+      {
+        "template": "    rageClickIntervalMs: \"{{value}}\",",
+        "targetElement": "<<TODO: FILL IN PATH TO RAGE CLICK INTERVAL MS VALUE>>.value",
+        "keepAsPlaceholder": true
+      },
+      {
+        "template": "    heavyLoadThresholdMs: \"{{value}}\",",
+        "targetElement": "<<TODO: FILL IN PATH TO HEAVY LOAD THRESHOLD MS VALUE>>.value",
+        "keepAsPlaceholder": true
+      },
+      {
+        "template": "  },"
+      }
+    ]
+  },
+  {
+    "template": "  logLevel: {{value}}",
+    "targetElement": "<<TODO: ADD PATH TO LOG LEVEL VALUE>>.value"
+  }
+]
