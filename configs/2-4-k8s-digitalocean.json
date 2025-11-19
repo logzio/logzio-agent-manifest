@@ -96,7 +96,16 @@
               "type": "TRACING",
               "description": "",
               "hint": "The Logz.io Telemetry Collector gathers traces and aggregated metrics from applications that are instrumented and running in Kubernetes.",
-              "params": []
+              "params": [
+                {
+                  "type": "boolean",
+                  "name": "isObi",
+                  "label": "Enable eBPF Auto-instrumentation (OBI)",
+                  "description": "Enable OpenTelemetry eBPF Instrumentation (OBI) DaemonSet for zero-code auto-instrumentation.",
+                  "hint": "Check this box to deploy the OBI DaemonSet and automatically capture traces from supported workloads using eBPF.",
+                  "value": false
+                }
+              ]
             }
           ]
         },
