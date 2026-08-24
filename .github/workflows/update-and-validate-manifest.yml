@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3.0.2
       - name: Set filter
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@0e4a8c6effa4802afeda77dc8d303f8176d7dfad # v3
         id: filter
         with:
           filters: |
@@ -27,7 +27,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: Build manifest
-        uses: jannekem/run-python-script-action@v1
+        uses: jannekem/run-python-script-action@9d8e2e0878d575fb6073277f38ce3f10ebf4f059 # v1
         with:
           script: |
             import os, json
@@ -63,7 +63,7 @@ jobs:
         with:
           name: manifest
       - name: Update dev pre-release
-        uses: meeDamian/github-release@2.0
+        uses: meeDamian/github-release@7ae19492500104f636b3fee4d8103af0fed36c8e # 2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           name: dev
@@ -89,7 +89,7 @@ jobs:
         with:
           name: manifest
       - name: Verify manifest
-        uses: jannekem/run-python-script-action@v1
+        uses: jannekem/run-python-script-action@9d8e2e0878d575fb6073277f38ce3f10ebf4f059 # v1
         with:
           script: |
             import os, requests, json, sys
