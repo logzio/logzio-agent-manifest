@@ -109,6 +109,10 @@
     ]
   },
   {
+    "template": "  --set obi.enabled=true \\",
+    "targetElement": "datasources[?(@.name=='Kubernetes')].telemetries[?(@.type=='TRACING')].params[?(@.name=='isObi' && @.value==true)]"
+  },
+  {
     "template": "  --set securityReport.enabled=true \\",
     "targetElement": "datasources[?(@.name=='Security')]"
   },
