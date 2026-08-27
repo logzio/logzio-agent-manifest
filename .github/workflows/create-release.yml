@@ -123,7 +123,7 @@ jobs:
           tar -czvf assets/mac_kubernetes_digitalocean.tar.gz -C datasources/mac kubernetes/digitalocean -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
           tar -czvf assets/mac_localhost_mac.tar.gz -C datasources/mac localhost/mac -C ${GITHUB_WORKSPACE} resources -C ${GITHUB_WORKSPACE} resources-mac
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ needs.update_version.outputs.VERSION }}
